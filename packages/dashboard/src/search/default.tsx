@@ -168,9 +168,7 @@ searchRegistry.add(
         .list({ name_cont: search, limit, sort: 'name' })
         .then((r) => r.data),
     getKey: (g) => g.id,
-    // Groups have no detail page — they are edited in a sheet on the groups
-    // page, which `?edit=` opens directly.
-    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups`, search: { edit: g.id } }),
+    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups/${g.id}` }),
     renderRow: (g) => (
       <>
         <Thumbnail size="xs" fallback={<UsersRoundIcon />} />

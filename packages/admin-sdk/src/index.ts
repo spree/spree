@@ -7,6 +7,7 @@ export type {
   Extension,
   ExtensionContext,
   FileUploadCreateParams,
+  RequestCompleteEvent,
   RequestFn,
   RequestOptions,
   RetryConfig,

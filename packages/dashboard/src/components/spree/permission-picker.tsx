@@ -130,7 +130,7 @@ export function PermissionGrid({
     >
       <div
         className={cn(
-          'grid grid-cols-[1fr_auto_auto] items-center gap-x-6 gap-y-2 p-3 text-sm',
+          'grid grid-cols-[1fr_auto_auto] items-center gap-x-6 gap-y-2 p-3 text-base',
           // A caller drawing its own frame pads the frame, not the grid.
           bare && 'px-0',
         )}

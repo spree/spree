@@ -216,7 +216,7 @@ module Spree
           end
 
           def model_class
-            Spree::Order
+            Spree::Cart
           end
 
           def serializer_class

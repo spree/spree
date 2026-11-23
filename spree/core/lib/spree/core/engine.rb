@@ -99,6 +99,7 @@ module Spree
       # wins over the environment — is never rejected for a stale env var.
       config.after_initialize do
         Spree::Core::Configuration.validate_env!(Spree::Config)
+        Rails.error.subscribe(Spree::RemovedApis::ErrorSubscriber.new)
       end
 
       # I18n's config lives in fiber/thread-local storage that survives across
@@ -596,7 +597,10 @@ module Spree
         app/models/spree/classification.rb
         app/models/spree/promotion/rules/taxon.rb
         app/models/spree/promotion_rule_taxon.rb
+        app/models/spree/prototype.rb
         app/models/spree/return_authorization_reason.rb
+        app/models/spree/shipment.rb
+        app/models/spree/shipping_method.rb
         app/models/spree/taxon.rb
         app/services/spree/checkout/add_store_credit.rb
         app/services/spree/checkout/remove_store_credit.rb
@@ -604,6 +608,16 @@ module Spree
 
       initializer 'spree.deprecated_aliases.skip_eager_load' do
         Rails.autoloaders.main.do_not_eager_load(*DEPRECATED_ALIAS_FILES.map { |path| root.join(path) })
+      end
+
+      # Hands reported errors to the diagnostics error log, resolving the
+      # class per call so a development reload picks up the new one.
+      module DiagnosticsErrorSubscriber
+        def self.report(...) = Spree::Diagnostics::ErrorLog.new.report(...)
+      end
+
+      initializer 'spree.diagnostics.error_log' do
+        Rails.error.subscribe(DiagnosticsErrorSubscriber)
       end
 
       # filter sensitive information during logging

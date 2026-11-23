@@ -103,7 +103,7 @@ function NotificationsDialog({
           {update ? (
             <UpdateNotification update={update} open={open} />
           ) : (
-            <p className="py-6 text-center text-muted-foreground text-sm">
+            <p className="py-6 text-center text-muted-foreground text-base">
               {t('admin.notifications.empty')}
             </p>
           )}
@@ -125,7 +125,7 @@ function UpdateNotification({ update, open }: { update: UpdateStatus; open: bool
           <h3 className="font-semibold text-base">
             {t('admin.updates.available', { version: update.latest_version })}
           </h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {t('admin.updates.running', { version: update.current_version })}
           </p>
         </div>
@@ -134,7 +134,7 @@ function UpdateNotification({ update, open }: { update: UpdateStatus; open: bool
             href={update.latest_release_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 font-medium text-sm underline underline-offset-3"
+            className="shrink-0 font-medium text-base underline underline-offset-3"
           >
             {t('admin.notifications.view_on_github')}
           </a>
@@ -148,7 +148,7 @@ function UpdateNotification({ update, open }: { update: UpdateStatus; open: bool
             <Skeleton className="h-4 w-5/6" />
           </div>
         ) : notes.isError ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {t('admin.notifications.release_notes_unavailable')}
           </p>
         ) : notes.data ? (

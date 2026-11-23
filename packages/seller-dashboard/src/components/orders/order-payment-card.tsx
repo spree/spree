@@ -1,4 +1,4 @@
-import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
+import { formatMoney, ReadRow, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Card,
   CardAction,
@@ -17,7 +17,6 @@ import {
 import { CreditCardIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
-import { ReadRow } from '../read-row'
 
 /**
  * What the buyer paid for this order.
@@ -64,7 +63,7 @@ export function OrderPaymentCard({ order }: { order: Order }) {
       {splits.length > 0 && (
         <>
           <Separator />
-          <p className="px-6 pt-4 text-sm text-muted-foreground">
+          <p className="px-6 pt-4 text-base text-muted-foreground">
             {t('orders.payment.share_help')}
           </p>
           <Table>

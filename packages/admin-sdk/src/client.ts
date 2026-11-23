@@ -1,4 +1,10 @@
-import type { InternalRequestOptions, RequestConfig, RequestFn, RetryConfig } from '@spree/sdk-core'
+import type {
+  InternalRequestOptions,
+  RequestCompleteEvent,
+  RequestConfig,
+  RequestFn,
+  RetryConfig,
+} from '@spree/sdk-core'
 import {
   createRequestFn,
   type Extended,
@@ -28,11 +34,19 @@ export interface AdminClientConfig {
    * embedding in environments where cookies should not flow.
    */
   credentials?: RequestCredentials
+  /**
+   * Called after every HTTP attempt, successful or not, with its timing,
+   * request ID and bodies. Headers include the credentials, so redact them
+   * before storing or displaying anything.
+   */
+  onRequestComplete?: (event: RequestCompleteEvent) => void
 }
 
 export interface Client extends AdminClient {
   /** Set or change the target store for subsequent requests (multi-store routing) */
   setStore(storeId: string): void
+  /** The store id requests are currently sent for, as set by `storeId` or `setStore`. */
+  getStore(): string | undefined
   /** Set JWT token for authenticated admin sessions */
   setToken(token: string): void
   /**
@@ -66,6 +80,7 @@ export function createAdminClient(config: AdminClientConfig): Client {
     fetchFn,
     retryConfig,
     credentials: config.credentials ?? 'include',
+    onRequestComplete: config.onRequestComplete,
   }
 
   let currentToken = config.jwtToken
@@ -131,6 +146,8 @@ export function createAdminClient(config: AdminClientConfig): Client {
   client.setStore = (storeId: string) => {
     currentStoreId = storeId
   }
+
+  client.getStore = () => currentStoreId || undefined
 
   client.setToken = (token: string) => {
     currentToken = token

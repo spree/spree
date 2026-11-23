@@ -19,7 +19,7 @@ module Spree
     # to record tracking marked the delivery delivered. No endpoint sets a
     # carrier status, so the name no longer answers rather than doing that.
     #
-    # Removed in 6.1, with the names that are no longer listed.
+    # Removed in 6.3, with the names that are no longer listed.
     # See docs/plans/6.0-agent-tools-from-openapi.md.
     module LegacyTools
       # Old tool name => the operation it runs and its renamed parameters.

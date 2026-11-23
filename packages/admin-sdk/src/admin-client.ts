@@ -576,6 +576,7 @@ import type {
   SavedReportUpdateParams,
   SellerApproveParams,
   SellerCreateParams,
+  SellerInvitationCreateParams,
   SellerInviteParams,
   SellerOnboarding,
   SellerPayoutCompleteParams,
@@ -663,6 +664,7 @@ import type {
   DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
+  Diagnostics,
   DigitalAsset,
   DigitalLink,
   Discount,
@@ -1177,6 +1179,21 @@ export class AdminClient {
      */
     get: (options?: RequestOptions): Promise<UpdateStatus> =>
       this.request<UpdateStatus>('GET', '/updates', options),
+  }
+
+  readonly diagnostics = {
+    /**
+     * An anonymised report on this installation to attach to a bug report,
+     * with `markdown` ready to paste into a GitHub issue. Needs a client
+     * created with `jwtToken` for an admin who can manage the store; a secret
+     * key gets a 404. `packages` lists the caller's own `@spree/*` packages
+     * as `name@version`, reported in a Dashboard section.
+     */
+    get: (params?: { packages?: string[] }, options?: RequestOptions): Promise<Diagnostics> =>
+      this.request<Diagnostics>('GET', '/diagnostics', {
+        ...options,
+        params: { packages: params?.packages?.join(',') },
+      }),
   }
 
   // ============================================
@@ -3414,6 +3431,17 @@ export class AdminClient {
     invitations: {
       list: (sellerId: string, options?: RequestOptions): Promise<{ data: Invitation[] }> =>
         this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
+
+      /** Invites someone to the seller's team without changing the seller's status. */
+      create: (
+        sellerId: string,
+        params: SellerInvitationCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invitation> =>
+        this.request<Invitation>('POST', `/sellers/${sellerId}/invitations`, {
+          ...options,
+          body: params,
+        }),
 
       /** Withdraws an offer. */
       delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>

@@ -6,6 +6,7 @@ import {
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
+  InfoIcon,
   KeyRoundIcon,
   MailIcon,
   PackageIcon,
@@ -16,6 +17,7 @@ import {
   ScrollTextIcon,
   ShapesIcon,
   ShieldCheckIcon,
+  ShoppingCartIcon,
   StoreIcon,
   TagIcon,
   TruckIcon,
@@ -63,7 +65,7 @@ settingsNav.add({
   key: 'settings.store',
   labelKey: 'admin.settings_nav.items.store',
   descriptionKey: 'admin.settings_nav.descriptions.store',
-  keywords: ['general', 'name', 'timezone', 'locale', 'units', 'weight', 'currency'],
+  keywords: ['general', 'name', 'seo', 'timezone', 'locale', 'units', 'weight', 'order numbers'],
   path: '/store',
   icon: StoreIcon,
   group: 'store',
@@ -71,6 +73,30 @@ settingsNav.add({
   subject: Subject.Store,
   // Every staff member can READ the store (shell data: name, logo, timezone,
   // currencies); only settings managers should see the page that edits it.
+  action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.storefront',
+  labelKey: 'admin.settings_nav.items.storefront',
+  descriptionKey: 'admin.settings_nav.descriptions.storefront',
+  keywords: [
+    'storefront url',
+    'domain',
+    'storefront access',
+    'login required',
+    'prices hidden',
+    'guest checkout',
+    'confirm step',
+    'company',
+    'phone',
+    'address',
+  ],
+  path: '/storefront',
+  icon: ShoppingCartIcon,
+  group: 'store',
+  position: 150,
+  subject: Subject.Store,
   action: 'update',
 })
 
@@ -169,7 +195,16 @@ settingsNav.add({
   key: 'settings.payment-methods',
   labelKey: 'admin.settings_nav.items.payment_methods',
   descriptionKey: 'admin.settings_nav.descriptions.payment_methods',
-  keywords: ['gateway', 'stripe', 'paypal', 'checkout', 'capture'],
+  keywords: [
+    'payment methods',
+    'gateway',
+    'provider',
+    'stripe',
+    'paypal',
+    'checkout',
+    'capture',
+    'check',
+  ],
   path: '/payment-methods',
   icon: CreditCardIcon,
   group: 'selling',
@@ -196,6 +231,8 @@ settingsNav.add({
     'exempt',
     'certificate',
     'avalara',
+    'shipping address',
+    'billing address',
   ],
   path: '/taxes',
   icon: PercentIcon,
@@ -427,4 +464,19 @@ settingsNav.add({
   group: 'developer',
   position: 500,
   subject: Subject.MaintenanceTaskRun,
+})
+
+// The report reveals the running version and stack, so the entry follows the
+// grant the API enforces.
+settingsNav.add({
+  key: 'settings.system-info',
+  labelKey: 'admin.settings_nav.items.system_info',
+  descriptionKey: 'admin.settings_nav.descriptions.system_info',
+  keywords: ['diagnostics', 'version', 'bug', 'issue', 'report', 'support', 'debug'],
+  path: '/system-info',
+  icon: InfoIcon,
+  group: 'developer',
+  position: 600,
+  subject: Subject.Store,
+  action: 'manage',
 })

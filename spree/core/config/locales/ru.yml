@@ -366,9 +366,9 @@ ru:
         one: Доставка
         other: Доставки
       spree/shipping_method:
-        many: Cпособов доставки
-        one: Cпособ доставки
-        other: Cпособы доставки
+        many: Способов доставки
+        one: Способ доставки
+        other: Способы доставки
       spree/state:
         many: Областей/Регионов
         one: Область/Регион
@@ -426,7 +426,7 @@ ru:
       not_locked: не был заблокирован
       not_saved:
         many: "%{count} ошибок препятствуют сохранению %{resource}:"
-        one: 'Одна ошибка препятствует сохранению %{resource}:'
+        one: "%{count} ошибка препятствует сохранению %{resource}:"
         other: "%{count} ошибки препятствуют сохранению %{resource}:"
   number:
     percentage:

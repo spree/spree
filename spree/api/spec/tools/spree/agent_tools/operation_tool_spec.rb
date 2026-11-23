@@ -144,6 +144,21 @@ RSpec.describe Spree::AgentTools::OperationTool do
       expect(product.reload.status).to eq('draft')
     end
 
+    it 'approves a seller it created when told to override, and can then suspend it' do
+      created = tool('create_resource').call(resource: 'sellers', attributes: { name: 'Biuro Plus' })
+      seller = store.sellers.find_by!(name: 'Biuro Plus')
+      expect(created[:error]).to be_nil
+      expect(seller).to be_pending
+
+      approved = tool('sellers_approve').call(id: seller.prefixed_id, override_requirements: true)
+      expect(approved[:error]).to be_nil
+      expect(seller.reload).to be_approved
+
+      suspended = tool('sellers_suspend').call(id: seller.prefixed_id, reason: 'Counterfeit goods')
+      expect(suspended[:error]).to be_nil
+      expect(seller.reload).to be_suspended
+    end
+
     it 'shows the operation and its record before running' do
       expect(tool('orders_cancel').summary(id: 'or_123')).to eq('Cancel an order or_123')
     end

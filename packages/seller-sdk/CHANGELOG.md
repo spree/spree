@@ -1,5 +1,23 @@
 # @spree/seller-sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.optionTypes.list()` and `client.optionTypes.get()` for the new read-only `GET /api/v3/seller/option_types` endpoint. Pass `expand: ['option_values']` for the values. Product types now carry `option_type_ids` next to `option_type_labels`. A product or variant written through `/api/v3/seller/products` that names an option type or value the store does not already have is now refused with a 422 naming `variants` instead of creating it.
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order line items carry `product_id`, so an order page can link each line to its product without expanding the variant.
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `profile.update` accepts `holiday_mode_until`, so a seller can set or end their own holiday mode.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `products.media.delete` for removing a file from a product's gallery. A product update never removes a file it was not sent, so this is the only way to take one off; the `media` description on product create and update now says so.
+
 ## 6.0.3
 
 ### Patch Changes

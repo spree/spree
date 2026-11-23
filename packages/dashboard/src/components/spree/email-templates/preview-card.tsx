@@ -9,6 +9,7 @@ import {
   CardTitle,
   Field,
   FieldLabel,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -183,9 +184,9 @@ export function EmailTemplatePreviewCard({
           <RecordField template={template} preview={preview} />
         </div>
         {preview.unavailable ? (
-          <p className="rounded-md border border-border p-4 text-sm text-muted-foreground">
+          <Item variant="muted" render={<p />} className="text-muted-foreground">
             {preview.unavailable}
-          </p>
+          </Item>
         ) : (
           <EmailPreviewFrame
             html={preview.data?.html}

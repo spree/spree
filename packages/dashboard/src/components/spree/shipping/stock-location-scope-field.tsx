@@ -34,11 +34,11 @@ export function StockLocationScopeField({
   return (
     <>
       <RadioGroup value={scope} onValueChange={(next) => onScopeChange(next as 'all' | 'selected')}>
-        <label htmlFor={`${idPrefix}-all`} className="flex items-center gap-2 text-sm">
+        <label htmlFor={`${idPrefix}-all`} className="flex items-center gap-2 text-base">
           <RadioGroupItem id={`${idPrefix}-all`} value="all" />
           {allLabel}
         </label>
-        <label htmlFor={`${idPrefix}-selected`} className="flex items-center gap-2 text-sm">
+        <label htmlFor={`${idPrefix}-selected`} className="flex items-center gap-2 text-base">
           <RadioGroupItem id={`${idPrefix}-selected`} value="selected" />
           {selectedLabel}
         </label>
@@ -46,14 +46,14 @@ export function StockLocationScopeField({
 
       {scope === 'selected' &&
         (locations.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{emptyLabel}</p>
+          <p className="text-muted-foreground text-base">{emptyLabel}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {locations.map((location) => (
               <label
                 key={location.id}
                 htmlFor={`${idPrefix}-location-${location.id}`}
-                className="flex items-center gap-2 text-sm"
+                className="flex items-center gap-2 text-base"
               >
                 <Checkbox
                   id={`${idPrefix}-location-${location.id}`}

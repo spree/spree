@@ -44,6 +44,58 @@ RSpec.describe Spree::Exports::Products, type: :model do
       rows = CSV.parse(export.attachment.download, headers: true)
       expect(rows.map { |row| row.values_at('sku', 'inventory_count', 'stock_location') }).to eq [['SHED-MUG', '7', nil]]
     end
+
+    it "writes the product's gallery images so a re-import keeps them" do
+      media = create(:media, viewable: product)
+      export = described_class.new(store: store)
+      export.save!
+      export.generate
+
+      row = CSV.parse(export.attachment.download, headers: true).find { |csv_row| csv_row['sku'] == 'SHED-MUG' }
+      expect(row['image1_src']).to end_with(media.filename.to_s)
+    end
+  end
+
+  # The job runs in the locale of whatever asked for the export — a request in
+  # the store's own language, or the application's default.
+  describe "#generate for a store whose default locale is not the application's" do
+    let(:dutch_store) { create(:store) }
+
+    before do
+      dutch_store.default_market.update!(default_locale: 'nl', supported_locales: 'nl,en')
+      create(:product, store: dutch_store.reload, name: 'Fiets', description: 'Een stadsfiets')
+    end
+
+    %i[nl en].each do |job_locale|
+      it "writes the product names and descriptions when the job runs in #{job_locale}" do
+        export = described_class.new(store: dutch_store)
+        export.save!
+        I18n.with_locale(job_locale) { export.generate }
+
+        rows = CSV.parse(export.attachment.download, headers: true)
+        expect(rows.map { |row| row.values_at('name', 'description') }).to eq [['Fiets', 'Een stadsfiets']]
+      end
+    end
+
+    # The admin filtered a list shown in English; the export holds the rows
+    # that list showed, written in the store's own language.
+    it 'selects rows by a translated filter in the locale it was asked for in' do
+      dutch_store.products.first.translations.create!(locale: 'en', name: 'Bicycle')
+      export = described_class.new(store: dutch_store, search_params: { name_cont: 'Bicycle' })
+      export.save!
+      I18n.with_locale(:en) { export.generate }
+
+      rows = CSV.parse(export.attachment.download, headers: true)
+      expect(rows.pluck('name')).to eq ['Fiets']
+    end
+
+    it "does not leave the exported store's content locale behind" do
+      export = described_class.new(store: dutch_store)
+      export.save!
+      I18n.with_locale(:nl) { export.generate }
+
+      expect(Spree::Current.attributes[:content_locale]).to be_nil
+    end
   end
 
   describe '#csv_headers' do

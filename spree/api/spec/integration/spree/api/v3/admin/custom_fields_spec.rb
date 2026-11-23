@@ -24,7 +24,7 @@ RSpec.describe 'Admin Custom Fields API', type: :request, swagger_doc: 'api-refe
     'purchase_orders' => { tag: 'Purchase Orders', scope: :purchasing, label: 'purchase order', parent: -> { create(:purchase_order) } },
     'companies' => { tag: 'Companies', scope: :customers, label: 'company', parent: -> { create(:company) } },
     'payment_methods' => { tag: 'Payment Methods', scope: :settings, label: 'payment method', parent: -> { create(:check_payment_method) } },
-    'delivery_methods' => { tag: 'Delivery', scope: :delivery_methods, label: 'delivery method', parent: -> { create(:delivery_method) } },
+    'delivery_methods' => { tag: 'Delivery Settings', scope: :delivery_methods, label: 'delivery method', parent: -> { create(:delivery_method) } },
     'tax_rates' => { tag: 'Settings', scope: :settings, label: 'tax rate', parent: -> { create(:tax_rate) } },
     'product_types' => { tag: 'Product Types', scope: :product_types, label: 'product type', parent: -> { create(:product_type) } },
     'media' => { tag: 'Media', scope: :media, label: 'media file', parent: -> { create(:media) } },

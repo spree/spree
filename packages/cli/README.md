@@ -1,6 +1,6 @@
 # @spree/cli
 
-CLI for managing [Spree Commerce](https://spreecommerce.org) projects — Docker-based dev stack, generators, API keys, and a gh-style Admin API client.
+CLI for [Spree Commerce](https://spreecommerce.org), the open-source headless commerce platform with REST Store and Admin APIs, TypeScript SDKs, an MCP server and a built-in marketplace. It runs the Spree Docker image locally and manages the project: dev stack, generators, API keys, and a gh-style Admin API client for scripts and AI agents. You need only Node.js and Docker.
 
 Automatically included in projects created with [`create-spree-app`](https://spreecommerce.org/docs/developer/create-spree-app/quickstart). Can also be installed standalone:
 
@@ -17,7 +17,7 @@ Run from your Spree project directory:
 |---------|-------------|
 | `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists and opens the dashboard in the browser once it is ready (`--no-open` skips it) |
 | `spree stop` | Stop backend services |
-| `spree upgrade` | Upgrade Spree — the server, `@spree/*` packages, migrations and data backfills |
+| `spree upgrade` | Upgrade Spree — the server, `@spree/*` packages, agent skills, migrations and data backfills |
 | `spree eject` | Switch from the prebuilt image to building from `backend/` |
 | `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
 | `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |

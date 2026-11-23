@@ -40,6 +40,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   RowActions,
   Select,
   SelectContent,
@@ -336,7 +337,7 @@ function EditProductTypeSheet({
           <SheetDescription>{t('admin.product_types.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -403,7 +404,9 @@ function ApplyToProductsSection({
 
   return (
     <div className="flex flex-col gap-2 rounded-md border border-dashed p-3">
-      <span className="font-medium text-sm">{t('admin.product_types.affects_new_only.title')}</span>
+      <span className="font-medium text-base">
+        {t('admin.product_types.affects_new_only.title')}
+      </span>
       <span className="text-muted-foreground text-xs">
         {t('admin.product_types.affects_new_only.description')}
       </span>
@@ -436,7 +439,7 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -573,7 +576,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
             items={fieldArray.fields.map((row) => row.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col gap-1 rounded-md border p-2">
+            <Item variant="outline" className="flex-col items-stretch gap-1">
               {fieldArray.fields.map((row, index) => (
                 <SortableCustomFieldRow
                   key={row.id}
@@ -584,7 +587,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
                   onRemove={() => fieldArray.remove(index)}
                 />
               ))}
-            </div>
+            </Item>
           </SortableContext>
         </DndContext>
       )}
@@ -636,7 +639,7 @@ function SortableCustomFieldRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'flex items-center gap-2 rounded-md px-1 py-1.5 text-sm',
+        'flex items-center gap-2 rounded-md px-1 py-1.5 text-base',
         isDragging && 'relative z-10 bg-card opacity-80 shadow-lg',
       )}
     >
@@ -664,7 +667,7 @@ function SortableCustomFieldRow({
         )}
       />
 
-      <Button type="button" variant="ghost" size="sm" onClick={onRemove}>
+      <Button type="button" variant="destructive-ghost" size="sm" onClick={onRemove}>
         <XIcon className="size-4" />
         <span className="sr-only">{t('admin.actions.remove')}</span>
       </Button>

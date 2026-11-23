@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-core",
   "license": "MIT",
-  "version": "6.0.3",
+  "version": "6.0.5",
   "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
@@ -46,6 +46,7 @@
     "src",
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -58,15 +59,15 @@
     "prepublishOnly": "tsup"
   },
   "peerDependencies": {
-    "@spree/admin-sdk": ">=6.0.3 <7.0.0-0",
-    "@spree/dashboard-ui": ">=6.0.3 <7.0.0-0",
+    "@spree/admin-sdk": ">=6.0.5 <7.0.0-0",
+    "@spree/dashboard-ui": ">=6.0.5 <7.0.0-0",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
-    "i18next": "^26.2.0",
+    "i18next": "^26.2.0 || ^27.0.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",
-    "react-i18next": "^17.0.8"
+    "react-i18next": "^17.0.8 || ^18.0.0"
   },
   "dependencies": {
     "@dnd-kit/core": "catalog:",
@@ -74,7 +75,7 @@
     "@dnd-kit/utilities": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@spree/core": "workspace:^",
-    "@tailwindcss/vite": "^4.3.4",
+    "@tailwindcss/vite": "^4.3.5",
     "@tanstack/react-hotkeys": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",

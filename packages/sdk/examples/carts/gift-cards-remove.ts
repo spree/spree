@@ -7,7 +7,7 @@ const client = createClient({
 
 // region:example
 const cart = await client.carts.giftCards.remove('cart_abc123', 'gc_abc123', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

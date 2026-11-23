@@ -2,6 +2,7 @@ import type { PriceList } from '@spree/admin-sdk'
 import { useStore } from '@spree/dashboard-core'
 import {
   Button,
+  CurrencyLabel,
   Dialog,
   DialogBody,
   DialogContent,
@@ -158,13 +159,13 @@ export function BulkPriceEditorDialog({
           </div>
           <div className="flex items-center gap-2">
             <Select value={currency} onValueChange={handleCurrencyChange}>
-              <SelectTrigger size="sm" className="w-24">
-                <SelectValue />
+              <SelectTrigger size="sm" className="w-28">
+                <SelectValue>{(code: string) => <CurrencyLabel code={code} />}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {currencies.map((c) => (
                   <SelectItem key={c} value={c}>
-                    {c}
+                    <CurrencyLabel code={c} />
                   </SelectItem>
                 ))}
               </SelectContent>

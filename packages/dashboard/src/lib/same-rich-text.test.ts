@@ -16,6 +16,12 @@ describe('sameRichText', () => {
     expect(sameRichText(`<p>${plain}</p>`, `<p>${plain}</p><p><br></p><p></p>`)).toBe(true)
   })
 
+  it('treats inline markup as equal to the same markup wrapped in a paragraph', () => {
+    const inline = '<strong>Hearth &amp; Grain</strong> is a family-run kitchen shop.'
+    expect(sameRichText(inline, `<p>${inline}</p>`)).toBe(true)
+    expect(sameRichText('<h2>Title</h2>', '<p><h2>Title</h2></p>')).toBe(false)
+  })
+
   it('does not treat a real wording change as equal', () => {
     expect(sameRichText('<p>Standventilator</p>', '<p>Turmventilator</p>')).toBe(false)
     expect(sameRichText('Standventilator', '<p>Turmventilator</p>')).toBe(false)
@@ -45,6 +51,12 @@ describe('shouldEmitRichTextChange', () => {
     expect(shouldEmitRichTextChange('<p></p>', '')).toBe(false)
     expect(shouldEmitRichTextChange('<p><br></p>', '')).toBe(false)
     expect(shouldEmitRichTextChange('<p>Hello</p>', 'Hello')).toBe(false)
+    expect(
+      shouldEmitRichTextChange(
+        '<p><strong>Hearth</strong> is a shop.</p>',
+        '<strong>Hearth</strong> is a shop.',
+      ),
+    ).toBe(false)
   })
 
   it('emits a user-split empty paragraph that sameRichText would ignore', () => {

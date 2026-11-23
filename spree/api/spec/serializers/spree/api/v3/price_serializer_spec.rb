@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
       )
     end
 
-    # Deprecated until 6.1, so 5.6 storefronts reading them keep working.
+    # Deprecated until 6.5, so 5.6 storefronts reading them keep working.
     it 'still answers to the deprecated amounts in cents' do
       price.update!(compare_at_amount: 29.99)
       expect(subject).to include('amount_in_cents' => 1999, 'compare_at_amount_in_cents' => 2999)

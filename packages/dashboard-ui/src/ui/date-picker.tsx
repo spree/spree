@@ -181,7 +181,7 @@ function DatePicker({
   const triggerChildren = (
     <>
       <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
-      <span className="flex-1 truncate">{triggerLabel}</span>
+      <span className="flex-1 truncate text-left">{triggerLabel}</span>
       {isValidDate && (
         <span
           role="button"
@@ -235,7 +235,7 @@ function DatePicker({
           <div
             role="dialog"
             aria-label={placeholder}
-            className="absolute top-full left-0 z-50 mt-2 w-auto rounded-lg border border-border bg-popover p-0 text-popover-foreground shadow-md"
+            className="absolute top-full left-0 z-50 mt-2 w-auto rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-md"
           >
             {panelChildren}
           </div>
@@ -252,7 +252,7 @@ function DatePicker({
           type="button"
           variant="outline"
           data-empty={!isValidDate}
-          className={className}
+          className={cn('justify-start', className)}
         >
           {triggerChildren}
         </Button>

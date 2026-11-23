@@ -197,7 +197,7 @@ function SignInForm({ invitationId, token, invitation, onAccepted }: FormProps) 
     <>
       <InvitationIntro invitation={invitation} action={t('admin.invitation.sign_in_to_accept')} />
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        {errors.root && <p className="text-base text-destructive">{errors.root.message}</p>}
         <div className="grid gap-2">
           <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
           <Input id="invitee-email" value={invitation.email} disabled />
@@ -211,7 +211,9 @@ function SignInForm({ invitationId, token, invitation, onAccepted }: FormProps) 
             aria-invalid={!!errors.password || undefined}
             {...form.register('password')}
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-base text-destructive">{errors.password.message}</p>
+          )}
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.sign_in_and_accept')}
@@ -248,7 +250,7 @@ function SignUpForm({ invitationId, token, invitation, onAccepted }: FormProps) 
     <>
       <InvitationIntro invitation={invitation} action={t('admin.invitation.create_to_accept')} />
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        {errors.root && <p className="text-base text-destructive">{errors.root.message}</p>}
         <div className="grid gap-2">
           <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
           <Input id="invitee-email" value={invitation.email} disabled />
@@ -263,7 +265,7 @@ function SignUpForm({ invitationId, token, invitation, onAccepted }: FormProps) 
               {...form.register('first_name')}
             />
             {errors.first_name && (
-              <p className="text-sm text-destructive">{errors.first_name.message}</p>
+              <p className="text-base text-destructive">{errors.first_name.message}</p>
             )}
           </div>
           <div className="grid gap-2">
@@ -274,7 +276,7 @@ function SignUpForm({ invitationId, token, invitation, onAccepted }: FormProps) 
               {...form.register('last_name')}
             />
             {errors.last_name && (
-              <p className="text-sm text-destructive">{errors.last_name.message}</p>
+              <p className="text-base text-destructive">{errors.last_name.message}</p>
             )}
           </div>
         </div>
@@ -286,7 +288,9 @@ function SignUpForm({ invitationId, token, invitation, onAccepted }: FormProps) 
             aria-invalid={!!errors.password || undefined}
             {...form.register('password')}
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-base text-destructive">{errors.password.message}</p>
+          )}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password_confirmation">
@@ -299,7 +303,7 @@ function SignUpForm({ invitationId, token, invitation, onAccepted }: FormProps) 
             {...form.register('password_confirmation')}
           />
           {errors.password_confirmation && (
-            <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
+            <p className="text-base text-destructive">{errors.password_confirmation.message}</p>
           )}
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
@@ -336,7 +340,7 @@ function AcceptAsSignedIn({ invitationId, token, invitation, onAccepted }: FormP
         invitation={invitation}
         action={t('admin.invitation.signed_in_as_invitee', { email: user?.email })}
       />
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-base text-destructive">{error}</p>}
       <Button className="w-full" disabled={isLoading} onClick={onAccept}>
         {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.accept')}
       </Button>
@@ -354,7 +358,7 @@ function SignedInAsAnotherAccount({ invitation }: { invitation: InvitationSummar
         <h1 className="text-2xl font-bold">
           {t('admin.invitation.join_store', { store: invitation.target.name })}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.invitation.signed_in_as_another_account', {
             email: user?.email,
             invitee: invitation.email,
@@ -389,7 +393,7 @@ function InvitationIntro({
       <h1 className="text-2xl font-bold">
         {t('admin.invitation.join_store', { store: invitation.target.name })}
       </h1>
-      <p className="text-sm text-muted-foreground">{`${invitedPart}${rolePart}${action}`}</p>
+      <p className="text-base text-muted-foreground">{`${invitedPart}${rolePart}${action}`}</p>
     </div>
   )
 }
@@ -405,7 +409,7 @@ function ErrorCard({ title, message }: { title: string; message: string }) {
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="text-sm text-muted-foreground">{message}</p>
+      <p className="text-base text-muted-foreground">{message}</p>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-ui",
   "license": "MIT",
-  "version": "6.0.3",
+  "version": "6.0.5",
   "description": "Spree Dashboard design system — shadcn primitives, headless composed components, and design tokens. Source-only package; consumers compile via their own Vite/Tailwind setup.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
@@ -34,6 +34,7 @@
   "files": [
     "src",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -44,11 +45,11 @@
   },
   "peerDependencies": {
     "@tanstack/react-router": "^1.169.2",
-    "i18next": "^26.2.0",
+    "i18next": "^26.2.0 || ^27.0.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",
-    "react-i18next": "^17.0.8",
+    "react-i18next": "^17.0.8 || ^18.0.0",
     "tailwindcss": "^4.2.4"
   },
   "dependencies": {
@@ -58,7 +59,7 @@
     "@codemirror/lang-html": "6.4.12",
     "@codemirror/lang-liquid": "6.3.3",
     "@codemirror/language": "6.13.1",
-    "@codemirror/lint": "6.9.7",
+    "@codemirror/lint": "6.9.8",
     "@codemirror/search": "6.7.2",
     "@codemirror/state": "6.7.6",
     "@codemirror/view": "6.43.15",
@@ -67,6 +68,7 @@
     "@dnd-kit/utilities": "catalog:",
     "@fontsource-variable/geist": "catalog:",
     "@fontsource-variable/geist-mono": "catalog:",
+    "@fontsource-variable/inter": "5.3.0",
     "@spree/core": "workspace:^",
     "@tanstack/react-hotkeys": "catalog:",
     "@tanstack/react-table": "catalog:",

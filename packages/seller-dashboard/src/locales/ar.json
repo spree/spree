@@ -360,7 +360,10 @@
     "profile": "الملف التعريفي",
     "settings": "الإعدادات",
     "sign_out": "تسجيل الخروج",
-    "team": "الفريق"
+    "team": "الفريق",
+    "general": "عام",
+    "taxes": "الضرائب",
+    "store": "المتجر"
   },
   "onboarding": {
     "accept_terms": "اقبل الشروط",
@@ -597,7 +600,14 @@
     "not_found": "تعذَّر العثور على هذه الدفعة.",
     "search_placeholder": "البحث بالمرجع",
     "subtitle": "ما أرسله إليك السوق، وما هو في طريقه.",
-    "title": "الدفعات"
+    "title": "الدفعات",
+    "schedule_intervals": {
+      "daily": "يوميًا",
+      "weekly": "أسبوعيًا",
+      "biweekly": "كل أسبوعين",
+      "monthly": "شهريًا",
+      "manual": "عندما يرسلها السوق"
+    }
   },
   "policies": {
     "add": "إضافة سياسة",
@@ -742,48 +752,21 @@
     "digital_files_review_notice": "إضافة ملف أو استبداله يعيد هذا المنتج إلى المراجعة، ويتوقف بيعه حتى يعتمده السوق مجددًا."
   },
   "profile": {
-    "about": "نبذة",
     "add_address": "إضافة عنوان",
     "address_filled": "مضاف",
     "address_missing": "غير مضاف",
     "address_not_provided": "لا يوجد عنوان بعد.",
-    "at_a_glance": "لمحة سريعة",
     "billing_address": "عنوان الفوترة",
-    "billing_email": "بريد الفوترة",
-    "business_details": "بيانات النشاط التجاري",
-    "contact_email": "بريد التواصل",
     "edit": "تعديل",
-    "edit_title": "تعديل ملفك التعريفي",
-    "joined": "تاريخ الانضمام",
     "legal_name": "الاسم القانوني",
     "minimum_payout": "الحد الأدنى للدفعة",
-    "name": "الاسم",
-    "no_about": "لم تكتب وصفًا بعد.",
-    "not_provided": "غير محدد",
-    "on_holiday_notice": "وضع الإجازة مفعَّل، لذا منتجاتك ظاهرة لكن لا يمكن شراؤها.",
     "operator_managed": "يحدده السوق",
     "payout_schedule": "جدول الدفعات",
-    "products_count": "المنتجات",
     "registration_number": "رقم التسجيل",
     "returns_address": "عنوان المرتجعات",
-    "save": "حفظ التغييرات",
     "saved": "تم حفظ الملف التعريفي",
-    "saving": "جارٍ الحفظ…",
-    "section_contact": "التواصل",
-    "section_settlement": "الدفعات والضرائب",
-    "section_standing": "الموقف",
     "select_tax_identifier_kind": "اختر نوع التسجيل أو اكتبه",
-    "status_help": {
-      "approved": "تمت الموافقة عليك ويمكنك البيع في هذا السوق.",
-      "canceled": "حساب البائع هذا مغلق.",
-      "invited": "تمت دعوتك. أكمل الإعداد لتقديم طلبك.",
-      "onboarding": "أكمل قائمة مهامك، ثم أرسِل للمراجعة.",
-      "pending": "لم يبدأ السوق النظر في طلبك بعد.",
-      "ready_for_review": "يراجع السوق طلبك.",
-      "rejected": "لم يُقبل طلبك. تواصل مع السوق لمعرفة المزيد.",
-      "suspended": "البيع متوقف مؤقتًا. تواصل مع السوق لمعرفة المزيد."
-    },
-    "subtitle": "كيف تعرِّف واجهة متجرك بك، وكيف يتواصل معك السوق.",
+    "subtitle": "كيف يقدّمك متجرك للمشترين.",
     "tax_identifier_kind": "نوع التسجيل",
     "tax_identifier_kinds": {
       "au_abn": "رقم النشاط التجاري الأسترالي",
@@ -793,13 +776,16 @@
       "us_ein": "رقم التعريف الضريبي الأمريكي (EIN)"
     },
     "tax_remittance": "الضريبة يوردها",
-    "team_count": "أعضاء الفريق",
     "vat_number": "رقم ضريبة القيمة المضافة",
     "vat_status": {
       "pending": "نتحقق من هذا الرقم.",
       "unavailable": "تعذَّر الوصول إلى السجل — سنحاول مرة أخرى.",
       "unsupported": "سُجِّل هذا الرقم كما أُدخل؛ لا يمكننا التحقق منه تلقائيًا.",
       "unverified": "تعذَّر التحقق من هذا الرقم."
+    },
+    "sections": {
+      "details": "التفاصيل",
+      "images": "الصور"
     }
   },
   "reset_password": {
@@ -860,5 +846,23 @@
       "member": "العضو"
     },
     "title": "فريقك"
+  },
+  "settings_general": {
+    "title": "عام",
+    "description": "كيف يتواصل معك السوق، ونشاطك التجاري، وعناوينك، ووضع العطلة.",
+    "sections": {
+      "contact": "التواصل",
+      "business": "النشاط التجاري",
+      "addresses": "العناوين",
+      "holiday": "وضع العطلة"
+    }
+  },
+  "taxes": {
+    "title": "الضرائب",
+    "description": "تسجيلاتك الضريبية، ومن يؤدي الضريبة على مبيعاتك.",
+    "remittance": {
+      "seller": "أنت",
+      "platform": "السوق"
+    }
   }
 }

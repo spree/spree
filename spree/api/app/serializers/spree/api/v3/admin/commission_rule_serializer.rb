@@ -13,9 +13,9 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: seller_rule, category_rule, product_rule, item_total_rule. Extensions may register more.'],
                    commission_rate_id: :string,
                    preferences: 'Record<string, unknown>',
-                   product_ids: 'Array<string> | null',
-                   seller_ids: 'Array<string> | null',
-                   category_ids: 'Array<string> | null'
+                   product_ids: [:string, multi: true, nullable: true],
+                   seller_ids: [:string, multi: true, nullable: true],
+                   category_ids: [:string, multi: true, nullable: true]
 
           attributes created_at: :iso8601, updated_at: :iso8601
 

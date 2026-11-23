@@ -119,7 +119,8 @@ module CodeSamplesHelper
         source: "#{signed_in ? ADMIN_SDK_JWT_CLIENT_INIT : ADMIN_SDK_CLIENT_INIT}\n\n#{source}\n"
       }
     )
-    admin_cli_example(sdk_body_json(source), sdk_call_has_args(source))
+    # `spree api` signs in with a secret key, which these endpoints refuse.
+    admin_cli_example(sdk_body_json(source), sdk_call_has_args(source)) unless signed_in
   end
 
   # Mirrors `sdk_example` for the Seller SDK — examples live under

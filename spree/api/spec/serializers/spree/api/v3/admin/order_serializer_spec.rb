@@ -23,6 +23,19 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
     end
   end
 
+  describe 'amount_left_to_pay' do
+    let(:order) { create(:order_with_line_items, store: store) }
+
+    it 'is what is due less the payments recorded and not yet captured' do
+      create(:payment, order: order, amount: 10, status: 'pending')
+      create(:payment, order: order, amount: 5, status: 'failed')
+      order.reload
+
+      expected = [order.outstanding_balance - 10, 0].max
+      expect(subject['amount_left_to_pay']).to eq(format('%.2f', expected))
+    end
+  end
+
   describe 'items' do
     let(:order) { create(:order_with_line_items, store: store) }
     let(:base_params) { { store: store, currency: store.default_currency, expand: 'items' } }

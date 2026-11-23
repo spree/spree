@@ -69,11 +69,11 @@ export function SellerAddressCard({
   const body = address ? (
     <AddressBlock address={address} />
   ) : (
-    <p className="text-muted-foreground text-sm">{t('profile.address_not_provided')}</p>
+    <p className="text-muted-foreground text-base">{t('profile.address_not_provided')}</p>
   )
 
   const editButton = (
-    <Button variant={address ? 'outline' : 'default'} size="sm" onClick={() => setEditing(true)}>
+    <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
       {address ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
       {address ? t('profile.edit') : t('profile.add_address')}
     </Button>

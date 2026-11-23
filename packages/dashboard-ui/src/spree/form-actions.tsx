@@ -2,6 +2,7 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useEffect } from 'react'
 import { type FieldValues, type UseFormReturn, useFormState } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { StatusDot } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Loader2Icon } from './icons'
 
@@ -23,6 +24,7 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
   label,
   savingLabel,
   dirty = false,
+  disabled = false,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
@@ -32,12 +34,14 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
    * saves from its own submit — counted as dirty alongside the form's own.
    */
   dirty?: boolean
+  /** Holds Save back for a reason the form state cannot see, such as an upload in flight. */
+  disabled?: boolean
 }) {
   const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   return (
-    <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting}>
+    <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting || disabled}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
       <span>
         {isSubmitting
@@ -78,14 +82,23 @@ export function FormDiscardButton<TFieldValues extends FieldValues>({
   if (!isDirty && !dirty) return null
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={isSubmitting}
-      onClick={onDiscard ?? (() => form.reset())}
-    >
-      {label ?? t('admin.actions.discard')}
-    </Button>
+    <>
+      {/* Says why Save just woke up, so a change made far down a long form is
+          not missed in the sticky header. Hidden on phones, where the header
+          has no room for it. */}
+      <span className="hidden items-center gap-1.5 text-base text-muted-foreground sm:inline-flex">
+        <StatusDot status="pending" />
+        {t('admin.common.unsaved_label')}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        disabled={isSubmitting}
+        onClick={onDiscard ?? (() => form.reset())}
+      >
+        {label ?? t('admin.actions.discard')}
+      </Button>
+    </>
   )
 }
 
@@ -99,12 +112,15 @@ export function FormActions<TFieldValues extends FieldValues>({
   discardLabel,
   onDiscard,
   dirty,
+  disabled,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   saveLabel?: string
   savingLabel?: string
   discardLabel?: string
   onDiscard?: () => void
+  /** Holds Save back, as on `FormSaveButton`. */
+  disabled?: boolean
   /**
    * Unsaved changes held outside the form — custom field drafts the page
    * saves from its own submit — counted as dirty alongside the form's own.
@@ -114,7 +130,13 @@ export function FormActions<TFieldValues extends FieldValues>({
   return (
     <>
       <FormDiscardButton form={form} label={discardLabel} onDiscard={onDiscard} dirty={dirty} />
-      <FormSaveButton form={form} label={saveLabel} savingLabel={savingLabel} dirty={dirty} />
+      <FormSaveButton
+        form={form}
+        label={saveLabel}
+        savingLabel={savingLabel}
+        dirty={dirty}
+        disabled={disabled}
+      />
     </>
   )
 }

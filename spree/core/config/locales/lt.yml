@@ -418,7 +418,7 @@ lt:
       not_found: nerastas
       not_locked: nebuvo užrakinta
       not_saved:
-        one: '1 klaida neleido išsaugoti %{resource}:'
+        one: "%{count} klaida neleido išsaugoti %{resource}:"
         other: "%{count} klaidos neleido išsaugoti %{resource}:"
   number:
     percentage:

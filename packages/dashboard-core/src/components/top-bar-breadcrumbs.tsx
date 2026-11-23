@@ -82,7 +82,7 @@ export function MobileBreadcrumbBar({
                   onClick={onOpenSettingsNav}
                   // 44px tall via the row; the negative inline margin keeps the
                   // text on the page gutter while the tap area overhangs it.
-                  className="-ms-2 inline-flex h-11 items-center gap-1 rounded-lg px-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="-ms-2 inline-flex h-11 items-center gap-1 rounded-lg px-2 text-base text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <MenuIcon className="size-4" />
                   {crumb.label}

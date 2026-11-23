@@ -33,10 +33,10 @@
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",
-    "i18next": "^26.2.0",
+    "i18next": "^26.2.0 || ^27.0.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-i18next": "^17.0.8"
+    "react-i18next": "^17.0.8 || ^18.0.0"
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",

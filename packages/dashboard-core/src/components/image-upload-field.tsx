@@ -17,6 +17,8 @@ export interface ImageUploadFieldProps {
   /** Accepted MIME types. Defaults to PNG/JPEG/WebP. */
   accept?: string
   disabled?: boolean
+  /** Called with true while a picked image uploads; see `FileUploadField`. */
+  onUploadingChange?: (uploading: boolean) => void
 }
 
 /**
@@ -32,6 +34,7 @@ export function ImageUploadField({
   square = false,
   accept = 'image/png,image/jpeg,image/webp',
   disabled = false,
+  onUploadingChange,
 }: ImageUploadFieldProps) {
   const { t } = useTranslation()
 
@@ -45,6 +48,7 @@ export function ImageUploadField({
       label={label}
       help={help}
       disabled={disabled}
+      onUploadingChange={onUploadingChange}
       dropLabel={t('admin.components.file_upload.drop_image_label')}
       browseLabel={t('admin.image_upload.upload_cta')}
       mediaClassName={square ? 'size-16' : 'h-16 w-28'}

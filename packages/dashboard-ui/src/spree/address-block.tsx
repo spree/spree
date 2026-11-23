@@ -47,9 +47,9 @@ export function AddressBlock({
   const { t, i18n } = useTranslation()
   return (
     <div>
-      {title && <h6 className="font-semibold text-sm mb-1.5">{title}</h6>}
+      {title && <h6 className="font-semibold text-base mb-1.5">{title}</h6>}
       {address ? (
-        <div className="text-sm text-muted-foreground flex flex-col gap-0.5">
+        <div className="text-base text-muted-foreground flex flex-col gap-0.5">
           <div>{address.full_name}</div>
           {address.company && <div>{address.company}</div>}
           <div>{address.address1}</div>
@@ -63,7 +63,7 @@ export function AddressBlock({
           {address.phone && <div>{address.phone}</div>}
         </div>
       ) : (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-base text-muted-foreground">
           {emptyText ?? t('admin.components.address_block.not_provided')}
         </span>
       )}

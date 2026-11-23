@@ -32,11 +32,21 @@ Spree.hooks.register('carts.upsert_items.validate', 'MyStore::CheckPurchaseLimit
 module MyStore
   class CheckPurchaseLimit
     def call(workflow)
-      return if workflow.quantity <= 10
+      return if resulting_quantity(workflow) <= 10
 
       workflow.errors.add(:quantity, :purchase_limit_exceeded,
                           message: 'You can order at most 10 of this item.')
       workflow.reject!
+    end
+
+    private
+
+    # upsert_items sets the quantity; add_item adds to what the cart already holds.
+    def resulting_quantity(workflow)
+      return workflow.quantity.to_i if workflow.class.workflow_key.end_with?('.upsert_items')
+
+      in_cart = workflow.cart.line_items.find_by(variant: workflow.variant)&.quantity.to_i
+      in_cart + (workflow.quantity.presence || 1).to_i
     end
   end
 end
@@ -49,7 +59,12 @@ tell staff from customers (`workflow.created_by`) to allow a supervisor
 override.
 
 Both cart keys appear above because adding to a cart and setting a quantity are
-different flows. See [Services & Workflows](/developer/customization/workflows)
+different flows. `carts.add_item` passes the units being added, so the handler
+counts what the line already holds — otherwise adding 6 and then 6 more gets
+past a limit of 10. `carts.upsert_items` runs for quantity edits and passes the
+quantity the line will hold. A rejection there does not fail the request: the
+API answers 200, leaves that item unchanged, and puts the reason in the cart's
+`warnings`. See [Services & Workflows](/developer/customization/workflows)
 for the full hook list.
 
 ## Relaxing a rule Spree ships

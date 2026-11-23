@@ -360,7 +360,10 @@
     "profile": "Profil",
     "settings": "Ustawienia",
     "sign_out": "Wyloguj się",
-    "team": "Zespół"
+    "team": "Zespół",
+    "general": "Ogólne",
+    "taxes": "Podatki",
+    "store": "Sklep"
   },
   "onboarding": {
     "accept_terms": "Zaakceptuj regulamin",
@@ -593,7 +596,14 @@
     "not_found": "Nie znaleziono tej wypłaty.",
     "search_placeholder": "Szukaj po numerze referencyjnym",
     "subtitle": "Ile marketplace Ci już przekazał i co jest w drodze.",
-    "title": "Wypłaty"
+    "title": "Wypłaty",
+    "schedule_intervals": {
+      "daily": "Codziennie",
+      "weekly": "Co tydzień",
+      "biweekly": "Co dwa tygodnie",
+      "monthly": "Co miesiąc",
+      "manual": "Gdy marketplace ją wyśle"
+    }
   },
   "policies": {
     "add": "Dodaj regulamin",
@@ -736,48 +746,21 @@
     "digital_files_review_notice": "Dodanie lub zastąpienie pliku wysyła ten produkt ponownie do weryfikacji; do ponownego zatwierdzenia przez marketplace nie jest w sprzedaży."
   },
   "profile": {
-    "about": "O sprzedawcy",
     "add_address": "Dodaj adres",
     "address_filled": "Dodano",
     "address_missing": "Nie dodano",
     "address_not_provided": "Brak adresu.",
-    "at_a_glance": "W skrócie",
     "billing_address": "Adres rozliczeniowy",
-    "billing_email": "E-mail do rozliczeń",
-    "business_details": "Dane firmy",
-    "contact_email": "E-mail kontaktowy",
     "edit": "Edytuj",
-    "edit_title": "Edytuj swój profil",
-    "joined": "Dołączono",
     "legal_name": "Nazwa prawna",
     "minimum_payout": "Minimalna wypłata",
-    "name": "Nazwa",
-    "no_about": "Nie masz jeszcze opisu.",
-    "not_provided": "Nie podano",
-    "on_holiday_notice": "Tryb urlopowy jest włączony, więc Twoje produkty są widoczne, ale nie można ich kupić.",
     "operator_managed": "Ustawia marketplace",
     "payout_schedule": "Harmonogram wypłat",
-    "products_count": "Produkty",
     "registration_number": "Numer rejestrowy",
     "returns_address": "Adres zwrotów",
-    "save": "Zapisz zmiany",
     "saved": "Profil zapisany",
-    "saving": "Zapisywanie…",
-    "section_contact": "Kontakt",
-    "section_settlement": "Wypłaty i podatki",
-    "section_standing": "Status współpracy",
     "select_tax_identifier_kind": "Wybierz lub wpisz rodzaj rejestracji",
-    "status_help": {
-      "approved": "Jesteś zatwierdzony i możesz sprzedawać na tym marketplace.",
-      "canceled": "To konto sprzedawcy jest zamknięte.",
-      "invited": "Masz zaproszenie. Dokończ konfigurację, aby złożyć zgłoszenie.",
-      "onboarding": "Przejdź przez swoją listę zadań, a potem wyślij zgłoszenie do weryfikacji.",
-      "pending": "Marketplace nie zajął się jeszcze Twoim zgłoszeniem.",
-      "ready_for_review": "Marketplace weryfikuje Twoje zgłoszenie.",
-      "rejected": "Twoje zgłoszenie nie zostało przyjęte. Skontaktuj się z marketplace’em, aby dowiedzieć się więcej.",
-      "suspended": "Sprzedaż jest wstrzymana. Skontaktuj się z marketplace’em, aby dowiedzieć się więcej."
-    },
-    "subtitle": "Jak Twój sklep przedstawia Cię kupującym i jak marketplace może się z Tobą skontaktować.",
+    "subtitle": "Jak Twój sklep przedstawia Cię kupującym.",
     "tax_identifier_kind": "Rodzaj rejestracji",
     "tax_identifier_kinds": {
       "au_abn": "Australian Business Number",
@@ -787,13 +770,16 @@
       "us_ein": "US EIN"
     },
     "tax_remittance": "Podatek odprowadza",
-    "team_count": "Członkowie zespołu",
     "vat_number": "Numer VAT",
     "vat_status": {
       "pending": "Sprawdzamy ten numer.",
       "unavailable": "Nie udało się połączyć z rejestrem — spróbujemy ponownie.",
       "unsupported": "Ten numer zapisujemy tak, jak go wpisano; nie możemy go sprawdzić automatycznie.",
       "unverified": "Nie udało się zweryfikować tego numeru."
+    },
+    "sections": {
+      "details": "Szczegóły",
+      "images": "Obrazy"
     }
   },
   "reset_password": {
@@ -854,5 +840,23 @@
       "member": "Członek zespołu"
     },
     "title": "Twój zespół"
+  },
+  "settings_general": {
+    "title": "Ogólne",
+    "description": "Jak marketplace się z Tobą kontaktuje, Twoja firma, adresy i tryb urlopowy.",
+    "sections": {
+      "contact": "Kontakt",
+      "business": "Firma",
+      "addresses": "Adresy",
+      "holiday": "Tryb urlopowy"
+    }
+  },
+  "taxes": {
+    "title": "Podatki",
+    "description": "Twoje rejestracje podatkowe i kto odprowadza podatek od Twojej sprzedaży.",
+    "remittance": {
+      "seller": "Ty",
+      "platform": "Marketplace"
+    }
   }
 }

@@ -176,6 +176,28 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
+    # The variants a storefront option filter matches and counts. The rules
+    # +Product.available+ (a base price, unless the store lists products
+    # without one) and +Product.in_stock+ apply to a product as a whole, so a
+    # value carried only by an unpriced, sold-out or discontinued variant
+    # would otherwise offer the shopper a product they cannot buy in it.
+    #
+    # @param currency [String, nil] defaults to the current currency
+    # @param in_stock [Boolean] whether the shopper asked for in-stock products
+    # @param store [Spree::Store, nil] whose price setting applies
+    # @return [ActiveRecord::Relation<Spree::Variant>]
+    def self.for_option_filters(currency = nil, in_stock: false, store: Spree::Current.store)
+      scope = not_discontinued
+
+      unless Spree::StorePreferences.read(store, :show_products_without_price)
+        priced = for_currency_and_available_price_amount(currency || Spree::Current.currency)
+        scope = scope.where(id: priced.select(:id))
+      end
+
+      scope = scope.where(id: in_stock_or_backorderable.select(:id)) if in_stock
+      scope
+    end
+
     # Variants one warehouse could actually send: it holds a level for them
     # with something available on it. Written for the transfer form's picker,
     # which would otherwise offer SKUs the source has none of — and
@@ -546,21 +568,21 @@ module Spree
       update_column(:primary_media_id, first_media&.id)
     end
 
-    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    # @deprecated Read #gallery_media directly; removed in 6.3. Nothing in
     #   Spree calls this — a hover image is a storefront presentation choice,
     #   not something core should name.
     # @return [Spree::Media, nil]
     def secondary_image
-      Spree::Deprecation.warn('Spree::Variant#secondary_image is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      Spree::Deprecation.warn('Spree::Variant#secondary_image is deprecated and will be removed in Spree 6.3. Use #gallery_media instead.')
       gallery_media.second
     end
 
-    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    # @deprecated Read #gallery_media directly; removed in 6.3. Nothing in
     #   Spree calls this, and which images to show beside the main one is a
     #   storefront presentation choice.
     # @return [Array<Spree::Media>]
     def additional_images
-      Spree::Deprecation.warn('Spree::Variant#additional_images is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      Spree::Deprecation.warn('Spree::Variant#additional_images is deprecated and will be removed in Spree 6.3. Use #gallery_media instead.')
       gallery_media.reject { |media| media.id == primary_media&.id }
     end
 
@@ -752,15 +774,15 @@ module Spree
       stock_levels.where.not(stock_location_id: location_ids_in_payload).destroy_all if persisted?
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.3.
     def stock_items
-      Spree::Deprecation.warn('Spree::Variant#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Variant#stock_items is deprecated and will be removed in Spree 6.3. Use #stock_levels instead.')
       stock_levels
     end
 
-    # @deprecated Use {#stock_levels=}; removed in 6.1.
+    # @deprecated Use {#stock_levels=}; removed in 6.3.
     def stock_items=(value)
-      Spree::Deprecation.warn('Spree::Variant#stock_items= is deprecated and will be removed in Spree 6.1. Use #stock_levels= instead.')
+      Spree::Deprecation.warn('Spree::Variant#stock_items= is deprecated and will be removed in Spree 6.3. Use #stock_levels= instead.')
       self.stock_levels = value
     end
 
@@ -788,9 +810,11 @@ module Spree
       end
     end
 
-    # @deprecated Use +stock_levels_attributes=+; removed in 6.1.
+    # @deprecated Use +stock_levels_attributes=+; removed in 6.3.
     def stock_items_attributes=(value)
-      Spree::Deprecation.warn('Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.1. Use #stock_levels_attributes= instead.')
+      Spree::Deprecation.warn(
+        'Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.3. Use #stock_levels_attributes= instead.'
+      )
       self.stock_levels_attributes = value
     end
 
@@ -956,6 +980,17 @@ module Spree
 
     def purchasable?
       in_stock? || oversellable_now?
+    end
+
+    # Whether a shopper could put this in a cart in the currency. Stock alone
+    # is not enough: the cart refuses a variant unless it has a base price
+    # there or a price list or pricing provider quoted one for the shopper.
+    #
+    # @param currency [String]
+    # @param quote [Spree::Price, nil] the price resolved for the shopper, when known
+    # @return [Boolean]
+    def purchasable_in?(currency, quote: nil)
+      purchasable? && (quote&.amount.present? || amount_in(currency).present?)
     end
 
     # Whether the variant can currently be bought by overselling — via

@@ -52,6 +52,8 @@ const ROLE_TEMPLATES: Array<{ key: string; permissions: string[] }> = [
       'write_gift_cards',
       'write_store_credits',
       'read_customers',
+      // Adding an item to an order searches the catalog.
+      'read_products',
     ],
   },
   {
@@ -198,7 +200,7 @@ export function RoleSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}

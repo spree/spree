@@ -666,6 +666,132 @@ module Spree
 
         expect { described_class.call(cart: ready_cart) }.to change { Spree::StockReservation.count }.by(-1)
       end
+
+      context 'when the cart holds all remaining stock' do
+        let(:line_item) { ready_cart.line_items.first }
+        let(:stock_level) { line_item.variant.stock_levels.first }
+
+        before do
+          stub_store_preferences(stock_reservations_enabled: true)
+          line_item.variant.stock_levels.each do |level|
+            level.update!(backorderable: false)
+            level.set_count_on_hand(0)
+          end
+          stock_level.set_count_on_hand(line_item.quantity)
+          create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                     stock_level: stock_level, quantity: line_item.quantity)
+        end
+
+        it 'places the reserved units without treating its own hold as unavailable stock' do
+          expect(stock_level.reload.purchasable_count).to eq(0)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_placed
+          expect(stock_level.reload.allocated_count).to eq(line_item.quantity)
+          expect(stock_level.reserved_count).to eq(0)
+        end
+
+        it 'keeps another checkout\'s hold while placing its own units' do
+          stock_level.set_count_on_hand(line_item.quantity + 1)
+          other_cart = create(:cart, store: store)
+          other_line = create(:line_item, cart: other_cart, order: nil, variant: line_item.variant)
+          other_hold = create(:stock_reservation, cart: other_cart, order: nil, line_item: other_line,
+                                                  stock_level: stock_level, quantity: 1)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(other_hold.reload.cart_id).to eq(other_cart.id)
+          expect(other_hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(1)
+          expect(stock_level.allocated_count).to eq(line_item.quantity)
+        end
+
+        it 'returns the hold to the cart when a later copier fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise 'cart copier failed' }])
+
+          expect { described_class.call(cart: ready_cart) }.to raise_error(RuntimeError, 'cart copier failed')
+
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+        end
+
+        it 'restores the original cart line and held stock after payment fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree::Payments::Process).to receive(:call).and_return(double(failure?: false))
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_failure
+          expect(result.error.value[:code]).to eq('payment_failed')
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(hold.line_item_id).to eq(line_item.id)
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+          expect(ready_cart.reload.completing_at).to be_nil
+          expect(ready_cart.completed_at).to be_nil
+        end
+      end
+
+      context 'when reserved lines belong to different sellers' do
+        let(:ready_cart) { create(:cart_ready_to_complete, store: store, line_items_count: 2) }
+
+        it 'keeps each sibling held until its own order is placed' do
+          stub_store_preferences(stock_reservations_enabled: true)
+          sellers = create_list(:seller, 2, :approved, store: store)
+          ready_cart.line_items.reload.zip(sellers).each do |line_item, seller|
+            line_item.variant.update!(seller: seller)
+            line_item.update_columns(seller_id: seller.id)
+            line_item.variant.stock_levels.each do |level|
+              level.update!(backorderable: false)
+              level.set_count_on_hand(0)
+            end
+            level = line_item.variant.stock_levels.first
+            level.set_count_on_hand(line_item.quantity)
+            create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                       stock_level: level, quantity: line_item.quantity)
+          end
+          protected_siblings = []
+          observe_siblings = lambda do |group|
+            group.orders.where(status: 'draft').find_each do |sibling|
+              protected_siblings << sibling.id
+              expect(sibling.stock_reservations.pluck(:line_item_id)).to match_array(sibling.line_items.ids)
+              sibling.line_items.each do |line|
+                level = line.variant.stock_levels.first
+                expect(level.reload.reserved_count).to eq(line.quantity)
+                expect(level.allocated_count).to eq(0)
+                expect(level.purchasable_count).to eq(0)
+              end
+            end
+          end
+          completion = Class.new(Spree::Orders::Complete) do
+            workflow_key 'orders.complete'
+
+            define_method(:complete_sibling_orders) do
+              observe_siblings.call(order_group) if order_group
+              super()
+            end
+            private :complete_sibling_orders
+          end
+          allow(Spree).to receive(:order_complete_workflow).and_return(completion)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_a(Spree::OrderGroup)
+          expect(result.value.orders).to all(be_placed)
+          expect(protected_siblings.size).to eq(1)
+          expect(ready_cart.reload.stock_reservations).to be_empty
+        end
+      end
     end
 
     describe 'admin/B2B order path' do
@@ -730,6 +856,35 @@ module Spree
     end
 
     describe 'crash-window replay' do
+      it 'returns the whole seller group when a retained draft divides during replay' do
+        cart = create(:cart_ready_to_complete, store: store, line_items_count: 2)
+        cart.line_items.zip(create_list(:seller, 2, :approved, store: store)).each do |line, seller|
+          line.variant.update!(seller: seller)
+          line.update_columns(seller_id: seller.id)
+        end
+        interrupted = Class.new(described_class) do
+          workflow_key 'carts.complete'
+
+          private
+
+          def finalize_completion
+            failure(cart, code: 'completion_failed')
+          end
+        end
+        expect(interrupted.call(cart: cart)).to be_failure
+        draft = Spree::Order.find_by!(cart_id: cart.id)
+        payment_ids = draft.payments.ids
+
+        result = described_class.call(cart: cart.reload)
+
+        expect(result).to be_success
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(result.value.orders).to all(be_placed)
+        expect(result.value.orders.count).to eq(2)
+        expect(result.value.payments.ids).to match_array(payment_ids)
+        expect(described_class.call(cart: cart.reload).value.id).to eq(result.value.id)
+      end
+
       it 'heals a completion that died between the order commit and the cart stamp' do
         order = described_class.call(cart: ready_cart).value
         # Simulate the crash window: order placed, cart stamp lost

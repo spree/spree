@@ -11,7 +11,6 @@ module Spree
         validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
 
         after_create :ensure_default_market
-        after_update :sync_default_market_settings
       end
 
       # Returns the default country, derived from the default market
@@ -34,9 +33,11 @@ module Spree
         end
       end
 
-      # @deprecated Use +default_country_code+. Removed in 6.1.
+      # @deprecated Use +default_country_code+. Removed in 6.3.
       def default_country_iso_code
-        Spree::Deprecation.warn('Spree::Store#default_country_iso_code is deprecated, use #default_country_code instead')
+        Spree::Deprecation.warn(
+          'Spree::Store#default_country_iso_code is deprecated and will be removed in Spree 6.3. Use #default_country_code instead.'
+        )
         default_country_code
       end
 
@@ -155,35 +156,6 @@ module Spree
             countries: [country]
           )
         end
-      end
-
-      # Store-level locale/currency edits keep steering the storefront: the
-      # legacy columns stay writable and propagate onto the default market
-      # (which is what readers delegate to).
-      # Diffs against the market rather than dirty-tracking — long-lived store
-      # instances (spec globals, app singletons) can carry stale change state.
-      def sync_default_market_settings
-        association(:default_market).reset
-        market = default_market
-        return if market.blank?
-
-        updates = {}
-        new_locale = read_attribute(:default_locale)
-        new_currency = read_attribute(:default_currency)
-        updates[:default_locale] = new_locale if new_locale.present? && market.default_locale != new_locale
-        updates[:currency] = new_currency if new_currency.present? && market.currency != new_currency
-        return if updates.empty?
-
-        market.update_columns(updates.merge(updated_at: Time.current))
-        association(:default_market).reset
-        clear_market_derived_memoization
-      end
-
-      def clear_market_derived_memoization
-        @supported_currencies_list = nil
-        @supported_locales_list = nil
-        @supported_locales = nil
-        @has_markets = nil
       end
 
       def legacy_supported_currencies_list

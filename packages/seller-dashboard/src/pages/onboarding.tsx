@@ -43,6 +43,7 @@ import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
+import { useProfile } from '../hooks/use-profile'
 
 /**
  * What the marketplace asks of this seller before admitting them.
@@ -105,10 +106,10 @@ export function OnboardingPage() {
           <Progress value={progressPercentage(progress)} />
 
           {submitted ? (
-            <p className="text-muted-foreground text-sm">{t('onboarding.under_review')}</p>
+            <p className="text-muted-foreground text-base">{t('onboarding.under_review')}</p>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {blocking.length === 0
                   ? t('onboarding.ready')
                   : t('onboarding.remaining', { count: blocking.length })}
@@ -132,7 +133,7 @@ export function OnboardingPage() {
         // `multiple` because these are independent — a seller does them in any
         // order — so opening one must not close the one they were reading.
         // Opens on the first outstanding line, which answers "what next".
-        <Card className="overflow-hidden py-0">
+        <Card className="overflow-hidden">
           <Accordion multiple defaultValue={openByDefault}>
             {requirements.map((requirement) => (
               <AccordionItem key={requirement.id} value={requirement.id}>
@@ -156,7 +157,7 @@ export function OnboardingPage() {
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-3 ps-12">
                   {requirement.description && (
-                    <p className="text-muted-foreground text-sm">{requirement.description}</p>
+                    <p className="text-muted-foreground text-base">{requirement.description}</p>
                   )}
                   <RequirementAction requirement={requirement} />
                 </AccordionContent>
@@ -189,15 +190,9 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Only the billing address needs it, and it is already loaded by the
-  // profile page and the sidebar switcher — this reads the same cache entry.
-  // The returns address does not: it lives on a stock location, which its own
-  // card fetches.
-  const { data: profile } = useQuery({
-    queryKey: ['seller', sellerId, 'profile'],
-    queryFn: () => sellerClient().profile.get(),
-    enabled: requirement.kind === 'billing_address',
-  })
+  // Only the billing address edits it. The returns address does not: it
+  // lives on a stock location, which its own card fetches.
+  const { data: profile } = useProfile({ enabled: requirement.kind === 'billing_address' })
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
@@ -301,11 +296,17 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     return (
       <>
         {rejection}
-        <p className="text-muted-foreground text-sm">{t('onboarding.awaiting_review')}</p>
+        <p className="text-muted-foreground text-base">{t('onboarding.awaiting_review')}</p>
       </>
     )
   }
 
+  // The contact email is edited on General, everything else on Profile; the
+  // server says when the email is the only thing a profile still lacks.
+  const route =
+    requirement.blocker?.state === 'contact_email_missing'
+      ? '/$sellerId/settings/general'
+      : panelRoute(requirement.kind)
   return (
     <>
       {rejection}
@@ -407,7 +408,13 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
-      {/* Addresses are filled in here rather than on the profile page: a
+      {/* Why the line is not done yet, when the server can say: what a
+          profile still lacks, or where a payout provider has got to. */}
+      {requirement.blocker?.message && (
+        <p className="text-muted-foreground text-base">{requirement.blocker.message}</p>
+      )}
+
+      {/* Addresses are filled in here rather than on the settings page: a
           seller working through setup should not be sent away and lose their
           place. Same card either way, so the two cannot diverge. */}
       {requirement.kind === 'billing_address' && profile && (
@@ -429,12 +436,8 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           repeatedly wondering why nothing changed. */}
       {requirement.kind === 'payout_account' && (
         <div className="flex flex-col items-start gap-2">
-          {requirement.blocker?.message && (
-            <p className="text-muted-foreground text-sm">{requirement.blocker.message}</p>
-          )}
-
           {requirement.blocker?.state === 'pending' ? (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('onboarding.awaiting_payout_provider')}
             </p>
           ) : (
@@ -456,10 +459,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           about (a provider's hosted flow), and it has no idea how this panel
           routes. Anything unmapped falls through to `action_url` below, so a
           kind added by a gem still gets a way in without this file changing. */}
-      {panelRoute(requirement.kind) && (
+      {route && (
         <div className="flex justify-start">
           <Button asChild>
-            <Link to={panelRoute(requirement.kind)!} params={{ sellerId }}>
+            <Link to={route} params={{ sellerId }}>
               {t('onboarding.go')}
               <ChevronRightIcon className="size-4" />
             </Link>
@@ -497,7 +500,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
 function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':
-      return '/$sellerId/profile'
+      return '/$sellerId/settings/profile'
     case 'policy':
       return '/$sellerId/settings/policies'
     case 'delivery_method':

@@ -1,5 +1,5 @@
 ---
-description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (automatic for a patch, printed for a human otherwise), the spree-starter bump and the storefront SDK bump.
+description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (published by release-on-merge.yml for a patch, printed for a human otherwise), the spree-starter bump and the storefront SDK bump.
 ---
 
 Cut the Spree release named in the arguments: `6.0.2`, `6.1.0` or a
@@ -8,15 +8,20 @@ next patch of `Spree::VERSION` and confirm it.
 
 Version: $ARGUMENTS
 
-Releases are published by `.github/workflows/release.yml` from tags pushed on a
-commit already on `main`; `.changeset/README.md` has the mechanics. This command
-wraps them with the review a release needs. Run the phases in order. Phase 5
-pushes the tags and creates the GitHub release itself for a patch release
-(`X.Y.Z` with `Z` above zero and no prerelease label); for a minor, major or
-prerelease it only prints the commands, and a human runs them. Phases 6 and 7
-bump spree-starter and the storefront once the gems and packages are
-published. All three need the pull request merged, so the command usually
-stops after phase 4 and is run again to publish.
+Releases are published by `.github/workflows/release.yml` on tags of a commit
+already on `main`; `.changeset/README.md` has the mechanics. This command
+wraps them with the review a release needs. Run the phases in order. A patch
+release (`X.Y.Z` with `Z` above zero and no prerelease label) publishes itself
+when its pull request merges: `.github/workflows/release-on-merge.yml` tags the
+merge commit, publishes and creates the GitHub release, and phase 5 watches it.
+For a minor, major or prerelease, phase 5 only prints the commands, and a
+human runs them. Phases 6 and 7 bump spree-starter and the storefront once the
+gems and packages are published. All three need the pull request merged, so
+the command usually stops after phase 4 and is run again to publish.
+
+Pull requests on other repositories (agent-skills, spree-starter,
+storefront) open with plain `gh pr create --repo <owner/name>`: the
+`/open-pr` gate covers only this repository.
 
 Work on a branch named `chore/release-<version>` with the workspace installed
 (`node_modules` present), never on `main`.
@@ -48,6 +53,26 @@ type, and list each item for the user before bumping:
   removed props, renamed fields, anything a plugin or SDK user could call.
 - **Generated artifacts left behind**: a serializer change without its
   `docs/api-reference/*.yaml` regeneration, SDK types out of date.
+- **Removed Ruby APIs**: every public class, method or scope deleted since the
+  tag, including deprecation shims this release drops (the ones marked
+  "Removed in <version>"), needs an entry under the release's version in
+  `Spree::RemovedApis::REMOVED` with what replaced it, an `UPGRADE_GUIDES`
+  link for that version, and a regenerated
+  `docs/developer/upgrades/removed-apis.mdx` (`UPDATE_DOCS=1 pnpm test:rspec
+  core spec/lib/spree/removed_apis_spec.rb`). Search the diff for deleted
+  `def`, `scope` and class files, and for `Removed in <version>` in comments
+  and deprecation messages.
+- **Store API changes that break the storefront**: `node
+  scripts/release/bump-storefront.mjs --local` type-checks the storefront
+  against this worktree's SDK. A failure (6.0.5 added required `Store` fields
+  the storefront's fallback lacked) is fixed with a storefront pull request
+  now, so the storefront bump in phase 7 needs no changes.
+- **Agent skills behind the release**: `@spree/cli` installs the newest
+  `spree/agent-skills` tag on the server's minor line that is not newer than
+  the server, so commits there since that tag reach no project until the
+  release is tagged. List them with `git ls-remote --tags
+  https://github.com/spree/agent-skills.git` and the compare view; phase 4
+  syncs and tags it.
 - **Open pull requests by the user** that are green and could ride along.
 
 A patch release carries only patch changesets for the packages in the
@@ -72,11 +97,13 @@ Confirm CI is green on `origin/main` HEAD: `gh run list --branch main --limit 6`
 2. `GITHUB_TOKEN=$(gh auth token) pnpm version:packages` — the changelog
    writer needs the token to link pull requests. Never run plain
    `changeset version`.
-3. Read every `packages/*/CHANGELOG.md` entry it wrote. A changeset shared by
-   several packages lands word for word in each; rewrite an entry that describes
-   another package (the CLI's entry must talk about the CLI). The entry for a
-   package with no changes of its own is "Released with Spree <version>, with no
-   changes of its own."
+3. Read every `packages/*/CHANGELOG.md` entry it wrote; each package ships its
+   changelog, so its users read these in `node_modules`. Every changeset names
+   one package, so each entry should already describe its own package; fix
+   one that does not. A package with no changes of its own gets "Released with
+   Spree <version>, with no changes of its own." from the script. The script
+   refuses a changeset that names several packages (one merged before the
+   check existed): split it into one changeset per package and run it again.
 4. Verify: `node scripts/publish-packages.mjs verify v<version>` and, for each
    tool that moved, `verify @spree/cli@<version>` or
    `verify create-spree-app@<version>`. `pnpm install --frozen-lockfile
@@ -93,11 +120,13 @@ Confirm CI is green on `origin/main` HEAD: `gh run list --branch main --limit 6`
 
 Write `tmp/release-notes-<version>.md` in the repository (`mkdir -p tmp`
 first; it is ignored by git and absent from a fresh checkout) in exactly this
-shape. It becomes the GitHub release body, and the
+shape, between the two marker comments, which phase 5 reads the notes back
+by. It becomes the GitHub release body, and the
 dashboard's notifications panel renders that body in every merchant's admin, so
 keep it plain GitHub markdown.
 
 ````markdown
+<!-- release-notes -->
 # Spree <version>
 
 <Two or three sentences: what kind of release this is and the three or four things a merchant or developer will notice.>
@@ -140,11 +169,12 @@ npx spree upgrade
 | --- | --- |
 | Spree gems | `<version>` |
 | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core` | `<npm version>` |
-| `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard` | `<npm version>` |
+| `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard`, `@spree/dashboard-sentry` | `<npm version>` |
 | `@spree/cli` | `<version>` |
 | `create-spree-app` | `<version>` (unchanged) |
 
 **Full Changelog:** https://github.com/spree/spree/compare/v<previous>...v<version>
+<!-- /release-notes -->
 ````
 
 Rules:
@@ -176,36 +206,80 @@ line, then the notes from phase 3 verbatim. A release pull request is the
 exception to the short-description rule: reviewers review the notes there, and
 phase 5 reads them back from it. Only collaborators can edit a pull request
 description, so never post the notes as a comment, which anyone can write.
+
+While the pull request waits for review, sync the agent skills when the audit
+found them behind: a pull request on `spree/agent-skills` that brings the
+skills in line with what this release changed (removed or renamed APIs, CLI
+commands, documented patterns), opened with `gh pr create --repo
+spree/agent-skills`. Once it merges, tag the merge commit `v<version>` and
+push it; a tag no server has reached yet changes nothing for existing
+projects. With nothing to sync, tag `main` as it is, so the release still has
+skills tagged for it. For a patch release that moves a tool, push this tag
+before the release pull request merges: `release-on-merge.yml` stops before
+publishing `@spree/cli` or `create-spree-app` while it is missing.
+
 Stop when `/open-pr` reports: the merge needs a human review.
 
 ## 5. Publish (after the merge)
 
-Run from a checkout of `main` at the merge commit (`git pull`). Check
-`Spree::VERSION` is the target, no `v<version>` tag exists yet, and every
-workflow that ran on the merge commit succeeded: `gh run list --commit <merge
-sha> --json name,conclusion`. Tests must be among them: every release commit
-changes `Spree::VERSION` under `spree/`, so a missing Tests run means CI never
-covered the merge commit. Stop on a missing, failed or cancelled run.
+Run from a checkout of `main` at the merge commit (`git pull`), and check
+`Spree::VERSION` is the target.
 
-Decide who publishes. A **patch release** (`X.Y.Z`, `Z` above zero, no
-prerelease label) is published by this command: run the commands below in
-order. A **minor, major or prerelease** is published by a human: print the
-same commands and the notes, run none of them, and stop.
+### A patch release
+
+`release-on-merge.yml` publishes it once CI passes on the merge commit.
+`scripts/release/publish-on-merge.mjs` holds its steps, in the order of the
+manual commands below: it checks the backend suite ran, reads the notes from
+the pull request description, tags the merge commit `v<version>`, runs
+`release.yml` on the tag, waits for `@spree/docs` on npm, tags and releases
+each tool whose `package.json` version is not on npm yet, creates the GitHub
+release (`--latest` only when it is the newest stable release) and starts
+`discord-release.yml`. Watch it:
+
+```bash
+gh run list --workflow release-on-merge.yml --json databaseId,status,conclusion,displayTitle --jq '.[] | select(.displayTitle == "Release on merge of <merge sha>")'
+gh run watch <id>
+```
+
+It starts only when the `CI` run on the merge commit concludes `success`. A
+failed or cancelled CI run is re-run with `gh run rerun <id> --failed`, and
+the release starts once it passes. Each `release.yml` run it starts shows in
+its log; when one fails, re-run that run's failed jobs, then re-run
+`release-on-merge.yml` with `gh run rerun <id> --failed`. Every step skips
+what already exists, so re-running is always safe. When it concluded
+`success`, go to step 4 below, which every release runs. When it cannot finish (say, GitHub Actions is down),
+run the manual commands below: they skip nothing that it did, but each one
+is safe to repeat.
+
+### A minor, major or prerelease, or the manual fallback
+
+Check no `v<version>` tag exists yet (for the fallback, that it tags the
+merge commit) and every workflow that ran on the merge commit succeeded: `gh
+run list --commit <merge sha> --json name,conclusion`. `CI` must be among them
+with its `Backend /` jobs run, not skipped: every release commit changes
+`Spree::VERSION` under `spree/`, so a CI run without them never covered the
+merge commit. Stop on a missing, failed or cancelled run.
+
+For a minor, major or prerelease, print the commands below and the notes, run
+none of them, and stop: a human publishes it. For the patch fallback, run them
+in order.
 
 1. Recover the notes first, before anything is pushed, so a problem with them
    stops the release while nothing has happened yet. They are in the pull
-   request description, from the `# Spree <version>` heading to the end; `<n>`
-   is the number in the merge commit subject:
+   request description, between the marker comments; `<n>` is the number in
+   the merge commit subject:
 
    ```bash
    mkdir -p tmp
-   gh pr view <n> --repo spree/spree --json body --jq .body | tr -d '\r' | sed -n '/^# Spree <version>$/,$p' > tmp/release-notes-<version>.md
+   gh pr view <n> --repo spree/spree --json body --jq .body | tr -d '\r' | sed -n '/^<!-- release-notes -->$/,/^<!-- \/release-notes -->$/p' | sed '1d;$d' > tmp/release-notes-<version>.md
    ```
 
    The `tr` matters: a description edited on github.com comes back with CRLF
-   line endings, and the heading match would otherwise find nothing. The file
-   must start with the heading and end with the **Full Changelog** line; an
-   empty or truncated file stops the release. Print it in full as a markdown
+   line endings, and the marker match would otherwise find nothing. The end
+   marker matters too: bots such as CodeRabbit append their own summary to the
+   description, which a read to the end would publish. The file must start
+   with the `# Spree <version>` heading and end with the **Full Changelog**
+   line; an empty or truncated file stops the release. Print it in full as a markdown
    block, so the user sees what is published and can paste it by hand.
 
 2. Tag the merge commit, with a tag for each tool that moved, and push at most
@@ -213,9 +287,26 @@ same commands and the notes, run none of them, and stop.
 
    ```bash
    git tag v<version> <merge sha>
-   git tag '@spree/cli@<version>' <merge sha>     # only tools that moved
-   git push origin v<version> '@spree/cli@<version>'
+   git push origin v<version>
+   # once the v<version> run below concluded success, and only tools that moved:
+   git tag '@spree/cli@<version>' <merge sha>
+   git push origin '@spree/cli@<version>'
    ```
+
+   A tag `release-on-merge.yml` already made on the merge commit stays as it
+   is: pushing it again starts nothing. Re-run the failed `release.yml` run on
+   it, or start one with `gh workflow run release.yml --ref <tag>` when it has
+   none.
+
+   Tool tags wait for the docs, which the `v<version>` run publishes:
+   `create-spree-app` projects depend on `@spree/docs` on the Spree major, and
+   `spree upgrade` moves a project's `@spree/docs` to its server's version.
+   Push a `@spree/cli` or `create-spree-app` tag only once `npm view
+   "@spree/docs@<npm version>" version` prints `<npm version>` (`6.0.0-rc.7`
+   for `6.0.0.rc7`), and once `spree/agent-skills` has its `v<version>` tag
+   from phase 4, so the first CLI to look for this release's skills finds
+   them. A tool release between Spree releases needs no wait: the docs and
+   skills for the current version are already published.
 
    The push starts one `release.yml` run per tag. Find each run by its tag,
    not by its place in the recent list, and wait for every one of them:
@@ -246,12 +337,12 @@ same commands and the notes, run none of them, and stop.
    by hand if no run exists:
 
    ```bash
-   gh run list --workflow discord-release.yml --event release --json headBranch,conclusion --jq '.[] | select(.headBranch == "v<version>")'
+   gh run list --workflow discord-release.yml --json displayTitle,status,conclusion --jq '.[] | select(.displayTitle == "Post v<version> to changelog")'
    gh workflow run discord-release.yml -f tag=v<version> -f channel=changelog
    ```
 
-   Run the second command only when the first prints nothing, so the release
-   is not posted twice. Skip this for a prerelease, which is never posted.
+   Run the second command only when the first prints nothing or only failed
+   runs, so the release is not posted twice. Skip this for a prerelease, which is never posted.
 
 4. Wait until the registries serve the exact version. A green release
    workflow means the upload finished, not that the version is installable:
@@ -275,50 +366,49 @@ same commands and the notes, run none of them, and stop.
 New projects come from [spree/spree-starter](https://github.com/spree/spree-starter),
 whose lockfile pins the Spree gems and whose `db/migrate` holds a copy of every
 gem migration. Run this once the gems are on RubyGems (phase 5 step 4), from
-the repository root of a worktree, whose Postgres the scratch database below
-uses.
+the repository root of a worktree, whose Postgres the scratch databases use:
 
 ```bash
-rm -rf tmp/spree-starter
-git clone --quiet https://github.com/spree/spree-starter.git tmp/spree-starter
-cd tmp/spree-starter
-git switch -c chore/spree-<version with dots as dashes>
-bundle update $(ls ../../spree/*.gemspec ../../spree/*/*.gemspec ../../spree/providers/*/*.gemspec | xargs -n1 basename | sed 's/\.gemspec$//')
-grep -E "^    spree[a-z_]* \(" Gemfile.lock
-DATABASE_NAME=spree_starter_release bin/rails db:create spree:install:migrations db:migrate
-DATABASE_NAME=spree_starter_release bin/rails db:drop
+node scripts/release/bump-starter.mjs <version>
 ```
 
-- `bundle update` resolves from Bundler's compact index, which can trail the
-  RubyGems API phase 5 polled by several minutes. A failure naming `Could not
-  find gem 'spree'` or a version other than `<version>` in the `grep` means
-  the index has not caught up: wait a minute and run the `bundle update` line
-  again, up to ten times, before treating it as an error.
-- `bundle update` on the gems this repository releases (the `spree` meta gem
-  and the gemspecs under `spree/*/` and `spree/providers/*/`), never a bare
-  `bundle update` and not every
-  `spree*` gem: `spree_dev_tools` has its own version. The starter's `Gemfile`
-  already allows the new version (`~> 6.0`), so this moves the lockfile and the
-  dependencies the gems require (6.0.2 moved Alba to 4) and nothing else. The
-  `grep` must then show `<version>` for every one of those gems; another
-  version means the gems are not on RubyGems yet or the `Gemfile` constraint
-  excludes them. Stop in that case. The Ruby in `.ruby-version` must be
-  installed; the worktree's Rails runs on it.
-- `spree:install:migrations` copies the gem migrations the starter lacks into
-  `db/migrate`; `db:migrate` runs them on the scratch database so
-  `db/schema.rb` is regenerated. The starter's `config/database.yml` reads
-  `DATABASE_NAME` (and `DATABASE_HOST`, `DATABASE_USERNAME`, `DATABASE_PORT`
-  when the worktree's Postgres is not the default local one) in development;
-  `DATABASE_URL` applies only in production. The scratch database is dropped
-  afterwards.
-- The diff must touch only `Gemfile.lock`, `db/migrate/` and `db/schema.rb`.
-  Anything else means a step ran against the wrong app; stop and look.
-- Commit as `Bump Spree to <version>`, with the copied migrations named in the
-  body, push, and open the pull request with `gh pr create --repo
-  spree/spree-starter --base main`. Its description lists the new migrations
-  and says what each one does. Its CI builds the Docker image and runs the
-  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. A
-  human merges it.
+The script clones the starter fresh into `tmp/spree-starter` and commits
+`Bump Spree to <version>` there; it does not push. In order, it:
+
+- runs `bundle update` on the gems this repository releases that the starter
+  installs, never a bare `bundle update`, and retries for up to ten minutes
+  while Bundler's index catches up with RubyGems;
+- clears `bundle audit` advisories with `bundle update --conservative`, since
+  the starter's CI fails on any advisory, even for a gem this release did not
+  move (6.0.5 hit seven in Puma);
+- copies the gem migrations the starter lacks and regenerates `db/schema.rb`
+  on scratch databases it drops afterwards;
+- fails when the diff touches anything but `Gemfile.lock`, `db/migrate/` and
+  `db/schema.rb`, and names every other gem that moved in the commit body.
+
+A failure that names a version other than `<version>` means the gems are not
+on RubyGems or the starter's `Gemfile` excludes them; stop and report it. When
+it succeeds, push the branch and open the pull request with `gh pr create
+--repo spree/spree-starter --base main`. Its description lists each migration
+the script printed and says what it does, and names any gem updated for an
+advisory. Its CI builds the Docker image and runs the specs; watch it with `gh
+pr checks --watch --repo spree/spree-starter`. A human merges it.
+
+- The merge does not publish the image `spree init` and new projects run. The
+  starter's `release.yml` builds `ghcr.io/spree/spree` from a `v*` tag, so tag
+  the bump's merge commit with the Spree version and push it:
+
+  ```bash
+  git fetch origin && git tag v<version> <merge sha> && git push origin v<version>
+  gh run list --repo spree/spree-starter --workflow release.yml --branch v<version> --json databaseId,conclusion
+  ```
+
+  Tag only after the bump merges: a tag on an earlier commit builds the old
+  gems (6.0.4 had to be re-cut as `v6.0.4.1`). Wait for the run to conclude
+  `success`. Skip this for a prerelease (`6.1.0.rc1`) and for a patch on an
+  older minor line (`6.0.6` after `6.1.0`): the starter's `release.yml` also
+  tags every image `latest`, so either tag would replace the newest stable
+  image new projects pull.
 
 ## 7. Bump the storefront's SDK
 
@@ -326,39 +416,31 @@ The Next.js storefront at [spree/storefront](https://github.com/spree/storefront
 depends on `@spree/sdk` by caret range, so new installs already get the new
 version; the lockfile and the range still move so the repository builds and
 tests against it. Run once `@spree/sdk@<npm version>` is on npm (phase 5
-step 4). Clone fresh rather than using a worktree's `storefront/`: that
-clone's lockfile points at the worktree's own SDK build and must never be
-committed.
+step 4):
 
 ```bash
-rm -rf tmp/storefront
-git clone --quiet https://github.com/spree/storefront.git tmp/storefront
-cd tmp/storefront
-git switch -c chore/sdk-<version with dots as dashes>
-pnpm add @spree/sdk@^<npm version>
-pnpm exec tsc --noEmit && pnpm run check && pnpm run test
+node scripts/release/bump-storefront.mjs <npm version>
 ```
 
-- `pnpm add` with the caret spec rewrites the range in `package.json` and
-  resolves the lockfile to the new version; nothing else moves. An
-  `ERR_PNPM_NO_MATCHING_VERSION` for `@spree/sdk` means npm's metadata has
-  not replicated to the mirror pnpm hit: wait a minute and run it again, up
-  to ten times. After it succeeds, the lockfile must name
-  `@spree/sdk@<npm version>`; an older version resolved means the range was
-  satisfied by stale metadata, so run `pnpm update @spree/sdk` once more. The diff must
-  touch only `package.json` and `pnpm-lock.yaml`. A type error here means the
-  Store API changed shape in this release; stop and report it rather than
-  patching the storefront inside the release.
-- Commit as `Updated @spree/sdk to ^<npm version>` with a one-sentence body
-  naming the Spree release, push, and open the pull request with `gh pr create
-  --repo spree/storefront --base main`. Its CI runs lint, type check, unit
-  tests and the Playwright suite against a Spree server; watch it with `gh pr
-  checks --watch --repo spree/storefront`. A human merges it.
+The script clones the storefront fresh into `tmp/storefront` (never a
+worktree's `storefront/`, whose lockfile points at that worktree's SDK
+build), moves `@spree/sdk` to `^<npm version>`, retrying for up to ten minutes
+while npm's metadata replicates, then runs the type check, lint and unit
+tests and commits `Updated @spree/sdk to ^<npm version>`. It does not push.
+
+A type error means the Store API changed shape and the audit's `--local` check
+was skipped or missed it: fix the storefront in this same pull request, and
+say so in its description. When it succeeds, push the branch and open the
+pull request with `gh pr create --repo spree/storefront --base main`. Its CI
+runs lint, type check, unit tests and the Playwright suite against a Spree
+server; watch it with `gh pr checks --watch --repo spree/storefront`. A human
+merges it.
 
 ## Final report
 
 The pull request URL, the audit items the user accepted or deferred, the tool
 versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
 changeset a commit forgot, an upgrade note) and, after the merge, the release
-URL (or the tag and release commands for a human), the registry checks and the
-spree-starter and storefront pull requests.
+URL (or the tag and release commands for a human), the registry checks, the
+agent-skills tag, the spree-starter and storefront pull requests and the
+starter's image release run.

@@ -12,6 +12,7 @@ export const OrderLineItemSchema = z.object({
   additional_tax_total: z.string().nullable(),
   total: z.string().nullable(),
   variant_id: z.string().nullable(),
+  product_id: z.string().nullable(),
   sku: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
 });

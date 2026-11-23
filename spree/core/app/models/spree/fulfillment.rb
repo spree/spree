@@ -68,7 +68,7 @@ module Spree
     # unfulfilled/fulfilled/delivered/canceled scopes + predicates come from
     # has_status below. These are the ones it cannot generate.
     #
-    # @deprecated legacy names — removed in 6.1
+    # @deprecated legacy names — removed in 6.3
     scope :shipped, -> { fulfilled }
     scope :pending, -> { unfulfilled }
     scope :ready, -> { unfulfilled }
@@ -151,22 +151,22 @@ module Spree
     include Spree::HasStatus
     has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
 
-    # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.1.
+    # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.3.
     def ship(*args)
-      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use Spree::Fulfillments::Fulfill instead.')
+      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.3. Use Spree::Fulfillments::Fulfill instead.')
       Spree.fulfillment_fulfill_workflow.call(fulfillment: self, **args.first.to_h)
     end
     alias ship! ship
 
-    # @deprecated Use {#can_fulfill?}; removed in 6.1.
+    # @deprecated Use {#can_fulfill?}; removed in 6.3.
     def can_ship?
-      Spree::Deprecation.warn('Spree::Fulfillment#can_ship? is deprecated and will be removed in Spree 6.1. Use #can_fulfill? instead.')
+      Spree::Deprecation.warn('Spree::Fulfillment#can_ship? is deprecated and will be removed in Spree 6.3. Use #can_fulfill? instead.')
       can_fulfill?
     end
 
-    # @deprecated Use {#fulfilled?}; removed in 6.1.
+    # @deprecated Use {#fulfilled?}; removed in 6.3.
     def shipped?
-      Spree::Deprecation.warn('Spree::Fulfillment#shipped? is deprecated and will be removed in Spree 6.1. Use #fulfilled? instead.')
+      Spree::Deprecation.warn('Spree::Fulfillment#shipped? is deprecated and will be removed in Spree 6.3. Use #fulfilled? instead.')
       fulfilled?
     end
 
@@ -209,7 +209,7 @@ module Spree
     # @deprecated the column is +status+ since 6.0
     alias_attribute :state, :status
     alias_attribute :shipped_at, :fulfilled_at
-    # Legacy association names — removed in 6.1.
+    # Legacy association names — removed in 6.3.
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', foreign_key: :fulfillment_id, inverse_of: :fulfillment, deprecated: true
     has_many :shipping_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate', foreign_key: :fulfillment_id, deprecated: true
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: 'Spree::DeliveryRate', foreign_key: :fulfillment_id, deprecated: true
@@ -271,9 +271,9 @@ module Spree
       delivery_method&.digital? || false
     end
 
-    # @deprecated Use {#delivery_method}; removed in 6.1.
+    # @deprecated Use {#delivery_method}; removed in 6.3.
     def shipping_method
-      Spree::Deprecation.warn('Spree::Fulfillment#shipping_method is deprecated and will be removed in Spree 6.1. Use #delivery_method instead.')
+      Spree::Deprecation.warn('Spree::Fulfillment#shipping_method is deprecated and will be removed in Spree 6.3. Use #delivery_method instead.')
       delivery_method
     end
 
@@ -281,18 +281,22 @@ module Spree
       delivery_rates.create(delivery_method: delivery_method, selected: selected, cost: cost)
     end
 
-    # @deprecated Use {#add_delivery_method}; removed in 6.1.
+    # @deprecated Use {#add_delivery_method}; removed in 6.3.
     def add_shipping_method(delivery_method, selected = false)
-      Spree::Deprecation.warn('Spree::Fulfillment#add_shipping_method is deprecated and will be removed in Spree 6.1. Use #add_delivery_method instead.')
+      Spree::Deprecation.warn(
+        'Spree::Fulfillment#add_shipping_method is deprecated and will be removed in Spree 6.3. Use #add_delivery_method instead.'
+      )
       add_delivery_method(delivery_method, selected)
     end
 
-    # @deprecated Cancel through {Spree::Fulfillments::Cancel}; removed in 6.1.
+    # @deprecated Cancel through {Spree::Fulfillments::Cancel}; removed in 6.3.
     #   Restocking and the provider call are workflow steps now, so this no
     #   longer runs as a transition callback. Kept only so a host app that
-    #   called it directly keeps working for one release.
+    #   called it directly keeps working until 6.3.
     def after_cancel
-      Spree::Deprecation.warn('Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.1. Cancel through Spree::Fulfillments::Cancel instead.')
+      Spree::Deprecation.warn(
+        'Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.3. Cancel through Spree::Fulfillments::Cancel instead.'
+      )
       manifest.each { |item| manifest_restock(item) }
       provider.cancel_fulfillment(self)
     end
@@ -470,7 +474,17 @@ module Spree
       fulfillment_items.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states) do
+      # An exchange replacement rides on the original line item, so it is priced
+      # as its own variant rather than at the line's price.
+      #
+      # @return [BigDecimal]
+      def price
+        return line_item.price if variant.nil? || variant.id == line_item.variant_id
+
+        variant.price_in(line_item.currency).amount || line_item.price
+      end
+    end
 
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
@@ -538,23 +552,23 @@ module Spree
       end
     end
 
-    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    # @deprecated Use {#unfulfilled?}; removed in 6.3.
     def ready_or_pending?
       unfulfilled?
     end
 
-    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    # @deprecated Use {#unfulfilled?}; removed in 6.3.
     def pending?
       unfulfilled?
     end
 
-    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    # @deprecated Use {#unfulfilled?}; removed in 6.3.
     def ready?
       unfulfilled?
     end
 
     # @deprecated `ready_for_pickup` is not a status since 6.0 — for pickup
-    # fulfillments `fulfilled` means "waiting at the counter". Removed in 6.1.
+    # fulfillments `fulfilled` means "waiting at the counter". Removed in 6.3.
     def ready_for_pickup?
       fulfilled? && provider.class.pickup?
     end
@@ -733,11 +747,11 @@ module Spree
     end
 
     # @deprecated Assigning tracking writes a delivery on save; removed in
-    #   6.1. Use Spree::Deliveries::Create or the +tracking:+ keyword on
+    #   6.3. Use Spree::Deliveries::Create or the +tracking:+ keyword on
     #   Spree::Fulfillments::Fulfill / Update instead.
     def tracking=(value)
       Spree::Deprecation.warn(
-        'Spree::Fulfillment#tracking= is deprecated and will be removed in Spree 6.1. ' \
+        'Spree::Fulfillment#tracking= is deprecated and will be removed in Spree 6.3. ' \
         'Tracking is a Spree::Delivery — use Spree::Deliveries::Create or the tracking: keyword ' \
         'on Spree::Fulfillments::Fulfill / Update.'
       )
@@ -785,7 +799,7 @@ module Spree
       self.cost = choice&.cost || 0
     end
 
-    # @deprecated No-op since 6.0; removed in 6.1.
+    # @deprecated No-op since 6.0; removed in 6.3.
     #
     # This re-derived the status from the order's payment state on every order
     # recalculation, which is what made a fulfillment move backwards when a
@@ -797,7 +811,10 @@ module Spree
       # rely on to write the status.
       return super unless args.one? && (args.first.is_a?(Spree::Order) || args.first.is_a?(Spree::Cart))
 
-      Spree::Deprecation.warn('Spree::Fulfillment#update!(order) is a no-op since Spree 6.0 and will be removed in 6.1. Fulfillment statuses change through Spree::Fulfillments workflows.')
+      Spree::Deprecation.warn(
+        'Spree::Fulfillment#update!(order) is a no-op since Spree 6.0 and will be removed in 6.3. ' \
+        'Fulfillment statuses change through Spree::Fulfillments workflows.'
+      )
       true
     end
 
@@ -867,6 +884,9 @@ module Spree
 
       begin
         capture_at_gateway(payment, bounded)
+        # The provider answers by webhook: the claim stays until then, which
+        # records the share as captured or releases it.
+        return bounded if payment.reload.requested?
       rescue StandardError
         # Released only when the money truly never moved. The capture workflow
         # keeps working after the charge commits — it authorizes the remainder
@@ -886,11 +906,7 @@ module Spree
     # caller in the rescue path is already raising the reason the capture
     # failed, and losing that to a bookkeeping error would hide it.
     def settle_share(split, amount, captured:)
-      split.with_lock do
-        attributes = { claimed_amount: split.claimed_amount - amount }
-        attributes[:captured_amount] = split.captured_amount + amount if captured
-        split.update!(attributes)
-      end
+      split.with_lock { split.settle_claim!(amount, captured: captured) }
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end

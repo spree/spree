@@ -7,7 +7,15 @@
  * - Outputs clean .md files to dist/
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'fs'
 import { dirname, join, relative, resolve } from 'path'
 import { convertContent, extractFrontmatter, resolveImports, rewriteLinks } from './convert.js'
 
@@ -83,6 +91,9 @@ function walkDir(dir, fileList = []) {
 // Main
 // ---------------------------------------------------------------------------
 
+// A page removed from the docs must not linger in dist/ and ship.
+rmSync(DIST_DIR, { recursive: true, force: true })
+
 let totalFiles = 0
 
 for (const dir of INCLUDE_DIRS) {
@@ -122,7 +133,14 @@ for (const file of OPENAPI_FILES) {
   const dest = join(DIST_DIR, file)
   mkdirSync(dirname(dest), { recursive: true })
   writeFileSync(dest, readFileSync(src, 'utf-8'))
-  totalFiles++
 }
 
-console.log(`@spree/docs: converted ${totalFiles} files to ${DIST_DIR}`)
+console.log(`@spree/docs: converted ${totalFiles} pages to ${DIST_DIR}`)
+
+// Source directories that go missing are only warned about above, so a build
+// that lost most of the docs would otherwise still pass and publish.
+const MIN_FILES = 100
+if (totalFiles < MIN_FILES) {
+  console.error(`@spree/docs: expected at least ${MIN_FILES} pages, got ${totalFiles}`)
+  process.exit(1)
+}

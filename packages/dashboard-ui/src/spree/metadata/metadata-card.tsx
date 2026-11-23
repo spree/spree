@@ -72,7 +72,7 @@ export function MetadataList({
           {externalReferencesTitle && (
             <h4 className="text-xs font-medium text-muted-foreground">{externalReferencesTitle}</h4>
           )}
-          <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] items-center gap-x-4 gap-y-1 text-sm">
+          <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] items-center gap-x-4 gap-y-1 text-base">
             {Object.entries(externalReferences).map(([system, key]) => (
               <Fragment key={system}>
                 <dt>
@@ -94,7 +94,7 @@ export function MetadataList({
           {both && metadataTitle && (
             <h4 className="text-xs font-medium text-muted-foreground">{metadataTitle}</h4>
           )}
-          <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
+          <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] gap-x-4 gap-y-2 text-base">
             {Object.entries(metadata).map(([key, value]) => (
               <Fragment key={key}>
                 <dt>

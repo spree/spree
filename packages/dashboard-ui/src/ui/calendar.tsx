@@ -22,7 +22,7 @@ function Calendar({
         months: 'flex flex-col sm:flex-row gap-2 relative',
         month: 'flex flex-col gap-4',
         month_caption: 'flex justify-center pt-1 relative items-center w-full',
-        caption_label: 'text-sm font-medium',
+        caption_label: 'text-base font-medium',
         nav: 'absolute top-1 inset-x-0 flex items-center justify-between px-1 z-10',
         button_previous:
           'inline-flex size-7 items-center justify-center rounded-md border border-border bg-transparent p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
@@ -32,7 +32,7 @@ function Calendar({
         weekdays: 'flex',
         weekday: 'text-muted-foreground rounded-md w-8 font-normal text-xs',
         week: 'flex w-full mt-2',
-        day: 'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-blue-50 [&:has([aria-selected].day-outside)]:bg-blue-50/50 [&:has([aria-selected].day-range-end)]:rounded-r-md',
+        day: 'relative p-0 text-center text-base focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-blue-50 [&:has([aria-selected].day-outside)]:bg-blue-50/50 [&:has([aria-selected].day-range-end)]:rounded-r-md',
         day_button: cn(
           'inline-flex size-8 items-center justify-center rounded-md p-0 font-normal transition-colors',
           'hover:bg-accent hover:text-foreground',

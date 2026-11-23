@@ -11,7 +11,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
 
   path '/api/v3/admin/delivery_profiles' do
     get 'List delivery profiles' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Fulfillment profiles group products with the stock locations, delivery zones and delivery methods that fulfill them. Every store has exactly one default profile.'
@@ -33,7 +33,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create a delivery profile' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -68,7 +68,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
     parameter name: :delivery_profile_id, in: :path, type: :string
 
     get 'List origin groups' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description "Returns the profile's origin groups: the sets of warehouses that each quote their own delivery rates."
@@ -95,7 +95,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create an origin group' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -125,7 +125,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
     parameter name: :id, in: :path, type: :string
 
     patch 'Update a delivery profile' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -150,7 +150,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
     end
 
     delete 'Delete a delivery profile' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'The default profile and profiles still referenced by products cannot be deleted.'

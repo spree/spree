@@ -405,6 +405,8 @@ function EmailTemplateEditor({
         <PageHeader
           backTo="settings/emails/templates"
           title={emailTemplateName(t, template.key)}
+          resource={template}
+          endpoint={`/api/v3/admin/email_templates/${template.id}?language=${encodeURIComponent(language)}`}
           badges={<VersionBadge template={template} dirty={dirty} hasDraft={hasDraft} />}
           actions={
             canEdit && (
@@ -488,7 +490,7 @@ function EmailTemplateEditor({
                     <Textarea
                       id="email-template-subject"
                       rows={2}
-                      className="min-h-0 resize-y font-mono text-sm"
+                      className="min-h-0 resize-y font-mono text-base"
                       value={subject}
                       readOnly={!canEdit}
                       onChange={(event) => editSubject(event.target.value)}

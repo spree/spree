@@ -13,8 +13,9 @@ module Spree
 
             request_params 'ApplyStoreCreditParams', action: :create do |body|
               body.attribute :amount, :decimal,
-                example: '10.00',
-                description: 'Defaults to as much as the cart can use. A JSON number is still read until 6.1, with a deprecation warning.'
+                             example: '10.00',
+                             description: 'Defaults to as much as the cart can use. ' \
+                                          'A JSON number is still read until 6.5, with a deprecation warning.'
             end
 
             # POST /api/v3/store/carts/:cart_id/store_credits
@@ -63,7 +64,10 @@ module Spree
             def stringify_numeric_amount
               return unless params[:amount].is_a?(Numeric)
 
-              Spree::Deprecation.warn('Sending the store credit amount as a JSON number is deprecated and will be refused in Spree 6.1. Send a decimal string such as "25.00".')
+              Spree::Deprecation.warn(
+                'Sending the store credit amount as a JSON number is deprecated and will be refused in Spree 6.5. ' \
+                'Send a decimal string such as "25.00".'
+              )
               params[:amount] = params[:amount].to_s
             end
           end

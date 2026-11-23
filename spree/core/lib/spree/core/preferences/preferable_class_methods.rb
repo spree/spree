@@ -192,6 +192,10 @@ module Spree::Preferences
       raise ArgumentError, "`currency:` applies to a :money preference, not `#{name}` (#{type})" if options[:currency] && type != :money
       raise ArgumentError, "`of: :object` needs `properties:` on preference `#{name}`" if options[:of] == :object && options[:properties].blank?
 
+      warn_incomplete_preference_declaration(name, type, options)
+    end
+
+    def warn_incomplete_preference_declaration(name, type, options)
       missing = case type
                 when :any then 'a type other than :any'
                 when :array then '`of:`' unless options[:of]
@@ -201,7 +205,7 @@ module Spree::Preferences
 
       Spree::Deprecation.warn(
         "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
-        'Spree 6.1 will raise for an incomplete declaration.'
+        'Spree 6.3 will raise for an incomplete declaration.'
       )
     end
 

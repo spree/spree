@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   # authorization spec requires and which cannot be added from outside — the
   # audience has to be bound when the token is issued. Relax to '~> 6.0' once
   # 6.0.0 is final.
-  s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
+  s.add_dependency 'doorkeeper', '~> 6.0.0.rc3'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   # json 3 removed the positional options hash, which ActiveSupport::JSON.decode
@@ -54,6 +54,11 @@ Gem::Specification.new do |s|
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
   s.add_dependency 'json_schemer', '~> 2.4'
+  # regexp_parser 2.13.2 dropped Regexp::Syntax#implements, which json_schemer
+  # 2.5.0's ECMA regexp syntax still calls, so requiring json_schemer (done
+  # when spree_core loads) raises NoMethodError and the app does not boot.
+  # Unpin once json_schemer ships a release that supports it.
+  s.add_dependency 'regexp_parser', '< 2.13.2'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'

@@ -74,7 +74,9 @@ module MyStore
   class CheckPurchaseLimit
     def call(workflow)
       # every #perform keyword is a reader: cart, variant, quantity, ...
-      return if workflow.quantity <= 10
+      # quantity is the number being added, so count what the cart holds
+      in_cart = workflow.cart.line_items.find_by(variant: workflow.variant)&.quantity.to_i
+      return if in_cart + (workflow.quantity.presence || 1).to_i <= 10
 
       workflow.errors.add(:quantity, :purchase_limit_exceeded,
                           message: 'You can order at most 10 of this item.')
@@ -337,7 +339,10 @@ for admin edits, or both.
 is what a quantity edit, a removal (quantity `0`) and a bulk item payload all
 run through. A rule about what may be in a cart therefore belongs on both keys —
 the readers are the same (`cart`, `variant`, `quantity`), so one handler class
-registers against each.
+registers against each. `quantity` differs, though: on `add_item` it is the
+number being added, on `upsert_items` the quantity the line will hold. The
+[purchase-limit example](/developer/customization/validations#vetoing-an-operation)
+handles both.
 
 `upsert_items` is also the one flow where a rejection is **not** fatal on the
 storefront: the vetoed item is skipped, the rest of the batch applies, and what

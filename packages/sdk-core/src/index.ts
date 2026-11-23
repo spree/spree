@@ -18,6 +18,7 @@ export { renderParamsTypes } from './params-types'
 export type {
   AuthConfig,
   InternalRequestOptions,
+  RequestCompleteEvent,
   RequestConfig,
   RequestFn,
   RequestOptions,

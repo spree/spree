@@ -110,6 +110,7 @@ export function mediaToFormValues(media: PanelMedia, index: number, formKey = 'p
     // on a video row resolves to its poster, so none of them work here.
     videoUrl: media.video_url,
     downloadUrl: media.download_url,
+    filename: media.filename ?? null,
   }
 }
 
@@ -226,6 +227,17 @@ export function omitUnchangedListFields(
 /** Variants with a non-null tax category id carry their own category on save. */
 export function variantHasTaxCategoryOverride(variant: VariantFormValues): boolean {
   return variant.tax_category_id != null && variant.tax_category_id !== ''
+}
+
+/**
+ * An override that changes the variant's tax: one naming the product's own
+ * category is stored, but taxes the variant exactly as the product does.
+ */
+export function variantTaxCategoryDiffersFromProduct(
+  variant: VariantFormValues,
+  productTaxCategoryId: string | null | undefined,
+): boolean {
+  return variantHasTaxCategoryOverride(variant) && variant.tax_category_id !== productTaxCategoryId
 }
 
 /**

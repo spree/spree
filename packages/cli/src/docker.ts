@@ -292,11 +292,12 @@ export async function dockerComposeRun(
 // carries compose's output on the thrown error.
 export async function prepareDatabase(
   projectDir: string,
-  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore'; composeFile?: string },
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
-  await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })
-  await dockerCompose(['run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
+  const file = options?.composeFile ? ['-f', options.composeFile] : []
+  await dockerCompose([...file, 'up', '-d', '--wait', 'postgres'], projectDir, { stdio })
+  await dockerCompose([...file, 'run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
     stdio,
   })
 }
@@ -318,6 +319,7 @@ export interface DockerComposeExecOrRunOptions {
 async function resolveComposeMode(
   projectDir: string,
   options: DockerComposeExecOrRunOptions = {},
+  notify: (message: string) => void = p.log.info,
 ): Promise<'exec' | 'run'> {
   const { service = 'web', edgeHint } = options
 
@@ -333,7 +335,7 @@ async function resolveComposeMode(
     process.exit(1)
   }
 
-  p.log.info(
+  notify(
     `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
   )
   return 'run'
@@ -368,17 +370,12 @@ export async function dockerComposeCapture(
   options: DockerComposeExecOrRunOptions = {},
 ): Promise<string> {
   const { service = 'web', env } = options
-  const mode = await resolveComposeMode(projectDir, options)
+  // The notice goes to stderr so the captured stdout stays parseable.
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    process.stderr.write(`${message}\n`),
+  )
 
-  const args = ['compose', mode]
-  if (mode === 'run') args.push('--rm')
-  args.push('-T')
-  if (env) {
-    for (const [key, value] of Object.entries(env)) {
-      args.push('-e', `${key}=${value}`)
-    }
-  }
-  args.push(service, ...argv)
+  const args = nonInteractiveArgs(mode, service, argv, env)
 
   // `compose up -d` can recreate a container moments before this runs — a
   // recovering project does exactly that — and `exec` into a container that
@@ -397,6 +394,57 @@ export async function dockerComposeCapture(
     }
   }
   throw lastError
+}
+
+function nonInteractiveArgs(
+  mode: 'exec' | 'run',
+  service: string,
+  argv: string[],
+  env?: Record<string, string>,
+): string[] {
+  const args = ['compose', mode]
+  if (mode === 'run') args.push('--rm')
+  args.push('-T')
+  for (const [key, value] of Object.entries(env ?? {})) {
+    args.push('-e', `${key}=${value}`)
+  }
+  args.push(service, ...argv)
+  return args
+}
+
+export interface DockerComposeStreamOptions extends DockerComposeExecOrRunOptions {
+  onOutput: (chunk: string, stream: 'stdout' | 'stderr') => void
+}
+
+/**
+ * Run a command like dockerComposeExecOrRun, but hand its stdout and stderr
+ * to `onOutput` as they arrive instead of printing them. Stdin stays attached
+ * (without a TTY), so the command can still read an answer to a prompt. The
+ * one-off container notice goes to `onOutput` too, as stderr. Throws the
+ * ExecaError when the command exits non-zero.
+ */
+export async function dockerComposeStream(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeStreamOptions,
+): Promise<void> {
+  const { service = 'web', env, onOutput } = options
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    onOutput(`${message}\n`, 'stderr'),
+  )
+
+  const subprocess = execa('docker', nonInteractiveArgs(mode, service, argv, env), {
+    cwd: projectDir,
+    stdin: 'inherit',
+    stdout: 'pipe',
+    stderr: 'pipe',
+    buffer: false,
+  })
+  for (const stream of ['stdout', 'stderr'] as const) {
+    subprocess[stream]?.setEncoding('utf8')
+    subprocess[stream]?.on('data', (chunk: string) => onOutput(chunk, stream))
+  }
+  await subprocess
 }
 
 /**

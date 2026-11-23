@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_SUPPLIER, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import { FIXTURE_SUPPLIER, gotoIndex, login, openRowMenu, rowButton, section } from './helpers'
 
 const SUPPLIERS_PATH = (storeId: string) => `/${storeId}/suppliers`
 const CTA = /new supplier/i
@@ -32,7 +32,7 @@ test.describe('suppliers', () => {
     await expect(page.getByText(/a supplier needs a name/i)).toBeVisible()
   })
 
-  test('adds a supplier and edits their contact', async ({ page }) => {
+  test('adds a supplier and edits their contact on its page', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, SUPPLIERS_PATH(creds.store_id), CTA)
 
@@ -40,18 +40,40 @@ test.describe('suppliers', () => {
     const name = `E2E Mill ${suffix}`
     await createSupplier(page, { name, email: `orders-${suffix}@mill.test` })
 
-    const row = page.getByRole('row').filter({ has: rowButton(page, name) })
-    await expect(row.getByText(`orders-${suffix}@mill.test`)).toBeVisible({ timeout: 15_000 })
+    // Creating opens the new supplier's page.
+    await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('#supplier-email')).toHaveValue(`orders-${suffix}@mill.test`)
+    await expect(
+      section(page, /^purchase orders/i).getByText(/no purchase orders from this supplier yet/i),
+    ).toBeVisible()
 
-    await rowButton(page, name).click()
-    await expect(page.locator('#supplier-name')).toHaveValue(name, { timeout: 15_000 })
+    // Details and Address are separate cards, each saving its own fields.
     await page.locator('#supplier-contact').fill('Alex Buyer')
     await page
-      .getByRole('dialog')
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('#supplier-contact') })
       .getByRole('button', { name: /^save$/i })
       .click()
+    await expect(page.getByText(/supplier saved/i)).toBeVisible({ timeout: 15_000 })
 
+    await page.goto(SUPPLIERS_PATH(creds.store_id))
+    const row = page.getByRole('row').filter({ has: rowButton(page, name) })
     await expect(row.getByText('Alex Buyer')).toBeVisible({ timeout: 15_000 })
+  })
+
+  test("a supplier's page lists its purchase orders and raises a new one", async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SUPPLIERS_PATH(creds.store_id), CTA)
+
+    await rowButton(page, FIXTURE_SUPPLIER).click()
+    await expect(page.getByRole('heading', { name: FIXTURE_SUPPLIER, level: 1 })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const orders = section(page, /^purchase orders/i)
+    await orders.getByRole('link', { name: /new purchase order/i }).click()
+    // The supplier arrives already picked.
+    await expect(page.locator('#supplier')).toHaveValue(FIXTURE_SUPPLIER, { timeout: 15_000 })
   })
 
   test('deletes a supplier with no purchasing history', async ({ page }) => {
@@ -60,6 +82,8 @@ test.describe('suppliers', () => {
 
     const name = `E2E Former Supplier ${Date.now()}`
     await createSupplier(page, { name })
+    await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
+    await page.goto(SUPPLIERS_PATH(creds.store_id))
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
     await openRowMenu(page, name)

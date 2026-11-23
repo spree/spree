@@ -56,8 +56,9 @@ export type VariantParams = {
   backorder_limit?: number | null
   position?: number
   /**
-   * One pair per option type the variant takes part in (size, color). Option types and values are
-   * created when missing.
+   * One pair per option type the variant takes part in (size, color), naming an option type and
+   * value the marketplace already defines (see `GET /option_types`). A seller cannot add to that
+   * vocabulary, so an unknown name is refused with a 422.
    */
   options?: VariantOptionParams[]
   /** Per-currency prices. Upserted by currency. */

@@ -10,7 +10,7 @@ class PromoteShippingCategoriesToDeliveryProfiles < ActiveRecord::Migration[8.1]
     rename_column :spree_products, :shipping_category_id, :delivery_profile_id
 
     # Nullable until the upgrade task assigns stores to 5.x rows; tightened
-    # in 6.1.
+    # in 6.3.
     add_reference :spree_delivery_profiles, :store, index: true
     add_column :spree_delivery_profiles, :default, :boolean, null: false, default: false
     # STI: profile kinds declare behavior (Shipping, Digital, extension

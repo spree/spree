@@ -99,6 +99,32 @@ describe Spree::StockReservations::Reserve do
       expect(result).to be_failure
     end
 
+    %i[cart order].each do |owner_type|
+      it "counts the opposite owner's holds after a stale #{owner_type} allocation" do
+        owner = create(owner_type, store: store)
+        other_type = owner_type == :cart ? :order : :cart
+        other = create(other_type, store: store)
+        own_attributes = { cart: owner_type == :cart ? owner : nil, order: owner_type == :order ? owner : nil }
+        other_attributes = { cart: other_type == :cart ? other : nil, order: other_type == :order ? other : nil }
+        own_line = create(:line_item, **own_attributes, variant: variant, quantity: 3)
+        other_line = create(:line_item, **other_attributes, variant: variant, quantity: 4)
+        own_hold = create(:stock_reservation, **own_attributes, line_item: own_line, stock_level: stock_level, quantity: 1)
+        other_hold = create(:stock_reservation, **other_attributes, line_item: other_line, stock_level: stock_level, quantity: 4)
+        stock_level.set_count_on_hand(5)
+        service = described_class.new
+        # Packing is optimistic; the locked recheck must see a draft order or
+        # cart that acquired its hold after these targets were chosen.
+        allow(service).to receive(:build_targets).and_return([[own_line, stock_level, 3]])
+
+        reservation = service.call(cart: owner)
+
+        expect(reservation).to be_failure
+        expect(own_hold.reload.quantity).to eq(1)
+        expect(other_hold.reload.quantity).to eq(4)
+        expect(stock_level.reload.reserved_count).to eq(5)
+      end
+    end
+
     it 'accumulates per stock_level across line items so the same SKU twice cannot oversell' do
       # 5 units on hand, two line items each wanting 3 → total demand 6, must fail.
       stock_level.set_count_on_hand(5)

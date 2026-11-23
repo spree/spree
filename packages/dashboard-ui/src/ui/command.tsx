@@ -91,10 +91,6 @@ function CommandDialog({
 }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         // `-translate-x-1/2` must be restated alongside `translate-y-0`: in
         // Tailwind v4 both compile to the standalone `translate` property, so
@@ -106,6 +102,12 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
+        {/* Inside the popup: the dialog is named by a title within it, and a
+            header beside it would stay in the page while the dialog is shut. */}
+        <DialogHeader className="sr-only">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
         {children}
       </DialogContent>
     </Dialog>
@@ -199,7 +201,7 @@ function CommandEmpty({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="command-empty"
       className={cn(
-        'py-10 text-center text-sm text-muted-foreground group-has-[[data-slot=command-item]]/command-list:hidden',
+        'py-10 text-center text-base text-muted-foreground group-has-[[data-slot=command-item]]/command-list:hidden',
         className,
       )}
       {...props}
@@ -278,7 +280,7 @@ function CommandItem({
       value={value}
       onClick={() => onSelect?.(text)}
       className={cn(
-        "group/command-item relative flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent-strong data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-highlighted:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-base outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent-strong data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-highlighted:*:[svg]:text-foreground",
         className,
       )}
       {...props}

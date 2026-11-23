@@ -21,6 +21,12 @@ export interface MediaPreviewProps {
   /** Click handler for setting the focal point; images only. */
   onFocalPointClick?: (event: React.MouseEvent<HTMLElement>) => void
   className?: string
+  /**
+   * `width` fills its container's width (a panel); `stage` shrinks the frame
+   * to the picture and fits it within the viewport, for a full-screen editor —
+   * so a focal point click always lands on the image, never on letterboxing.
+   */
+  fit?: 'width' | 'stage'
 }
 
 /**
@@ -41,14 +47,23 @@ export function MediaPreview({
   focalPoint,
   onFocalPointClick,
   className = 'max-h-[60vh]',
+  fit = 'width',
 }: MediaPreviewProps) {
   const { t } = useTranslation()
 
   const isImage = mediaType === 'image'
+  const stage = fit === 'stage'
+  // The stage's own padding and the editor's top bar, so the picture fits.
+  const stageHeight = 'max-h-[calc(100dvh-9rem)]'
 
   if (mediaType === 'external_video' && embedUrl) {
     return (
-      <div className="aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-border bg-black">
+      <div
+        className={cn(
+          'aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-border bg-black',
+          stage && 'max-w-5xl',
+        )}
+      >
         <iframe
           src={embedUrl}
           title={alt || t('admin.components.media_preview.video_title')}
@@ -68,7 +83,10 @@ export function MediaPreview({
         controls
         playsInline
         preload="metadata"
-        className={cn('w-full shrink-0 rounded-lg bg-black', className)}
+        className={cn(
+          'shrink-0 rounded-lg bg-black',
+          stage ? cn('max-w-full', stageHeight) : cn('w-full', className),
+        )}
       />
     )
   }
@@ -80,11 +98,23 @@ export function MediaPreview({
       type="button"
       disabled={!canSetFocalPoint}
       onClick={onFocalPointClick}
-      className="group relative block w-full shrink-0 overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default"
+      className={cn(
+        'group relative shrink-0 overflow-hidden rounded-lg border border-border bg-muted disabled:cursor-default',
+        stage ? 'inline-block max-w-full border-0 bg-transparent' : 'block w-full',
+        canSetFocalPoint && 'cursor-crosshair',
+      )}
     >
       {previewUrl ? (
         <>
-          <img src={previewUrl} alt={alt} className={cn('w-full object-contain', className)} />
+          <img
+            src={previewUrl}
+            alt={alt}
+            className={
+              stage
+                ? cn('block h-auto w-auto max-w-full object-contain', stageHeight)
+                : cn('w-full object-contain', className)
+            }
+          />
           {isImage && focalPoint && (
             <span
               aria-hidden
@@ -96,7 +126,12 @@ export function MediaPreview({
       ) : (
         // A video with no poster has no still to show; say which kind of file
         // it is rather than rendering a broken image.
-        <div className="flex aspect-square w-full items-center justify-center text-muted-foreground">
+        <div
+          className={cn(
+            'flex aspect-square items-center justify-center text-muted-foreground',
+            stage ? 'w-64' : 'w-full',
+          )}
+        >
           {isImage ? <ImagePlusIcon className="size-8" /> : <FilmIcon className="size-8" />}
         </div>
       )}

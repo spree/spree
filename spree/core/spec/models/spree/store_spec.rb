@@ -303,6 +303,60 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.errors[:customer_support_email]).to be_present
       end
     end
+
+    describe 'social accounts' do
+      it 'accepts a handle or a web address' do
+        store = build(:store, facebook: 'https://facebook.com/shop', twitter: '@shop', instagram: 'instagram.com/shop.beans')
+        expect(store).to be_valid
+      end
+
+      it 'accepts a dotted or non-Latin handle, a port and a protocol-relative address' do
+        store = build(:store, facebook: '//facebook.com:443/shop', twitter: 'café', instagram: 'shop.beans')
+        expect(store).to be_valid
+      end
+
+      it 'refuses a path that climbs out of the account, or a handle with no letter or digit' do
+        store = build(:store, facebook: '@shop/../../x', twitter: '..', instagram: '-')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'refuses a scheme hidden behind a tab or a control character' do
+        store = build(:store, facebook: "java\tscript:alert(1)", twitter: "\u0001javascript:alert(1)")
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter)
+      end
+
+      it 'refuses a Unicode space or an invisible character' do
+        store = build(:store, facebook: "https://facebook.com/a\u00A0b", twitter: "x.com/\u202Eshop", instagram: "instagram.com/a\u2028b")
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'keeps a value saved before the format rule from blocking other changes' do
+        store = create(:store)
+        store.update_column(:facebook, 'facebook.com/My Shop')
+        expect(store.reload.update(name: 'Renamed')).to be(true)
+      end
+
+      it 'refuses a web address with a malformed port or with credentials before the host' do
+        store = build(:store, facebook: 'https://facebook.com:7z/shop', twitter: 'https://x.com@evil.example/shop', instagram: 'https://')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'refuses a value with any other scheme' do
+        store = build(:store, facebook: 'javascript:alert(1)', twitter: 'javascript:0/alert(1)', instagram: 'mailto:a@b.co')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'strips whitespace and stores blank as nil' do
+        store = build(:store, twitter: '  @shop ', instagram: '   ')
+        expect(store.twitter).to eq('@shop')
+        expect(store.instagram).to be_nil
+      end
+    end
   end
 
   context 'Translations' do
@@ -324,6 +378,73 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       expect(store_pl_translation).to be_present
       expect(store_pl_translation.name).to eq('Store PL')
+    end
+  end
+
+  # Saving through the settings page, a translation in another language, or
+  # the logo alone each commit an update on the store row, so each publishes
+  # once. The payload is covered in spree_api, where the serializer lives.
+  describe 'store.updated', :events do
+    let!(:store) { create(:store).tap { |store| store.default_market.update!(supported_locales: 'en,de') } }
+    let(:logo) do
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+        filename: 'logo.jpg',
+        content_type: 'image/jpeg'
+      )
+    end
+    let(:published) { [] }
+
+    before do
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        published << name if name.start_with?('store.')
+        original.call(name, *rest)
+      end
+    end
+
+    it 'is published once when a setting changes' do
+      store.update!(facebook: 'mystore')
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when only a translation in another language changes' do
+      store.reload.upsert_translations('de' => { 'name' => 'Laden', 'seo_title' => 'Laden SEO' })
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when the logo is attached' do
+      store.update!(logo_signed_id: logo.signed_id)
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when the logo is removed' do
+      store.update!(logo_signed_id: logo.signed_id)
+      published.clear
+
+      store.reload.update!(logo_signed_id: nil)
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is attributed to the store that changed, whichever store the caller is in' do
+      events = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, *args|
+        original.call(*args).tap { |event| events << event }
+      end
+      other_store = create(:store)
+
+      Spree::Current.with_store(other_store) { store.update!(facebook: 'mystore') }
+
+      expect(events.map(&:store_id)).to eq([store.id])
+    end
+
+    it 'is not published when a related record only touches the store' do
+      store.touch
+
+      expect(published).to be_empty
     end
   end
 
@@ -574,6 +695,35 @@ describe Spree::Store, type: :model, without_global_store: true do
       it 'returns nil' do
         expect(store.default_currency).to be_nil
       end
+    end
+  end
+
+  describe 'the legacy locale and currency columns' do
+    let!(:store) { create(:store, default_currency: 'USD', default_locale: 'en') }
+    let(:market) { store.default_market }
+
+    before do
+      # The market moved on through Settings → Markets; the store columns kept
+      # their values from setup.
+      market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl')
+    end
+
+    it 'leaves the market alone when another setting is saved' do
+      expect { Spree::Store.find(store.id).update!(customer_support_email: 'help@example.com') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale', 'supported_locales') })
+    end
+
+    it 'leaves the market alone when the columns themselves are written' do
+      expect { store.update!(default_currency: 'GBP', default_locale: 'de') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale') })
+    end
+
+    it 'keeps answering from the default market' do
+      store.update!(default_currency: 'GBP', default_locale: 'de')
+      reloaded = Spree::Store.find(store.id)
+
+      expect(reloaded.default_currency).to eq('EUR')
+      expect(reloaded.default_locale).to eq('nl')
     end
   end
 

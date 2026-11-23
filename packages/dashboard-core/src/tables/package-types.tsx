@@ -45,7 +45,7 @@ defineTable<PanelPackageType>('package-types', {
       key: 'dimensions',
       label: i18n.t('admin.package_types.dimensions_column'),
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       // Three numbers mean nothing without the unit they were measured in —
       // the same figures read as inches or centimetres differ sixteenfold by
       // volume, which is what the freight tiers compare.
@@ -57,7 +57,7 @@ defineTable<PanelPackageType>('package-types', {
     {
       key: 'volume',
       label: i18n.t('admin.package_types.volume_column'),
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (packageType) =>
         packageType.volume ? `${Number(packageType.volume).toFixed(3)} m³` : '—',
     },
@@ -67,7 +67,7 @@ defineTable<PanelPackageType>('package-types', {
       sortable: true,
       filterable: true,
       filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (packageType) => <RelativeTime iso={packageType.created_at} />,
     },
   ],

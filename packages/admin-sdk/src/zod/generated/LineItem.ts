@@ -46,6 +46,7 @@ export const LineItemSchema = z.object({
   catalog_name: z.string().nullable(),
   cost_price: z.string().nullable(),
   tax_category_id: z.string().nullable(),
+  product_id: z.string().nullable(),
   get variant() { return VariantSchema.optional(); },
   tax_category: TaxCategorySchema.optional(),
 });

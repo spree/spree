@@ -13,6 +13,14 @@ module Spree
             body.attribute :meta_description, :string,
               nullable: true,
               description: "The storefront's default meta description, in the store's default language."
+            body.attribute :meta_keywords, :string, nullable: true,
+                                                    description: "The storefront's default meta keywords, comma-separated, in the default language."
+            body.attribute :facebook, :string, nullable: true, example: 'https://facebook.com/mystore',
+                                               description: 'The Facebook page: a handle or a full URL.'
+            body.attribute :twitter, :string, nullable: true, example: 'mystore',
+                                              description: 'The X (Twitter) account: a handle or a full URL.'
+            body.attribute :instagram, :string, nullable: true, example: 'mystore',
+                                                description: 'The Instagram account: a handle or a full URL.'
             body.attribute :admin_locale, :locale, nullable: true, example: 'en',
               description: 'The language the dashboard opens in for every staff member; null lets each use their own.'
             body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
@@ -143,7 +151,7 @@ module Spree
           # all, so every signed-in staff member can read it regardless of
           # their permissions. Secret keys still need `read_settings`: a
           # scope-limited integration has no business reading operational
-          # settings (support/notification emails, routing) it wasn't granted.
+          # settings (notification emails, routing) it wasn't granted.
           # Writing always requires `write_settings`.
           skip_scope_check! only: :show, jwt_only: true
 

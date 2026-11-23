@@ -82,7 +82,7 @@ module Spree
           amount = name.to_s.delete_prefix('display_')
           [:string, nullable: nullable,
                     comment: "`#{amount}` formatted with its currency symbol in the request's language.",
-                    deprecated: "Format `#{amount}` with its currency instead. Removed in 6.1."]
+                    deprecated: "Format `#{amount}` with its currency instead. Removed in 6.5."]
         end
 
         # Declares rates and percentages, written as decimal strings without

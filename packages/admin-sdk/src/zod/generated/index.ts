@@ -47,6 +47,7 @@ export { DeliveryProfileSchema, type DeliveryProfile } from './DeliveryProfile';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
 export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
 export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZoneMember';
+export { DiagnosticsSchema, type Diagnostics } from './Diagnostics';
 export { DigitalAssetSchema, type DigitalAsset } from './DigitalAsset';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';

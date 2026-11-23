@@ -48,7 +48,8 @@ module Spree
       def order_settled_in_full?
         return false unless order.total.to_d.positive?
 
-        settled = order.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
+        completed = order.payments.completed
+        settled = completed.sum(:amount) - Spree::Refund.completed_or_unset.where(payment_id: completed.select(:id)).sum(:amount)
         settled >= order.total.to_d
       end
 

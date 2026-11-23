@@ -60,9 +60,7 @@ RSpec.describe Spree::Api::V3::Seller::ProductTypesController, type: :controller
     end
 
     # The form warns a seller which options the type is about to add to their
-    # variants. Labels, not ids: a seller manages no option-type vocabulary
-    # and has no endpoint to resolve ids against, so ids alone would leave the
-    # warning permanently blank.
+    # variants, already named so the warning needs no lookup.
     it 'names the option types picking it will add' do
       typed = create(:product_type_with_option_types, store: store)
       expected = typed.option_types.map { |option_type| option_type.label.presence || option_type.name }
@@ -73,10 +71,21 @@ RSpec.describe Spree::Api::V3::Seller::ProductTypesController, type: :controller
       expect(json_response['option_type_labels']).to all(be_present)
     end
 
+    # The variants builder offers these as rows on a new product, resolved
+    # against the seller's option types endpoint.
+    it 'lists the ids of the option types picking it will add' do
+      typed = create(:product_type_with_option_types, store: store)
+
+      get :show, params: { id: typed.prefixed_id }, as: :json
+
+      expect(json_response['option_type_ids']).to match_array(typed.option_types.map(&:prefixed_id))
+    end
+
     it 'answers an empty list for a type that adds no options' do
       get :show, params: { id: product_type.prefixed_id }, as: :json
 
       expect(json_response['option_type_labels']).to eq([])
+      expect(json_response['option_type_ids']).to eq([])
     end
 
     # Filing is the operator's, so a seller is never shown a consequence they

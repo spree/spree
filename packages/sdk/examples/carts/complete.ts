@@ -7,7 +7,7 @@ const client = createClient({
 
 // region:example
 const order = await client.carts.complete('cart_abc123', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

@@ -2,6 +2,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import {
+  adminRequest,
   login,
   openProfileDialog,
   saveCustomFieldWithPage,
@@ -174,39 +175,26 @@ test.describe('store settings — general', () => {
   // These settings are written under their plain names (`timezone`,
   // `guest_checkout`, …) since preferences became a typed contract; each must
   // still save and come back after a reload.
-  test('saves standards, storefront access, order numbers and payments, and they survive a reload', async ({
-    page,
-  }) => {
+  test('saves standards and order numbers, and they survive a reload', async ({ page }) => {
     const creds = await login(page)
     await page.goto(STORE_PATH(creds.store_id))
     const timezone = page.locator('#store-timezone')
-    const storefrontAccess = page.locator('#store-storefront-access')
-    const guestCheckout = page.getByRole('switch', { name: /^guest checkout/i })
     const prefix = page.locator('#store-order-number-prefix')
-    const captureRadios = page.getByRole('radio')
-    const onDispatch = page.getByRole('radio', { name: /on dispatch/i })
     // The form fills from the store once it loads; wait for that before editing.
     await expect(prefix).not.toHaveValue('', { timeout: 15_000 })
 
     const original = {
       timezone: (await timezone.textContent())?.trim() ?? '',
-      storefrontAccess: (await storefrontAccess.textContent())?.trim() ?? '',
-      guestCheckout: (await guestCheckout.getAttribute('aria-checked')) === 'true',
       prefix: await prefix.inputValue(),
-      capture: await captureRadios.evaluateAll((radios) =>
-        radios.findIndex((radio) => radio.getAttribute('aria-checked') === 'true'),
-      ),
     }
 
     // Browsers list this zone as `Asia/Calcutta`; the store saves and shows
     // its current IANA name.
+    // A searchable list: typing narrows it to the zone.
     await timezone.click()
-    await page.getByRole('option', { name: 'Asia/Kolkata', exact: true }).click()
-    await storefrontAccess.click()
-    await page.getByRole('option', { name: /^prices hidden/i }).click()
-    await guestCheckout.click()
+    await page.getByPlaceholder(/search timezones/i).fill('kolkata')
+    await page.getByRole('option', { name: /^Asia\/Kolkata/ }).click()
     await prefix.fill('E2E')
-    await onDispatch.click()
 
     const save = page.getByRole('button', { name: /^save$/i })
     await save.click()
@@ -215,20 +203,63 @@ test.describe('store settings — general', () => {
     await page.reload()
     await expect(prefix).toHaveValue('E2E', { timeout: 15_000 })
     await expect(timezone).toContainText('Asia/Kolkata')
-    await expect(storefrontAccess).toContainText(/prices hidden/i)
-    await expect(guestCheckout).toHaveAttribute('aria-checked', String(!original.guestCheckout))
-    await expect(onDispatch).toBeChecked()
 
     // Put the shared store back the way it was for the rest of the suite.
     await timezone.click()
-    await page.getByRole('option', { name: original.timezone, exact: true }).click()
-    await storefrontAccess.click()
-    await page.getByRole('option', { name: original.storefrontAccess, exact: true }).click()
-    await guestCheckout.click()
+    await page.getByPlaceholder(/search timezones/i).fill(original.timezone)
+    await page
+      .getByRole('option')
+      .filter({ hasText: new RegExp(`^${original.timezone}(GMT|$)`) })
+      .click()
     await prefix.fill(original.prefix)
-    if (original.capture >= 0) await captureRadios.nth(original.capture).click()
     await save.click()
     await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  // Each sits in a row with its control on the right; a download limit's
+  // number is only offered while its switch is on.
+  test('saves stock and download limits, hiding a limit that is switched off', async ({ page }) => {
+    const creds = await login(page)
+    const original = await adminRequest<{
+      low_stock_threshold: number
+      limit_digital_download_count: boolean
+      digital_asset_authorized_clicks: number
+    }>(page, creds, 'get', '/store')
+
+    try {
+      await page.goto(STORE_PATH(creds.store_id))
+      const threshold = page.getByLabel(/^low stock threshold$/i)
+      const limitCount = page.getByRole('switch', { name: /^limit number of downloads/i })
+      const allowed = page.getByLabel(/^downloads allowed$/i)
+      const save = page.getByRole('button', { name: /^save$/i })
+      await expect(threshold).not.toHaveValue('', { timeout: 15_000 })
+
+      // Start from the limit on, whatever the shared store holds.
+      if ((await limitCount.getAttribute('aria-checked')) !== 'true') await limitCount.click()
+      await expect(allowed).toBeVisible()
+      await threshold.fill('17')
+      await allowed.fill('9')
+      await save.click()
+      await expect(save).toBeDisabled({ timeout: 15_000 })
+
+      await page.reload()
+      await expect(threshold).toHaveValue('17', { timeout: 15_000 })
+      await expect(allowed).toHaveValue('9')
+
+      await limitCount.click()
+      await expect(allowed).toHaveCount(0)
+      await save.click()
+      await expect(save).toBeDisabled({ timeout: 15_000 })
+      await page.reload()
+      await expect(limitCount).toHaveAttribute('aria-checked', 'false', { timeout: 15_000 })
+      await expect(allowed).toHaveCount(0)
+    } finally {
+      await adminRequest(page, creds, 'patch', '/store', {
+        low_stock_threshold: original.low_stock_threshold,
+        limit_digital_download_count: original.limit_digital_download_count,
+        digital_asset_authorized_clicks: original.digital_asset_authorized_clicks,
+      })
+    }
   })
 
   // The e2e store supports `de` through its Europe market, so the
@@ -289,6 +320,65 @@ test.describe('store settings — general', () => {
     await metaDescription.fill('')
     await save.click()
     await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  test('saves the meta keywords and social accounts', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const keywords = page.getByLabel(/^meta keywords$/i)
+    const facebook = page.getByLabel(/^facebook$/i)
+    const twitter = page.getByLabel(/^x \(twitter\)$/i)
+    const instagram = page.getByLabel(/^instagram$/i)
+    await expect(keywords).toBeVisible({ timeout: 15_000 })
+
+    const handle = `e2e${Date.now()}`
+    await keywords.fill('coffee, beans')
+    await facebook.fill(`https://facebook.com/${handle}`)
+    await twitter.fill(`@${handle}`)
+    await instagram.fill(handle)
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(keywords).toHaveValue('coffee, beans', { timeout: 15_000 })
+    await expect(facebook).toHaveValue(`https://facebook.com/${handle}`)
+    await expect(twitter).toHaveValue(`@${handle}`)
+    await expect(instagram).toHaveValue(handle)
+
+    // Clear them so later specs in this shard start from a blank store.
+    for (const field of [keywords, facebook, twitter, instagram]) await field.fill('')
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  // Uploads, saves and then removes the logo, so the shared store ends where
+  // it started.
+  test('uploads the store logo, then removes it', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    await expect(page.locator('#store-name')).toBeVisible({ timeout: 15_000 })
+
+    const savedLogo = page.getByText(/^attached file$/i)
+    const save = page.getByRole('button', { name: /^save$/i })
+
+    await page.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
+    await expect(page.getByText(/uploading/i)).toBeHidden({ timeout: 30_000 })
+    await expect(savedLogo).toBeVisible()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(savedLogo).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^remove$/i }).click()
+    await expect(savedLogo).toHaveCount(0)
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.locator('#store-name')).toBeVisible({ timeout: 15_000 })
+    await expect(savedLogo).toHaveCount(0)
   })
 
   // A store with no storefront of its own reads back no storefront URL: the

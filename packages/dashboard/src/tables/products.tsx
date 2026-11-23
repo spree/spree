@@ -1,11 +1,7 @@
-import type { Channel } from '@spree/admin-sdk'
-import {
-  ASSIGNABLE_PRODUCT_STATUSES,
-  defineTable,
-  formatPrice,
-  ProductStockSummary,
-} from '@spree/dashboard-core'
-import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
+import type { Channel, Product } from '@spree/admin-sdk'
+import { PRODUCT_STATUSES } from '@spree/core'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
+import { ProductIdentity, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -14,7 +10,7 @@ import { channelAutocompleteProps } from '../hooks/use-channels'
 import { productTypeAutocompleteProps } from '../hooks/use-product-types'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 
-defineTable('products', {
+defineTable<Product>('products', {
   docsPath: 'products/creating-products',
   description: i18n.t('admin.table_descriptions.products'),
   title: i18n.t('admin.nav.products'),
@@ -30,16 +26,16 @@ defineTable('products', {
       sortable: true,
       default: true,
       render: (product) => (
-        <Link
-          to={'/$storeId/products/$productId' as string}
-          params={{ productId: product.id }}
-          className="flex items-center gap-3 no-underline"
-        >
-          <Thumbnail src={product.thumbnail_url} fallback={<PackageIcon />} />
-          <div className="min-w-0">
-            <div className="truncate font-medium text-foreground">{product.name}</div>
-          </div>
-        </Link>
+        <ProductIdentity
+          name={product.name}
+          thumbnailUrl={product.thumbnail_url}
+          render={
+            <Link
+              to={'/$storeId/products/$productId' as string}
+              params={{ productId: product.id }}
+            />
+          }
+        />
       ),
     },
     {
@@ -50,11 +46,21 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: ASSIGNABLE_PRODUCT_STATUSES.map((status) => ({
+      // Every status, review ones included: an operator filters to what is in
+      // review even though only the bulk action is limited to the three it
+      // may set.
+      filterOptions: PRODUCT_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`admin.pages.products.status_options.${status}`),
       })),
-      render: (product) => <StatusBadge status={product.status} />,
+      render: (product) => (
+        <StatusBadge
+          status={product.status}
+          label={i18n.t(`admin.pages.products.status_options.${product.status}`, {
+            defaultValue: product.status,
+          })}
+        />
+      ),
     },
     {
       key: 'inventory',
@@ -71,9 +77,12 @@ defineTable('products', {
       // Not filterable: the search box already matches SKUs, and matches them
       // better — it searches every variant's, where this filtered only the
       // default variant's.
+      // The SKU lives on the default variant, not the product, so it is
+      // requested only while the column is on.
+      expand: 'default_variant',
       default: false,
-      className: 'text-sm text-muted-foreground',
-      render: (product) => product.sku ?? '—',
+      className: 'text-base text-muted-foreground',
+      render: (product) => product.default_variant?.sku || '—',
     },
     {
       key: 'price',

@@ -36,12 +36,20 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   useIsMobile,
 } from '@spree/dashboard-ui'
-import { InfoIcon } from '@spree/dashboard-ui/icons'
+import {
+  ChevronDownIcon,
+  ChevronsUpDownIcon,
+  ChevronUpIcon,
+  InfoIcon,
+} from '@spree/dashboard-ui/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -91,19 +99,51 @@ const filterSchema = z.object({
  * reserved, incoming — need somewhere to say what they count. A tooltip keeps
  * that out of the header row until it is asked for.
  */
-function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boolean }) {
-  if (!column.labelHint || hideHint) return column.label
+function ColumnLabel({
+  column,
+  hideHint,
+  sort,
+}: {
+  column: ColumnDef
+  hideHint?: boolean
+  sort?: ColumnSort
+}) {
+  const SortIcon = sort && (sort.direction ? SORT_ICONS[sort.direction] : ChevronsUpDownIcon)
+  const sortIcon = SortIcon && (
+    <SortIcon
+      aria-hidden
+      className={cn(
+        'ms-1 inline size-3.5 align-[-0.125em]',
+        !sort?.direction && 'opacity-50 group-hover/th:opacity-100',
+      )}
+    />
+  )
+  // A bare text node, not wrapped in an element: the table's sizing copy of
+  // the header hides every element in a cell, and the label must stay to name
+  // the column there.
+  if (!column.labelHint || hideHint) {
+    return (
+      <>
+        {column.label}
+        {sortIcon}
+      </>
+    )
+  }
 
   return (
     <span className="inline-flex items-center gap-1">
-      {column.label}
+      <span className="inline-flex items-center">
+        {column.label}
+        {sortIcon}
+      </span>
       <Tooltip>
         <TooltipTrigger asChild>
           {/* Focusable and named, so the explanation opens on focus as well as
-              hover and reaches a screen reader the same way. */}
+              hover and reaches a screen reader the same way. Raised above the
+              sort button that covers the cell. */}
           <button
             type="button"
-            className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            className="relative z-10 cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             aria-label={column.labelHint}
           >
             <InfoIcon className="size-3.5" />
@@ -114,6 +154,32 @@ function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boole
         </TooltipContent>
       </Tooltip>
     </span>
+  )
+}
+
+interface ColumnSort {
+  direction?: 'asc' | 'desc'
+  onSort: () => void
+}
+
+const SORT_ICONS = { asc: ChevronUpIcon, desc: ChevronDownIcon }
+const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const
+
+/**
+ * Covers a sortable header cell, so the whole cell is the click target while
+ * the label stays the cell's own text. Named "Sort by <column>" rather than
+ * the bare label, so it is not mistaken for a toolbar control of the same name.
+ */
+function SortButton({ column, sort }: { column: ColumnDef; sort: ColumnSort }) {
+  const { t } = useTranslation()
+
+  return (
+    <button
+      type="button"
+      onClick={sort.onSort}
+      aria-label={t('admin.components.table_toolbar.sort_by_column', { column: column.label })}
+      className="absolute inset-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2"
+    />
   )
 }
 
@@ -142,9 +208,26 @@ export const resourceSearchSchema = z.object({
       return val
     }, z.array(z.string()))
     .optional(),
+  /** The open tab of a table with `views`; absent means the first. */
+  view: z.string().optional(),
 })
 
 export type ResourceSearch = z.infer<typeof resourceSearchSchema>
+
+/**
+ * State for a `ResourceTable` held in the component rather than the URL, so
+ * several tables can sit on one page. Spread the result onto the table.
+ */
+export function useEmbeddedTableSearch(initial: Partial<ResourceSearch> = {}) {
+  const [search, setSearch] = useState<Record<string, unknown>>(initial)
+  // Parsed once per change: the table memoizes on the parsed arrays.
+  const searchParams = useMemo(() => resourceSearchSchema.parse(search), [search])
+  return {
+    searchParams,
+    onSearchChange: (updates: Record<string, unknown>) =>
+      setSearch((previous) => ({ ...previous, ...updates })),
+  }
+}
 
 // ============================================================================
 // Props
@@ -166,6 +249,20 @@ export interface ResourceActionsContext {
   totalCount: number | undefined
 }
 
+/**
+ * One tab of a list split into parts that are never read together, such as
+ * the operator's own stock locations and their sellers'. Each tab is a fixed
+ * slice of the list, not a filter the merchant can clear.
+ */
+export interface TableView {
+  key: string
+  label: string
+  /** Request params sent while this tab is open, on top of `defaultParams`. */
+  params?: Record<string, unknown>
+  /** Columns this tab leaves out of the table, the column picker and the filters. */
+  hiddenColumns?: string[]
+}
+
 interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
   tableKey: string
@@ -184,6 +281,12 @@ interface ResourceTableProps<T> {
   queryFn: (params: never) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
   searchParams: ResourceSearch
+  /**
+   * Takes the table's state changes instead of the URL — for a table embedded
+   * in a record page beside others, which would otherwise share one `page`
+   * and `filters`. Pair with `useEmbeddedTableSearch`.
+   */
+  onSearchChange?: (updates: Record<string, unknown>) => void
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
   /**
@@ -203,6 +306,19 @@ interface ResourceTableProps<T> {
   docsPath?: string
   /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
   defaultParams?: Record<string, unknown>
+  /** Splits the list into tabs; the first opens by default. */
+  views?: TableView[]
+  /**
+   * Columns left out entirely — not shown, not offered as filters — such as
+   * the seller on a seller's own page. Adds to the open view's.
+   */
+  hiddenColumns?: string[]
+  /**
+   * Draws the table as a card — border, corners and lift — holding its
+   * toolbar and pagination, with a plain, unpinned header row: for a table
+   * embedded among a record page's cards.
+   */
+  framed?: boolean
   /**
    * Actions to render in the toolbar (e.g., "Add Product" button). Either a
    * static node, or a function that receives the current table state — use
@@ -241,7 +357,7 @@ interface ResourceTableProps<T> {
    * filter attributes.
    */
   customFieldColumns?: ColumnDef<T>[]
-  /** @deprecated Use `customFieldColumns` — removed in Spree 6.1. */
+  /** @deprecated Use `customFieldColumns` — removed in Spree 6.3. */
   metafieldColumns?: ColumnDef<T>[]
 }
 
@@ -260,11 +376,15 @@ export function ResourceTable<T extends Record<string, any>>({
   queryKey,
   queryFn,
   searchParams,
+  onSearchChange,
   title,
   hideHeader = false,
   description,
   docsPath,
-  defaultParams,
+  defaultParams: baseParams,
+  views,
+  hiddenColumns: tableHiddenColumns,
+  framed = false,
   actions,
   reorder,
   bulkActions,
@@ -287,6 +407,7 @@ export function ResourceTable<T extends Record<string, any>>({
   // with `md:` leaves its text in the accessibility tree, so "2 selected"
   // and every action label match twice.
   const isMobile = useIsMobile()
+  const labelsCovered = bulkActive && !isMobile
 
   const {
     page,
@@ -296,7 +417,18 @@ export function ResourceTable<T extends Record<string, any>>({
     search,
     filters,
     columns: urlColumns,
+    view: urlView,
   } = searchParams
+
+  const activeView = views?.find((v) => v.key === urlView) ?? views?.[0]
+  const hiddenColumns = useMemo(
+    () => [...(tableHiddenColumns ?? []), ...(activeView?.hiddenColumns ?? [])],
+    [tableHiddenColumns, activeView],
+  )
+  const defaultParams = useMemo(
+    () => (activeView?.params ? { ...baseParams, ...activeView.params } : baseParams),
+    [baseParams, activeView],
+  )
 
   // When the table is reorderable, sort is locked to the position field
   // ascending — anything else makes drag-and-drop meaningless. Otherwise
@@ -310,21 +442,24 @@ export function ResourceTable<T extends Record<string, any>>({
   const sort = reorder ? positionField : (urlSort ?? defaultSort.field)
   const dir: 'asc' | 'desc' = reorder ? 'asc' : (urlDir ?? defaultSort.direction)
 
-  const [searchInput, setSearchInput] = useState(search ?? '')
+  const searchable = table.searchable !== false
+  const [searchInput, setSearchInput] = useState(searchable ? (search ?? '') : '')
   const deferredSearch = useDeferredValue(searchInput)
 
   // Registry columns + dynamic custom-field columns. Memoized so the toolbar's
   // internal memos (FilterPanel `items` stability) keep stable deps.
   const extraColumns = customFieldColumns ?? metafieldColumns
   const allColumns = useMemo(
-    () => [...table.columns, ...(extraColumns ?? [])],
-    [table, extraColumns],
+    () => [...table.columns, ...(extraColumns ?? [])].filter((c) => !hiddenColumns.includes(c.key)),
+    [table, extraColumns, hiddenColumns],
   )
   const displayableColumns = useMemo(
     () => allColumns.filter((c) => c.displayable !== false),
     [allColumns],
   )
-  const defaultColumnKeys = getDefaultColumnKeys(table)
+  const defaultColumnKeys = getDefaultColumnKeys(table).filter(
+    (key) => !hiddenColumns.includes(key),
+  )
   const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
   const visibleColumns = useMemo(
@@ -375,7 +510,17 @@ export function ResourceTable<T extends Record<string, any>>({
   const { data, isLoading } = useQuery({
     queryKey: [
       ...queryKeyPrefix,
-      { page, limit, sort: sortString, search: deferredSearch, filters, expand: columnExpand },
+      // The fixed params are part of the key: a tab changing them would
+      // otherwise be answered from the previous tab's cache.
+      {
+        page,
+        limit,
+        sort: sortString,
+        search: deferredSearch,
+        filters,
+        expand: columnExpand,
+        params: defaultParams,
+      },
     ],
     queryFn: () => {
       const params: Record<string, unknown> = {
@@ -470,6 +615,10 @@ export function ResourceTable<T extends Record<string, any>>({
 
   // Navigation helpers
   function updateSearch(updates: Record<string, unknown>) {
+    if (onSearchChange) {
+      onSearchChange(updates)
+      return
+    }
     navigate({
       search: (prev: Record<string, unknown>) => ({ ...prev, ...updates }) as never,
     })
@@ -484,9 +633,33 @@ export function ResourceTable<T extends Record<string, any>>({
     updateSearch({ sort: s.field, dir: s.direction, page: 1 })
   }
 
+  // A header click sorts by that column ascending, and a second click flips it.
+  function columnSort(col: ColumnDef): ColumnSort | undefined {
+    if (!col.sortable) return undefined
+    const active = col.key === sort
+    return {
+      direction: active ? dir : undefined,
+      onSort: () =>
+        handleSortChange({
+          field: col.key,
+          direction: active && dir === 'asc' ? 'desc' : 'asc',
+        }),
+    }
+  }
+
   function handleFiltersChange(f: FilterRule[]) {
     updateSearch({
       filters: f.length > 0 ? JSON.stringify(f) : undefined,
+      page: 1,
+    })
+  }
+
+  // A filter set on one tab can name a column the next one hides, so a tab
+  // starts unfiltered.
+  function handleViewChange(key: string) {
+    updateSearch({
+      view: key === views?.[0]?.key ? undefined : key,
+      filters: undefined,
       page: 1,
     })
   }
@@ -543,6 +716,31 @@ export function ResourceTable<T extends Record<string, any>>({
         })
       : actions
 
+  const toolbar = (
+    <TableToolbar
+      columns={displayableColumns}
+      visibleColumns={visibleColumnKeys}
+      onVisibleColumnsChange={handleColumnsChange}
+      search={searchInput}
+      onSearchChange={handleSearchChange}
+      searchable={searchable}
+      searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
+      sort={{ field: sort, direction: dir }}
+      onSortChange={handleSortChange}
+      filters={filters as FilterRule[]}
+      onFiltersChange={handleFiltersChange}
+      allColumns={allColumns}
+      hideSort={reorderActive}
+    />
+  )
+  const pagination = meta && (
+    <Pagination
+      meta={meta}
+      onPageChange={(p) => updateSearch({ page: p })}
+      onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
+    />
+  )
+
   return (
     // Below `sm` the table spans the full width: the page gutter plus the
     // card's own border spends ~34px of a 390px screen on chrome, and a table
@@ -589,26 +787,31 @@ export function ResourceTable<T extends Record<string, any>>({
       {pageOwnsHeader && resolvedActions && (
         <div className="flex flex-wrap items-center justify-end gap-2">{resolvedActions}</div>
       )}
-      <TableToolbar
-        columns={displayableColumns}
-        visibleColumns={visibleColumnKeys}
-        onVisibleColumnsChange={handleColumnsChange}
-        search={searchInput}
-        onSearchChange={handleSearchChange}
-        searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
-        sort={{ field: sort, direction: dir }}
-        onSortChange={handleSortChange}
-        filters={filters as FilterRule[]}
-        onFiltersChange={handleFiltersChange}
-        allColumns={allColumns}
-        hideSort={reorderActive}
-      />
-      {/* `overflow-x-clip`, never `overflow-hidden`: the rows clip to the
-          rounded frame horizontally, but a `hidden` overflow on either axis
-          makes this a scroll container, and the pinned column row inside
-          would then stick to THIS box rather than to the page — which is to
-          say, scroll away with it. */}
-      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+      {views && views.length > 1 && (
+        <Tabs value={activeView?.key} onValueChange={(v) => handleViewChange(v as string)}>
+          <TabsList>
+            {views.map((v) => (
+              <TabsTrigger key={v.key} value={v.key}>
+                {v.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
+      {!framed && toolbar}
+      {/* Borderless: the list sits on the page with no card around it, its
+          header a rounded band and its rows divided by their own rules.
+          `overflow-x-clip`, never `overflow-hidden`: a `hidden` overflow on
+          either axis makes this a scroll container, and the pinned column row
+          inside would then stick to THIS box rather than to the page — which
+          is to say, scroll away with it. */}
+      <Card
+        className={cn(
+          'gap-0 overflow-x-clip',
+          !framed && 'rounded-none border-0 bg-transparent shadow-none',
+        )}
+      >
+        {framed && <div className="p-3">{toolbar}</div>}
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -619,7 +822,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedTop roundedBottom>
+              <Table stickyHeader={!framed} band={!framed}>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -682,14 +885,15 @@ export function ResourceTable<T extends Record<string, any>>({
                 the same sticky offset as the pinned header keeps the two
                 travelling together; the start padding clears the select-all
                 checkbox, which stays visible and interactive underneath. */}
-            {bulkActive && !isMobile && (
+            {labelsCovered && (
               // `pointer-events-none` on the overlay, re-enabled only on the
               // bar itself: the start-padding gutter is part of this div and
               // would otherwise swallow every click aimed at the select-all
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
               <div className="pointer-events-none sticky top-header-height z-30 h-0">
-                <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
+                {/* The header band's height, so the actions centre on its checkbox. */}
+                <div className="flex h-10 items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
@@ -739,7 +943,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedTop roundedBottom>
+            <Table stickyHeader={!framed} band={!framed}>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -757,27 +961,38 @@ export function ResourceTable<T extends Record<string, any>>({
                       />
                     </TableHead>
                   )}
-                  {headerColumns.map((col) => (
-                    <TableHead
-                      key={col.key}
-                      className={cn(
-                        col.headerClassName,
-                        'transition-colors duration-150 ease-out',
-                        // Hide the text, not the cell: `opacity-0` would erase
-                        // the cell's muted background and bottom rule too,
-                        // leaving rows visible through the band behind the
-                        // bulk actions overlay. Only where that overlay is
-                        // drawn — on a phone the bar is at the foot of the
-                        // screen and the column labels stay readable.
-                        bulkActive && !isMobile && 'text-transparent select-none',
-                      )}
-                    >
-                      {/* The hint hides with the label: an info icon floating
+                  {headerColumns.map((col) => {
+                    const colSort = columnSort(col)
+                    return (
+                      <TableHead
+                        key={col.key}
+                        aria-sort={colSort?.direction && ARIA_SORT[colSort.direction]}
+                        className={cn(
+                          col.headerClassName,
+                          'transition-colors duration-150 ease-out',
+                          colSort && 'group/th relative',
+                          colSort &&
+                            !labelsCovered &&
+                            'hover:text-foreground has-[>button:active]:text-foreground/70',
+                          colSort?.direction && 'text-foreground',
+                          // Hide the text, not the cell: `opacity-0` would erase
+                          // the cell's muted background and bottom rule too,
+                          // leaving rows visible through the band behind the
+                          // bulk actions overlay. Only where that overlay is
+                          // drawn — on a phone the bar is at the foot of the
+                          // screen and the column labels stay readable.
+                          labelsCovered && 'text-transparent select-none',
+                        )}
+                      >
+                        {/* The hint hides with the label: an info icon floating
                           over the bulk-actions band would be the only thing
                           left in the row. */}
-                      <ColumnLabel column={col} hideHint={bulkActive && !isMobile} />
-                    </TableHead>
-                  ))}
+                        <ColumnLabel column={col} hideHint={labelsCovered} sort={colSort} />
+                        {/* Not clickable while the bulk bar covers the labels. */}
+                        {colSort && !labelsCovered && <SortButton column={col} sort={colSort} />}
+                      </TableHead>
+                    )
+                  })}
                   {rowActionsEnabled && (
                     <TableHead className="w-12">
                       <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
@@ -833,10 +1048,8 @@ export function ResourceTable<T extends Record<string, any>>({
                         // the panel floats over its neighbours, and without this
                         // a merchant editing a figure has to count rows to see
                         // which record they are editing.
-                        className={cn(
-                          'has-data-[popup-open]:bg-accent-strong/40',
-                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
-                        )}
+                        // The table's `band` style paints both from these.
+                        data-selected={isSelected || undefined}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">
@@ -863,14 +1076,11 @@ export function ResourceTable<T extends Record<string, any>>({
             </Table>
           </>
         )}
+        {/* Nothing to page through in an empty table. No rule of its own: the
+            last row's border already divides the two. */}
+        {framed && !!meta?.count && <div className="px-3 py-2">{pagination}</div>}
       </Card>
-      {meta && (
-        <Pagination
-          meta={meta}
-          onPageChange={(p) => updateSearch({ page: p })}
-          onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-        />
-      )}
+      {!framed && pagination}
       {/* Clears the fixed bottom bar so it can't cover the pagination or the
           last row while a selection is active. Carries the same safe-area
           inset the bar pads itself by, or the home indicator's worth of bar

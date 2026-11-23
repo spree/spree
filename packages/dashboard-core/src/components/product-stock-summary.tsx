@@ -45,7 +45,7 @@ export function ProductStockSummary({ product }: { product: ProductStockFields }
   )
 
   return (
-    <span className="text-sm text-muted-foreground">
+    <span className="text-base text-muted-foreground">
       {status}
       {product.variant_count > 1 && (
         <>

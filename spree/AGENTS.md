@@ -13,9 +13,11 @@ Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventio
 - Per-request context: `Spree::Current.store`, `.currency`, `.locale`.
 - Customers and staff: `Spree.customer_class` and `Spree.admin_user_class`, never a user model constant (`Spree.user_class` is deprecated).
 - Swappable classes are registered in `Spree::Dependencies` (`Spree::Dependencies.cart_add_item_workflow = 'MyApp::AddItem'`). The old `*_service` keys are deprecated, and some are no longer consulted at all.
+- Removing a public Ruby API (a class, a method or a scope, once its deprecation shim is gone) adds it to `Spree::RemovedApis::REMOVED` in `core/lib/spree/removed_apis.rb`, under the release that removed it, with what replaced it. The `NoMethodError` or `NameError` then names the replacement, so coding agents and upgraders working from old Spree knowledge are pointed to the current API. Then regenerate the docs page that lists them: `UPDATE_DOCS=1 pnpm test:rspec core spec/lib/spree/removed_apis_spec.rb`.
 - YARD comments (`@param`, `@return`) on classes and non-obvious public methods only; never on private helpers.
 - Descriptive variable names, no abbreviations.
 - Jobs that iterate over records use `ActiveJob::Continuable`.
+- Report errors with `Rails.error.report(error, source: 'spree.<area>')`, not `Rails.logger.error`, so they reach the diagnostics error log (`docs/plans/6.0-diagnostics-and-issue-reporting.md`).
 
 ## Models
 
@@ -83,7 +85,7 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 - Associations are their own serializers, never hand-built hashes. Keep serializers lean; logic goes on the model. Never use `typelize_from`.
 - An attribute block only reads: a method call, a format or a one-line fallback. Branching, lookups and queries go on the model (`user.status`, `user.invited_by(store)`), where they are tested once and reused outside the API.
 - Value lists: **closed** lists use `enum:` + `enum_type_name:` and are added to `Typelizer::OpenEnums::CLOSED_LIST_NAMES`; **open** lists (`has_status`, kinds extensions can add) use `enum_type_name:` alone; registry-driven `type` attributes stay `:string` with a `comment:` listing the built-ins. Both named kinds are generated into `@spree/core`.
-- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.1.'`), not just described.
+- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.5.'`), not just described.
 - After a serializer change run the type pipeline: `cd spree/api && bundle exec rake typelizer:generate`, then `pnpm generate:zod` from the root (the Lefthook pre-commit hook does both), then integration specs and `bundle exec rake rswag:specs:swaggerize`. Restart Rails — Alba caches definitions at boot.
 
 ## Events and webhooks
@@ -112,7 +114,9 @@ See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/ema
 
 ## Money, time and translations
 
+- A store's locale and currency come from its default market: `store.default_market.default_locale`, `store.default_market.currency`. The store's own `default_locale`, `supported_locales` and `default_currency` attributes are legacy — never read or set them in new code or specs; give a spec's store its locale by updating its default market.
 - Money: `BigDecimal` only — no `.to_f`, `Float()` or float literals on amounts. Use `Spree::Money::Rounding`: `to_currency` to round (only when persisting, serializing or calling a gateway), `to_minor_units` / `from_minor_units`, `parse_canonical` for request input (canonical decimal strings, no locale parsing), `format` for output. A third party that needs a JSON number gets `.to_f` once, with a comment.
+- A payment whose gateway answered `requested?` waits in `requested` for the provider's webhook (`docs/plans/6.0-adyen-payment-provider.md`). Code that moves money refuses it, settlement leaves it alone, and code that sums money counts it as authorized. Captured and refunded money counts completed capture events and refunds only (an empty, not yet backfilled status counts as completed); balance checks subtract every refund that has not failed.
 - Store dates use the store's zone: `Time.find_zone(store.preferred_timezone) || Time.zone`. Never `Time.zone.parse` operator input meant as a fixed instant — use `iso8601`.
 - `I18n.t('spree.<key>')` with the full key (`Spree.t` is deprecated). Keys live in `config/locales/en.yml`. Before removing a key `i18n-tasks unused` reports, check it isn't built dynamically.
 

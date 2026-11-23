@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/checkout/return","channel":"Web","expiresAt":"2026-11-18T18:43:01Z","applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":11000,"currency":"USD"},"reference":"or_UkLWZg9DAJ-1","merchantOrderReference":"or_UkLWZg9DAJ","countryCode":"US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperEmail":"jone_collins@volkman.ca","payable":false,"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","recurringProcessingModel":"CardOnFile","shopperInteraction":"Ecommerce","additionalData":{"manualCapture":"true"},"lineItems":[{"id":"li_UkLWZg9DAJ","description":"Product
+        15199","sku":"SKU-1","quantity":1,"amountIncludingTax":1000},{"id":"delivery","description":"Delivery","quantity":1,"amountIncludingTax":10000}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-985dc6481e3a
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:01 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '3573'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-87f61ef977de59092b1ce8331be39b86-ae738a62b7d0563e-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-985dc6481e3a
+      Pspreference:
+      - FGZZQ95V27XN4MW5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=920022A374F1A4209DFBCE98EA25735F; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=Z6VfVxQgjQxyNCrBypIH.8uahSLoRMq6b_CV2Z3Ewnc-1795023781.1944995-1.0.1.1-3_qCpyxFLrW6m.zBvfNg_8_5nf1riEbfdp7DKU0u797FV2wdqp48OSrsZEeHnxOKJtnV66Wszc1fy4tXL7gXE6R5ZbYD_lOKNSqtFRWV7Gr2RqgvoKg96f2tJBS774Ox;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:01 GMT
+      - _cfuvid=xTyNxKhgRF8zeZqHyzJ0B40bQabtR49FgVspnPF53So-1795023781.1944995-1.0.1.1-gvlOxjnarp7ic9LNvfmuinQw21dni09mUoMPvfe26nk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c668780095a1-WAW
+    body:
+      encoding: UTF-8
+      string: '{"additionalData":{"manualCapture":"true"},"amount":{"currency":"USD","value":11000},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"channel":"Web","countryCode":"US","expiresAt":"2026-11-18T19:43:01+01:00","id":"CS8688584B04E6B5E40CB92A7","lineItems":[{"amountExcludingTax":0,"amountIncludingTax":1000,"description":"Product
+        15199","id":"li_UkLWZg9DAJ","quantity":1,"sku":"SKU-1","taxAmount":0,"taxPercentage":0},{"amountExcludingTax":0,"amountIncludingTax":10000,"description":"Delivery","id":"delivery","quantity":1,"taxAmount":0,"taxPercentage":0}],"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","merchantOrderReference":"or_UkLWZg9DAJ","payable":false,"recurringProcessingModel":"CardOnFile","reference":"or_UkLWZg9DAJ-1","returnUrl":"https:\/\/shop.example.com\/checkout\/return","shopperEmail":"jone_collins@volkman.ca","shopperInteraction":"Ecommerce","shopperLocale":"en-US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:01 GMT
+recorded_with: VCR 6.4.1

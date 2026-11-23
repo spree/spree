@@ -231,7 +231,7 @@ function CreateRequirementSheet({
             // `role="alert"`: the message appears after a failed save, so a
             // screen reader has to be told rather than the operator being
             // expected to notice new text.
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive text-base">
               {saveError}
             </p>
           )}
@@ -385,7 +385,7 @@ function EditRequirementForm({
             // `role="alert"`: the message appears after a failed save, so a
             // screen reader has to be told rather than the operator being
             // expected to notice new text.
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive text-base">
               {saveError}
             </p>
           )}
@@ -596,7 +596,7 @@ function SettingSwitch({
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex flex-col">
-        <label htmlFor={id} className="font-medium text-sm">
+        <label htmlFor={id} className="font-medium text-base">
           {label}
         </label>
         <span className="text-muted-foreground text-xs">{description}</span>

@@ -33,6 +33,32 @@ module Spree
         expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
       end
 
+      describe 'attributes an extension made writable' do
+        around do |example|
+          original = Spree::Cart.additional_permitted_attributes
+          example.run
+          Spree::Cart.additional_permitted_attributes = original
+        end
+
+        it 'assigns a column declared with Spree::Cart.additional_permitted_attributes' do
+          Spree::Cart.additional_permitted_attributes += [:accept_marketing]
+
+          result = described_class.call(cart: cart, params: { accept_marketing: true })
+
+          expect(result).to be_success
+          expect(cart.reload.accept_marketing).to be(true)
+        end
+
+        it 'leaves core fields to their own handling' do
+          cart.update!(metadata: { 'source' => 'campaign' })
+          Spree::Cart.additional_permitted_attributes += [:metadata]
+
+          described_class.call(cart: cart, params: { metadata: { 'channel' => 'email' } })
+
+          expect(cart.reload.metadata).to include('source' => 'campaign', 'channel' => 'email')
+        end
+      end
+
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
 

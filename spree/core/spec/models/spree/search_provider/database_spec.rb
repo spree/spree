@@ -208,6 +208,43 @@ module Spree
           expect(result.products).to include(product_1, product_2)
           expect(result.products).not_to include(product_3)
         end
+
+        # A product is listed when some variant is priced and some variant is in
+        # stock, but the value the shopper picked must be on one that is.
+        context 'when the only variant carrying a value has no price' do
+          let(:filters) { { 'with_option_value_ids' => [red.prefixed_id] } }
+
+          before { product_2.variants.detect { |variant| variant.option_values.include?(red) }.prices.delete_all }
+
+          it 'does not list the product' do
+            expect(provider.search_and_filter(scope: scope, filters: filters).products).not_to include(product_2)
+          end
+
+          it 'still lists it in the back office' do
+            back_office = described_class.new(store, audience: nil)
+
+            expect(back_office.search_and_filter(scope: scope, filters: filters).products).to include(product_2)
+          end
+        end
+
+        context 'when the shopper asks for stock' do
+          let(:filters) { { 'with_option_value_ids' => [blue.prefixed_id], 'in_stock' => '1' } }
+          # product_1 stays in stock through this red variant; its blue one is sold out.
+          let!(:product_1_red) { create(:variant, product: product_1, option_values: [red, large]) }
+
+          before do
+            Spree::StockLevel.update_all(count_on_hand: 0, backorderable: false)
+            Spree::StockLevel.where(variant: product_1_red).update_all(count_on_hand: 5)
+            Spree::StockLevel.where(variant: product_3.variants).update_all(count_on_hand: 5)
+          end
+
+          it 'lists only products whose matching variant is itself in stock' do
+            result = provider.search_and_filter(scope: scope, filters: filters)
+
+            expect(result.products).to include(product_3)
+            expect(result.products).not_to include(product_1)
+          end
+        end
       end
 
       context "with 'manual' sort by category" do

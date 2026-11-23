@@ -4,8 +4,8 @@ import { createShippedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
 /** One of the order page's cards, found by its title. */
 function card(page: Page, title: RegExp) {
   return page
-    .locator('[data-slot="card"]')
-    .filter({ has: page.locator('[data-slot="card-title"]', { hasText: title }) })
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: title }) })
     .first()
 }
 

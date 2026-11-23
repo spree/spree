@@ -21,7 +21,7 @@ module Spree
     # without this the default scope propagates into every join — taking the
     # history of those units out of `for_store` and out of the API with it.
     belongs_to :stock_level, -> { with_deleted }, class_name: 'Spree::StockLevel', inverse_of: :stock_movements
-    # @deprecated Replaced by the concrete cause keys below; dropped in 6.1.
+    # @deprecated Replaced by the concrete cause keys below; dropped in 6.3.
     belongs_to :originator, polymorphic: true, optional: true
 
     # The cause. A fulfillment-driven row carries its order too, so "which
@@ -76,7 +76,7 @@ module Spree
     delegate :variant, :variant_id, to: :stock_level, allow_nil: true
     delegate :product, to: :variant
 
-    # `stock_item_id` rides along for one release beside the name that replaced
+    # `stock_item_id` rides along until 6.5 beside the name that replaced
     # it: Ransack resolves attribute aliases, and dropping the old filter would
     # hand a client still sending it the whole collection rather than an error.
     self.whitelisted_ransackable_attributes = %w[quantity kind reason created_at stock_level_id
@@ -139,15 +139,15 @@ module Spree
       Spree::Money.new(unit_cost, currency: purchase_order&.currency)
     end
 
-    # @deprecated Use {#stock_level}; removed in 6.1.
+    # @deprecated Use {#stock_level}; removed in 6.3.
     def stock_item
-      Spree::Deprecation.warn('Spree::StockMovement#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      Spree::Deprecation.warn('Spree::StockMovement#stock_item is deprecated and will be removed in Spree 6.3. Use #stock_level instead.')
       stock_level
     end
 
-    # @deprecated Use {#stock_level=}; removed in 6.1.
+    # @deprecated Use {#stock_level=}; removed in 6.3.
     def stock_item=(record)
-      Spree::Deprecation.warn('Spree::StockMovement#stock_item= is deprecated and will be removed in Spree 6.1. Use #stock_level= instead.')
+      Spree::Deprecation.warn('Spree::StockMovement#stock_item= is deprecated and will be removed in Spree 6.3. Use #stock_level= instead.')
       self.stock_level = record
     end
 

@@ -170,7 +170,7 @@ function TranslationsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {isError ? (
-              <p className="px-6 py-10 text-center text-muted-foreground text-sm">
+              <p className="px-6 py-10 text-center text-muted-foreground text-base">
                 {t('admin.pages.translations.load_error')}
               </p>
             ) : isLoading ? (
@@ -215,7 +215,7 @@ function TranslationsPage() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Progress value={percentage} className="flex-1" />
-                            <span className="whitespace-nowrap text-muted-foreground text-sm tabular-nums">
+                            <span className="whitespace-nowrap text-muted-foreground text-base tabular-nums">
                               {percentage}%
                             </span>
                           </div>
@@ -274,7 +274,7 @@ function TranslationsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {isError ? (
-              <p className="px-6 py-10 text-center text-muted-foreground text-sm">
+              <p className="px-6 py-10 text-center text-muted-foreground text-base">
                 {t('admin.pages.translations.load_error')}
               </p>
             ) : isLoading ? (

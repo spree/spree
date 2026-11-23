@@ -199,7 +199,7 @@ function ReasonRow({
       </TableCell>
       {withCode && (
         <TableCell>
-          <code className="text-sm">{reasonCode(reason)}</code>
+          <code className="text-base">{reasonCode(reason)}</code>
         </TableCell>
       )}
       <TableCell>
@@ -352,7 +352,7 @@ function ReasonFormFields({
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

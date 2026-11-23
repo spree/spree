@@ -13,7 +13,7 @@ module Spree
         class OrderLineItemSerializer < V3::BaseSerializer
           typelize name: :string, sku: [:string, nullable: true], options_text: [:string, nullable: true],
                    quantity: :number, currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], variant_id: [:string, nullable: true],
-                   thumbnail_url: [:string, nullable: true]
+                   thumbnail_url: [:string, nullable: true], product_id: [:string, nullable: true]
 
           attributes :name, :options_text, :quantity, :currency
 
@@ -22,7 +22,7 @@ module Spree
           money_attributes :discounted_amount,
                            :additional_tax_total, :total
 
-          prefixed_id_attributes :variant
+          prefixed_id_attributes :variant, :product
 
           # How a seller finds the item on their own shelf.
           attribute :sku do |line_item|

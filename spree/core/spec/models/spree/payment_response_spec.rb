@@ -52,6 +52,22 @@ RSpec.describe Spree::PaymentResponse do
     end
   end
 
+  describe '#requested?' do
+    it 'is false with no reference by default' do
+      response = described_class.new(true, 'Captured')
+
+      expect(response).not_to be_requested
+      expect(response.reference).to be_nil
+    end
+
+    it 'carries a requested answer and its reference' do
+      response = described_class.new(true, 'Capture requested', {}, requested: true, reference: 'PSP123')
+
+      expect(response).to be_requested
+      expect(response.reference).to eq('PSP123')
+    end
+  end
+
   describe 'YAML serialization' do
     it 'round-trips through YAML.safe_load' do
       original = described_class.new(true, 'Captured', { 'ref' => '42' },

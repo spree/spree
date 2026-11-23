@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  FIXTURE_LEDGER_RETURNS_LOCATION,
+  FIXTURE_LEDGER_SELLER,
+  FIXTURE_TRANSFER_SOURCE,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+} from './helpers'
 
 const STOCK_LOCATIONS_PATH = (storeId: string) => `/${storeId}/settings/stock-locations`
 const CTA = /add stock location/i
@@ -17,6 +25,42 @@ test.describe('stock locations', () => {
   test('lists stock locations', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
+  })
+
+  test("splits your own locations from your sellers' into tabs", async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
+    const search = page.getByPlaceholder(/search by name/i)
+    const sellerColumn = page.getByRole('columnheader', { name: /^seller$/i })
+
+    // Your own opens first: no seller's warehouse, and no seller column.
+    await expect(page.getByRole('tab', { name: /^your locations$/i })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    await expect(sellerColumn).toHaveCount(0)
+    await search.fill(FIXTURE_TRANSFER_SOURCE)
+    await expect(rowButton(page, FIXTURE_TRANSFER_SOURCE)).toBeVisible({ timeout: 15_000 })
+    await search.fill(FIXTURE_LEDGER_RETURNS_LOCATION)
+    await expect(page.getByText(/no stock locations/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('tab', { name: /^sellers' locations$/i }).click()
+    await expect(page).toHaveURL(/[?&]view=sellers/)
+    await expect(sellerColumn).toBeVisible()
+    const sellerRow = page
+      .getByRole('row')
+      .filter({ has: rowButton(page, FIXTURE_LEDGER_RETURNS_LOCATION) })
+    await expect(sellerRow).toContainText(FIXTURE_LEDGER_SELLER, { timeout: 15_000 })
+    await search.fill(FIXTURE_TRANSFER_SOURCE)
+    await expect(page.getByText(/no stock locations/i)).toBeVisible({ timeout: 15_000 })
+
+    // The tab is in the address, so it survives a reload.
+    await page.reload()
+    await expect(page.getByRole('tab', { name: /^sellers' locations$/i })).toHaveAttribute(
+      'aria-selected',
+      'true',
+      { timeout: 15_000 },
+    )
   })
 
   test('creates a new stock location', async ({ page }) => {

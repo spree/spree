@@ -6,7 +6,6 @@ import {
   HomeIcon,
   PackageIcon,
   SettingsIcon,
-  StoreIcon,
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { OnboardingNavBadge } from '../components/onboarding-nav-badge'
@@ -82,15 +81,6 @@ nav.add({
   icon: HandCoinsIcon,
   position: 140,
   subject: 'seller_earnings',
-})
-
-nav.add({
-  key: 'profile',
-  label: i18n.t('nav.profile'),
-  path: '/profile',
-  icon: StoreIcon,
-  position: 150,
-  subject: 'seller_profile',
 })
 
 // Settings opens the landing page (and the secondary rail on wide viewports).

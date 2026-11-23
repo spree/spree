@@ -1,5 +1,17 @@
 # @spree/sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `client.store.get()` now also returns the store's `meta_keywords`, `logo_url`, social accounts (`facebook`, `twitter`, `instagram`) and `customer_support_email`, so a storefront can read its logo and structured data from the Store API instead of environment variables.
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
 ## 6.0.3
 
 ### Patch Changes

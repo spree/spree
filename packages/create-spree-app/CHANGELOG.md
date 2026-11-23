@@ -1,5 +1,17 @@
 # create-spree-app
 
+## 2.5.0
+
+### Minor Changes
+
+- [#15205](https://github.com/spree/spree/pull/15205) [`92394a3`](https://github.com/spree/spree/commit/92394a31735510bbb1097f0c80ea9e944ddf3554) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New projects now depend on `@spree/docs` on the Spree major (`^6.0.0-0`) instead of `latest`, since the docs package now carries the Spree version. Their agent skills come from the `spree/agent-skills` release tagged for the Spree version, and their `AGENTS.md` describes the local docs and skills as matched to the project's Spree version, tells agents to compare the installed docs version with the server's in `spree info`, and no longer recommends the deprecated `spree rspec`, `spree routes`, `spree rails` and `spree rake` commands.
+
+### Patch Changes
+
+- [#15215](https://github.com/spree/spree/pull/15215) [`b63350e`](https://github.com/spree/spree/commit/b63350e16bb7b0a8fa7c40c0f0624e951eba6026) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - After starting services, pressing Ctrl+C in `create-spree-app` now prints what to do next: `cd` into the project, then `pnpm run dev` to start the store (finishing setup if Ctrl+C interrupted it), or `pnpm spree stop` to stop containers that are still running. Before, Ctrl+C also ended the `npx` / `pnpm dlx` wrapper, so the setup exited without saying what to do next. Every `cd` hint now uses the path the project was created at, such as `projects/my-store`, instead of only its folder name.
+
+- [#15196](https://github.com/spree/spree/pull/15196) [`78b297e`](https://github.com/spree/spree/commit/78b297e65e95d278dae6e6375c1875ea542ef6c0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New projects' agent instructions now describe in one line that `spree generate` ejects a project still on the prebuilt image, instead of a whole section.
+
 ## 2.4.2
 
 ### Patch Changes

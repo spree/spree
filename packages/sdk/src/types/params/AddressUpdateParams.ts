@@ -22,9 +22,9 @@ export type AddressUpdateParams = {
    * partial address.
    */
   quick_checkout?: boolean
-  /** @deprecated Use `country_code`. Removed in 6.1. */
+  /** @deprecated Use `country_code`. Removed in 6.5. */
   country_iso?: string
-  /** @deprecated Use `state_code`. Removed in 6.1. */
+  /** @deprecated Use `state_code`. Removed in 6.5. */
   state_abbr?: string
   /** Makes this the default billing address. */
   is_default_billing?: boolean

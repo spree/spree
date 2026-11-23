@@ -55,6 +55,11 @@ module Spree
           # so the minimum-products requirement asks the same question free.
           attributes :products_count
 
+          # What is live and what waits on the operator's review, read in the
+          # same query as the total above.
+          typelize(Spree::Product::ALL_STATUSES.to_h { |status| [status.to_sym, :number] })
+          attribute :products_count_by_status, &:products_count_by_status
+
           attributes :users_count
 
           # How far through the marketplace's checklist this seller is — what
@@ -77,6 +82,11 @@ module Spree
           one :returns_address,
               resource: proc { Spree.api.admin_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
+
+          # The stock location the returns address is read from. The address
+          # is not the seller's own to write — it is edited on this location.
+          typelize returns_location_id: [:string, nullable: true]
+          prefixed_id_attributes :returns_location
 
           expandable_custom_fields admin: true
         end

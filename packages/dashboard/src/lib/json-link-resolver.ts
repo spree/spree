@@ -19,9 +19,9 @@ const PREFIX_DESTINATIONS: Record<string, { to: string; paramName: string }> = {
 const PREFIXED_ID_RE = /^([a-z]+(?:_[a-z]+)*)_([A-Za-z0-9]{6,})$/
 
 /**
- * Build a `JsonValueLinkResolver` bound to the current store. Pass the
- * result to `<JsonPreviewDrawer resolveLink={...} />` (or via
- * `<PageHeader jsonPreview={{ resolveLink: ..., ... }} />`).
+ * Build a `JsonValueLinkResolver` bound to the current store. The store
+ * layout provides it to every `PageHeader` through `JsonLinkResolverProvider`,
+ * so pages don't pass it themselves.
  */
 export function spreeJsonLinkResolver(storeId: string): JsonValueLinkResolver {
   return (value) => {

@@ -87,7 +87,7 @@ function GettingStartedPage() {
           checklist read top to bottom, and five separate frames made it read as
           five unrelated things. Opens on the requested step, or else the first
           unfinished one. */}
-      <Card className="overflow-hidden py-0">
+      <Card className="overflow-hidden">
         <Accordion
           value={open ?? (opening ? [opening] : [])}
           onValueChange={(value) => setOpen(value as string[])}
@@ -117,7 +117,7 @@ function GettingStartedPage() {
                     fallback={
                       <>
                         {description && (
-                          <p className="text-muted-foreground text-sm">{description}</p>
+                          <p className="text-muted-foreground text-base">{description}</p>
                         )}
                         {link && cta && (
                           <Button asChild variant={task.done ? 'outline' : 'default'}>

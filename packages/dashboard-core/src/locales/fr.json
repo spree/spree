@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Communauté",
-      "contact_support": "Contacter le support",
       "documentation": "Documentation",
       "edit_profile": "Modifier le profil",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
       },
       "log_out": "Se déconnecter",
-      "preferences": "Préférences",
-      "view_store": "Voir la boutique"
+      "report_issue": "Signaler un problème",
+      "send_feedback": "Envoyer un avis"
     },
     "actions": {
       "actions_menu": "Actions",
@@ -102,7 +101,11 @@
       "default_shipping": "Livraison par défaut",
       "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
-      "set_default_shipping": "Définir comme adresse de livraison par défaut"
+      "set_default_shipping": "Définir comme adresse de livraison par défaut",
+      "columns": {
+        "address": "Adresse",
+        "defaults": "Par défaut pour"
+      }
     },
     "auth": {
       "back_to_login": "Retour à la connexion",
@@ -174,6 +177,8 @@
       "no_results": "Aucun résultat",
       "combobox_more_results_one": "1 résultat de plus non affiché. Saisissez pour rechercher.",
       "combobox_more_results_other": "{{count}} résultats de plus non affichés. Saisissez pour rechercher.",
+      "search_min_length_one": "Saisissez au moins 1 caractère pour rechercher.",
+      "search_min_length_other": "Saisissez au moins {{count}} caractères pour rechercher.",
       "none": "Aucun",
       "optional": "Facultatif",
       "or": "ou",
@@ -190,7 +195,8 @@
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
       "yes": "Oui",
       "done": "Terminé",
-      "error": "Une erreur s'est produite."
+      "error": "Une erreur s'est produite.",
+      "unsaved_label": "Modifications non enregistrées"
     },
     "components": {
       "address_block": {
@@ -321,7 +327,8 @@
         "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
         "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
         "upload_failed": "Échec du téléversement : {{message}}",
-        "uploading": "Téléversement…"
+        "uploading": "Téléversement…",
+        "replace": "Remplacer le fichier"
       },
       "import_button": {
         "delimiter_label": "Séparateur de colonnes",
@@ -342,7 +349,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Profondeur de réduction",
         "copied": "Copié",
-        "copy_all": "Tout copier",
+        "copy_curl": "Copier en curl",
+        "copy_json": "Copier le JSON",
         "depth": "Profondeur {{level}}",
         "failed_to_load": "Échec du chargement : {{message}}",
         "open_raw": "Ouvrir la réponse brute",
@@ -437,11 +445,8 @@
           "this_month": "Ce mois-ci",
           "today": "Aujourd'hui"
         },
-        "date_range_end": "Fin",
-        "date_range_start": "Début",
         "descending": "Décroissant",
         "filter_by": "Filtrer par…",
-        "filter_date_placeholder": "Choisir une date",
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
@@ -474,8 +479,12 @@
         "search_placeholder": "Rechercher…",
         "select_all": "Tout sélectionner",
         "sort_by": "Trier par",
+        "sort_by_column": "Trier par {{column}}",
         "sort_tooltip": "Trier",
-        "visible_columns": "Colonnes visibles"
+        "visible_columns": "Colonnes visibles",
+        "row_density": "Densité des lignes",
+        "density_comfortable": "Confortable",
+        "density_compact": "Compacte"
       },
       "tag_combobox": {
         "create_option": "Créer « {{tag}} »",
@@ -487,6 +496,11 @@
         "label": "Thème",
         "light": "Clair",
         "system": "Système"
+      },
+      "timezone_combobox": {
+        "empty": "Aucun fuseau horaire trouvé",
+        "placeholder": "Sélectionner un fuseau horaire",
+        "search_placeholder": "Rechercher un fuseau horaire…"
       },
       "wizard": {
         "discard_cancel": "Continuer",
@@ -501,6 +515,40 @@
         "in_stock_short": "En stock",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "developer_inspector": {
+        "title": "Outils de développement",
+        "description": "Requêtes à l’Admin API depuis cet onglet, conservées en mémoire uniquement. Les jetons et mots de passe sont masqués.",
+        "system_info": "Informations système",
+        "clear": "Effacer",
+        "tabs": {
+          "requests": "Requêtes",
+          "errors": "Erreurs"
+        },
+        "empty_requests": "Aucune requête pour l’instant. Utilisez le tableau de bord et elles apparaîtront ici.",
+        "empty_errors": "Aucune requête en échec.",
+        "select_request": "Sélectionnez une requête pour voir ses détails.",
+        "network_error": "Erreur réseau",
+        "status": "Statut",
+        "duration": "Durée",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID de requête",
+        "error_code": "Code d’erreur",
+        "query": "Paramètres de requête",
+        "request_body": "Corps de la requête",
+        "response_body": "Corps de la réponse",
+        "no_body": "Aucun corps",
+        "copy_curl": "Copier en curl",
+        "copy_sdk": "Copier en appel SDK",
+        "copy_response": "Copier la réponse",
+        "copy_request_id": "Copier l’ID de requête",
+        "copied": "Copié",
+        "menu_open": "Outils de développement"
+      },
+      "server_error": {
+        "title": "Une erreur s'est produite sur le serveur",
+        "request_id": "Requête {{id}}",
+        "report": "Signaler"
       }
     },
     "currency_amounts": {
@@ -971,6 +1019,24 @@
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
         }
+      },
+      "seller": {
+        "about": {
+          "label": "À propos",
+          "help": "Affiché sur le profil boutique du vendeur."
+        },
+        "holiday_mode_until": {
+          "label": "Absent jusqu'au",
+          "placeholder": "Choisir une date",
+          "help": "Le catalogue reste visible mais rien ne peut être acheté jusque-là."
+        },
+        "contact_email": {
+          "help": "Destination des invitations et des avis de la place de marché."
+        },
+        "billing_email": {
+          "label": "E-mail de facturation",
+          "help": "Destination des factures de commission et des avis de versement, si elle diffère."
+        }
       }
     },
     "image_upload": {
@@ -1075,15 +1141,35 @@
       "signed_in_as_invitee": ". Vous êtes connecté en tant que {{email}}."
     },
     "media_picker": {
+      "any": "Tous",
       "confirm": "Ajouter la sélection",
       "description": "Choisissez des fichiers déjà dans votre médiathèque, ou importez-en de nouveaux.",
+      "drop_hint_images": "Ou glissez-déposez des images ici",
+      "drop_hint_media": "Ou glissez-déposez des images et des vidéos ici",
       "empty": "Votre médiathèque est vide. Importez un fichier pour commencer.",
+      "filter_type": "Type",
+      "filter_usage": "Utilisation",
       "no_results": "Aucun fichier ne correspond à votre recherche.",
       "search_placeholder": "Rechercher par nom…",
       "selected_count_one": "{{count}} sélectionné",
       "selected_count_other": "{{count}} sélectionnés",
+      "sort_date_added": "Date d’ajout",
+      "sort_file_name": "Nom du fichier",
+      "sort_file_size": "Taille du fichier",
       "title": "Médiathèque",
-      "upload": "Importer"
+      "type_image": "Images",
+      "type_video": "Vidéos",
+      "upload": "Importer",
+      "usage_unused": "Non utilisé",
+      "usage_used": "Utilisé",
+      "view": "Affichage",
+      "view_grid": "Vue en grille",
+      "view_list": "Vue en liste"
+    },
+    "media_editor": {
+      "information": "Informations",
+      "details": "Détails",
+      "added": "Ajouté le {{date}}"
     },
     "messages": {
       "address_removed": "Adresse supprimée",
@@ -1576,12 +1662,18 @@
         "add_video_title": "Ajouter un lien vidéo",
         "assigned_variants_help": "Sélectionnez les variantes que cette image représente. Laissez vide pour l'appliquer à toutes les variantes.",
         "assigned_variants_label": "Variantes associées",
-        "delete_confirm": "Supprimer ce média ? Cette action est irréversible.",
+        "delete_confirm": "Retirer ce média ? Il sera supprimé à l’enregistrement du produit.",
+        "delete_selected_confirm_one": "Retirer le média sélectionné ? Il sera supprimé à l’enregistrement du produit.",
+        "delete_selected_confirm_other": "Retirer les {{count}} médias sélectionnés ? Ils seront supprimés à l’enregistrement du produit.",
         "drop_hint": "Glissez-déposez un média ici, ou cliquez pour parcourir",
         "edit_title": "Modifier le média",
         "file_types_hint": "Images (PNG, JPG, WebP) et vidéos (MP4, WebM, MOV)",
         "focal_point_help": "Cliquez sur l'image pour définir ce qui reste visible lors du recadrage.",
         "focal_point_reset": "Réinitialiser",
+        "select_all": "Sélectionner tous les médias",
+        "select_item": "Sélectionner {{name}}",
+        "selected_count_one": "{{count}} sélectionné",
+        "selected_count_other": "{{count}} sélectionnés",
         "unsupported_file_one": "{{count}} fichier n'a pas été ajouté — seules les images et vidéos sont prises en charge.",
         "unsupported_file_other": "{{count}} fichiers n'ont pas été ajoutés — seules les images et vidéos sont prises en charge.",
         "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
@@ -1692,6 +1784,10 @@
           "failed_to_create_option_type": "Impossible de créer le type d’option",
           "failed_to_create_value": "Impossible de créer la valeur"
         },
+        "images_aria": "Images de {{name}}",
+        "images_description": "Cochez les images du produit qui montrent cette variante. Elles suivent l’ordre de la carte Médias, et la première cochée devient sa vignette — faites glisser les images dans cette carte pour la changer.",
+        "images_title": "Images de {{name}}",
+        "images_unsaved": "Enregistrez le produit pour ajouter des images à cette variante",
         "keep": "Tout conserver",
         "option_type_label": "Type d'option",
         "option_type_placeholder": "Choisissez un type d'option",
@@ -1713,6 +1809,7 @@
           "carton_placeholder": "Aucun carton",
           "pending_save": "Les modifications sont enregistrées avec le produit."
         },
+        "thumbnail_badge": "Vignette",
         "title": "Variantes",
         "variant_label": "Variante"
       }
@@ -1795,7 +1892,8 @@
       "value_count_other": "{{count}} valeurs"
     },
     "media_library": {
-      "download": "Télécharger"
+      "download": "Télécharger",
+      "choose_from_library": "Choisir dans la médiathèque"
     },
     "catalogs": {
       "terms": {
@@ -2123,6 +2221,17 @@
       "replace": "Remplacer le fichier",
       "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
       "replace_title": "Remplacer ce fichier ?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Photo de couverture",
+        "cover_photo_help": "Une bannière large en haut du profil du vendeur.",
+        "logo_label": "Logo",
+        "logo_help": "Un format carré convient le mieux. Affiché à côté du vendeur partout où il apparaît.",
+        "square_logo_label": "Logo carré",
+        "square_logo_help": "Pour les emplacements qui exigent un carré strict, comme un avatar."
+      },
+      "not_provided": "Non renseigné"
     }
   }
 }

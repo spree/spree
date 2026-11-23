@@ -8,7 +8,7 @@ module Spree
         include Typelizer::DSL
 
         typelize code: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
-                 name: [:string, deprecated: 'Name the locale from `code` with `Intl.DisplayNames`. Removed in 6.1.'],
+                 name: [:string, deprecated: 'Name the locale from `code` with `Intl.DisplayNames`. Removed in 6.5.'],
                  default: :boolean, rtl: :boolean
 
         attributes :code, :name

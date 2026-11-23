@@ -22,6 +22,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_active
+          step :list_on_default_channel
           step :close_submission
           run_hooks :after_approve
         end
@@ -34,6 +35,22 @@ module Spree
 
       def mark_active
         failure(product) unless product.update(status: 'active')
+      end
+
+      # A seller's product is created on no sales channel, so approving it
+      # alone would leave it active but on sale nowhere. On its first approval
+      # it goes on the store's default channel, as the dashboard's new product
+      # form does, unless it is already listed somewhere. A product approved
+      # before keeps the channels the operator left it on, even none.
+      def list_on_default_channel
+        return if product.product_publications.exists?
+        return if product.submissions.with_status(:approved).exists?
+
+        channel = product.store&.default_channel
+        return unless channel&.active?
+
+        channel.add_products(product.id)
+        product.product_publications.reset
       end
 
       # An auto-approval says so on the row: a blank reviewer must read as

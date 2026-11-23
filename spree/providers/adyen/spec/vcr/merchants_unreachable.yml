@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://management-test.adyen.com/v3/merchants?pageSize=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Traceparent:
+      - 00-7f4d77bb678ad977ebe1bd2e0c73940f-4c3a9317e96ab9fe-01
+      Set-Cookie:
+      - JSESSIONID=41f06684463276f7~1678BC541B05855C0CA4F091894C78A6; Path=/configurationapi;
+        Secure; HttpOnly
+      Pspreference:
+      - 7986576c-2044-ea77-0392-8de4d398e90f_1-WNLR4FDZLFZ28222
+      Requestid:
+      - 7986576c-2044-ea77-0392-8de4d398e90f_1-WNLR4FDZLFZ28222
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 18 Nov 2026 17:41:15 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"_links":{"first":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants?pageNumber=1&pageSize=100"},"last":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants?pageNumber=1&pageSize=100"},"self":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants?pageNumber=1&pageSize=100"}},"itemsTotal":1,"pagesTotal":1,"data":[{"id":"<ADYEN_MERCHANT_ACCOUNT>","name":"<ADYEN_MERCHANT_ACCOUNT>","companyId":"SpreeCommerce","captureDelay":"immediate","defaultShopperInteraction":"Ecommerce","status":"Active","shopWebAddress":"https:\/\/www.adyen.com\/","merchantCity":"","primarySettlementCurrency":"PLN","dataCenters":[{"name":"default","livePrefix":""}],"_links":{"self":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>"},"apiCredentials":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/apiCredentials"},"users":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/users"},"webhooks":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks"}},"reference":"<ADYEN_MERCHANT_ACCOUNT>"}]}'
+  recorded_at: Wed, 18 Nov 2026 17:41:15 GMT
+recorded_with: VCR 6.4.1

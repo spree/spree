@@ -73,6 +73,8 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
 
 If a field has no translation for the requested locale, you get the default-language value rather than an empty string — a half-translated catalogue still renders as a usable page.
 
+The default language is the default locale of the store's **default market**, which is where content entered without switching locale is kept. A store whose default market is Dutch holds its product names in Dutch and translates into the other locales its markets support. Rails' own `config.i18n.default_locale` is a separate setting — it picks the language Spree's own messages render in and does not have to match.
+
 <Note>
 Responses vary by locale, so if you cache them, include the locale in the cache key. Spree sets `Vary` headers for you, which is enough for a CDN but not for a hand-rolled in-memory cache.
 </Note>

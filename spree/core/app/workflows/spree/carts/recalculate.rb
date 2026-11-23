@@ -13,7 +13,7 @@ module Spree
       #   for callers that are removing a promotion's effects
       def perform(cart: nil, order: nil, line_item: nil, line_item_created: false, options: {})
         if order
-          Spree::Deprecation.warn('Calling Spree::Carts::Recalculate with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn('Calling Spree::Carts::Recalculate with order: is deprecated and will be removed in Spree 6.3. Pass cart: instead.')
           cart ||= order
         end
         super(cart: cart, line_item: line_item, line_item_created: line_item_created, options: options)

@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '../ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/data-table'
 import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { AddressBlock, type AddressBlockValue } from './address-block'
 import { RowActions } from './row-actions'
@@ -92,5 +94,91 @@ export function AddressBookRow({
         </ItemActions>
       )}
     </Item>
+  )
+}
+
+/**
+ * An address book as a table, for a detail page's main column: one row per
+ * address, its labels and defaults beside it, the actions at the end. Fill it
+ * with `AddressBookTableRow`s; the card around it is the caller's.
+ */
+export function AddressBookTable({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
+  return (
+    <Table roundedTop>
+      <TableHeader>
+        <TableRow>
+          <TableHead>{t('admin.address_book.columns.address')}</TableHead>
+          <TableHead>{t('admin.address_book.columns.defaults')}</TableHead>
+          <TableHead className="w-10" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>{children}</TableBody>
+    </Table>
+  )
+}
+
+/** One address in an `AddressBookTable`; takes the same props as `AddressBookRow`. */
+export function AddressBookTableRow({
+  address,
+  canEdit = true,
+  inheritedFrom,
+  onEdit,
+  onRemove,
+  onSetDefaultBilling,
+  onSetDefaultShipping,
+}: Parameters<typeof AddressBookRow>[0]) {
+  const { t } = useTranslation()
+  const inherited = inheritedFrom != null
+  const isDefaultBilling = !inherited && address.is_default_billing
+  const isDefaultShipping = !inherited && address.is_default_shipping
+
+  return (
+    <TableRow>
+      <TableCell>
+        {address.label && <div className="font-medium text-base">{address.label}</div>}
+        <AddressBlock address={address} />
+      </TableCell>
+      <TableCell>
+        <span className="flex flex-wrap gap-1.5">
+          {inherited && (
+            <Badge variant="secondary">
+              {t('admin.address_book.inherited_from', { name: inheritedFrom })}
+            </Badge>
+          )}
+          {isDefaultBilling && (
+            <Badge variant="outline">{t('admin.address_book.default_billing')}</Badge>
+          )}
+          {isDefaultShipping && (
+            <Badge variant="outline">{t('admin.address_book.default_shipping')}</Badge>
+          )}
+          {!inherited && !isDefaultBilling && !isDefaultShipping && (
+            <span className="text-muted-foreground">—</span>
+          )}
+        </span>
+      </TableCell>
+      <TableCell className="w-10 text-right">
+        {canEdit && !inherited && (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: onEdit },
+              {
+                key: 'set_default_billing',
+                label: t('admin.address_book.set_default_billing'),
+                visible: !!onSetDefaultBilling && !address.is_default_billing,
+                onSelect: () => onSetDefaultBilling?.(),
+              },
+              {
+                key: 'set_default_shipping',
+                label: t('admin.address_book.set_default_shipping'),
+                visible: !!onSetDefaultShipping && !address.is_default_shipping,
+                onSelect: () => onSetDefaultShipping?.(),
+              },
+              { key: 'delete', destructive: true, onSelect: onRemove },
+            ]}
+          />
+        )}
+      </TableCell>
+    </TableRow>
   )
 }

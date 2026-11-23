@@ -11,7 +11,7 @@ module Spree
       # @return [Spree::ServiceModule::Result] deletion outcome
       def call(cart: nil, order: nil)
         if order
-          Spree::Deprecation.warn('Calling Spree::Carts::Destroy with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn('Calling Spree::Carts::Destroy with order: is deprecated and will be removed in Spree 6.3. Pass cart: instead.')
           cart ||= order
         end
         rewrite_input!(remove: [:order], cart: cart)

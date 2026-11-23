@@ -17,6 +17,7 @@ import { TrashIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../../lib/variant-search'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext, PromotionActionLineItemParams } from './types'
 
@@ -117,12 +118,12 @@ export function CreateLineItemsActionEditor({
       pending={variantsLoading}
       saveDisabled={lineItems.length === 0}
     >
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {t('admin.components.create_line_items_action_editor.description')}
       </p>
 
       {resolvedLineItems.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.components.create_line_items_action_editor.empty')}
         </p>
       ) : (
@@ -158,7 +159,7 @@ export function CreateLineItemsActionEditor({
                     <Button
                       type="button"
                       size="icon-xs"
-                      variant="ghost"
+                      variant="destructive-ghost"
                       onClick={() => removeVariant(row.variant_id)}
                     >
                       <TrashIcon className="size-4" />
@@ -189,6 +190,7 @@ export function CreateLineItemsActionEditor({
               for (const variant of res.data) variantById.current.set(variant.id, variant)
               return res
             }}
+            minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
             hydrate={async () => ({ data: [] })}
             getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
             renderOption={(variant) => (

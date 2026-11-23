@@ -70,19 +70,6 @@ module Spree
             )
           end
 
-          # A request authenticated by a secret API key has no Spree user to
-          # describe/update, so it gets a 404 pointing at the key endpoint
-          # rather than a 500 from a nil user — mirroring ApiKeysController#current.
-          def require_current_user!
-            return if current_user
-
-            render_error(
-              code: ERROR_CODES[:record_not_found],
-              message: I18n.t('spree.me_no_current_user'),
-              status: :not_found
-            )
-          end
-
           # /me describes the signed-in user rather than a store, and the
           # dashboard reads it before any store is selected. A user who holds
           # no role on any store (not yet given one, or removed from all of

@@ -110,7 +110,7 @@ export function TagsCard({ order }: { order: Order }) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
+          <p className="text-base text-muted-foreground">{t('admin.common.none')}</p>
         )}
       </CardContent>
     </Card>

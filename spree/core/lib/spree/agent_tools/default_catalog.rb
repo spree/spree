@@ -31,7 +31,7 @@ module Spree
 
       # @deprecated The 6.0.0 workflow allowlist, kept only so a reference to
       #   it does not break through 6.0.x. Nothing reads it: Admin API
-      #   operations are tools on their own. Removed in 6.1.
+      #   operations are tools on their own. Removed in 6.3.
       WORKFLOWS = {
         # Catalog
         product_activate_workflow: 'write_products',
@@ -99,7 +99,7 @@ module Spree
 
       # @deprecated The 6.0.0 exclusion list, kept like {WORKFLOWS}. Its
       #   reasons now travel as `agent_tool false, reason:` on the operation's
-      #   rswag spec. Removed in 6.1.
+      #   rswag spec. Removed in 6.3.
       # The email template editor is a draft-and-publish surface: its steps
       # move a draft through revisions against a live preview, and they mean
       # nothing outside that screen. Publishing one sends real mail in the

@@ -43,7 +43,8 @@ module Spree
           # we fall back to `Spree::Current.store` if not.
           # Filtered in Ruby rather than with `for_resource`, so the staff
           # index's preloaded roles are used instead of a query per user.
-          typelize({ id: :string, name: :string }, multi: true)
+          typelize({ id: [:string, comment: 'Role ID'], name: [:string, comment: 'Role name, e.g. admin'] },
+                   multi: true, comment: 'Role assignments on the current store')
           attribute :roles do |user, params|
             store = params&.dig(:store) || Spree::Current.store
             roles = user.spree_roles.to_a
@@ -56,7 +57,8 @@ module Spree
           # store switcher can offer all accessible stores. Read off the same
           # preloaded roles, and deduped/sorted in Ruby, so the staff index
           # spends no extra query per user.
-          typelize({ id: :string, name: :string, code: :string }, multi: true)
+          typelize({ id: [:string, comment: 'Store ID'], name: [:string, comment: 'Store name'], code: [:string, comment: 'Store code'] },
+                   multi: true, comment: 'Stores the staff member can access through a role assignment')
           attribute :stores do |user|
             stores = user.spree_roles.filter_map { |role| role.resource if role.resource.is_a?(Spree::Store) }
 

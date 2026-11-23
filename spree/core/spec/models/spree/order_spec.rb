@@ -431,6 +431,31 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#refunds_total' do
+    let(:order) { create(:shipped_order) }
+    let(:payment) { order.payments.completed.first }
+    let(:returned) { create(:return, order: order, store: order.store) }
+
+    before do
+      create(:refund, payment: payment, amount: 5, originator: returned)
+      create(:refund, payment: payment, amount: 3, originator: returned).update_column(:status, nil)
+      create(:refund, :requested, payment: payment, amount: 2, originator: returned)
+      create(:refund, :failed, payment: payment, amount: 1, originator: returned)
+    end
+
+    it 'counts completed and empty refunds only' do
+      expect(order.refunds_total).to eq(8)
+      expect(order.returned_items_refund_total).to eq(8)
+    end
+
+    it 'reads the same from refunds a list already loaded' do
+      loaded = Spree::Order.includes(:refunds).find(order.id)
+
+      expect(loaded.refunds_total).to eq(8)
+      expect(loaded.returned_items_refund_total).to eq(8)
+    end
+  end
+
   describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55
@@ -461,7 +486,7 @@ describe Spree::Order, type: :model do
   end
 
   # The deprecated twin of #payment_methods; it must keep matching its
-  # replacement until it is removed in 6.1.
+  # replacement until it is removed in 6.3.
   describe '#collect_payment_methods' do
     it 'includes an active storefront-visible method' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
@@ -1659,6 +1684,16 @@ describe Spree::Order, type: :model do
 
         it 'returns true' do
           expect(subject).to be true
+        end
+      end
+
+      context 'when the only refund is still waiting on the provider' do
+        let(:amount) { 50 }
+
+        before { refund.update_column(:status, 'requested') }
+
+        it 'returns false, since nothing has been given back yet' do
+          expect(order.reload.partially_refunded?).to be false
         end
       end
 

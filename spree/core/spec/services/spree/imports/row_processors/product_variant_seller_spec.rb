@@ -148,6 +148,55 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, 'for a seller-owne
     end
   end
 
+  # A seller builds variants from the marketplace's option types and values
+  # and never adds to them, so a name the store lacks fails the row with
+  # nothing written. The operator's import creates them as it always has.
+  describe 'option types and values' do
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', seller: seller, store: store) }
+    let(:row_data) do
+      csv_row_hash('slug' => 'denim-shirt', 'sku' => 'DENIM-GREEN', 'price' => '1.00',
+                   'option1_name' => 'Finish', 'option1_value' => 'Green')
+    end
+
+    def vocabulary_and_variant_counts
+      [Spree::OptionType.count, Spree::OptionValue.count, Spree::Variant.count]
+    end
+
+    it 'fails the row on an option type the marketplace does not offer, creating nothing' do
+      before = vocabulary_and_variant_counts
+
+      expect { described_class.new(row).process! }.
+        to raise_error(ArgumentError, 'The marketplace has no option type named Finish.')
+      expect(vocabulary_and_variant_counts).to eq(before)
+    end
+
+    it 'fails the row on a value the option type does not offer, creating nothing' do
+      create(:option_type, store: store, name: 'finish', label: 'Finish')
+      before = vocabulary_and_variant_counts
+
+      expect { described_class.new(row).process! }.
+        to raise_error(ArgumentError, 'Finish has no value named Green.')
+      expect(vocabulary_and_variant_counts).to eq(before)
+    end
+
+    it "builds the variant from the marketplace's option type and value" do
+      finish = create(:option_type, store: store, name: 'finish', label: 'Finish')
+      green = create(:option_value, option_type: finish, name: 'green', label: 'Green')
+
+      expect { subject.process! }.not_to change(Spree::OptionType, :count)
+      expect(product.variants.find_by(sku: 'DENIM-GREEN').option_values).to eq([green])
+    end
+
+    context 'when the import is the operator\'s own' do
+      let(:import) { create(:product_import, store: store) }
+
+      it 'still creates the option type and value it was given' do
+        expect { subject.process! }.to change(Spree::OptionType, :count).by(1).
+          and change(Spree::OptionValue, :count).by(1)
+      end
+    end
+  end
+
   describe 'inventory' do
     let!(:seller_location) do
       create(:stock_location, seller: seller, store: store, name: "#{seller.name} warehouse",

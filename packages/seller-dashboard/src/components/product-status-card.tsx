@@ -51,14 +51,14 @@ export function ProductStatusCard({ product, onDone }: { product: Product; onDon
       <CardContent className="flex flex-col items-start gap-3">
         <StatusBadge status={status} label={t(`products.statuses.${status}`)} />
 
-        <p className="text-muted-foreground text-sm">{t(`products.status_help.${status}`)}</p>
+        <p className="text-muted-foreground text-base">{t(`products.status_help.${status}`)}</p>
 
         {/* Why the marketplace turned it down, so the seller knows what to
             fix. It lives on the submission rather than the product: a note
             the seller could overwrite by saving their own product was no
             record of anything. */}
         {status === 'rejected' && product.submission?.review_note && (
-          <p className="text-sm">
+          <p className="text-base">
             {t('products.rejection_reason', { reason: product.submission.review_note })}
           </p>
         )}

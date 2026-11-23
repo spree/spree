@@ -1,5 +1,49 @@
 # @spree/dashboard-core
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15220](https://github.com/spree/spree/pull/15220) [`f32acce`](https://github.com/spree/spree/commit/f32accecc5873d951cbd5d57a8410aeffd33d7f8) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins can now receive the errors the panels' error screens catch through `errorReporters` in `defineDashboardPlugin`, and mount session-wide components in the new `app.root` slot, each behind its own error boundary. `RouteErrorBoundary` takes an `onCatch` callback, and the router error screen both panels share retries by refetching the page's data.
+
+- [#15230](https://github.com/spree/spree/pull/15230) [`53d2936`](https://github.com/spree/spree/commit/53d2936a5750d9a3b806b97a45c7712393b35622) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Resource tables now sort by clicking a sortable column header: the first click sorts ascending, the next flips the direction, and the header shows the current direction.
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The product form's Variants card now lets a seller's client register a `list` of option types alone, so the seller panel offers the marketplace's option types and values to pick from without the actions that add new ones. The form fetches a product type's option types by id, so a type naming option types past the first 100 still offers them, in both panels.
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `ResourceImageField` takes a `disabled` prop that blocks picking or removing an image, for example while the owning form saves.
+- Updated dependencies []:
+  - @spree/core@6.0.5
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `AddressFormDialog` asks before discarding unsaved changes, whether it is closed with Cancel, Escape or by clicking outside, and its Save waits for a change when editing an address that is already filled in. A blank address stays saveable, so pressing Save shows what is still missing.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Refreshed the look of the admin dashboard and the seller panel: the Inter font, one 13px text size, a neutral palette with 12px corners and a near-black dark theme. Fields, cards, switches, tabs and alerts share one style, list tables lose their frame and gain a compact row density, and date filters use a range calendar. Records on detail pages sit under titled sections instead of cards nested in cards, and the settings nav sits beside the icon rail.
+  
+  For plugin authors, `@spree/dashboard-ui` adds `Section`, `StatItem`, `ProductIdentity`, `CurrencyLabel`, `DateRangePanel` and new icons, and `@spree/dashboard-core` adds `useTableDensity`. The card `variant` prop is deprecated and has no effect: group records under a `Section` instead.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The media library opens as a large dialog with search, type and usage filters, upload, grid or list view and sorting, and the Media page gains the same views. Product media opens in a full-screen editor and can be removed in bulk, with files only deleted once the product saves, and each variant picks its images from the product's own.
+  
+  `MediaPickerSheet` is deprecated in favour of `MediaPickerDialog`, and `useFormDeleteProductMedia` in favour of marking files in `removed_media_ids` and saving with `useCommitRemovedProductMedia`. Both old names keep working until the next minor release.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Payment methods became a Payments page: payment providers with their logos and status, manual payment methods, a Checkout order sheet for the order checkout offers them in, and the payment capture setting. Bogus is marked as a test gateway. Tax by shipping address moved to the Taxes page, and a new Storefront & checkout page holds the storefront URL, storefront access, checkout and address settings that used to be on the store page. Settings pages show a label beside its control on desktop, and the store timezone is a searchable picker.
+  
+  `@spree/dashboard-core` adds `SettingsContainer`, `SettingsFieldGroup`, `SettingsRow`, `SettingsSelectField`, `SettingsSwitchField` and `TimezoneCombobox`, and `SettingsSection` takes an `icon`. The payment methods list table (`payment-methods`) is gone, so columns a plugin added to it no longer show.
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added a developer inspector, opened from the user menu or with Ctrl/Cmd+Shift+D, that lists the dashboard's recent API requests with their request IDs. Every detail page that passes its record and endpoint to `PageHeader` gets View as JSON, with Copy JSON and Copy as curl. The Vite plugin records the installed `@spree/*` package versions for the diagnostics report.
+
+- [#15181](https://github.com/spree/spree/pull/15181) [`9895bd8`](https://github.com/spree/spree/commit/9895bd8ce21f5201d52ed494cfa57d657b29bc50) Thanks [@dependabot](https://github.com/apps/dependabot)! - The dashboard packages accept i18next 27 and react-i18next 18 as peer dependencies, alongside i18next 26 and react-i18next 17.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `ResourceTable` takes `onSearchChange`, and `useEmbeddedTableSearch` supplies it, so a record page can embed a list table whose state stays out of the URL. `hiddenColumns` leaves columns out of a table, and `framed` draws it as a card holding its toolbar and pagination, with no pinned header.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `ReadRow`, `ResourceImageField` and the seller form schema move here from the dashboards. File and image upload fields hide their drop zone once a file is attached and offer Replace beside Remove.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Updating a seller takes `returns_address`, written inline like `billing_address`. It is saved onto the seller's returns stock location, or a new one for a seller who has none, so the seller page edits it in place instead of opening the stock location. `@spree/dashboard-core` exports `EditStockLocationSheet`, so a record page can open a location's editor without leaving the page.
+- Updated dependencies []:
+  - @spree/core@6.0.4
+
 ## 6.0.3
 
 ### Patch Changes

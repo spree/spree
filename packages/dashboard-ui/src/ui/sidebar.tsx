@@ -361,7 +361,7 @@ function SidebarInset({ className, id = 'main-content', ...props }: React.Compon
         // The inset sheet is the raised surface, so it takes the card colour —
         // pure white in light mode — rather than the page grey, which is now the
         // ground the rail sits on.
-        'relative z-0 flex w-full min-w-0 flex-1 flex-col bg-background md:peer-data-[variant=inset]:bg-card md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:border md:peer-data-[variant=inset]:border-sidebar-border md:peer-data-[variant=inset]:shadow-sm',
+        'relative z-0 flex w-full min-w-0 flex-1 flex-col bg-background md:peer-data-[variant=inset]:bg-card md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-2xl md:peer-data-[variant=inset]:border md:peer-data-[variant=inset]:border-sidebar-border',
         className,
       )}
       {...props}
@@ -548,7 +548,7 @@ function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'
     <div
       data-slot="sidebar-group-content"
       data-sidebar="group-content"
-      className={cn('w-full text-sm', className)}
+      className={cn('w-full text-base', className)}
       {...props}
     />
   )
@@ -587,7 +587,7 @@ const sidebarMenuButtonVariants = cva(
   // badge. Without it the flex line wraps and the label visibly squashes to two
   // lines inside the fixed height until the animation lands. Labels clip
   // instead — which is what the `truncate` below already intends.
-  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden whitespace-nowrap rounded-md p-1 text-left font-medium text-base text-sidebar-foreground/80 outline-hidden transition-[color,background-color,border-color,box-shadow] duration-100 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent-hover data-open:hover:text-sidebar-foreground data-active:bg-accent-strong data-active:text-foreground data-active:font-semibold data-active:hover:bg-accent-strong-hover [&>span:last-child]:truncate',
+  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden whitespace-nowrap rounded-lg p-1 text-left font-normal text-base text-sidebar-foreground/80 outline-hidden transition-[color,background-color,border-color,box-shadow] duration-100 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent-hover data-open:hover:text-sidebar-foreground data-active:bg-sidebar-active data-active:text-foreground data-active:font-semibold data-active:hover:bg-sidebar-active-hover [&>span:last-child]:truncate',
   {
     variants: {
       variant: {
@@ -601,7 +601,7 @@ const sidebarMenuButtonVariants = cva(
         // desktop rail keeps its compact pointer-sized rows.
         default:
           'h-8 text-base in-data-[mobile=true]:h-12 in-data-[mobile=true]:px-2 in-data-[mobile=true]:[&_svg]:size-5',
-        sm: 'h-7 text-xs in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-sm',
+        sm: 'h-7 text-xs in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base',
         lg: 'h-12 text-base group-data-[collapsible=icon]:p-0!',
       },
     },
@@ -798,7 +798,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 in-data-[mobile=true]:h-11 in-data-[mobile=true]:px-2 min-w-0 items-center gap-2 overflow-hidden rounded-lg p-1 font-medium text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 in-data-[mobile=true]:h-11 in-data-[mobile=true]:px-2 min-w-0 items-center gap-2 overflow-hidden rounded-lg p-1 font-normal text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

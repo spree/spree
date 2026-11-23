@@ -1,8 +1,6 @@
 module Spree
   module CSV
     class ProductVariantPresenter
-      include Spree::ImagesHelper
-
       CSV_HEADERS = [
         'product_id',
         'sku',
@@ -76,7 +74,7 @@ module Spree
       # For the primary variant row (when the index is zero), product-level details such as name,
       # slug, status, seller name, description, meta tags, and tag/label lists are included.
       # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
-      # availability dates, inventory count, shipping category, tax category, image URLs via original_url,
+      # availability dates, inventory count, shipping category, tax category, original image URLs,
       # and the first three option types and corresponding option values) are appended.
       # Additionally, when the index is zero, associated categories and properties are added.
       #
@@ -121,9 +119,9 @@ module Spree
           nil,
           variant.tax_category&.name,
           product.product_type&.name,
-          spree_image_url(variant.images[0], image_url_options),
-          spree_image_url(variant.images[1], image_url_options),
-          spree_image_url(variant.images[2], image_url_options),
+          image_urls[0],
+          image_urls[1],
+          image_urls[2],
           option_type(0)&.label,
           option_value(option_type(0)),
           option_type(1)&.label,
@@ -207,8 +205,19 @@ module Spree
         @default_stock_level = variant.stock_levels.find { |level| level.stock_location_id == location.id }
       end
 
-      def image_url_options
-        { variant: :xlarge }
+      # The original files, which the import downloads back onto the row's
+      # variant: the media linked to that variant, or on the product's first
+      # row, when it has none, the product's own gallery so unlinked uploads
+      # survive. Videos are left out — the import saves every URL as an image.
+      def image_urls
+        @image_urls ||= begin
+          media = variant.gallery_media.to_a
+          media = product.media.to_a if media.empty? && index.zero?
+
+          media.select { |image| image.image? && image.attached? }.first(3).map do |image|
+            Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
+          end
+        end
       end
     end
   end

@@ -53,11 +53,11 @@ export const Subject = {
   DeliveryMethod: 'delivery_method',
   DeliveryZone: 'delivery_zone',
   DeliveryProfile: 'delivery_profile',
-  /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.1. */
+  /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.3. */
   ShippingMethod: 'delivery_method',
   StockLocation: 'stock_location',
   StockLevel: 'stock_level',
-  /** @deprecated Use Subject.StockLevel — removed in Spree 6.1. */
+  /** @deprecated Use Subject.StockLevel — removed in Spree 6.3. */
   StockItem: 'stock_level',
   StockTransfer: 'stock_transfer',
   StockTransferItem: 'stock_transfer_item',

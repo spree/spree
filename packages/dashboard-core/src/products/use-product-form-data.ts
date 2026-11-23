@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import type {
   PanelCollection,
   PanelDeliveryProfile,
@@ -95,20 +96,32 @@ export function useFormProductType(id?: string) {
 }
 
 /**
- * Option types named by a product type, resolved from the full list rather
- * than fetched by id — the list is already cached and small enough that a
- * second round trip buys nothing.
+ * Fetches the option types a product type names, by id, through the
+ * registered client. Both the Admin and the Seller option-types endpoints
+ * filter on `id_in`, so this works in either panel.
+ */
+export async function fetchOptionTypesByIds(ids: string[]): Promise<{ data: PanelOptionType[] }> {
+  const client = getApiClient()
+  if (!client.optionTypes || ids.length === 0) return { data: [] }
+
+  return client.optionTypes.list({ id_in: ids, limit: ids.length })
+}
+
+/**
+ * Option types named by a product type, fetched by id rather than picked out
+ * of the form's list: that list is one page, so a type naming an option type
+ * past it would otherwise offer nothing.
  */
 export function useFormOptionTypesByIds(ids?: string[]) {
-  const { data, ...rest } = useFormOptionTypes(Boolean(ids?.length))
-  const wanted = new Set(ids ?? [])
+  const client = getApiClient()
+  const wanted = ids ?? []
 
-  return {
-    ...rest,
-    data: ids?.length
-      ? { data: (data?.data ?? []).filter((type) => wanted.has(type.id)) }
-      : undefined,
-  }
+  return useQuery({
+    queryKey: useResourceKey('option-types', 'panel-form', 'by-ids', wanted),
+    queryFn: () => fetchOptionTypesByIds(wanted),
+    enabled: wanted.length > 0 && Boolean(client.optionTypes),
+    staleTime: FIVE_MINUTES,
+  })
 }
 
 export function useFormTaxCategories() {
@@ -162,9 +175,35 @@ export function useFormCartonPackageTypes() {
 }
 
 /**
- * Removing a file already on the product. A panel whose client registers no
- * deletion answers a no-op mutation, so the gallery still drops the row from
- * the form and the save reconciles it.
+ * Deletes the media a product form marked for removal, after the product
+ * itself saved. Resolves to how many deletes failed, so the form can say so.
+ */
+export function useCommitRemovedProductMedia(productId: string) {
+  const client = getApiClient()
+  const queryClient = useQueryClient()
+  const mediaKey = useResourceKey('products', productId, 'media')
+
+  return useCallback(
+    async (mediaIds: string[] | undefined) => {
+      // Independent deletes, so all at once: a bulk removal of twenty files
+      // waits on one round trip rather than twenty.
+      const results = await Promise.allSettled(
+        (mediaIds ?? []).map((mediaId) => client.deleteProductMedia?.(productId, mediaId)),
+      )
+      const failed = results.filter((result) => result.status === 'rejected').length
+      if (mediaIds?.length) await queryClient.invalidateQueries({ queryKey: mediaKey })
+      return failed
+    },
+    [client, productId, queryClient, mediaKey],
+  )
+}
+
+/**
+ * Removing a file already on the product, straight away.
+ *
+ * @deprecated The product form now removes files on save — mark them in
+ * `removed_media_ids` and commit with `useCommitRemovedProductMedia`. Kept
+ * until the next minor release.
  */
 export function useFormDeleteProductMedia(productId: string) {
   const client = getApiClient()

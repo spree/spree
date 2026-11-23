@@ -33,6 +33,77 @@ RSpec.describe Spree::Fulfillment, 'capture on dispatch in a split checkout' do
 
   before { payment }
 
+  it 'passes by a shared payment waiting on its provider' do
+    payment.update!(status: 'requested')
+    expect(Spree.payment_capture_workflow).not_to receive(:call)
+
+    dispatch(seller_order, worth: 40)
+
+    expect(captured_for(seller_order)).to eq(0)
+  end
+
+  context 'when the provider answers the capture later' do
+    let(:payment_method) do
+      create(:credit_card_payment_method, store: store, capture_method: 'on_dispatch', preferred_requested_mode: true)
+    end
+
+    it 'keeps the share authorized, its claim held until the provider answers' do
+      dispatch(seller_order, worth: 40)
+
+      expect(payment.reload).to be_requested
+      expect(seller_split.reload).to have_attributes(captured_amount: 0, claimed_amount: 40)
+    end
+
+    def answer(action)
+      Spree::Payments::HandleModificationWebhook.call(
+        payment_method: payment_method, action: action, record: payment.reload.capture_events.sole
+      )
+    end
+
+    it 'records the share as captured once the provider confirms' do
+      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:authorize).
+        and_return(Spree::PaymentResponse.new(true, 'ok', {}, authorization: 'BGS-REMAINDER'))
+      dispatch(seller_order, worth: 40)
+
+      answer(:capture_succeeded)
+
+      expect(seller_split.reload).to have_attributes(captured_amount: 40, claimed_amount: 0)
+      expect(captured_for(first_party_order)).to eq(0)
+    end
+
+    it "settles no more than the capture's amount across shares in flight" do
+      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:authorize).
+        and_return(Spree::PaymentResponse.new(true, 'ok', {}, authorization: 'BGS-REMAINDER'))
+      dispatch(seller_order, worth: 40)
+      first_party_split.update_columns(claimed_amount: 20)
+
+      answer(:capture_succeeded)
+
+      expect(seller_split.reload).to have_attributes(captured_amount: 40, claimed_amount: 0)
+      expect(first_party_split.reload.claimed_amount).to eq(20)
+    end
+
+    it 'releases the claim when the provider refuses' do
+      dispatch(seller_order, worth: 40)
+
+      answer(:capture_failed)
+
+      expect(seller_split.reload).to have_attributes(captured_amount: 0, claimed_amount: 0)
+    end
+
+    it "takes the share's captured money back on a failure after success" do
+      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:authorize).
+        and_return(Spree::PaymentResponse.new(true, 'ok', {}, authorization: 'BGS-REMAINDER'))
+      dispatch(seller_order, worth: 40)
+      answer(:capture_succeeded)
+
+      answer(:capture_failed)
+
+      expect(seller_split.reload.captured_amount).to eq(0)
+      expect(seller_order.reload.payment_total).to eq(0)
+    end
+  end
+
   it 'captures no more than the order’s own share' do
     dispatch(seller_order, worth: 100)
 

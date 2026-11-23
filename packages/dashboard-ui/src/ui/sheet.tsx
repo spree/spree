@@ -129,13 +129,21 @@ function SheetContent({
           // `translate`; the rest are listed because `className` is merged, so
           // a caller can animate any of them — and a missing entry fails
           // silently, as a jump rather than an error.
-          'fixed z-50 flex flex-col border border-border bg-card text-foreground text-sm shadow-lg transition-[opacity,transform,translate,scale] duration-250 ease-out',
-          'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-xl',
+          'fixed z-50 flex flex-col border border-border bg-card text-foreground text-base shadow-lg transition-[opacity,transform,translate,scale] duration-250 ease-out',
+          'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-2xl',
           'data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:sm:max-w-sm',
           'data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t',
           'data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b',
           'data-[starting-style]:opacity-0 data-[side=right]:data-[starting-style]:translate-x-10 data-[side=left]:data-[starting-style]:-translate-x-10 data-[side=bottom]:data-[starting-style]:translate-y-10 data-[side=top]:data-[starting-style]:-translate-y-10',
           'data-[ending-style]:opacity-0 data-[side=right]:data-[ending-style]:translate-x-10 data-[side=left]:data-[ending-style]:-translate-x-10 data-[side=bottom]:data-[ending-style]:translate-y-10 data-[side=top]:data-[ending-style]:-translate-y-10',
+          // A sheet opened from inside this one stacks on top, as toasts do:
+          // this one shrinks from its outer edge and slides out far enough to
+          // peek from behind, a step per open sheet above it, and dims.
+          'after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-250',
+          'data-[nested-dialog-open]:after:bg-black/5 dark:data-[nested-dialog-open]:after:bg-black/30',
+          'data-[side=right]:origin-left data-[side=left]:origin-right',
+          'data-[nested-dialog-open]:scale-[calc(1-0.05*var(--nested-dialogs))]',
+          'data-[side=right]:data-[nested-dialog-open]:translate-x-[calc(-20px*var(--nested-dialogs))] data-[side=left]:data-[nested-dialog-open]:translate-x-[calc(20px*var(--nested-dialogs))]',
           className,
         )}
         {...props}
@@ -207,7 +215,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="sheet-footer"
       className={cn(
-        'flex flex-col-reverse gap-2 border-t border-border-subtle bg-muted/50 p-4 sm:flex-row sm:justify-end rounded-b-xl',
+        'flex flex-col-reverse gap-2 border-t border-border-subtle bg-muted/50 p-4 sm:flex-row sm:justify-end rounded-b-2xl',
         className,
       )}
       {...props}
@@ -219,7 +227,7 @@ function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPr
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn('text-lg font-medium', className)}
+      className={cn('text-lg font-semibold', className)}
       {...props}
     />
   )
@@ -232,7 +240,7 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-base text-muted-foreground', className)}
       {...props}
     />
   )

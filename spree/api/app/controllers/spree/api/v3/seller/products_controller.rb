@@ -62,8 +62,10 @@ module Spree
             # operator's endpoint: it would make the server fetch a URL the
             # caller chose.
             body.attribute :media, :array,
-              as: 'SellerProductMediaParams',
-              description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do |media_item|
+                           as: 'SellerProductMediaParams',
+                           description: 'Files to add or update: `signed_id` attaches a fresh upload; ' \
+                                        '`id` updates one already there. A file left out stays; remove ' \
+                                        'one with `DELETE /products/{product_id}/media/{id}`.' do |media_item|
               media_item.attribute :id, :id
               media_item.attribute :signed_id, :string, description: 'A `signed_id` from `POST /files`.'
               media_item.include_attributes Spree::Api::V3::MediaRequestSchema
@@ -100,6 +102,7 @@ module Spree
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :require_ids!, only: [:bulk_submit, :bulk_status_update, :bulk_destroy]
+          before_action :refuse_unknown_variant_options, only: [:create, :update]
 
           # PATCH /api/v3/seller/products/:id/submit
           #
@@ -300,6 +303,40 @@ module Spree
           end
 
           private
+
+          # A seller builds variants from the marketplace's option types and
+          # values and never adds to them, but `Variant#options=` creates
+          # whatever a payload names. Each option is matched here the way that
+          # writer matches it, against this store's vocabulary, so an unknown
+          # name is a 422 before anything is written.
+          def refuse_unknown_variant_options
+            # `create` authorizes inside the action, after this filter: a
+            # caller who may not create a product is told that, not which of
+            # the marketplace's options their payload missed.
+            authorize_resource!(build_resource, :create) if action_name == 'create'
+
+            requested = Array(params[:variants]).grep(ActionController::Parameters).
+                        flat_map { |variant| Array(variant[:options]).grep(ActionController::Parameters) }.
+                        select { |option| option[:name].present? && option[:value].present? }.
+                        map { |option| [option[:name], option[:value]] }
+            unknown = Spree::OptionType.unknown_options(current_store, requested)
+            return if unknown.empty?
+
+            errors = ActiveModel::Errors.new(Spree::Product.new)
+            unknown.each do |option|
+              if option[:option_type].nil?
+                errors.add(:variants, :unknown_option_type,
+                           message: I18n.t('spree.errors.messages.unknown_option_type', name: option[:name]))
+              else
+                errors.add(:variants, :unknown_option_value,
+                           message: I18n.t('spree.errors.messages.unknown_option_value',
+                                           value: option[:value],
+                                           option_type: option[:option_type].label.presence || option[:option_type].name))
+              end
+            end
+
+            render_validation_error(errors)
+          end
 
           # 422s when the caller omits `ids` entirely, matching the operator's
           # bulk endpoints. An explicit empty array is a no-op, which is what a

@@ -24,8 +24,12 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
                            authorized_amount: 60, captured_amount: 60)
   end
 
+  # A share moves only once the money has gone back, which payment.refunded
+  # announces.
   def refund!(order, amount)
-    create(:refund, payment: payment, order: order, amount: amount)
+    create(:refund, payment: payment, order: order, amount: amount).tap do
+      payment.publish_event('payment.refunded')
+    end
   end
 
   it 'records the refund against only that order’s share' do
@@ -69,6 +73,20 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
                           customer: seller_order.customer, amount: 30)
 
     expect(seller_order.reload.payment_status).to eq('refunded')
+  end
+
+  it 'leaves the share alone while the provider has not answered a refund' do
+    create(:refund, :requested, payment: payment, order: seller_order, amount: 15)
+
+    expect(seller_split.reload.refunded_amount).to eq(0)
+  end
+
+  it 'takes a refund back off the share when it fails after completing' do
+    refund = refund!(seller_order, 15)
+    refund.update!(status: 'failed', failure_reason: 'Refused')
+    refund.publish_event('refund.failed')
+
+    expect(seller_split.reload.refunded_amount).to eq(0)
   end
 
   it 'totals several refunds on one order rather than counting the last' do

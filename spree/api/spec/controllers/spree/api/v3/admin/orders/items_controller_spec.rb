@@ -282,5 +282,28 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       subject
       expect(response).to have_http_status(:no_content)
     end
+
+    it 'brings the order totals in line with the lines that are left' do
+      kept = create(:line_item, order: order, variant: create(:variant), quantity: 2, price: 24.50)
+      Spree::Orders::Recalculate.call(order: order)
+
+      subject
+
+      order.reload
+      expect(order.item_total).to eq(49.0)
+      expect(order.total_quantity).to eq(2)
+      expect(order.line_items).to contain_exactly(kept)
+    end
+
+    it 'reports a removal a handler vetoes' do
+      Spree.hooks.register('orders.upsert_items.validate') { |flow| flow.reject!('locked') }
+
+      subject
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(order.line_items.reload).to include(line_item)
+    ensure
+      Spree.hooks.clear!
+    end
   end
 end

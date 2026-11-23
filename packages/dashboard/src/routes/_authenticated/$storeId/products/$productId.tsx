@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
-  adminClient,
   CategorizationCard,
   DigitalAssetsCard,
   extensionFormValues,
@@ -24,6 +23,7 @@ import {
   StatusCard,
   TaxCard,
   useAssignableVariants,
+  useCommitRemovedProductMedia,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -52,7 +52,6 @@ import { StockHistoryDialog } from '../../../../components/spree/stock-history-c
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
 // track_inventory) live on variants in API v3. The product form no longer
@@ -95,6 +94,7 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
+  const commitRemovedMedia = useCommitRemovedProductMedia(productId)
   const {
     data: mediaResponse,
     refetch: refetchMedia,
@@ -176,7 +176,7 @@ function ProductForm({ product }: { product: Product }) {
     // Media and variant rows get their extension fields back from live form
     // state, which the parse behind `submitted` stripped.
     const data = withExtensionRowValues('product', submitted, form.getValues())
-    const { variants, media, ...rest } = data
+    const { variants, media, removed_media_ids: removedMediaIds, ...rest } = data
     // Extension fields come from live form state: the Zod parse behind
     // `data` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('product', form)
@@ -197,13 +197,21 @@ function ProductForm({ product }: { product: Product }) {
 
     // Strip UI-only fields and ship media inline. The server upserts by id
     // (alt/position/variant_ids), creates new entries from signed_id, and
-    // leaves omitted persisted items alone — deletes still go through the
-    // dedicated DELETE /media endpoint, which the MediaCard already calls
-    // before removing an entry from form state.
+    // leaves omitted persisted items alone — the files the merchant removed
+    // are deleted through the media DELETE endpoint once this save succeeds.
     if (media && media.length > 0) {
       payload.media = media.map(
         (
-          { previewUrl, fullPreviewUrl, posterUrl, videoUrl, downloadUrl, uploadId, ...rest },
+          {
+            previewUrl,
+            fullPreviewUrl,
+            posterUrl,
+            videoUrl,
+            downloadUrl,
+            uploadId,
+            filename,
+            ...rest
+          },
           i,
         ) => ({
           ...rest,
@@ -214,6 +222,10 @@ function ProductForm({ product }: { product: Product }) {
 
     try {
       await updateProduct.mutateAsync({ id: productId, ...payload })
+      const failedDeletes = await commitRemovedMedia(removedMediaIds)
+      if (failedDeletes > 0) {
+        toastManager.add({ type: 'error', title: t('admin.errors.failed_to_delete') })
+      }
       // Re-baseline the form to the just-submitted values so isDirty flips
       // to false BEFORE the post-save refetch lands. The dirty-skip in the
       // hydration effect would otherwise keep isDirty true forever (since
@@ -228,6 +240,7 @@ function ProductForm({ product }: { product: Product }) {
         // `data` is the parsed (extension-stripped) shape — put extension
         // values back so the reset doesn't blank their inputs pre-refetch.
         ...extensionValues,
+        removed_media_ids: [],
         media: (data.media ?? []).map(
           ({ signed_id: _sid, source_media_id: _smid, poster_signed_id: _psid, ...rest }) => rest,
         ),
@@ -280,7 +293,7 @@ function ProductForm({ product }: { product: Product }) {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}
@@ -291,23 +304,20 @@ function ProductForm({ product }: { product: Product }) {
               backTo="products"
               badges={<StatusBadge status={product.status} />}
               actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
-              resource={{ id: product.id }}
+              resource={product}
               onDelete={handleDelete}
               deleteConfirmMessage={t('admin.products.delete_confirm')}
               deleteLabel={t('admin.products.delete_label')}
-              jsonPreview={{
-                title: `Product ${product.name}`,
-                fetch: () => adminClient.products.get(productId),
-                endpoint: `/api/v3/admin/products/${productId}`,
-                resolveLink: spreeJsonLinkResolver(storeId),
-              }}
+              endpoint={`/api/v3/admin/products/${productId}`}
             />
           }
           main={
             <>
               <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
-              <VariantsCard form={form} />
+              {/* Media before variants, so a variant's image square points back
+                  at a gallery already on screen above it. */}
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
+              <VariantsCard form={form} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard
                 form={form}
@@ -345,7 +355,11 @@ function ProductForm({ product }: { product: Product }) {
                   // whether to render these from the same value, and reading
                   // a different one left the buttons up against a product
                   // that had already been approved.
-                  <ProductReviewActions productId={productId} status={formStatus ?? ''} />
+                  <ProductReviewActions
+                    productId={productId}
+                    status={formStatus ?? ''}
+                    hasUnsavedChanges={form.formState.isDirty}
+                  />
                 }
               />
               <PublishingCard form={form} />

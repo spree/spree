@@ -39,7 +39,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.3)' do
     before { allow(Spree::Deprecation).to receive(:warn) }
 
     it 'warns and points at #snapshot' do
@@ -921,7 +921,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  # The pre-6.0 names stay callable for one release. Nothing in core calls
+  # The pre-6.0 names stay callable until 6.3. Nothing in core calls
   # them, so without these they could break unnoticed.
   describe 'deprecated postal-code helpers' do
     it 'normalizes through the class-level shell' do
@@ -939,7 +939,7 @@ describe Spree::Address, type: :model do
   end
 
   describe '#require_postal_code?' do
-    # The pre-6.0 name stays overridable for one release: a decorator's
+    # The pre-6.0 name stays overridable until 6.3: a decorator's
     # require_zipcode? sits ahead of Spree::Address in the ancestry, so it
     # still decides. Otherwise the override would stop being called silently.
     it 'honors a host app override of the pre-6.0 require_zipcode?' do

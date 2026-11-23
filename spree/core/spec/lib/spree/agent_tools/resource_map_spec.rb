@@ -62,4 +62,84 @@ RSpec.describe Spree::AgentTools::ResourceMap do
       expect(entry.permission_keys).to eq(['read_products'])
     end
   end
+
+  # A search given parent_id runs on the collection under that parent; the
+  # shallowest path alone listed the whole store.
+  describe 'listing under a parent' do
+    let(:base) { '/api/v3/admin' }
+    let(:context) { context_holding('read_products', 'read_orders') }
+
+    def register(key, model_name, permission, index_paths)
+      described_class.register(key: key, model_name: model_name, permission: permission,
+                               serializer_name: model_name, api_paths: { index: index_paths.first },
+                               index_paths: index_paths)
+    end
+
+    let!(:products) do
+      register('products', 'Spree::Product', 'read_products',
+               ["#{base}/products", "#{base}/categories/:category_id/products",
+                "#{base}/collections/:collection_id/products"])
+    end
+    let!(:claims) { register('claims', 'Spree::Claim', 'read_orders', ["#{base}/claims", "#{base}/orders/:order_id/claims"]) }
+    let!(:deliveries) do
+      register('deliveries', 'Spree::Delivery', 'read_orders',
+               ["#{base}/orders/:order_id/fulfillments/:fulfillment_id/deliveries"])
+    end
+
+    before do
+      register('categories', 'Spree::Category', 'read_products', ["#{base}/categories"])
+      register('collections', 'Spree::Collection', 'read_products', ["#{base}/collections"])
+      register('orders', 'Spree::Order', 'read_orders', ["#{base}/orders"])
+    end
+
+    it 'names the parents a resource is listed under' do
+      expect(products.index_parents.keys).to eq(%w[categories collections])
+    end
+
+    it "picks the parent's collection by the id's prefix" do
+      expect(products.path_for(:index, parent_id: 'ctg_abc')).to eq("#{base}/categories/ctg_abc/products")
+      expect(products.path_for(:index, parent_id: 'coll_abc')).to eq("#{base}/collections/coll_abc/products")
+    end
+
+    it 'lists the whole collection without a parent' do
+      expect(products.path_for(:index)).to eq("#{base}/products")
+    end
+
+    it 'has no path under a parent of another kind' do
+      expect(products.path_for(:index, parent_id: 'or_abc')).to be_nil
+    end
+
+    it 'uses the only parent there is, leaving the id to the endpoint' do
+      expect(claims.path_for(:index, parent_id: 'or_abc')).to eq("#{base}/orders/or_abc/claims")
+    end
+
+    it 'leaves out a path one parent id cannot fill' do
+      expect(deliveries.index_parents).to be_empty
+    end
+
+    it 'refuses a search under a parent the resource is not listed under' do
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'products', parent_id: 'or_abc')
+
+      expect(result[:error]).to eq('products cannot be listed under or_abc. Pass the id of one of: categories, collections.')
+      expect(result[:parents]).to eq(%w[categories collections])
+    end
+
+    it 'refuses a parent for a resource never listed under one' do
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'orders', parent_id: 'prod_abc')
+
+      expect(result[:error]).to include('not listed under another record')
+    end
+
+    it 'keeps the nested refusal for a resource two levels deep' do
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'deliveries', parent_id: 'or_abc')
+
+      expect(result[:error]).not_to include('cannot be listed under')
+    end
+
+    it 'is named by describe_resource' do
+      described = Spree::AgentTools::DescribeResource.new(context).call(resource: 'products')[:resources].first
+
+      expect(described[:listed_under]).to eq(%w[categories collections])
+    end
+  end
 end

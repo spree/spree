@@ -65,7 +65,7 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - **Prefixed IDs** (`prod_86Rf07xd4z`) in every request, response and event payload — never raw integer ids. IDs are strings; never cast them to integers.
 - **No Ruby class names on the wire** — not in requests, responses, filters, webhooks, permission subjects, SDK types or docs. Use the short `api_type` name (`Spree::PriceRules::VolumeRule` → `volume_rule`). Details in `spree/AGENTS.md`.
 - **Read and write names match.** A field a serializer exposes is accepted under the same name on write; legacy column names are bridged on the model, never by the client.
-- **Deprecate, never remove.** Store, Admin and Seller APIs are stable contracts: a renamed field keeps working, marked `deprecated:`, until the next minor release, and the upgrade guide names its replacement. Ruby renames keep the old name working for one release with a deprecation warning.
+- **Deprecate, never remove.** Store, Admin and Seller APIs are stable contracts: a renamed field or webhook event name keeps working, marked `deprecated:`, for five minor releases (deprecated in 6.0, removed in 6.5), and the upgrade guide names its replacement. Ruby renames keep the old name working for three minor releases (deprecated in 6.0, removed in 6.3) with a deprecation warning, and legacy tables and columns kept for an upgrade task are dropped on the same schedule. Name the removal release in the message (`Removed in 6.5.`).
 - **Money is never a float**, in Ruby or TypeScript (`docs/plans/6.0-money-correctness.md`).
 - **One store per installation.** Store-owned data belongs to a store; cross-store sharing is gone.
 
@@ -76,7 +76,8 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - No co-author or "generated with" trailers.
 - Open every pull request with `/open-pr` (code review, security review, open, monitor). A hook blocks a bare `gh pr create` until both reviews have run on `HEAD`.
 - Pull request descriptions are public: no credentials, personal data or local URLs. Keep them short; bullets for larger changes.
-- Cut releases with `/release <version>` (audit, version bump, release notes, pull request, then tags, GitHub release, and the spree-starter and storefront bumps). A patch release publishes itself; a minor, major or prerelease prints the tag commands for a human.
+- Fix every real finding a reviewer reports — person or bot — in the same pull request, including bugs the change did not introduce. "It predates this change" and "it belongs in a follow-up" are not reasons to leave one. Skip a finding only when it is wrong, and say why on its thread.
+- Cut releases with `/release <version>` (audit, version bump, release notes, pull request, then tags, GitHub release, and the spree-starter and storefront bumps). A patch release publishes itself when its pull request merges (`release-on-merge.yml`); a minor, major or prerelease prints the tag commands for a human.
 
 ## Testing
 

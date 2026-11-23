@@ -11,10 +11,10 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   product_ids: 'Array<string> | null',
-                   category_ids: 'Array<string> | null',
-                   customer_ids: 'Array<string> | null',
-                   option_value_ids: 'Array<string> | null'
+                   product_ids: [:string, multi: true, nullable: true],
+                   category_ids: [:string, multi: true, nullable: true],
+                   customer_ids: [:string, multi: true, nullable: true],
+                   option_value_ids: [:string, multi: true, nullable: true]
 
           attributes created_at: :iso8601, updated_at: :iso8601
 

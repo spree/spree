@@ -11,7 +11,7 @@ module Spree
   #   class OrderCompletedNotifier < Spree::Subscriber
   #     subscribes_to 'order.placed'
   #
-  #     def call(event)
+  #     def handle(event)
   #       order_id = event.payload['id']
   #       Spree::OrderMailer.confirm_email(order_id).deliver_later
   #     end
@@ -21,7 +21,7 @@ module Spree
   #   class OrderAuditLogger < Spree::Subscriber
   #     subscribes_to 'order.placed', 'order.canceled'
   #
-  #     def call(event)
+  #     def handle(event)
   #       AuditLog.create!(
   #         event_name: event.name,
   #         payload: event.payload,
@@ -34,7 +34,7 @@ module Spree
   #   class OrderEventLogger < Spree::Subscriber
   #     subscribes_to 'order.*'
   #
-  #     def call(event)
+  #     def handle(event)
   #       Rails.logger.info("Order event: #{event.name}")
   #     end
   #   end
@@ -66,7 +66,7 @@ module Spree
   #   class CriticalOrderHandler < Spree::Subscriber
   #     subscribes_to 'order.placed', async: false
   #
-  #     def call(event)
+  #     def handle(event)
   #       # This runs synchronously
   #     end
   #   end
@@ -141,9 +141,9 @@ module Spree
 
     # Handle an event
     #
-    # Override this method in subclasses to handle events.
-    # If you've defined event handlers with `on`, this method
-    # will route to the appropriate handler automatically.
+    # Routes the event to the handler named with `on`, or to #handle.
+    # Subclasses implement #handle; overriding this method skips the
+    # `on` routing.
     #
     # @param event [Spree::Event] The event to handle
     # @return [void]

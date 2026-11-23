@@ -4,7 +4,7 @@ module Spree
     # {Spree::Cart} and {Spree::Order}. Before 6.0 a cart was an incomplete
     # order, so extensions written against 5.x (payment gateways, checkout
     # plugins) call the legacy names on carts too. Every legacy name warns and
-    # forwards to its replacement. Removed in 6.1.
+    # forwards to its replacement. Removed in 6.3.
     #
     # Renamed columns are also registered with +alias_attribute+, so the legacy
     # name keeps working in +where+ / +find_by+ (those paths do not warn).
@@ -80,7 +80,7 @@ module Spree
       private
 
       def warn_deprecated_name(legacy_name, current_name)
-        Spree::Deprecation.warn("#{self.class.name}##{legacy_name} is deprecated and will be removed in Spree 6.1. Use ##{current_name} instead.")
+        Spree::Deprecation.warn("#{self.class.name}##{legacy_name} is deprecated and will be removed in Spree 6.3. Use ##{current_name} instead.")
       end
     end
   end
