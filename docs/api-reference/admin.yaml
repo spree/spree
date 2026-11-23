@@ -81288,7 +81288,7 @@ components:
               refund_amount:
                 type: string
                 format: decimal
-                pattern: "^-?\\d+(\\.\\d+)?$"
+                pattern: "^(-?\\d+(\\.\\d+)?)?$"
                 description: Tax included. Defaults to what was paid for these units.
             required:
             - line_item_id

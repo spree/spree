@@ -137,6 +137,22 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     it 'sends decimals as canonical strings' do
       expect(price.json_schema[:properties][:amount]).to include(type: :string, format: :decimal)
     end
+
+    it 'accepts an empty string for a decimal declared blank: true' do
+      refund = described_class.shape('TestRefundParams') { |s| s.attribute :amount, :decimal, blank: true }
+      pattern = Regexp.new(refund.json_schema[:properties][:amount][:pattern])
+
+      expect(pattern).to match('')
+      expect(pattern).to match('-12.50')
+      expect(pattern).not_to match('12.')
+      expect(Regexp.new(price.json_schema[:properties][:amount][:pattern])).not_to match('')
+    end
+
+    it 'refuses blank: on a field that is not a decimal' do
+      declare = -> { described_class.shape('TestBlankParams') { |s| s.attribute :name, :string, blank: true } }
+
+      expect(declare).to raise_error(ArgumentError, /blank:/)
+    end
   end
 
   describe '#component_name' do

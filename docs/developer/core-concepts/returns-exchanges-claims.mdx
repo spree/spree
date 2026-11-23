@@ -234,7 +234,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments' \
 
 </CodeGroup>
 
-A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. A line opened without a `refund_amount`, as every claim a customer opens is, offers its `paid_amount`, so resolving without an `amount` refunds what the customer paid for the claimed items. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
+A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. A line opened without a `refund_amount` (or with an empty one), as every claim a customer opens is, offers its `paid_amount`, rounded down to the currency's minor unit. Resolving without an `amount` refunds the sum of the lines' `refund_amount`, so a line opened with a lower amount, including 0, keeps the refund below what the customer paid. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
 
 ## Exchanges
 
