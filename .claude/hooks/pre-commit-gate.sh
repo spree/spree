@@ -162,9 +162,11 @@ read_head_flag() {
           char="${rest:0:1}"; rest="${rest:1}"
           case "$char" in
             [dfweh]) continue ;;
-            # gh reads `-H=` as an empty value, not as "the next word".
-            H) if [ -n "$rest" ]; then HEAD_FLAG="${rest#=}"; else next=head; fi; break ;;
-            R) if [ -n "$rest" ]; then REPO_FLAG="${rest#=}"; else next=repo; fi; break ;;
+            # Like gh's flag parser (pflag): an attached value loses a leading
+            # `=` only when more follows it (`-H=x` is x), so `-H=` is the
+            # value `=`, never "the next word".
+            H) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; HEAD_FLAG="$rest"; else next=head; fi; break ;;
+            R) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; REPO_FLAG="$rest"; else next=repo; fi; break ;;
             [aBbFlmprtT]) [ -n "$rest" ] || next=skip; break ;;
             *) return 2 ;;
           esac
