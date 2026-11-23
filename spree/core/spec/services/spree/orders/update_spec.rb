@@ -44,6 +44,75 @@ module Spree
         end
       end
 
+      context 'moving a draft to another customer' do
+        let(:other_customer) { create(:user) }
+        let(:order) { create(:order_with_totals, customer: user, store: store, line_items_price: 90) }
+        let(:params) { { customer_id: other_customer.id } }
+
+        before { order.update_column(:total, 90) }
+
+        context "with the first customer's store credit applied" do
+          let!(:store_credit) { create(:store_credit, customer: user, store: store, amount: 15, currency: order.currency) }
+
+          before do
+            create(:store_credit_payment_method, store: store)
+            expect(Spree::StoreCredits::Apply.call(order: order)).to be_success
+          end
+
+          it 'takes the store credit payment off the order' do
+            expect(subject).to be_success
+
+            order.reload
+            expect(order.customer).to eq(other_customer)
+            expect(order.payments.store_credits.valid).to be_empty
+            expect(order.total_applied_store_credit).to eq(0)
+            expect(store_credit.reload.amount_remaining).to eq(15)
+          end
+
+          it 'keeps the payment when the same customer is sent again' do
+            described_class.call(order: order, params: { customer_id: user.id })
+
+            expect(order.reload.payments.store_credits.valid.sum(:amount)).to eq(15)
+          end
+
+          it 'leaves a placed order alone' do
+            order.update_column(:completed_at, Time.current)
+
+            expect(subject).to be_success
+            expect(order.reload.payments.store_credits.valid.sum(:amount)).to eq(15)
+          end
+        end
+
+        context 'with a gift card issued to the first customer applied' do
+          let(:gift_card) { create(:gift_card, customer: user, store: store, amount: 25, currency: order.currency) }
+
+          before { expect(Spree::GiftCards::Apply.call(gift_card: gift_card, order: order)).to be_success }
+
+          it 'takes the gift card off the order and restores its balance' do
+            expect(subject).to be_success
+
+            order.reload
+            expect(order.gift_card).to be_nil
+            expect(order.payments.store_credits.valid).to be_empty
+            expect(gift_card.reload.amount_remaining).to eq(25)
+          end
+        end
+
+        context 'with a gift card issued to no one applied' do
+          let(:gift_card) { create(:gift_card, store: store, amount: 25, currency: order.currency) }
+
+          before { expect(Spree::GiftCards::Apply.call(gift_card: gift_card, order: order)).to be_success }
+
+          it 'keeps the gift card on the order' do
+            expect(subject).to be_success
+
+            order.reload
+            expect(order.gift_card).to eq(gift_card)
+            expect(order.payments.store_credits.valid.sum(:amount)).to eq(25)
+          end
+        end
+      end
+
       context 'updating scalar attributes' do
         let(:params) { { email: 'new@example.com', customer_note: 'Leave at door' } }
 

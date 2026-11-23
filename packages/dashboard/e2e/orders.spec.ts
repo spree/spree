@@ -695,6 +695,61 @@ test.describe('order customer', () => {
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
   })
 
+  test("takes the first customer's store credit off a draft moved to another customer", async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const firstCustomer = await adminRequest<{ id: string }>(page, creds, 'post', '/customers', {
+      email: `e2e-credit-owner-${Date.now()}@example.com`,
+    })
+    await adminRequest(page, creds, 'post', `/customers/${firstCustomer.id}/store_credits`, {
+      amount: '15.00',
+      currency: 'USD',
+      memo: 'E2E credit that stays with its owner',
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      customer_id: firstCustomer.id,
+      items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+    })
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/store_credits`, {
+      amount: '15.00',
+    })
+    const withCredit = await adminRequest<{ total: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(withCredit.amount_due).not.toBe(withCredit.total)
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click({ timeout: 15_000 })
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await editor.locator('#order-customer-picker').fill('Promo')
+    await page.getByRole('option').filter({ hasText: FIXTURE_PROMO_CUSTOMER_EMAIL }).first().click()
+    await editor.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(editor).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: 'Promo Customer', exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const moved = await adminRequest<{ total: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(moved.amount_due).toBe(moved.total)
+  })
+
   test('asks before removing the customer from a placed order', async ({ page }) => {
     const creds = await login(page)
     const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })

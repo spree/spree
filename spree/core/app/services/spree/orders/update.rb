@@ -27,6 +27,7 @@ module Spree
           # the transaction, leaving the address rows written above behind.
           raise ActiveRecord::RecordInvalid, @order unless @order.update(@params)
 
+          release_previous_customer_balance if @order.saved_change_to_customer_id? && !@order.completed?
           process_items(items_param) if items_param
 
           # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
@@ -91,6 +92,22 @@ module Spree
       def process_items(items)
         result = Spree::Orders::UpsertItems.call(order: @order, items: items)
         propagate_step_failure!(result, fallback: 'Failed to update items on order') if result.failure?
+      end
+
+      # Store credit and a named gift card pay only for their owner's orders,
+      # so a draft that changes hands gives back what the previous customer
+      # put on it. A gift card without a named owner is spendable by anyone
+      # holding its code, so it stays.
+      def release_previous_customer_balance
+        gift_card = @order.gift_card
+
+        if gift_card.nil?
+          result = Spree.store_credit_remove_service.call(order: @order)
+          propagate_step_failure!(result, fallback: 'Failed to remove store credit from order') if result.failure?
+        elsif gift_card.customer_id.present? && gift_card.customer_id != @order.customer_id
+          result = Spree.gift_card_remove_workflow.call(order: @order)
+          propagate_step_failure!(result, fallback: 'Failed to remove gift card from order') if result.failure?
+        end
       end
 
       def build_fulfillments(keep_selection:)
