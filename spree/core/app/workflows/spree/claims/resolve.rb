@@ -37,6 +37,7 @@ module Spree
         step :settle_tax
 
         ApplicationRecord.transaction do
+          step :lock_claim
           run_hooks :before_settle
           step :build_replacement_fulfillments if replacing?
           step :issue_store_credit if refunding? && internal_refund?
@@ -76,6 +77,15 @@ module Spree
                            message: I18n.t('spree.errors.messages.invalid_refund_method'))
           failure(claim)
         end
+        # Read fresh: a caller may hold a copy loaded before another request
+        # resolved the claim.
+        failure(claim, :not_approved) unless claim.reload.approved?
+      end
+
+      # Checked again under the claim's row lock, so two requests racing to
+      # resolve one claim cannot both pay out or both ship a replacement.
+      def lock_claim
+        claim.lock!
         failure(claim, :not_approved) unless claim.approved?
       end
 

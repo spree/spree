@@ -104,6 +104,26 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'apologize')).to be_failure
     end
 
+    it 'refuses to resolve a claim a second time' do
+      first = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'store_credit')
+      second = Spree::Claims::Resolve.call(claim: claim.reload, resolution: 'refund', refund_method: 'store_credit')
+
+      expect(first).to be_success
+      expect(second).to be_failure
+      expect(Spree::StoreCredit.where(originator: claim).count).to eq(1)
+    end
+
+    # Two requests racing: each loaded the claim while it was still approved.
+    it 'refuses a resolve that read the claim before another one resolved it' do
+      stale = Spree::Claim.find(claim.id)
+      Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'store_credit')
+
+      result = Spree::Claims::Resolve.call(claim: stale, resolution: 'refund', refund_method: 'store_credit')
+
+      expect(result).to be_failure
+      expect(Spree::StoreCredit.where(originator: claim).count).to eq(1)
+    end
+
     # Unguarded, an unrecognised method falls through internal_refund? to the
     # gateway branch — money moving by a route the caller never asked for.
     it 'refuses an unknown refund method when refunding' do
