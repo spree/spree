@@ -1801,6 +1801,7 @@ en:
       eligible: Eligible
     store_credit_name: Store Credit
     store_credit_not_applied: No Store Credit could be applied to this order.
+    store_credit_paid_by_previous_customer: Store credit from the previous customer has already been taken on this order. Refund or void that payment before changing the customer.
     store_credit_payment_method:
       currency_mismatch: Store credit currency does not match order currency
       insufficient_authorized_amount: Unable to capture more than authorized amount

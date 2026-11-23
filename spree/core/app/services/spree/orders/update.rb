@@ -27,11 +27,14 @@ module Spree
           # the transaction, leaving the address rows written above behind.
           raise ActiveRecord::RecordInvalid, @order unless @order.update(@params)
 
+          # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
+          # Read before releasing the previous customer's balance: the removal
+          # services reload the order, which drops the address's saved changes.
+          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
+
           release_previous_customer_balance if @order.saved_change_to_customer_id? && !@order.completed?
           process_items(items_param) if items_param
 
-          # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
-          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
           build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
 
           @order.recalculate_totals!
@@ -103,7 +106,7 @@ module Spree
 
         if gift_card.nil?
           result = Spree.store_credit_remove_service.call(order: @order)
-          propagate_step_failure!(result, fallback: 'Failed to remove store credit from order') if result.failure?
+          propagate_step_failure!(result, fallback: I18n.t('spree.store_credit_paid_by_previous_customer')) if result.failure?
         elsif gift_card.customer_id.present? && gift_card.customer_id != @order.customer_id
           result = Spree.gift_card_remove_workflow.call(order: @order)
           propagate_step_failure!(result, fallback: 'Failed to remove gift card from order') if result.failure?

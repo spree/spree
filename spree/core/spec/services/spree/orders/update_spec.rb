@@ -75,6 +75,14 @@ module Spree
             expect(order.reload.payments.store_credits.valid.sum(:amount)).to eq(15)
           end
 
+          it 'refuses the change once the credit has been taken' do
+            order.payments.store_credits.update_all(status: 'completed')
+
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to include('Refund or void that payment')
+            expect(order.reload.customer).to eq(user)
+          end
+
           it 'leaves a placed order alone' do
             order.update_column(:completed_at, Time.current)
 
@@ -318,6 +326,21 @@ module Spree
 
               order.reload
               expect(order.ship_address_id).to eq(initial_address.id)
+              expect(order.ship_address.address1).to eq('5 Edited Way')
+              expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
+              expect(order.delivery_total).to eq(5)
+            end
+          end
+
+          context 'and the shipping address is edited in place while the customer changes' do
+            let(:params) do
+              { customer_id: create(:user).id, shipping_address: { id: initial_address.id, address1: '5 Edited Way' } }
+            end
+
+            it 'still rebuilds from the default rate' do
+              expect(subject).to be_success
+
+              order.reload
               expect(order.ship_address.address1).to eq('5 Edited Way')
               expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
               expect(order.delivery_total).to eq(5)
