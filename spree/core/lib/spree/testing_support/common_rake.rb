@@ -46,14 +46,21 @@ namespace :common do
       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
     bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
-    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}")
+    # A failed step stops the task. Carrying on left a test app that looked
+    # built but had no Spree migrations or an unmigrated database.
+    install = "#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false " \
+              "--user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}"
+    system(install) || raise('Spree install generator failed')
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
+      # Fails on a database that does not exist yet, which is the usual case.
       system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
-      system('bundle exec rake db:drop db:create > /dev/null 2>&1')
+      system('bundle exec rake db:drop db:create > /dev/null 2>&1') ||
+        raise('Failed to create the dummy database. Run `bundle exec rake db:drop db:create` in the gem to see why.')
       Spree::DummyModelGenerator.start
-      system('bundle exec rake db:migrate > /dev/null 2>&1')
+      system('bundle exec rake db:migrate > /dev/null 2>&1') ||
+        raise('Failed to migrate the dummy database. Run `bundle exec rake db:migrate` in the gem to see why.')
     end
 
     begin
