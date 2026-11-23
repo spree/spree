@@ -223,6 +223,33 @@ RSpec.describe Spree::Channel, type: :model do
 
       expect(Spree::CollectionPublication.find_by(channel: channel, collection: collection).published_at).to eq(future)
     end
+
+    context 'events', events: true do
+      before { Spree::Events.reset! }
+      after { Spree::Events.reset! }
+
+      def published_events
+        published = []
+        Spree::Events.subscribe('collection.published', async: false) { |event| published << event }
+        Spree::Events.activate!
+        yield
+        published
+      end
+
+      it 'announces each new publication once' do
+        events = published_events do
+          channel.add_collections([collection.id])
+          channel.add_collections([collection.id])
+        end
+
+        expect(events.size).to eq(1)
+        expect(events.first.payload['id']).to eq(collection.prefixed_id)
+      end
+
+      it 'stays silent when asked to' do
+        expect(published_events { channel.add_collections([collection.id], publish_events: false) }).to be_empty
+      end
+    end
   end
 
   describe '#remove_collections' do

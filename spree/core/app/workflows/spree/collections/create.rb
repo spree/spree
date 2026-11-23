@@ -45,7 +45,7 @@ module Spree
         return if collection.publications_assigned?
 
         channels = store.channels.active
-        channels.add_collections(collection.id)
+        channels.add_collections(collection.id, publish_events: false)
         @published_channels = channels.to_a
       end
     end

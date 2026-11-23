@@ -35,7 +35,12 @@ module Spree
         end
 
         def eligible?(order, _options = {})
-          return true if eligible_collection_ids.empty?
+          # No collections picked yet matches no order, so an order-level
+          # action cannot discount everything.
+          if eligible_collection_ids.empty?
+            eligibility_errors.add(:base, eligibility_error_message(:no_matching_collections))
+            return false
+          end
 
           order_collection_ids = Spree::ProductCollection.where(product_id: order.product_ids, collection_id: eligible_collection_ids).
                                  distinct.pluck(:collection_id)

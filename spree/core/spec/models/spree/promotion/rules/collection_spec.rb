@@ -25,6 +25,11 @@ RSpec.describe Spree::Promotion::Rules::Collection, type: :model do
     expect(rule).not_to be_eligible(order_with(in_winter))
   end
 
+  it 'matches no order while no collection is picked' do
+    empty = described_class.create!(promotion: promotion, preferred_match_policy: 'all')
+    expect(empty).not_to be_eligible(order_with(in_summer))
+  end
+
   it 'needs a product from every collection with the all policy' do
     rule.update!(collection_ids: [summer.id, winter.id], preferred_match_policy: 'all')
 

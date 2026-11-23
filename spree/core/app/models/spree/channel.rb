@@ -101,13 +101,16 @@ module Spree
     # gets collections only this way: nothing publishes onto a channel when it
     # is created.
     # @param collection_ids [Array<Integer>, Integer]
+    # @param publish_events [Boolean] whether each new publication sends `collection.published`
     # @return [Integer] the number of CollectionPublications created or updated
-    def self.add_collections(collection_ids)
+    def self.add_collections(collection_ids, publish_events: true)
       collection_ids = Array(collection_ids).map(&:to_s).uniq
       channels = all.to_a
       return 0 if collection_ids.empty? || channels.empty?
 
-      count = channels.sum { |channel| channel.send(:upsert_collection_publications, collection_ids) }
+      count = channels.sum do |channel|
+        channel.send(:publish_collections, collection_ids, publish_events: publish_events)
+      end
       Spree::Collection.where(id: collection_ids).touch_all
       count
     end
@@ -169,12 +172,14 @@ module Spree
     # @param collection_ids [Array<Integer>, Integer]
     # @param published_at [Time, nil] when the publications go live; nil means immediately
     # @param unpublished_at [Time, nil] when the publications come down; nil means never
+    # @param publish_events [Boolean] whether each new publication sends `collection.published`
     # @return [Integer] the number of CollectionPublications created or updated
-    def add_collections(collection_ids, published_at: nil, unpublished_at: nil)
+    def add_collections(collection_ids, published_at: nil, unpublished_at: nil, publish_events: true)
       collection_ids = Array(collection_ids).map(&:to_s).uniq
       return 0 if collection_ids.empty?
 
-      count = upsert_collection_publications(collection_ids, published_at: published_at, unpublished_at: unpublished_at)
+      count = publish_collections(collection_ids, published_at: published_at, unpublished_at: unpublished_at,
+                                                  publish_events: publish_events)
       Spree::Collection.where(id: collection_ids).touch_all
       count
     end
@@ -228,6 +233,19 @@ module Spree
 
     def upsert_collection_publications(collection_ids, published_at: nil, unpublished_at: nil)
       upsert_publication_rows(Spree::CollectionPublication, :collection_id, collection_ids, published_at, unpublished_at)
+    end
+
+    # The bulk upsert skips the publication callbacks, so the events for the
+    # newly created rows are sent here.
+    def publish_collections(collection_ids, publish_events:, published_at: nil, unpublished_at: nil)
+      existing_ids = publish_events ? collection_publications.where(collection_id: collection_ids).pluck(:collection_id).map(&:to_s) : []
+      count = upsert_collection_publications(collection_ids, published_at: published_at, unpublished_at: unpublished_at)
+      return count unless publish_events
+
+      store.collections.where(id: collection_ids - existing_ids).find_each do |collection|
+        collection.publish_event('collection.published', nil, { channel_id: prefixed_id })
+      end
+      count
     end
 
     def upsert_publication_rows(publication_class, foreign_key, record_ids, published_at, unpublished_at)

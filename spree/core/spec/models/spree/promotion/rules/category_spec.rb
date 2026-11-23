@@ -10,6 +10,10 @@ describe Spree::Promotion::Rules::Category, type: :model do
     let(:category2) { create :category, name: 'second' }
     let(:order) { create :order_with_line_items, store: store }
 
+    it 'matches no order while no category is picked' do
+      expect(rule).not_to be_eligible(order)
+    end
+
     context 'with any match policy' do
       before do
         rule.preferred_match_policy = 'any'
