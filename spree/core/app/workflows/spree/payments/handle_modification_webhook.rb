@@ -185,6 +185,9 @@ module Spree
       # not change.
       def authorize_remainder
         return if remainder.blank?
+        # Holding more than the order still owes would only keep the
+        # customer's money tied up.
+        return unless remainder.trim_remainder_to_amount_owed!
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         return if result.success?

@@ -698,6 +698,35 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'the legacy locale and currency columns' do
+    let!(:store) { create(:store, default_currency: 'USD', default_locale: 'en') }
+    let(:market) { store.default_market }
+
+    before do
+      # The market moved on through Settings → Markets; the store columns kept
+      # their values from setup.
+      market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl')
+    end
+
+    it 'leaves the market alone when another setting is saved' do
+      expect { Spree::Store.find(store.id).update!(customer_support_email: 'help@example.com') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale', 'supported_locales') })
+    end
+
+    it 'leaves the market alone when the columns themselves are written' do
+      expect { store.update!(default_currency: 'GBP', default_locale: 'de') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale') })
+    end
+
+    it 'keeps answering from the default market' do
+      store.update!(default_currency: 'GBP', default_locale: 'de')
+      reloaded = Spree::Store.find(store.id)
+
+      expect(reloaded.default_currency).to eq('EUR')
+      expect(reloaded.default_locale).to eq('nl')
+    end
+  end
+
   describe '#default_locale' do
     context 'with markets' do
       let!(:store) { create(:store, default_locale: 'en') }

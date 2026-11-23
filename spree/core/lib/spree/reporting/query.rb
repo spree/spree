@@ -201,7 +201,10 @@ module Spree
           dimension = registry.dimension!(member_name(name, 'dimension'))
 
           if dimension.time?
-            grain = (grain || dimension.grains.first).to_sym
+            grain = dimension.grains.first if ['', nil].include?(grain)
+            raise InvalidQuery, "grain for #{dimension.name} must be a string" unless grain.is_a?(String) || grain.is_a?(Symbol)
+
+            grain = grain.to_sym
             unless dimension.grains.include?(grain)
               raise InvalidQuery, "invalid grain #{grain} for #{dimension.name}. Valid grains: #{dimension.grains.join(', ')}"
             end

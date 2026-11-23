@@ -13,12 +13,16 @@ module Spree
 
       param :metrics, type: :array, items: :string,
                       description: 'Metric names, e.g. ["orders", "net_sales"]', required: true
-      param :dimensions, type: :array, items: :string,
+      param :dimensions, type: :array, items: %i[string object],
                          description: 'Dimensions to group by, as named by describe_reporting ' \
-                                      '(e.g. ["completed_at", "channel"]). Omit for a single total.',
+                                      '(e.g. ["completed_at", "channel"]). A date dimension takes a grain as ' \
+                                      '{"name": "completed_at", "grain": "month"} (hour, day, week or month); ' \
+                                      'without one, the grain is picked to fit the time range. Omit for a single total.',
                          required: false
       param :time_range, type: :object,
-                         description: 'A preset such as {"preset": "last_30_days"}, or {"from": "2026-01-01", "to": "2026-03-31"}',
+                         description: 'A preset such as {"preset": "last_30_days"} or {"preset": "year_to_date"}, ' \
+                                      'or dates as {"since": "2026-01-01", "until": "2026-03-31"}. ' \
+                                      'Defaults to the last 30 days.',
                          required: false
       param :filters, type: :array, items: :object,
                       description: 'Dimension filters, each {"dimension": …, "op": "eq" or "in", "value": …} — ' \
@@ -32,15 +36,38 @@ module Spree
       # returned thousands is capped rather than truncated silently.
       DEFAULT_LIMIT = 50
       MAX_LIMIT = 500
+      # A date dimension given without a grain gets the finest one that keeps
+      # the series about this long: a month by day, a quarter by week, a year
+      # by month. The reporting default, hour, fits almost no question.
+      TARGET_POINTS = 31
+      # Models often write a range as from/to; both are read as since/until.
+      TIME_RANGE_ALIASES = { 'from' => 'since', 'to' => 'until' }.freeze
+      TIME_RANGE_KEYS = %w[preset since until].freeze
 
       def call(metrics:, dimensions: nil, time_range: nil, filters: nil, sort: nil, limit: nil, currency: nil)
-        query = build_query(metrics: metrics, dimensions: dimensions, time_range: time_range,
-                            filters: filters, sort: sort, limit: limit, currency: currency)
+        row_limit = [(limit || DEFAULT_LIMIT).to_i, MAX_LIMIT].min
+        raise Spree::Reporting::InvalidQuery, "limit must be between 1 and #{MAX_LIMIT}" if row_limit < 1
+
+        # An unsorted date series is reported whole or not at all: cut at the
+        # limit, it would end early next to totals for the whole range. A
+        # sorted one ("the five best days") is a ranking, cut on purpose.
+        dimensions = Array(dimensions).map { |entry| entry.is_a?(Hash) ? entry.stringify_keys : entry }
+        series = sort.blank? && dimensions.any? { |entry| time_dimension_for(entry) }
+
+        query = build_query(metrics: metrics, dimensions: dimensions, time_range: time_range, filters: filters,
+                            sort: sort, currency: currency, limit: (row_limit unless series),
+                            target_points: series && dimensions.one? ? [TARGET_POINTS, row_limit].min : TARGET_POINTS)
 
         refusal = unauthorized_members(query)
         return refusal if refusal
 
-        shape(query.execute)
+        result = query.execute
+        if series && Array(result.rows).size > row_limit
+          return { error: "This report has #{result.rows.size} rows, more than the limit of #{row_limit}. " \
+                          "Shorten the range, use a coarser grain, or raise limit (up to #{MAX_LIMIT})." }
+        end
+
+        shape(result)
       rescue Spree::Reporting::UnknownMember => e
         { error: e.message, valid: Array(e.valid).map(&:to_s) }
       rescue Spree::Reporting::InvalidQuery => e
@@ -56,18 +83,93 @@ module Spree
 
       private
 
-      def build_query(metrics:, dimensions:, time_range:, filters:, sort:, limit:, currency:)
-        parameters = {
-          'metrics' => Array(metrics),
-          'dimensions' => Array(dimensions),
-          'filters' => Array(filters),
-          'limit' => [(limit || DEFAULT_LIMIT).to_i, MAX_LIMIT].min
-        }
-        parameters['time_range'] = time_range if time_range.present?
+      def build_query(metrics:, dimensions:, time_range:, filters:, sort:, currency:, limit:, target_points:)
+        parameters = { 'metrics' => Array(metrics), 'filters' => Array(filters) }
+        parameters['limit'] = limit if limit
+        parameters['time_range'] = normalize_time_range(time_range) if time_range.present?
         parameters['sort'] = sort if sort.present?
         parameters['currency'] = currency if currency.present?
 
+        ungrained = dimensions.index { |entry| ungrained_time_dimension(entry) }
+        return reporting_query(parameters.merge('dimensions' => dimensions)) if ungrained.nil?
+
+        # The range decides the grain, and only the query resolves the range
+        # (presets, the store's timezone), so it is built once at the coarsest
+        # grain to read the range back, then again at the grain that fits.
+        entry = dimensions[ungrained]
+        dimension = ungrained_time_dimension(entry)
+        entry = { 'name' => entry } unless entry.is_a?(Hash)
+        draft = dimensions.dup
+        draft[ungrained] = entry.merge('grain' => dimension.grains.last.to_s)
+        query = reporting_query(parameters.merge('dimensions' => draft))
+
+        draft[ungrained] = entry.merge('grain' => fitting_grain(dimension, query, target_points).to_s)
+        reporting_query(parameters.merge('dimensions' => draft))
+      end
+
+      def reporting_query(parameters)
         Spree::Reporting::Query.new(store: context.store, params: parameters)
+      end
+
+      # The registry's time dimension an entry names, or nil. Anything else is
+      # left for the query to accept or refuse.
+      def time_dimension_for(entry)
+        name = entry.is_a?(Hash) ? entry['name'] : entry
+        return unless name.is_a?(String) || name.is_a?(Symbol)
+
+        dimension = Spree.reporting.dimensions[name.to_sym]
+        dimension if dimension&.time?
+      end
+
+      def ungrained_time_dimension(entry)
+        return if entry.is_a?(Hash) && ['', nil].exclude?(entry['grain'])
+
+        time_dimension_for(entry)
+      end
+
+      def fitting_grain(dimension, query, target_points)
+        dimension.grains.find { |grain| (bucket_count(query, grain) || Float::INFINITY) <= target_points } ||
+          dimension.grains.last
+      end
+
+      # Counted on the store's calendar, as the adapter buckets them, so a
+      # daylight saving change does not push 31 days over the target.
+      def bucket_count(query, grain)
+        first = query.time_range.first.in_time_zone(query.time_zone)
+        last = query.time_range.last.in_time_zone(query.time_zone)
+
+        case grain
+        when :hour then ((last - first.beginning_of_hour) / 1.hour).floor + 1
+        when :day then (last.to_date - first.to_date).to_i + 1
+        when :week then ((last.to_date.beginning_of_week(:monday) - first.to_date.beginning_of_week(:monday)).to_i / 7) + 1
+        when :month then ((last.year * 12) + last.month) - ((first.year * 12) + first.month) + 1
+        end
+      end
+
+      # A range in a shape the query does not read would be dropped there for
+      # the last 30 days, and the model would report on the wrong period.
+      def normalize_time_range(range)
+        return range unless range.is_a?(Hash)
+
+        range = range.to_h.stringify_keys
+        TIME_RANGE_ALIASES.each do |alias_key, key|
+          next unless range.key?(alias_key)
+          raise Spree::Reporting::InvalidQuery, "time_range takes #{alias_key} or #{key}, not both" if range.key?(key)
+
+          range[key] = range.delete(alias_key)
+        end
+
+        if range.key?('preset') && range.keys.intersect?(%w[since until])
+          raise Spree::Reporting::InvalidQuery, 'time_range takes a preset or since and until, not both'
+        end
+
+        unknown = range.keys - TIME_RANGE_KEYS
+        if unknown.any?
+          raise Spree::Reporting::InvalidQuery,
+                "time_range does not take #{unknown.join(', ')}. Use {\"preset\": …} or {\"since\": …, \"until\": …}."
+        end
+
+        range
       end
 
       # The same per-member check the reporting endpoint makes, in the same
