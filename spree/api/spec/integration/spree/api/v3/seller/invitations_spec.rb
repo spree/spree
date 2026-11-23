@@ -94,7 +94,8 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
       security [bearer_auth: []]
       description <<~DESC
         Sends the invitation email again, for a colleague who never got the first
-        one. An invitation whose window has closed is refused rather than
+        one. The invitation's `expires_at` moves to 14 days after the resend. An
+        invitation whose window has closed is refused rather than
         re-sent.
       DESC
 

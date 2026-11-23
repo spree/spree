@@ -117,12 +117,15 @@ module Spree
     # The token is rotated first, so a link that leaked with the earlier email
     # stops working, and the invitee gets the full window again from the new
     # email rather than whatever was left of the old one.
+    #
+    # @return [Boolean] true when the email went out again, false when refused
     def resend!
-      return if expired? || deleted? || accepted?
+      return false if expired? || deleted? || accepted?
 
       self.expires_at = VALID_FOR.from_now
       regenerate_token # saves the new expiry along with the token
       publish_event('invitation.resent')
+      true
     end
 
     # The staff account holding the invited address, if one exists. Matched

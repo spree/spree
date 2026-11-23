@@ -46572,7 +46572,8 @@ paths:
         bearer_auth: []
       description: |-
         Sends a pending invitation to the seller's team again, with a fresh
-        acceptance link. Use it when the email never arrived; an invitation that
+        acceptance link. The invitation's `expires_at` moves to 14 days after
+        the resend. Use it when the email never arrived; an invitation that
         has expired is refused, so invite the person again instead.
 
 
@@ -51071,7 +51072,7 @@ paths:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
         '422':
-          description: the invitation has expired
+          description: the invitation has expired or was already accepted
           content:
             application/json:
               example:

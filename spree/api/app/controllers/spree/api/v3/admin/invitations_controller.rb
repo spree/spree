@@ -39,25 +39,28 @@ module Spree
             @resource = find_resource
             authorize!(:update, @resource)
 
-            refusal = if @resource.accepted?
-                        I18n.t('spree.invitation_already_accepted')
-                      elsif @resource.expired?
-                        I18n.t('spree.invitation_expired')
-                      end
-
-            if refusal
-              return render_error(
-                code: ErrorHandler::ERROR_CODES[:processing_error],
-                message: refusal,
-                status: :unprocessable_content
-              )
+            # The model re-checks the window, so an invitation that expires
+            # between these checks and the send is still refused, not reported
+            # as sent.
+            if @resource.accepted?
+              return render_resend_refusal(I18n.t('spree.invitation_already_accepted'))
+            end
+            unless @resource.resend!
+              return render_resend_refusal(I18n.t('spree.invitation_expired'))
             end
 
-            @resource.resend!
             render json: serialize_resource(@resource)
           end
 
           protected
+
+          def render_resend_refusal(message)
+            render_error(
+              code: ErrorHandler::ERROR_CODES[:processing_error],
+              message: message,
+              status: :unprocessable_content
+            )
+          end
 
           def model_class
             Spree::Invitation

@@ -67,7 +67,7 @@ module Spree
             # Sends the email again. The model refuses once the invitation has
             # expired, and says so rather than silently doing nothing.
             def resend
-              if @invitation.expired?
+              unless @invitation.resend!
                 return render_error(
                   code: ErrorHandler::ERROR_CODES[:processing_error],
                   message: I18n.t('spree.invitation_expired'),
@@ -75,7 +75,6 @@ module Spree
                 )
               end
 
-              @invitation.resend!
               render json: serialize(@invitation)
             end
 

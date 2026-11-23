@@ -144,7 +144,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
         run_test!
       end
 
-      response '422', 'the invitation has expired' do
+      response '422', 'the invitation has expired or was already accepted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before { invitation.update_column(:expires_at, 1.day.ago) }

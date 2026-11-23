@@ -142,10 +142,16 @@ RSpec.describe Spree::Invitation, type: :model do
       end
     end
 
-    it 'leaves the expiry of an expired invitation alone' do
+    it 'leaves the expiry of an expired invitation alone and says it refused' do
       invitation.update_column(:expires_at, 1.hour.ago)
 
-      expect { invitation.resend! }.not_to change { invitation.reload.expires_at }
+      result = nil
+      expect { result = invitation.resend! }.not_to change { invitation.reload.expires_at }
+      expect(result).to be(false)
+    end
+
+    it 'says it sent the invitation again' do
+      expect(invitation.resend!).to be(true)
     end
   end
 
