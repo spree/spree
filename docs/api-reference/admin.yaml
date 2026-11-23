@@ -19580,7 +19580,8 @@ paths:
         bearer_auth: []
       description: |-
         Deletes an unused gift card. Cards that have been redeemed or
-        partially redeemed cannot be deleted and return 422.
+        partially redeemed, or that are applied to an open cart or draft
+        order, cannot be deleted and return 422.
 
 
         **Required scope:** `write_gift_cards` (for API-key authentication).
