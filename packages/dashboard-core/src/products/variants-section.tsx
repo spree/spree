@@ -373,12 +373,12 @@ export function VariantsSection({
           label: variantDisplayLabel(
             variant,
             t('admin.products.variants.default_variant'),
-            allOptionTypes,
+            knownOptionTypes,
           ),
         }
       })
       .filter((entry): entry is { key: string; label: string } => entry !== null)
-  }, [orphanedKeys, form, t, allOptionTypes])
+  }, [orphanedKeys, form, t, knownOptionTypes])
 
   return (
     <Card>
@@ -465,7 +465,7 @@ export function VariantsSection({
                         form={form}
                         index={index}
                         isSimpleProduct={isSimpleProduct}
-                        optionTypes={allOptionTypes}
+                        optionTypes={knownOptionTypes}
                         onEdit={() => handleEditRow(index)}
                         onRemove={() => handleRowRemove(index)}
                         onPickImages={() => setPickingImagesFor(index)}
@@ -485,7 +485,7 @@ export function VariantsSection({
         <VariantImagesPicker
           form={form}
           variantIndex={pickingImagesFor}
-          optionTypes={allOptionTypes}
+          optionTypes={knownOptionTypes}
           onClose={() => setPickingImagesFor(null)}
         />
       )}
