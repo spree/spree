@@ -50,6 +50,9 @@ module Spree
 
           if new_amount.positive?
             payment.update_store_credit_amount!(new_amount)
+            # A payment recorded before holds existed takes its hold now.
+            next payment.invalidate! unless payment.hold_store_credit!
+
             remaining_total -= new_amount
           else
             payment.invalidate!

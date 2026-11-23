@@ -227,7 +227,10 @@ module Spree
       true
     end
 
+    # A failed payment is never processed again, so it gives back any store
+    # credit it held.
     def failure!
+      release_store_credit_hold!
       update!(status: 'failed')
     end
     alias failure failure!
@@ -305,7 +308,12 @@ module Spree
         # A payment draws on its own credit: what that credit has free, plus
         # what this payment already holds on it.
         held = store_credit_held? ? amount_in_database.to_d : BigDecimal('0')
-        [source.amount_remaining + held, amount_from_order].min
+        available = source.amount_remaining + held
+        # Shrinking a saved payment never draws more from the credit: a
+        # partial capture leaves the rest of its authorization on the credit,
+        # so its free amount can be below what was just captured.
+        available = [available, amount_in_database.to_d].max if persisted? && amount_in_database
+        [available, amount_from_order].min
       elsif payment_method&.store_credit?
         store_credits = owner.available_store_credits
         store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
@@ -342,9 +350,9 @@ module Spree
     end
 
     # Puts this payment's amount on hold on the customer's store credit, so no
-    # other order can spend it. Only a draft order's payment is held: a cart
-    # takes its credit when it completes, moments later, and a hold left by an
-    # abandoned cart would never be released. Gift card credit is drawn down
+    # other order can spend it. An order's payment is held, a cart's never
+    # is: a cart takes its credit when it completes, moments later, and a hold
+    # left by an abandoned cart would never be released. Gift card credit is drawn down
     # on the card itself.
     #
     # @return [Boolean] false when the credit no longer has the amount free
@@ -363,7 +371,12 @@ module Spree
     def release_store_credit_hold!
       return unless store_credit_held?
 
-      source.with_lock { source.void(response_code, action_originator: self) }
+      # Checked again under the credit's lock: StoreCredit#void does not refuse a
+      # code it already voided or captured, so two racing releases (or a
+      # release racing a capture) would each take the amount off again.
+      source.with_lock do
+        source.void(response_code, action_originator: self) if store_credit_held?
+      end
     end
 
     # Statuses a payment can be resized from: nobody has claimed it for the

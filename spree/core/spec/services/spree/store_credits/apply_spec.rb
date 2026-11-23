@@ -401,6 +401,26 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(credit.reload.amount_authorized).to eq(6)
     end
 
+    it 'holds a payment recorded before holds existed when credit is applied again' do
+      draft = draft_with_total(BigDecimal('10'))
+      draft.payments.create!(payment_method: Spree::PaymentMethod::StoreCredit.last, source: credit, amount: 10,
+                             status: 'checkout', response_code: credit.generate_authorization_code)
+
+      described_class.call(order: draft.reload)
+
+      expect(credit.reload.amount_authorized).to eq(10)
+      expect(draft.payments.store_credits.valid.sum(:amount)).to eq(10)
+    end
+
+    it 'releases the hold when the payment fails' do
+      draft = draft_with_total(BigDecimal('10'))
+      described_class.call(order: draft)
+
+      draft.reload.payments.store_credits.first.failure!
+
+      expect(credit.reload.amount_authorized).to eq(0)
+    end
+
     it 'releases the hold when the store credit is removed' do
       draft = draft_with_total(BigDecimal('44.99'))
       described_class.call(order: draft)

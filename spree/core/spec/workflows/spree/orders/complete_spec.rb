@@ -126,6 +126,20 @@ module Spree
         expect(credit.amount_used).to eq(0)
       end
 
+      it 'captures part of a held payment authorized at completion' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+
+        result = Spree.payment_capture_workflow.call(payment: payment, amount: BigDecimal('6'))
+
+        expect(result).to be_success
+        expect(payment.reload.amount).to eq(6)
+        expect(credit.reload.amount_used).to eq(6)
+      end
+
       it 'completes each of two drafts paid from different credits' do
         first = draft_with_total(BigDecimal('10'))
         Spree::StoreCredits::Apply.call(order: first)
