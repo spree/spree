@@ -39,7 +39,10 @@ module Spree
       # waits for one in flight and then removes the role it granted.
       transaction do
         revoke_pending_invitations_for(user)
-        Spree::RoleUser.where(user: user, role: roles).destroy_all
+        # One DELETE, evaluated against the latest committed rows. A per-row
+        # destroy first SELECTs from MySQL's repeatable-read snapshot, which
+        # misses a role an acceptance committed while this waited on its lock.
+        Spree::RoleUser.where(user: user, role: roles).delete_all
       end
     end
 

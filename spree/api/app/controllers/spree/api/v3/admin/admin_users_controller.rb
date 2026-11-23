@@ -116,12 +116,13 @@ module Spree
           # Reconcile the user's roles on this store to match `desired_role_ids`.
           # Adds missing assignments and removes extras — no-op for unchanged.
           def apply_role_ids(desired_role_ids)
-            # Clearing every role is a removal from staff.
-            return current_store.remove_user(@resource) if desired_role_ids.empty?
-
             store_roles = current_store.roles
-            current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
             target = desired_role_ids.map(&:to_s)
+            # A list naming no role of this store — empty, or only unknown ids —
+            # leaves the person with no store role: a removal from staff.
+            return current_store.remove_user(@resource) unless store_roles.exists?(id: target)
+
+            current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
 
             store_roles.where(id: target - current).each do |role|
               @resource.role_users.find_or_create_by!(role: role)
