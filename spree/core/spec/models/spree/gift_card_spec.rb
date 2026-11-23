@@ -80,6 +80,19 @@ RSpec.describe Spree::GiftCard, type: :model do
         end
       end
 
+      # Batch, customer and store deletes reach the card through
+      # dependent: :destroy with whatever copy they loaded, so the check
+      # reads the card's row under a lock rather than that copy.
+      it 'checks a locked fresh copy of the card' do
+        gift_card = create(:gift_card, store: store)
+        stale = described_class.find(gift_card.id)
+        gift_card.update_columns(status: 'partially_redeemed', amount_used: 5)
+
+        expect(described_class).to receive(:lock).and_call_original
+        expect(stale.destroy).to be(false)
+        expect(described_class.exists?(gift_card.id)).to be(true)
+      end
+
       it 'allows deleting a card only completed orders used' do
         gift_card = create(:gift_card, store: store, status: :active)
         create(:completed_order_with_totals, store: store, gift_card: gift_card)

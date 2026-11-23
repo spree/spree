@@ -295,8 +295,18 @@ module Spree
       self.code = code.downcase if code.present?
     end
 
+    # Runs inside the destroy's transaction, so the row lock taken here holds
+    # until the delete commits. Spree::GiftCards::Apply locks the card before
+    # drawing it down and attaching it, so an apply either commits first (and
+    # the reloaded card shows the hold) or waits and then finds the card gone.
+    # Every destroy path gets this — the admin endpoint, and the
+    # dependent: :destroy cascades from a batch, a customer or a store.
+    #
+    # The check reads a locked fresh copy rather than reloading this record,
+    # so in-memory changes are left alone.
     def ensure_can_be_deleted
-      return if can_be_deleted?
+      current = self.class.lock.find(id)
+      return if current.can_be_deleted?
 
       errors.add(:base, :cannot_destroy_used_gift_card)
       throw(:abort)
