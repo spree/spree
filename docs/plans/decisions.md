@@ -1,3 +1,15 @@
+## 2026-11-23: No storefront record in core; a publishable key can be bound to several channels
+
+**Context:** A store knows its storefront through one `storefront_url` preference and its publishable keys. A hosted product needs somewhere to keep a storefront's repository, domains and deployments, and the Next.js storefront serves two channels from one deployment with one key, which the 5.6 single-channel binding can only express as an unbound key that reaches every channel. A `Spree::Storefront` record with its own keys, identity overrides and a link to its manager was drafted over 2026-11-21 to 2026-11-23, then compared with three other open-source commerce platforms: none has a storefront record in core, one binds its publishable keys to sales channels many-to-many, and all three keep hosting in a cloud console separate from the store's admin.
+
+**Decision:** Core gets no storefront record. A storefront is whoever holds a publishable key, and the store keeps one `storefront_url`. `spree_api_key_channels` replaces `ApiKey#channel_id`: no rows is every channel, one row is the old binding, several rows bind one key to a chosen set; channels can be added to a key and never removed. Hosting details live in a hosted product's own app, which works only through the stock Admin API and webhooks, because on Spree Cloud a merchant may run their own image and nothing underneath can be patched.
+
+Rejected: the storefront record, which only earns its place when a store has several storefronts on different domains. Also rejected: per-storefront name and SEO overrides, which no compared platform has and which would need their own translations. Also rejected: keeping the single binding and using one key per channel.
+
+**Consequences:** A multi-channel key without a channel header resolves to the store's default channel if bound to it, otherwise the request is a 422. `channel_id` on keys is deprecated in 6.1 and removed in 6.2. If a store needs a second storefront on its own domain, the first answer to consider is a storefront URL on the channel, not a new model.
+
+**Plan:** `6.1-storefront-connection.md`. **Plans amended:** `5.6-store-channel-context-and-key-binding.md` (the single binding becomes a set).
+
 ## 2026-11-14: `spree seed` is the one command; the file is `spree.seeds.yml`; sample data stays in Ruby
 
 **Context:** The store file was deployed by `spree config …` from the `@spree/config` package, next to `spree seed`, which ran the database seeds. `config` is the natural name for the application config of a TypeScript Spree 7. Sample data had been rewritten as a recipe run through the Admin API, which needed the browser tab to stay open when started from the setup screen (`6.0-cli-configurator.md`).

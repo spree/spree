@@ -212,6 +212,19 @@ async function deployFixtures(
 }
 
 /**
+ * The test gateway answers captures, voids and refunds as requested, the way
+ * a provider that reports their outcome by webhook does. A gateway's settings
+ * are not written from a fixture file, so this is the dashboard's own save.
+ * The card payment written in Ruby is already captured, so it is unaffected.
+ */
+async function requestGatewayOutcomes(client: AdminClient) {
+  const methods = await client.paymentMethods.list({ limit: 100 })
+  const gateway = methods.data.find((method) => method.name === FIXTURE_BOGUS_GATEWAY)
+  if (!gateway) throw new Error(`The deploy did not create "${FIXTURE_BOGUS_GATEWAY}"`)
+  await client.paymentMethods.update(gateway.id, { preferences: { requested_mode: true } })
+}
+
+/**
  * The store's admin, signed in. An invitation records who sent it, so it
  * cannot be sent with the deploy key, which belongs to no person.
  */
@@ -444,6 +457,7 @@ export default async function globalSetup() {
   }
   await deployFixtures('e2e/fixtures/store.yml', config, client, ['products'])
   await deployFixtures('e2e/fixtures/comma-store.yml', commaConfig, commaClient)
+  await requestGatewayOutcomes(commaClient)
 
   const sellerSlug = ledgerSellerSlug(config)
   const sellerId = await prepareStore(client, credentials, sellerSlug)
