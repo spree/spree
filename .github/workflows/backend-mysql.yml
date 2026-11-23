@@ -187,20 +187,23 @@ jobs:
         env:
           SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
         run: |
+          # Output streams as it happens, each line prefixed with its suite.
           pids=()
           for suite_dir in $SUITE_DIRS; do
             (
-              cd "$suite_dir"
-              if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
-                bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
-              else
-                bundle exec rake test_app
-              fi
-              bundle exec rake parallel_setup[${{ matrix.procs }}]
-            ) > "$RUNNER_TEMP/setup-$(basename "$suite_dir").log" 2>&1 &
+              set -eo pipefail
+              {
+                cd "$suite_dir"
+                if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+                  bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
+                else
+                  bundle exec rake test_app
+                fi
+                bundle exec rake "parallel_setup[${{ matrix.procs }}]"
+              } 2>&1 | sed -u "s|^|[$suite_dir] |"
+            ) &
             pids+=("$!")
           done
-          # Each log prints whole, in order, as its suite finishes.
           status=0
           i=0
           for suite_dir in $SUITE_DIRS; do
@@ -209,9 +212,6 @@ jobs:
               echo "::error::Setup failed for $suite_dir"
             fi
             i=$((i + 1))
-            echo "::group::Setup $suite_dir"
-            cat "$RUNNER_TEMP/setup-$(basename "$suite_dir").log"
-            echo "::endgroup::"
           done
           exit "$status"
 
