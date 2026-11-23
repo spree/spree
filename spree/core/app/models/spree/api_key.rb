@@ -74,11 +74,15 @@ module Spree
     validate :channel_immutable, if: -> { persisted? && channel_id_changed? }
 
     before_validation :generate_token, on: :create
-    after_create_commit :notify_store_admins, if: :secret?
+    after_create_commit :notify_store_admins, if: -> { secret? && !skip_admin_notification }
 
     # Where the creating request came from, set by the Admin API so the
     # security notice sent to store admins can name it. Never persisted.
     attr_accessor :request_ip
+
+    # Set when a key is minted as part of setting up a store (the CLI's own
+    # read-only key), which is not news to anyone. Never persisted.
+    attr_accessor :skip_admin_notification
 
     scope :active, -> { where(revoked_at: nil) }
     scope :revoked, -> { where.not(revoked_at: nil) }

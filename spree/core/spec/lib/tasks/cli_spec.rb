@@ -35,6 +35,22 @@ describe 'spree:cli:create_api_key' do
       expect(key.scopes).to eq(%w[read_orders write_promotions])
     end
 
+    context 'with store admins' do
+      before { create(:admin_user) }
+
+      it 'emails them about the new key' do
+        expect { subject.invoke }.to output.to_stdout.and have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created)
+      end
+
+      context 'with SKIP_ADMIN_NOTIFICATION=true' do
+        let(:env) { super().merge('SKIP_ADMIN_NOTIFICATION' => 'true') }
+
+        it 'sends no email' do
+          expect { expect { subject.invoke }.to output.to_stdout }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+        end
+      end
+    end
+
     context 'when an active key already carries the name' do
       let!(:previous) { create(:api_key, :secret, name: 'CI key', store: store, scopes: %w[read_all]) }
 
