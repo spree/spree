@@ -11,6 +11,16 @@ module Spree
     publishes_lifecycle_events
 
     CODE_LOOKUP_BATCH_SIZE = 1_000
+    # Rounds of fresh codes tried before giving up. Each code has 64 random
+    # bits, so a round that comes back short is already a rare collision;
+    # running out of rounds means rows are being dropped for some other reason.
+    MAX_CODE_ATTEMPTS = 5
+    # Codes are the prefix plus 16 random hex characters, and must fit a
+    # 255-character column.
+    MAX_PREFIX_LENGTH = 255 - 16
+
+    # Raised when a batch cannot be filled with unique codes.
+    class CodeGenerationError < StandardError; end
 
     #
     # Associations
@@ -22,6 +32,7 @@ module Spree
     # Validations
     #
     validates :codes_count, :amount, :prefix, presence: true
+    validates :prefix, length: { maximum: MAX_PREFIX_LENGTH }
     validates :codes_count, numericality: {
       greater_than: 0,
       less_than_or_equal_to: ->(_record) { Spree::Config[:gift_card_batch_limit].to_i }
@@ -60,12 +71,15 @@ module Spree
         # checked, so top the batch up until it holds every card.
         missing = codes_count - gift_cards.count
 
-        while missing.positive?
+        MAX_CODE_ATTEMPTS.times do
+          break unless missing.positive?
+
           rows = generate_codes(missing, taken: @gift_cards_to_insert.pluck(:code)).map { |code| gift_card_hash(code) }
           Spree::GiftCard.insert_all rows
           @gift_cards_to_insert.concat(rows)
           missing = codes_count - Spree::GiftCard.where(gift_card_batch_id: id).count
         end
+        raise CodeGenerationError, "Gift card batch #{prefixed_id} is #{missing} card(s) short of #{codes_count}" if missing.positive?
 
         publish_gift_card_created_events(@gift_cards_to_insert.pluck(:code)) if publish_events && @gift_cards_to_insert.any?
       end
@@ -85,7 +99,9 @@ module Spree
       codes = Set.new
       taken = taken.to_set
 
-      while codes.size < count
+      MAX_CODE_ATTEMPTS.times do
+        break if codes.size >= count
+
         candidates = Array.new(count - codes.size) { "#{prefix.downcase}#{SecureRandom.hex(8).downcase}" }
         candidates = candidates.uniq.reject { |code| codes.include?(code) || taken.include?(code) }
 
@@ -94,6 +110,7 @@ module Spree
           codes.merge(slice.reject { |code| stored.include?(code) })
         end
       end
+      raise CodeGenerationError, "Could not generate #{count} unique gift card codes" if codes.size < count
 
       codes.to_a
     end

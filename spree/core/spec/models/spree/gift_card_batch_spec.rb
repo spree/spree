@@ -140,6 +140,32 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
     end
   end
 
+  describe 'code generation limits' do
+    subject(:gift_card_batch) { build(:gift_card_batch, codes_count: 2, prefix: 'batch_', amount: 10) }
+
+    it 'rejects a prefix that leaves codes no room in the column' do
+      gift_card_batch.prefix = 'x' * (described_class::MAX_PREFIX_LENGTH + 1)
+
+      expect(gift_card_batch).not_to be_valid
+      expect(gift_card_batch.errors[:prefix]).to be_present
+    end
+
+    it 'raises instead of spinning when inserted cards keep going missing' do
+      allow(Spree::GiftCard).to receive(:insert_all)
+
+      expect { gift_card_batch.save! }.to raise_error(described_class::CodeGenerationError, /2 card\(s\) short/)
+      expect(Spree::GiftCard).to have_received(:insert_all).exactly(described_class::MAX_CODE_ATTEMPTS).times
+      expect(described_class.count).to eq(0)
+    end
+
+    it 'raises instead of spinning when every generated code is taken' do
+      existing = create(:gift_card_batch, codes_count: 1, prefix: 'batch_', amount: 10)
+      allow(SecureRandom).to receive(:hex).and_return(existing.gift_cards.first.code.delete_prefix('batch_'))
+
+      expect { existing.generate_codes(1) }.to raise_error(described_class::CodeGenerationError)
+    end
+  end
+
   describe '#generate_gift_cards' do
     subject(:gift_card_batch) { build(:gift_card_batch, codes_count: 2, prefix: 'batch_', amount: 10) }
 
