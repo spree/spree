@@ -34,10 +34,13 @@ module Spree
         step :resolve_amount if refunding?
         run_hooks :validate
 
-        step :settle_tax
-
+        # Everything that writes runs under the claim's row lock, so a request
+        # that loses a race to resolve the same claim changes nothing: not the
+        # replacement flags, not the tax credit rows, not the money.
         ApplicationRecord.transaction do
           step :lock_claim
+          step :save_replacement_selection
+          step :settle_tax
           run_hooks :before_settle
           step :build_replacement_fulfillments if replacing?
           step :issue_store_credit if refunding? && internal_refund?
@@ -83,10 +86,11 @@ module Spree
       end
 
       # Checked again under the claim's row lock, so two requests racing to
-      # resolve one claim cannot both pay out or both ship a replacement.
+      # resolve one claim cannot both pay out or both ship a replacement. A
+      # separate copy is locked so the replacement choice held on `claim`'s
+      # lines survives.
       def lock_claim
-        claim.lock!
-        failure(claim, :not_approved) unless claim.approved?
+        failure(claim, :not_approved) unless Spree::Claim.lock.find(claim.id).approved?
       end
 
       # Rewrites the credit rows for the money actually going back — each line's
@@ -121,14 +125,18 @@ module Spree
       end
 
       # Flags exactly the chosen lines, so resolving twice with different
-      # choices cannot leave stale flags behind.
+      # choices cannot leave stale flags behind. Held in memory for the
+      # validate hooks, and saved once the claim is locked.
       def apply_replacement_selection
         chosen = Array(replacement_line_item_ids).map(&:to_s)
 
         claim.claim_line_items.each do |line|
-          line.update!(send_replacement: chosen.include?(line.id.to_s))
+          line.send_replacement = chosen.include?(line.id.to_s)
         end
-        claim.claim_line_items.reload
+      end
+
+      def save_replacement_selection
+        claim.claim_line_items.each { |line| line.save! if line.changed? }
       end
 
       def build_replacement_fulfillments

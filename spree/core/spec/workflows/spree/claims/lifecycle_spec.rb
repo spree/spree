@@ -113,17 +113,6 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::StoreCredit.where(originator: claim).count).to eq(1)
     end
 
-    # Two requests racing: each loaded the claim while it was still approved.
-    it 'refuses a resolve that read the claim before another one resolved it' do
-      stale = Spree::Claim.find(claim.id)
-      Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'store_credit')
-
-      result = Spree::Claims::Resolve.call(claim: stale, resolution: 'refund', refund_method: 'store_credit')
-
-      expect(result).to be_failure
-      expect(Spree::StoreCredit.where(originator: claim).count).to eq(1)
-    end
-
     # Unguarded, an unrecognised method falls through internal_refund? to the
     # gateway branch — money moving by a route the caller never asked for.
     it 'refuses an unknown refund method when refunding' do
@@ -265,6 +254,40 @@ RSpec.describe 'Spree::Claims workflows' do
       claim.reload
     end
 
+    # Two requests racing: the second passes its own check, then the first
+    # resolves the claim before the second writes anything.
+    it 'changes nothing for a resolve that loses a race to another' do
+      claim = approved_claim(refund_amount: 27.5)
+      line = claim.claim_line_items.first
+      line.variant.stock_levels.first&.set_count_on_hand(10)
+      snapshot = nil
+
+      allow_any_instance_of(Spree::Claims::Resolve).to receive(:ensure_resolvable).and_wrap_original do |original|
+        original.call
+        next if snapshot
+
+        snapshot = {}
+        winner = Spree::Claims::Resolve.call(claim: Spree::Claim.find(claim.id), resolution: 'refund_and_replacement',
+                                             amount: 10, replacement_line_item_ids: [line.id])
+        expect(winner).to be_success
+        snapshot = race_state(claim)
+      end
+
+      loser = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', replacement_line_item_ids: [])
+
+      expect(loser).to be_failure
+      expect(race_state(claim)).to eq(snapshot)
+    end
+
+    def race_state(claim)
+      {
+        credits: Spree::StoreCredit.where(originator: claim).pluck(:amount),
+        replacements: claim.order.fulfillment_items.where(replacement: true).count,
+        flags: Spree::ClaimLineItem.where(claim_id: claim.id).pluck(:send_replacement),
+        tax_rows: Spree::TaxLine.where(claim_line_item_id: claim.claim_line_items.select(:id)).order(:id).pluck(:amount)
+      }
+    end
+
     it 'lets the refund reach the price and its tax' do
       claim = approved_claim(refund_amount: 27.5)
 
@@ -308,8 +331,10 @@ RSpec.describe 'Spree::Claims workflows' do
       claim = approved_claim(refund_amount: 0)
       line_item.variant.stock_levels.first&.set_count_on_hand(10)
 
-      Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement',
+                                           replacement_line_item_ids: claim.claim_line_items.ids)
 
+      expect(result).to be_success
       expect(claim.credited_tax_total).to eq(0)
     end
 
