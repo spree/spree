@@ -1,0 +1,1 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode>env:Server</faultcode><faultstring>MS_UNAVAILABLE</faultstring></env:Fault></env:Body></env:Envelope>
