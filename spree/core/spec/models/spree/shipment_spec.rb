@@ -42,25 +42,40 @@ describe Spree::Fulfillment, type: :model do
   end
 
   describe '#fulfillment_type' do
-    it 'reads the kind from the delivery method when none is stored' do
-      { 'Spree::FulfillmentProvider::Pickup' => 'pickup', 'Spree::FulfillmentProvider::PickupPoint' => 'pickup_point',
-        'Spree::FulfillmentProvider::Digital' => 'digital', 'Spree::FulfillmentProvider::Manual' => 'shipping' }.each do |provider, kind|
-        shipment.delivery_method.fulfillment_provider = provider
-        expect(shipment.fulfillment_type).to eq(kind), provider
+    let(:fulfillment) { create(:fulfillment) }
+
+    def choose(method_factory)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(method_factory), true)
+      fulfillment.reload
+    end
+
+    it 'reads the kind from the selected delivery method' do
+      { pickup_delivery_method: 'pickup', pickup_point_delivery_method: 'pickup_point',
+        digital_delivery_method: 'digital', delivery_method: 'shipping' }.each do |method_factory, kind|
+        expect(choose(method_factory).fulfillment_type).to eq(kind), method_factory.to_s
       end
     end
 
-    it 'keeps a stored kind' do
-      shipment.fulfillment_type = 'digital'
-      expect(shipment.fulfillment_type).to eq('digital')
+    it 'follows a change of rate over the stored kind' do
+      fulfillment.update_columns(fulfillment_type: 'shipping')
+
+      expect(choose(:pickup_delivery_method).fulfillment_type).to eq('pickup')
     end
 
-    context 'when there is no delivery method' do
-      let(:shipping_method) { nil }
+    it 'ignores a rate that was not selected' do
+      choose(:delivery_method)
+      fulfillment.add_delivery_method(create(:pickup_delivery_method))
 
-      it 'is shipping' do
-        expect(shipment.fulfillment_type).to eq('shipping')
-      end
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+    end
+
+    it 'falls back to the stored kind, then shipping, without a selected rate' do
+      fulfillment.delivery_rates.destroy_all
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+
+      fulfillment.update_columns(fulfillment_type: 'digital')
+      expect(fulfillment.fulfillment_type).to eq('digital')
     end
   end
 

@@ -271,19 +271,19 @@ module Spree
       delivery_method&.digital? || false
     end
 
-    # How the goods reach the customer. Nothing writes the column for a new
-    # fulfillment, so it falls back to the selected delivery method's provider
-    # the way the 6.0 upgrade backfill does.
+    # How the goods reach the customer, read from the selected delivery
+    # method's provider the way the 6.0 upgrade backfill did, so it follows a
+    # later change of rate. The column (only the backfill writes it) answers
+    # for a fulfillment with no selected rate.
     #
     # @return [String] shipping, digital, pickup or pickup_point
     def fulfillment_type
-      stored = super
-      return stored if stored.present?
+      provider_class = selected_delivery_rate&.delivery_method&.provider_class
+      return super.presence || 'shipping' if provider_class.nil?
 
-      provider_class = delivery_method&.provider_class
-      if provider_class&.digital? then 'digital'
-      elsif provider_class&.pickup_point? then 'pickup_point'
-      elsif provider_class&.pickup? then 'pickup'
+      if provider_class.digital? then 'digital'
+      elsif provider_class.pickup_point? then 'pickup_point'
+      elsif provider_class.pickup? then 'pickup'
       else 'shipping'
       end
     end

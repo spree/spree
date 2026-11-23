@@ -83,7 +83,8 @@ describe Spree::OrderMailer, type: :mailer do
 
   context 'when the order is collected from a pickup location' do
     let(:pickup_location) do
-      create(:stock_location, store: store, name: 'Pickup counter', address1: '12 Market Street', city: 'Brooklyn',
+      create(:stock_location, store: store, name: 'Pickup counter', address1: '12 Market Street', address2: 'Unit 4B',
+                              city: 'Brooklyn', state: nil,
                               zipcode: '11201', pickup_enabled: true, pickup_instructions: 'Ring the bell at the side door.')
     end
 
@@ -100,9 +101,15 @@ describe Spree::OrderMailer, type: :mailer do
 
       [message.html_part, message.text_part].each do |part|
         body = part.body.to_s
-        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Brooklyn',
+        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Unit 4B', 'Brooklyn 11201',
                                 'Ring the bell at the side door.')
       end
+    end
+
+    it 'leaves out a canceled pickup' do
+      order.fulfillments.first.update_columns(status: 'canceled')
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location')
     end
   end
 

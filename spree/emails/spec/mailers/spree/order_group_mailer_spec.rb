@@ -64,6 +64,22 @@ describe Spree::OrderGroupMailer, type: :mailer do
       described_class.confirm_email(group.id).message
     end
 
+    it 'says where to collect a parcel picked up from a seller' do
+      fulfillment = group.orders.first.fulfillments.first
+      fulfillment.stock_location.update!(name: 'Pickup counter', address1: '12 Market Street',
+                                         pickup_instructions: 'Ring the bell at the side door.')
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Ring the bell at the side door.')
+      end
+    end
+
+    it 'names no pickup location when every parcel is shipped' do
+      parts_of(described_class.confirm_email(group)).each { |body| expect(body).not_to include('Pickup location') }
+    end
+
     it 'prefixes a re-send so the customer knows it is not a second purchase' do
       expect(described_class.confirm_email(group, true).subject).to include('[Resend]')
     end
