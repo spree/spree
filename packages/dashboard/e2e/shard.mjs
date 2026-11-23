@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-// Prints the spec files of one CI shard, as arguments for `playwright test`.
+// Prints the spec files of one CI shard, one per line, as file arguments for
+// `playwright test`. Playwright reads each argument as a regular expression,
+// so every line is escaped and anchored to match its own file and no other.
 //
 // Playwright's own `--shard` gives every shard the same number of tests, but
 // the product specs take much longer per test, so one shard ran up to twice
@@ -35,9 +37,17 @@ for (const spec of specs) {
   lightest.files.push(spec.file)
 }
 
+// With no file arguments Playwright runs the whole suite, so never print none.
+const { files } = shards[shard - 1]
+if (files.length === 0) {
+  console.error(`Shard ${shard} of ${total} has no spec files`)
+  process.exit(1)
+}
+
+const escapeRegExp = (file) => file.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 console.log(
-  shards[shard - 1].files
+  files
     .sort()
-    .map((file) => `e2e/${file}`)
-    .join(' '),
+    .map((file) => `/e2e/${escapeRegExp(file)}$`)
+    .join('\n'),
 )
