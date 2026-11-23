@@ -162,8 +162,11 @@ read_head_flag() {
           char="${rest:0:1}"; rest="${rest:1}"
           case "$char" in
             [dfweh]) continue ;;
-            H) rest="${rest#=}"; if [ -n "$rest" ]; then HEAD_FLAG="$rest"; else next=head; fi; break ;;
-            R) rest="${rest#=}"; if [ -n "$rest" ]; then REPO_FLAG="$rest"; else next=repo; fi; break ;;
+            # Like gh's flag parser (pflag): an attached value loses a leading
+            # `=` only when more follows it (`-H=x` is x), so `-H=` is the
+            # value `=`, never "the next word".
+            H) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; HEAD_FLAG="$rest"; else next=head; fi; break ;;
+            R) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; REPO_FLAG="$rest"; else next=repo; fi; break ;;
             [aBbFlmprtT]) [ -n "$rest" ] || next=skip; break ;;
             *) return 2 ;;
           esac
@@ -224,7 +227,10 @@ while IFS= read -r segment; do
   # or a URL, so every spelling of this repository is gated. Expansions,
   # comments and redirections change which arguments gh gets without the gate
   # seeing it, so only a command made of plain words and quotes, read to its
-  # end, can skip the gate.
+  # end, can skip the gate. The shell expands nothing in single quotes, nor in
+  # double quotes without `$` or a backtick (a backslash is refused above), so
+  # those are dropped before the check and may hold any text, such as a title
+  # with `^6.0.6` or `(#123)`.
   repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
   repo_name="${repo_name#*://}"
   repo_name="${repo_name#git@}"
@@ -232,9 +238,34 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" =~ ^[[:alnum:]\ $'\t'\"\'_./:=@,+%-]*$ ]] \
-    && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
-    continue
+  unquoted=""
+  rest="$LAUNCHED"
+  inert_quote="^('[^']*'|\"[^\"\$\`]*\")"
+  while [ -n "$rest" ]; do
+    if [[ "$rest" =~ $inert_quote ]]; then
+      rest="${rest:${#BASH_REMATCH[0]}}"
+    else
+      unquoted+="${rest:0:1}"
+      rest="${rest:1}"
+    fi
+  done
+  # The flags are read from the first `create` in the line, which a quoted
+  # value given to a flag before `pr` can hold, so a skip needs `pr create`
+  # right after `gh`. A `--` ends the flags the gate reads but not the ones gh
+  # does, so a command with one is never skipped either. And so that no other
+  # difference between the gate's reading and gh's can change the repository,
+  # a skip needs exactly one `--repo` and no `-R`.
+  repo_flags=$(grep -oE '(^|[[:space:]])--repo([=[:space:]]|$)' <<<"$unquoted" | wc -l | tr -d ' ')
+  if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
+    if [ $flags_read -eq 0 ] && [[ "$unquoted" =~ ^[[:alnum:]\ $'\t'_./:=@,+%-]*$ ]] \
+      && [[ "$LAUNCHED" =~ ^gh[[:space:]]+pr[[:space:]]+create[[:space:]] ]] \
+      && ! [[ " $unquoted " =~ [[:space:]]--[[:space:]] ]] \
+      && [ "$repo_flags" = 1 ] && ! [[ " $unquoted" =~ [[:space:]]-[[:alnum:]]*R ]]; then
+      continue
+    fi
+    echo "Blocked: $seg" >&2
+    echo "A pull request on $REPO_FLAG is not gated, but the gate must read the whole command to know that: write it as 'gh pr create --repo OWNER/NAME ...' on one line, with no flags before pr, one --repo, no -R and no standalone --, pass the body with --body-file, and quote any text with \$ or a backtick in single quotes." >&2
+    exit 2
   fi
   review_dir="$pr_dir"
   head_owner=""
