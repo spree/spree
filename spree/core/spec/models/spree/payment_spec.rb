@@ -1383,4 +1383,103 @@ describe Spree::Payment, type: :model do
       end
     end
   end
+
+  describe '#trim_remainder_to_amount_owed!' do
+    let(:remainder) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50)
+    end
+
+    before { create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 170) }
+
+    it 'shrinks a remainder to what the order still owes' do
+      expect(remainder.trim_remainder_to_amount_owed!).to be(true)
+      expect(remainder.reload.amount).to eq(30)
+    end
+
+    it 'leaves a remainder another run claimed at the amount it was claimed at' do
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload.amount).to eq(50)
+    end
+
+    it 'voids a remainder when the order owes nothing' do
+      order.update_columns(total: 170)
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_void
+    end
+
+    it 'leaves a remainder another run claimed alone when the order owes nothing' do
+      order.update_columns(total: 170)
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_processing
+    end
+  end
+
+  describe '#amount_owed_by_order' do
+    let(:payment) { create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50) }
+
+    it 'counts a sibling waiting on its provider by what it asked to capture, once' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: card, status: 'requested', amount: 100)
+      sibling.capture_events.create!(amount: 40, status: 'requested')
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 20)
+
+      expect(payment.amount_owed_by_order(including_in_flight: true)).to eq(140)
+    end
+
+    # A sibling's capture moves it from processing to requested, with its
+    # requested capture event, in one transaction. A read that sums statuses
+    # and capture events in separate statements can land between them and
+    # count the sibling twice; one statement sees it once.
+    it 'counts a sibling once when its capture is requested while the balance is read' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: card, status: 'processing', amount: 40)
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 20)
+
+      moved = false
+      move_sibling = lambda do |*, payload|
+        # The read of the siblings by status; the move lands right after it.
+        next if moved || payload[:sql] !~ /\ASELECT .*FROM [`"]?spree_payments[`"]? WHERE .*status[`"]? IN \(/im
+
+        moved = true
+        sibling.update_column(:status, 'requested')
+        sibling.capture_events.create!(amount: 40, status: 'requested')
+      end
+
+      owed = ActiveSupport::Notifications.subscribed(move_sibling, 'sql.active_record') do
+        payment.amount_owed_by_order(including_in_flight: true)
+      end
+
+      expect(moved).to be(true)
+      expect(owed).to eq(140)
+    end
+
+    it 'leaves order payment processing charging a payment still owed when a sibling capture is requested meanwhile' do
+      # Its own order, without the payment the outer setup adds.
+      other_order = create(:order, store: store, total: 80)
+      sibling = create(:payment, order: other_order, payment_method: gateway, source: card, status: 'processing', amount: 40)
+      needed = create(:payment, order: other_order, payment_method: gateway, source: card, status: 'checkout', amount: 40)
+      processed = []
+      allow(Spree.payment_process_workflow).to receive(:call) do |payment:, **|
+        processed << payment
+        Spree::ServiceModule::Result.new(true, payment, nil)
+      end
+
+      moved = false
+      move_sibling = lambda do |*, payload|
+        next if moved || payload[:sql] !~ /\ASELECT .*FROM [`"]?spree_payments[`"]? WHERE .*status[`"]? IN \(/im
+
+        moved = true
+        sibling.update_column(:status, 'requested')
+        sibling.capture_events.create!(amount: 40, status: 'requested')
+      end
+
+      ActiveSupport::Notifications.subscribed(move_sibling, 'sql.active_record') { other_order.process_payments! }
+
+      expect(moved).to be(true)
+      expect(processed).to eq([needed])
+    end
+  end
 end

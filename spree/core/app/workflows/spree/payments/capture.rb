@@ -218,9 +218,9 @@ module Spree
       # outside the lock.
       def authorize_remainder
         return if remainder.blank?
-        # What the order still owes was captured: holding the rest would only
-        # keep the customer's money tied up.
-        return remainder.void! if remainder.amount_owed_by_order(including_in_flight: true)&.zero?
+        # Holding more than the order still owes would only keep the
+        # customer's money tied up.
+        return unless remainder.trim_remainder_to_amount_owed!
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         failure(remainder, result.error.value.to_s) if result.failure?

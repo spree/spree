@@ -71,6 +71,16 @@ RSpec.describe Spree::Payments::Capture do
       expect(result.error.value).to eq(:capture_amount_not_positive)
     end
 
+    it 'refuses a zero-amount payment captured with no amount' do
+      payment.update_columns(amount: 0)
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:capture_amount_not_positive)
+    end
+
     it 'refuses to capture more than the payment amount' do
       expect(gateway).not_to receive(:capture)
 
@@ -79,6 +89,43 @@ RSpec.describe Spree::Payments::Capture do
       expect(result).to be_failure
       expect(result.error.value).to eq(:capture_exceeds_payment_amount)
       expect(payment.reload).to be_pending
+    end
+
+    context 'when the order owes less than the payment authorized' do
+      # The payment was authorized at the old total; the order has since come down.
+      before do
+        payment
+        order.update_columns(total: BigDecimal('30.25'))
+      end
+
+      it 'carries only what is still owed to the remainder of a partial capture' do
+        expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
+        expect(gateway).to receive(:authorize).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
+
+        described_class.call(payment: payment, amount: BigDecimal('10'))
+
+        expect(order.payments.pending.sole.amount).to eq(BigDecimal('20.25'))
+      end
+
+      it 'carries nothing another pending payment already holds' do
+        create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: BigDecimal('20.25'))
+        expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
+        expect(gateway).not_to receive(:authorize)
+
+        described_class.call(payment: payment, amount: BigDecimal('10'))
+
+        expect(order.payments.pending.sum(:amount)).to eq(BigDecimal('20.25'))
+      end
+
+      it 'counts a capture another payment is waiting on its provider to confirm as collected' do
+        other = create(:payment, order: order, payment_method: gateway, source: card, status: 'requested', amount: BigDecimal('10'))
+        other.capture_events.create!(amount: BigDecimal('10'), status: 'requested')
+        expect(gateway).to receive(:capture).with(money('20.25'), '123', anything).and_return(success_response)
+
+        described_class.call(payment: payment)
+
+        expect(payment.reload.captured_amount).to eq(BigDecimal('20.25'))
+      end
     end
 
     context 'with exact amounts' do

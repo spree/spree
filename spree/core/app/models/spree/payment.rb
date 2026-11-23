@@ -349,6 +349,22 @@ module Spree
       true
     end
 
+    # Voids this payment while nobody has claimed it. One conditional UPDATE,
+    # so a payment another run is charging (processing) is not overwritten
+    # and its capture can still be recorded. The caller publishes
+    # payment.voided, outside any lock it holds.
+    #
+    # @return [Boolean] false when the payment was claimed or settled meanwhile
+    def void_if_unclaimed!
+      voided = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
+               update_all(status: 'void', updated_at: Time.current)
+      return false if voided.zero?
+
+      self.status = 'void'
+      clear_attribute_changes(%i[status])
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end
@@ -455,14 +471,10 @@ module Spree
       return BigDecimal('0') if fresh_order.canceled?
 
       others = fresh_order.payments.where.not(id: id)
-      # One statement for both sums, so a sibling settling between two reads
-      # can't drop out of the completed sum and the in-flight sum at once.
-      # reorder(nil): the default created_at ordering is not grouped, which
-      # MySQL's only_full_group_by refuses.
-      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
+      by_status, awaiting = sibling_amounts(others)
       captured = others.where(status: 'completed')
-      owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
-             fresh_order.returned_items_refund_total
+      owed = fresh_order.total - by_status.fetch('completed', 0) - awaiting +
+             Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) - fresh_order.returned_items_refund_total
       if including_in_flight
         owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0)
       elsif including_processing
@@ -472,22 +484,57 @@ module Spree
       [owed, BigDecimal('0')].max
     end
 
+    # Sizes a remainder split off a partial capture to what its order still
+    # owes beyond its other live payments: voids it when nothing is, so the
+    # hold on the customer's money is released, and shrinks it when less is.
+    #
+    # Read and resized under the order's lock, which a capture holds while it
+    # moves a sibling from processing to requested and a dispatch holds while
+    # it claims a payment: the owed figure cannot count a sibling twice, and a
+    # remainder another run claimed meanwhile keeps the amount it was claimed at.
+    #
+    # @return [Boolean] whether the remainder still needs authorizing
+    def trim_remainder_to_amount_owed!
+      voided = false
+      outcome = with_order_lock do
+        owed = amount_owed_by_order(including_in_flight: true)
+        if owed&.zero?
+          voided = void_if_unclaimed!
+          next :released
+        end
+        next :authorize if owed.nil? || owed >= amount || resize_if_unclaimed!(owed)
+
+        :claimed
+      end
+      publish_event('payment.voided') if voided
+      outcome == :authorize
+    end
+
     # Row work only — moves the uncaptured remainder onto a new pending
     # payment and shrinks this one to what was captured. The caller authorizes
     # the returned remainder at the gateway afterwards, outside any lock.
     #
-    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
+    # @return [Spree::Payment, nil] the remainder payment, or nil when fully
+    #   captured or when the order can take no more
     def split_uncaptured_amount
       return if uncaptured_amount <= 0
 
-      remainder = owner.payments.create!(
+      remainder = owner.payments.new(
         amount: uncaptured_amount,
         payment_method: payment_method,
         source: source,
         status: 'pending',
         capture_on_dispatch: true
       )
-      carry_splits_to(remainder)
+      # The order may now take less than the authorization left over, when its
+      # total came down after the payment was authorized.
+      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
+      if remainder.amount.positive?
+        remainder.save!
+        carry_splits_to(remainder)
+      else
+        remainder = nil
+      end
       # Bang: a silent failure here would leave this payment at its full amount
       # beside a remainder that also exists, so the group would hold more money
       # than the customer was ever charged.
@@ -641,6 +688,34 @@ module Spree
 
     def set_amount
       self.amount = owner.total - owner.payment_total
+    end
+
+    # One statement for every sum, so a sibling moving between statuses
+    # between two reads is counted once: not dropped from both the completed
+    # and the in-flight sums, nor counted both as in flight (processing) and
+    # as awaiting its provider (requested).
+    #
+    # @return [Array(Hash{String => BigDecimal}, BigDecimal)] the amounts by
+    #   status, and the captures sent to a provider that confirms them by
+    #   webhook, which count as collected already
+    def sibling_amounts(others)
+      events = Spree::PaymentCaptureEvent.arel_table
+      awaiting_sql = events.project(events[:amount].sum).
+                     where(events[:payment_id].eq(Spree::Payment.arel_table[:id]).and(events[:status].eq('requested')))
+      rows = others.where(status: %w[completed pending processing requested]).
+             pluck(:status, :amount, Arel::Nodes::Grouping.new(awaiting_sql))
+
+      by_status = Hash.new(BigDecimal('0'))
+      awaiting = BigDecimal('0')
+      rows.each do |status, amount, requested|
+        by_status[status] += amount unless status == 'requested'
+        awaiting += BigDecimal(requested.to_s) if requested
+      end
+      [by_status, awaiting]
+    end
+
+    def with_order_lock(&)
+      order_id ? Spree::Order.find(order_id).with_lock(&) : yield
     end
 
     def amount_must_be_less_than_or_equal_to_max_amount
