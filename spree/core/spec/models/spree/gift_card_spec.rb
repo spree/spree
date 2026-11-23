@@ -41,6 +41,64 @@ RSpec.describe Spree::GiftCard, type: :model do
         expect(gift_card).to_not be_destroyed
         expect(gift_card.errors.messages).to eq(base: ["Can't delete a used gift card"])
       end
+
+      # Applying a card draws it down and pays with a store credit made from
+      # it while the card stays active; deleting it would leave that payment
+      # funding the order with no card behind it.
+      context 'when an open cart holds the card' do
+        let(:gift_card) { create(:gift_card, store: store, amount: 60) }
+        let(:cart) { create(:cart_with_line_items, store: store, line_items_price: 60) }
+
+        before do
+          cart.update_column(:total, 60)
+          expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: cart)).to be_success
+          gift_card.reload
+        end
+
+        it 'refuses the delete and keeps the card' do
+          expect(gift_card.status).to eq('active')
+          expect(gift_card.can_be_deleted?).to be(false)
+          expect(gift_card.destroy).to be(false)
+          expect(Spree::GiftCard.exists?(gift_card.id)).to be(true)
+        end
+
+        it 'allows the delete once the card is taken off the cart' do
+          expect(Spree.gift_card_remove_workflow.call(order: cart.reload)).to be_success
+
+          expect(gift_card.reload.can_be_deleted?).to be(true)
+          expect(gift_card.destroy).to be_destroyed
+        end
+      end
+
+      context 'when a draft order holds the card without drawing on it' do
+        let(:gift_card) { create(:gift_card, store: store) }
+
+        it 'refuses the delete' do
+          create(:order, store: store, gift_card: gift_card)
+
+          expect(gift_card.reload.destroy).to be(false)
+        end
+      end
+
+      # Batch, customer and store deletes reach the card through
+      # dependent: :destroy with whatever copy they loaded, so the check
+      # reads the card's row under a lock rather than that copy.
+      it 'checks a locked fresh copy of the card' do
+        gift_card = create(:gift_card, store: store)
+        stale = described_class.find(gift_card.id)
+        gift_card.update_columns(status: 'partially_redeemed', amount_used: 5)
+
+        expect(described_class).to receive(:lock).and_call_original
+        expect(stale.destroy).to be(false)
+        expect(described_class.exists?(gift_card.id)).to be(true)
+      end
+
+      it 'allows deleting a card only completed orders used' do
+        gift_card = create(:gift_card, store: store, status: :active)
+        create(:completed_order_with_totals, store: store, gift_card: gift_card)
+
+        expect(gift_card.reload.destroy).to be_destroyed
+      end
     end
   end
 
