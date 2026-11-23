@@ -268,8 +268,8 @@ jobs:
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
-    # workers against one backend would. Playwright distributes spec files
-    # across shards; within a shard the suite stays serial (workers: 1).
+    # workers against one backend would. e2e/shard.mjs distributes spec files
+    # across shards by size; within a shard the suite stays serial (workers: 1).
     strategy:
       fail-fast: false
       matrix:
@@ -354,11 +354,22 @@ jobs:
         working-directory: packages/dashboard
         run: pnpm exec playwright install-deps chromium
 
+      # The assignment stops the step when shard.mjs fails; with no file
+      # arguments the whole suite would run on every shard. The array keeps
+      # each line as one argument.
       - name: Run dashboard E2E tests
         working-directory: packages/dashboard
         env:
           E2E_PREVIEW: '1'
-        run: pnpm test:e2e --shard=${{ matrix.shard }}/4
+        run: |
+          list=$(node e2e/shard.mjs ${{ matrix.shard }} 4)
+          mapfile -t specs <<< "$list"
+          pnpm test:e2e "${specs[@]}"
+
+      - name: Print spec timings
+        if: ${{ !cancelled() }}
+        working-directory: packages/dashboard
+        run: node e2e/spec-timings.mjs test-results/report.json
 
       # First-run setup needs a stack with no admin, which the main suite's
       # never has — it brings up its own Rails and database. One shard is

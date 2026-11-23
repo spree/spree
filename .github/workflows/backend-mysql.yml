@@ -1,0 +1,236 @@
+name: Backend (MySQL)
+
+# The Ruby suites on MySQL. PostgreSQL covers every pull request
+# (backend.yml), so this runs nightly against main instead. ci.yml also calls
+# it for the two changes MySQL is most likely to break or least affordable to
+# miss: a pull request that adds a migration, and a release.
+#
+# Run it against any branch with:
+#   gh workflow run backend-mysql.yml --ref <branch>
+on:
+  schedule:
+    - cron: '17 2 * * *' # daily, 02:17 UTC
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # Keeps the gem cache the other jobs restore, and nothing waits for it. On
+  # most runs the cache already exists and this ends after the lookup. It is
+  # the only job that saves: it alone installs every gem's bundle, so a test
+  # lane saving its own would leave the shared cache incomplete.
+  build-mysql:
+    name: 'Gem cache (MySQL)'
+    runs-on: ubuntu-latest
+    env:
+      DB: mysql
+      RAILS_VERSION: '~> 8.1.0'
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
+      - name: Look up gem cache
+        id: gems
+        uses: actions/cache/restore@v6
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          lookup-only: true
+
+      - uses: ruby/setup-ruby@v1
+        if: steps.gems.outputs.cache-hit != 'true'
+        with:
+          ruby-version: '4.0'
+
+      # Starts from the newest earlier cache, so only changed gems install,
+      # and saves under the new key when the job ends.
+      - name: Cache Ruby gems
+        if: steps.gems.outputs.cache-hit != 'true'
+        uses: actions/cache@v6
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          restore-keys: |
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-
+
+      - name: Install libvips and MySQL client library
+        if: steps.gems.outputs.cache-hit != 'true'
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64 libmysqlclient-dev
+          version: 1
+
+      - name: Install root dependencies
+        if: steps.gems.outputs.cache-hit != 'true'
+        working-directory: spree
+        run: |
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+
+      - name: Install all project dependencies
+        if: steps.gems.outputs.cache-hit != 'true'
+        run: |
+          for project in core api emails providers/adyen providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
+            echo "--- Installing gems for $project ---"
+            cd spree/$project
+            bundle config set --local path ${{ github.workspace }}/vendor/bundle
+            bundle install
+            cd ${{ github.workspace }}
+          done
+
+  test-mysql:
+    name: 'Test ${{ matrix.project }} (MySQL, ${{ matrix.shard }}/${{ matrix.total_shards }})'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same lanes as test-postgres in backend.yml; see there for the
+        # grouping model.
+        include:
+          # core: 3 runners × 4 procs = 12-way
+          - { project: core, shard: 1, total_shards: 3, procs: 4 }
+          - { project: core, shard: 2, total_shards: 3, procs: 4 }
+          - { project: core, shard: 3, total_shards: 3, procs: 4 }
+          # api: 2 runners × 4 procs = 8-way
+          - { project: api, shard: 1, total_shards: 2, procs: 4 }
+          - { project: api, shard: 2, total_shards: 2, procs: 4 }
+          # providers: 1 runner × 2 procs — every provider gem shares a lane.
+          # No Meilisearch service here, so spree_meilisearch's integration spec
+          # skips itself; its unit specs still run against MySQL.
+          - {
+              project: providers,
+              dirs: 'providers/adyen providers/easypost providers/meilisearch providers/paypal providers/stripe',
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
+          # optional-gems: 1 runner × 2 procs — emails, dashboard, mcp and
+          # opentelemetry share a lane.
+          - {
+              project: optional-gems,
+              dirs: 'emails dashboard mcp opentelemetry',
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      RAILS_VERSION: '~> 8.1.0'
+      CI_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Read runner image
+        id: runner-image
+        run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
+
+      - name: Restore gem cache
+        uses: actions/cache/restore@v6
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          restore-keys: |
+            gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-mysql-
+
+      - name: Install libvips and MySQL client library
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64 libmysqlclient-dev
+          version: 1
+
+      - name: Install dependencies
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
+        run: |
+          cd spree
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" \
+              && bundle config set --local path ${{ github.workspace }}/vendor/bundle \
+              && bundle install)
+          done
+
+      - name: Setup test app
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
+        run: |
+          for suite_dir in $SUITE_DIRS; do
+            if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+              (cd "$suite_dir" && bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app)
+            else
+              (cd "$suite_dir" && bundle exec rake test_app)
+            fi
+          done
+
+      - name: Setup parallel databases
+        working-directory: spree
+        env:
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
+        run: |
+          for suite_dir in $SUITE_DIRS; do
+            (cd "$suite_dir" && bundle exec rake parallel_setup[${{ matrix.procs }}])
+          done
+
+      - name: Run tests
+        working-directory: spree
+        env:
+          SHARD: ${{ matrix.shard }}
+          TOTAL_SHARDS: ${{ matrix.total_shards }}
+          PROCS: ${{ matrix.procs }}
+          SUITE_DIRS: ${{ matrix.dirs || matrix.project }}
+        run: |
+          mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
+          # Run every suite in a shared lane even when an earlier one fails.
+          status=0
+          for suite_dir in $SUITE_DIRS; do
+            suite_name=$(basename "$suite_dir")
+            RSPEC_OPTS="--order random --format progress -r rspec_junit_formatter --format RspecJunitFormatter -o ${{ github.workspace }}/tmp/test-results/rspec/${suite_name}-${{ matrix.shard }}-\$TEST_ENV_NUMBER.xml" \
+              bash -c "cd '$suite_dir' && bundle exec rake parallel_shard" || status=1
+          done
+          exit "$status"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-mysql-${{ matrix.project }}-${{ matrix.shard }}
+          path: tmp/test-results/
+          if-no-files-found: ignore
+
+      - name: Upload failed test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: failed-screenshots-mysql-${{ matrix.project }}-${{ matrix.shard }}
+          path: /tmp/test-artifacts/
+          if-no-files-found: ignore
