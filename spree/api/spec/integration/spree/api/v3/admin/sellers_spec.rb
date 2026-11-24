@@ -360,6 +360,16 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
         run_test!
       end
+
+      response '404', 'the invitation was revoked' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.destroy! }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
     end
   end
 

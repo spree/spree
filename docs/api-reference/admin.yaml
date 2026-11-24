@@ -46625,6 +46625,16 @@ paths:
                     a new one.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/sellers/{id}/approve":
     parameters:
     - name: id

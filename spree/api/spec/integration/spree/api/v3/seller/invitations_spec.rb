@@ -115,7 +115,19 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         run_test!
       end
 
-      response '404', "another seller's invitation" do
+      response '422', 'the invitation has expired or was already accepted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { pending_invitation.prefixed_id }
+
+        before { pending_invitation.update_column(:expires_at, 1.day.ago) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '404', "another seller's invitation, or a revoked one" do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:other_seller) { create(:seller, :approved, store: store) }

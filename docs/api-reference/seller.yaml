@@ -24150,8 +24150,19 @@ paths:
                   name: Seller 85
               schema:
                 "$ref": "#/components/schemas/Invitation"
+        '422':
+          description: the invitation has expired or was already accepted
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
         '404':
-          description: another seller's invitation
+          description: another seller's invitation, or a revoked one
           content:
             application/json:
               example:
