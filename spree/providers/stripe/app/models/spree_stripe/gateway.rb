@@ -86,9 +86,9 @@ module SpreeStripe
       "https://dashboard.stripe.com/#{mode_path}payments/#{payment.transaction_id}"
     end
 
-    # Called by core when a session-created payment moves to pending. The intent
-    # is already confirmed client-side in the session flow, so this reads back the
-    # intent rather than initiating a charge.
+    # Called by core when a payment moves to pending. A storefront session already
+    # confirmed the intent. An admin saved-card payment has none yet, so one is
+    # created off-session first.
     #
     # @param money [Spree::Money]
     # @param payment_source [Spree::PaymentSource, Spree::CreditCard]
@@ -279,7 +279,7 @@ module SpreeStripe
 
     private
 
-    def handle_authorize_or_purchase(_money, _payment_source, gateway_options)
+    def handle_authorize_or_purchase(money, payment_source, gateway_options)
       # Scoped through this gateway's own payments — a cart-owned payment
       # (checkout is still in flight) has no order to join through, and the
       # payment method already belongs to exactly one store. Found by the
@@ -296,9 +296,12 @@ module SpreeStripe
         payment = payments.find_by(number: payment_number)
       end
       return failure('Payment not found') if payment.blank?
-      return failure('Payment is missing a payment intent') if payment.response_code.blank?
 
       protect_from_error do
+        # eg. payment created via admin
+        payment = ensure_payment_intent_exists_for_payment(payment, money, payment_source, gateway_options)
+        return failure('Payment is missing a payment intent') if payment.response_code.blank?
+
         stripe_payment_intent = retrieve_payment_intent(payment.response_code)
 
         response = if payment_intent_accepted?(stripe_payment_intent)
@@ -310,6 +313,8 @@ module SpreeStripe
 
         success(response.id, response)
       end
+    rescue Spree::Core::GatewayError => error
+      failure(error.message)
     end
 
     def validate_secret_key

@@ -6784,7 +6784,6 @@ which loads them on demand.
 
 **Plan:** `6.0-diagnostics-and-issue-reporting.md`.
 
-
 ## 2026-11-16 — Adyen becomes a provider gem in a 6.0 patch; core learns to wait for a provider's answer
 
 **Context:** `spree_adyen` 0.11.0 does not run on 6.0, so merchants taking Adyen on 5.x cannot upgrade. Its payment-session path keyed payments on the Adyen session id and never recorded the PSP reference that capture, cancel and refund need. It completed a session from any `redirectResult`, took any return URL a client sent, and kept its previous HMAC key in `private_metadata`, which 6.0's metadata consolidation moved into `metadata`, where the Admin API returns it. Adyen answers every capture, cancel and refund with `received` and reports the outcome by webhook, sometimes failing days after a success. Its docs say to wait for that webhook, and its partner checklist requires webhooks that update the systems integrated with the payments flow. 5.x waited for captures and voids through decorator statuses (`capture_pending`, `void_pending`), which 6.0's rule against decorating core models forbids. Separately, core's payment webhook endpoint has dropped the `metadata` a gateway's `parse_webhook_event` returns since webhooks became asynchronous (#13776).
@@ -6805,3 +6804,13 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Decision:** Remove the `after_update` sync. The default market is the only place a store's currency and locale are changed; the readers already delegate to it. Code that sets them writes the market, as setup does.
 
 **Consequences:** Writing `store.default_currency` or `store.default_locale` on a store that has markets changes only the legacy column, which nothing reads while markets exist. Specs that switched a store's language through the store now update its default market. The legacy columns remain the seed for the bootstrap market at creation and the answer for a store with no market.
+
+## 2026-11-23 — Admin saved-card charges mint an intent in purchase
+
+**Context:** The admin dashboard charges a customer's saved card on a draft or placed order with `POST /admin/orders/:id/payments` and a `source_id`. Since the Stripe port (2026-08-09), `SpreeStripe::Gateway#authorize` and `#purchase` only read back an intent a session created, so this charge failed with "Payment is missing a payment intent".
+
+**Decision:** Restore `ensure_payment_intent_exists_for_payment` inside `handle_authorize_or_purchase`, as the old gem did. Admin POST still only saves a checkout payment with `source_id`. Money moves on `process_payments!` (draft complete). Storefront payments already have `response_code`, so the helper is a no-op. A card without `gateway_payment_profile_id` still fails as missing an intent. The intent is confirmed off-session under the gateway-options idempotency key (`spree-#{payment.prefixed_id}`).
+
+**Consequences:** Capture-immediately against a checkout payment with a blank `response_code` still cannot capture (capture needs an existing intent). Completing the draft runs purchase, which mints the intent. The Admin API accepts only a card saved through the chosen payment method, and the dashboard lists only those cards.
+
+**Plans amended:** `6.0-payment-gateways-monorepo.md` (`authorize`/`purchase` mint an off-session intent when `response_code` is blank). The Admin API contract is unchanged: `POST /payments` with `source_id`, no PaymentSession.

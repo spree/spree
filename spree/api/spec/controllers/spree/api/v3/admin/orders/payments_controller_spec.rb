@@ -154,7 +154,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       let(:credit_card_method) { create(:credit_card_payment_method) }
       let(:saved_card) { create(:credit_card, customer: customer, payment_method: credit_card_method) }
 
-      it 'attaches the saved card as the payment source' do
+      it 'attaches the saved card' do
         post :create, params: {
           order_id: order.prefixed_id,
           payment_method_id: credit_card_method.prefixed_id,
@@ -177,6 +177,23 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
             order_id: order.prefixed_id,
             payment_method_id: credit_card_method.prefixed_id,
             source_id: other_card.prefixed_id,
+            amount: order.total
+          }, as: :json
+
+          expect(response).to have_http_status(:not_found)
+          expect(order.reload.payments.count).to eq(0)
+        end
+      end
+
+      context 'when the card was saved through another payment method' do
+        let(:other_method) { create(:credit_card_payment_method) }
+        let(:other_method_card) { create(:credit_card, customer: customer, payment_method: other_method) }
+
+        it 'returns 404 because this gateway cannot charge it' do
+          post :create, params: {
+            order_id: order.prefixed_id,
+            payment_method_id: credit_card_method.prefixed_id,
+            source_id: other_method_card.prefixed_id,
             amount: order.total
           }, as: :json
 
