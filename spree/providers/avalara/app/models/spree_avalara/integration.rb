@@ -18,8 +18,17 @@ module SpreeAvalara
                                               PRODUCTION_ENDPOINT => 'Production' }
     preference :company_code, :string
 
+    # What happens to a placed sale at Avalara. "Don't record" leaves recording to
+    # another system, such as an ERP, so only quotes are sent and nothing is
+    # filed, voided or credited.
+    DOCUMENT_RECORDING_CHOICES = {
+      'commit' => 'Record and commit',
+      'save' => 'Record without committing',
+      'none' => "Don't record"
+    }.freeze
+
     preference :address_validation_enabled, :boolean, default: false
-    preference :commit_transaction_enabled, :boolean, default: true
+    preference :document_recording, :string, default: 'commit', choices: DOCUMENT_RECORDING_CHOICES
     preference :show_rate_in_label, :boolean, default: false
 
     # Without these a half-filled credential set saves and then fails at
@@ -33,6 +42,7 @@ module SpreeAvalara
     # requests wherever an admin points it — internal services and cloud
     # metadata included — with the reply readable through the connection test.
     validates :preferred_endpoint, inclusion: { in: [SANDBOX_ENDPOINT, PRODUCTION_ENDPOINT] }
+    validates :preferred_document_recording, inclusion: { in: DOCUMENT_RECORDING_CHOICES.keys }
 
     def self.integration_group
       'tax'
@@ -80,6 +90,20 @@ module SpreeAvalara
         endpoint: preferred_endpoint,
         company_code: preferred_company_code
       )
+    end
+
+    # Whether placed sales, cancellations and credits are filed with Avalara.
+    #
+    # @return [Boolean]
+    def records_documents?
+      preferred_document_recording != 'none'
+    end
+
+    # Whether a filed document is committed rather than left Saved.
+    #
+    # @return [Boolean]
+    def commits_documents?
+      preferred_document_recording == 'commit'
     end
 
     # Verifies the credentials with a ping, the one AvaTax call that costs

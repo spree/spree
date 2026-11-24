@@ -12,7 +12,7 @@ FactoryBot.define do
     # record. Cassettes are recorded against the sandbox.
     preferred_endpoint { SpreeAvalara::Integration::SANDBOX_ENDPOINT }
     preferred_company_code { ENV.fetch('AVATAX_COMPANY_CODE', 'DEFAULT') }
-    preferred_commit_transaction_enabled { true }
+    preferred_document_recording { 'commit' }
     preferred_address_validation_enabled { false }
     preferred_show_rate_in_label { false }
 

@@ -343,8 +343,8 @@ RSpec.describe SpreeAvalara::TaxProvider do
     # is filed: false records it as Saved rather than Committed, so it stays out
     # of Avalara's filings until something commits it. Confirmed against the
     # sandbox — both settings file a document and compute the same tax.
-    it 'files the sale uncommitted when the merchant turned committing off' do
-      integration.preferred_commit_transaction_enabled = false
+    it 'files the sale uncommitted when the merchant records without committing' do
+      integration.preferred_document_recording = 'save'
 
       provider.commit(order)
 
@@ -361,6 +361,16 @@ RSpec.describe SpreeAvalara::TaxProvider do
                                                  details: { 'code' => 'EntityNotFoundError' }))
 
       expect { provider.commit(order) }.to raise_error(Spree::Tax::CalculationRefused)
+    end
+
+    # Another system records the sale, so nothing is filed here.
+    it 'files nothing when the merchant does not record documents' do
+      integration.preferred_document_recording = 'none'
+
+      provider.commit(order)
+
+      expect(client).not_to have_received(:create_or_adjust_transaction)
+      expect(order.reload.metadata['avalara_transaction_id']).to be_nil
     end
   end
 
@@ -380,6 +390,14 @@ RSpec.describe SpreeAvalara::TaxProvider do
       allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
 
       expect { provider.void(order) }.not_to raise_error
+      expect(client).not_to have_received(:void_transaction)
+    end
+
+    it 'voids nothing when the merchant does not record documents' do
+      integration.preferred_document_recording = 'none'
+
+      provider.void(order)
+
       expect(client).not_to have_received(:void_transaction)
     end
 
@@ -498,6 +516,14 @@ RSpec.describe SpreeAvalara::TaxProvider do
 
       expect { provider.commit_replacement(order, lines) }.not_to raise_error
     end
+
+    it 'files nothing when the merchant does not record documents' do
+      integration.preferred_document_recording = 'none'
+
+      provider.commit_replacement(order, lines)
+
+      expect(client).not_to have_received(:create_or_adjust_transaction)
+    end
   end
 
   describe '#refund' do
@@ -529,6 +555,14 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect(client).to have_received(:create_transaction) do |model|
         expect(model[:code]).to eq("#{claim.order.number}-#{claim.number}")
       end
+    end
+
+    it 'credits nothing when the merchant does not record documents' do
+      integration.preferred_document_recording = 'none'
+
+      provider.refund(order, [line])
+
+      expect(client).not_to have_received(:create_transaction)
     end
 
     it 'files nothing when nothing went back' do

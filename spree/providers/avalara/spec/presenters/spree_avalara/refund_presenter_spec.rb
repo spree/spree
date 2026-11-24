@@ -37,7 +37,7 @@ RSpec.describe SpreeAvalara::RefundPresenter do
   it 'files the credit with the status the merchant chose' do
     expect(present.call[:commit]).to be(true)
 
-    integration.preferred_commit_transaction_enabled = false
+    integration.preferred_document_recording = 'save'
 
     expect(present.call[:commit]).to be(false)
   end

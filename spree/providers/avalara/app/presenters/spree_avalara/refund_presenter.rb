@@ -45,7 +45,7 @@ module SpreeAvalara
         type: 'ReturnInvoice',
         companyCode: integration.preferred_company_code,
         code: code,
-        commit: integration.preferred_commit_transaction_enabled,
+        commit: integration.commits_documents?,
         # Filed on the day the money went back, so the credit lands in the
         # period it happened in rather than reopening the sale's.
         date: date_in_store_zone(Time.current),

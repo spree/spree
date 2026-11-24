@@ -91,12 +91,13 @@ module SpreeAvalara
       # complete an order the customer has already paid for is worse than a sale
       # the merchant has to file by hand.
       return report_disconnected(order) if integration.nil?
+      return unless integration.records_documents?
 
       body = integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
           owner: order, integration: integration, items: order.taxable_items,
           type: 'SalesInvoice', code: order.number,
-          commit: integration.preferred_commit_transaction_enabled,
+          commit: integration.commits_documents?,
           tax_date: order.completed_at,
           # The order's frozen snapshot, not a fresh resolution: what was
           # filed has to match what was charged.
@@ -120,7 +121,7 @@ module SpreeAvalara
       # there is nothing to reverse. Unlike estimate, this does not fail closed:
       # refusing to cancel an order because a tax service is unreachable helps
       # nobody.
-      return if integration.nil?
+      return if integration.nil? || !integration.records_documents?
 
       integration.client.void_transaction(order.number)
     rescue SpreeAvalara::RequestError => error
@@ -187,12 +188,13 @@ module SpreeAvalara
 
       integration = Integration.active_for(order.store)
       return report_disconnected(order) if integration.nil?
+      return unless integration.records_documents?
 
       integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
           owner: order, integration: integration, items: shipped, type: 'SalesInvoice',
           code: "#{order.number}-#{SpreeAvalara.post_sale_record(shipped.first)&.number}-REPLACEMENT",
-          commit: integration.preferred_commit_transaction_enabled,
+          commit: integration.commits_documents?,
           tax_identifier: order.resolved_tax_identifier,
           exemptions: order.usable_exemptions
         ).call
@@ -214,6 +216,7 @@ module SpreeAvalara
       # Nothing was filed through an integration that is not connected, so there
       # is nothing to credit — the same reasoning as void.
       return report_disconnected(order) if integration.nil?
+      return unless integration.records_documents?
 
       presenter = RefundPresenter.new(
         order: order, integration: integration, return_items: return_items,

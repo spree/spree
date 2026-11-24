@@ -19,10 +19,12 @@ RSpec.describe SpreeAvalara::Integration do
   end
 
   describe 'preferences' do
-    it 'carries the same set as the legacy extension, so upgraded rows keep working' do
+    # The legacy names, so upgraded rows keep working; the commit switch alone
+    # became a choice, which the upgrade task translates.
+    it 'keeps the legacy names apart from the commit switch' do
       expect(described_class.preference_schema.map { |field| field[:key] }).to contain_exactly(
         :account_number, :license_key, :endpoint, :company_code,
-        :address_validation_enabled, :commit_transaction_enabled, :show_rate_in_label
+        :address_validation_enabled, :document_recording, :show_rate_in_label
       )
     end
 
@@ -30,9 +32,32 @@ RSpec.describe SpreeAvalara::Integration do
       fresh = described_class.new
 
       expect(fresh.preferred_endpoint).to eq(described_class::SANDBOX_ENDPOINT)
-      expect(fresh.preferred_commit_transaction_enabled).to be(true)
+      expect(fresh.preferred_document_recording).to eq('commit')
       expect(fresh.preferred_address_validation_enabled).to be(false)
       expect(fresh.preferred_show_rate_in_label).to be(false)
+    end
+
+    it 'offers the three ways of recording documents and accepts no other' do
+      integration = build(:avalara_integration, store: @default_store)
+
+      %w[commit save none].each do |choice|
+        integration.preferred_document_recording = choice
+        expect(integration).to be_valid
+      end
+
+      integration.preferred_document_recording = 'archive'
+      expect(integration).not_to be_valid
+    end
+
+    it 'answers whether documents are recorded and committed' do
+      integration = build(:avalara_integration, store: @default_store)
+
+      answers = %w[commit save none].to_h do |choice|
+        integration.preferred_document_recording = choice
+        [choice, [integration.records_documents?, integration.commits_documents?]]
+      end
+
+      expect(answers).to eq('commit' => [true, true], 'save' => [true, false], 'none' => [false, false])
     end
 
     it 'masks the license key' do

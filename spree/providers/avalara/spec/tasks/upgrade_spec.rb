@@ -66,6 +66,52 @@ RSpec.describe 'spree_avalara:upgrade' do
       expect(retyped.type).to eq('SpreeAvalara::Integration')
       expect(retyped.preferred_company_code).to eq('Spark')
     end
+
+    describe 'the legacy commit switch' do
+      # A legacy row as it was saved: the switch is in its preferences, the new
+      # choice is not. Written through the base class, because saving through
+      # this gem's model fills in the new choice's default.
+      def legacy_row(commit:, store: @default_store)
+        integration = create(:avalara_integration, store: store)
+        preferences = integration.preferences.except(:document_recording)
+        preferences = preferences.merge(commit_transaction_enabled: commit) unless commit.nil?
+        Spree::Integration.where(id: integration.id).
+          update_all(type: 'Spree::Integrations::Avalara', preferences: preferences)
+        integration
+      end
+
+      def recording_of(integration)
+        Spree::Integration.find(integration.id).preferred_document_recording
+      end
+
+      it 'switched off becomes recording without committing' do
+        legacy = legacy_row(commit: false)
+
+        upgrader.call
+
+        expect(recording_of(legacy)).to eq('save')
+      end
+
+      it 'switched on, or never set, stays recording and committing' do
+        on = legacy_row(commit: true)
+        unset = legacy_row(commit: nil, store: create(:store))
+
+        upgrader.call
+
+        expect(recording_of(on)).to eq('commit')
+        expect(recording_of(unset)).to eq('commit')
+      end
+
+      it 'leaves a choice already made alone, so a second run changes nothing' do
+        legacy = legacy_row(commit: false)
+        upgrader.call
+        Spree::Integration.find(legacy.id).tap { |row| row.preferred_document_recording = 'none' }.save!(validate: false)
+
+        upgrader.call
+
+        expect(recording_of(legacy)).to eq('none')
+      end
+    end
   end
 
   describe 'the buyer VAT number' do

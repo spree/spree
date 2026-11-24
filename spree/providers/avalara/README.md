@@ -26,7 +26,7 @@ host; switch `endpoint` to `https://rest.avatax.com` when you go live.
 | `account_number`, `license_key` | Your AvaTax credentials |
 | `endpoint` | Sandbox (default) or production host |
 | `company_code` | The company documents are filed against |
-| `commit_transaction_enabled` | Whether filed documents are *committed*, not whether they are filed. On (default) records a placed order as Committed; off records it as Saved, so it stays out of Avalara's filings until something commits it — the legacy extension's behaviour. Either way the sale reaches Avalara and the tax is the same. The same setting governs return credits |
+| `document_recording` | What happens to a placed sale at Avalara. **Record and commit** (default) files it as Committed. **Record without committing** files it as Saved, so it stays out of Avalara's filings until something commits it — the legacy extension's behaviour with commit switched off. **Don't record** files nothing: only quotes are sent, and no sale, void or credit reaches Avalara, for a store whose ERP records the sales instead. The tax charged is the same in all three. Switching to Don't record also stops voids and credits for documents recorded before the switch |
 | `address_validation_enabled` | Refuse a checkout whose US or Canadian address Avalara cannot resolve (default off) |
 | `show_rate_in_label` | Reserved; carried over so upgraded settings survive |
 
@@ -78,7 +78,7 @@ bin/rails spree_avalara:upgrade
 ```
 
 Idempotent, and not needed on a fresh install. It retypes your existing integration (credentials carry
-over untouched), turns legacy `spree_users.vat_id` values into buyer tax registrations, deletes the
+over untouched, and a legacy "commit transactions" switch that was off becomes **Record without committing**), turns legacy `spree_users.vat_id` values into buyer tax registrations, deletes the
 synthesized "AvaTax Official Tax Rate" rows — left behind, Spree's own engine would read them as real
 configuration — points markets that name no engine at Avalara, and gives each connected store an
 exemption reason per Avalara entity use code, as the legacy extension's code table did. A market where

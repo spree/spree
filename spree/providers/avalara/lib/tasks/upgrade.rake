@@ -31,6 +31,7 @@ module SpreeAvalara
     def call
       say 'Upgrading to spree_avalara'
       say "  integrations retyped: #{retype_integrations}"
+      say "  commit settings translated: #{translate_commit_setting}"
       say "  tax identifiers created from vat_id: #{migrate_vat_ids}"
       report_preserved_exemption_data
       say "  synthesized tax rates deleted: #{delete_synthesized_tax_rates}"
@@ -73,6 +74,27 @@ module SpreeAvalara
       return 0 unless connection.table_exists?(Spree::Integration.table_name)
 
       Spree::Integration.where(type: LEGACY_INTEGRATION_TYPE).update_all(type: 'SpreeAvalara::Integration')
+    end
+
+    # The legacy "commit transactions" switch became a choice of how documents
+    # are recorded. Off meant filed but left Saved, which is "record without
+    # committing"; on is the new default, so only off needs writing. A row that
+    # already holds a choice is left alone, which keeps a second run a no-op.
+    #
+    # Read and written as the stored column rather than through the model, which
+    # fills in the new choice's default and would hide that none was ever made.
+    def translate_commit_setting
+      return 0 unless connection.table_exists?(Spree::Integration.table_name)
+
+      rows = Spree::Integration.where(type: 'SpreeAvalara::Integration').pluck(:id, :preferences)
+      rows.sum do |id, stored|
+        preferences = (stored || {}).with_indifferent_access
+        next 0 if preferences.key?(:document_recording)
+        next 0 unless preferences[:commit_transaction_enabled].to_s == 'false'
+
+        Spree::Integration.where(id: id).update_all(preferences: preferences.merge(document_recording: 'save'))
+        1
+      end
     end
 
     # The legacy extension stored one VAT number per user; core stores a typed
