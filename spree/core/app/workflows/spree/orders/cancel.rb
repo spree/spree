@@ -223,11 +223,12 @@ module Spree
         left = amount_left_to_give_back
         return payment.cancel!(refund: refund_payments && left.positive?) unless payment.payment_method.cancel_voids?(payment)
 
-        # A void releases the whole payment whatever `refund:` says — store
-        # credit its full original amount — so it runs only when the order
-        # has all of that left to give.
-        released = payment.store_credit? ? payment.amount : payment.credit_allowed
-        return payment.cancel!(refund: refund_payments) if released <= left && payment.credit_allowed == released
+        # A void releases the whole payment whatever `refund:` says — a card
+        # charge or store credit its full original amount, part-refunded or
+        # not — so it runs only when nothing was refunded yet and the order
+        # has all of it left to give.
+        released = payment.amount.to_d
+        return payment.cancel!(refund: refund_payments) if released <= left && payment.credit_allowed.to_d == released
 
         # Otherwise only what is left goes back, as a refund: when the caller
         # asked for money back, and always for store credit, which a cancel

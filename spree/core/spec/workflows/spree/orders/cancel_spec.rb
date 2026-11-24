@@ -194,6 +194,17 @@ module Spree
         expect(payment.reload).to be_void
       end
 
+      # A void releases the whole charge, so a partly refunded one would give
+      # back again what its refunds already returned. Only the rest goes back.
+      it 'refunds only the remainder of a partly refunded charge instead of voiding it' do
+        create(:refund, payment: payment, amount: 10)
+
+        subject.call(order: order, canceler: user, refund_payments: true)
+
+        expect(payment.reload).not_to be_void
+        expect(payment.refunds.sum(:amount)).to eq(payment.amount)
+      end
+
       # Stripe and PayPal cannot void a drawn charge: they refund it or, when
       # the operator keeps the money, leave it standing. The order must then
       # still read as paid.
