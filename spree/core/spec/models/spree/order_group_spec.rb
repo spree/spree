@@ -173,6 +173,32 @@ RSpec.describe Spree::OrderGroup, type: :model do
 
       expect(group.fulfillment_groups.map(&:name)).to all(be_present)
     end
+
+    describe 'the pickup location of a parcel' do
+      let(:group) { create(:order_group, :with_parcels, store: store, sellers_count: 2, shared_stock_location: true) }
+      let(:counter) { group.fulfillments.first.stock_location }
+
+      before do
+        counter.update!(pickup_enabled: true)
+        pickup = create(:pickup_delivery_method)
+        group.fulfillments.each do |fulfillment|
+          fulfillment.delivery_rates.destroy_all
+          fulfillment.add_delivery_method(pickup, true)
+        end
+      end
+
+      it 'is the counter while any half of the parcel is still to be collected' do
+        group.fulfillments.order(:id).first.update_columns(status: 'canceled')
+
+        expect(group.reload.fulfillment_groups.sole.pickup_location).to eq(counter)
+      end
+
+      it 'is nil once every half of the parcel is canceled' do
+        group.fulfillments.update_all(status: 'canceled')
+
+        expect(group.reload.fulfillment_groups.sole.pickup_location).to be_nil
+      end
+    end
   end
 
   describe 'a line packed from two warehouses' do

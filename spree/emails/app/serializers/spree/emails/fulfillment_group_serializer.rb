@@ -4,6 +4,7 @@ module Spree
     # cost to deliver.
     class FulfillmentGroupSerializer
       include Alba::Resource
+      include Typelizer::DSL
 
       attributes :name
 
@@ -17,6 +18,9 @@ module Spree
       attribute :seller_names do |group|
         group.sellers.map(&:name)
       end
+
+      typelize pickup_location: { nullable: true }
+      one :pickup_location, resource: Spree::Emails::StockLocationSerializer
 
       many :manifest, key: :items, source: proc { manifest.select(&:line_item) },
                      resource: Spree::Emails::ParcelItemSerializer
