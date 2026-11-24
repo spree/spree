@@ -119,6 +119,40 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       expect(Spree::Refund.where(order_id: seller_order.id).sum(:amount)).to eq(15)
     end
 
+    # A refund still waiting on its provider is not yet in the share's
+    # refunded column, but Refunds::Create counts it. Sizing a share's refund
+    # from the column alone would ask for more than the workflow allows, fail
+    # after the order already reads canceled, and leave the next share
+    # unsettled.
+    context 'when one of two shares has a refund still requested' do
+      let(:payment_a) do
+        create(:payment, order: nil, cart: nil, order_group: group, amount: 100, status: 'completed')
+      end
+      let(:payment_b) do
+        create(:payment, order: nil, cart: nil, order_group: group, amount: 50, status: 'completed')
+      end
+      let!(:share_a) do
+        create(:payment_split, payment: payment_a, order: seller_order, authorized_amount: 100, captured_amount: 100)
+      end
+      let!(:share_b) do
+        create(:payment_split, payment: payment_b, order: seller_order, authorized_amount: 50, captured_amount: 50)
+      end
+
+      before do
+        seller_split.destroy!
+        create(:refund, :requested, payment: payment_a, order: seller_order, amount: 30)
+        share_a.update_columns(refunded_amount: 0)
+      end
+
+      it 'refunds each share only what it can still give back' do
+        result = described_class.call(order: seller_order, refund_payments: true)
+
+        expect(result).to be_success
+        expect(Spree::Refund.where(payment: payment_a, status: 'completed').sum(:amount)).to eq(70)
+        expect(Spree::Refund.where(payment: payment_b, status: 'completed').sum(:amount)).to eq(50)
+      end
+    end
+
     # Store credit writes no refund row, so only the order's own ledger says
     # part of what it was paid already went back (V-3832).
     context 'after part of the order was given back as store credit' do

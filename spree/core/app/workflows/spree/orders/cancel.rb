@@ -308,7 +308,9 @@ module Spree
           # what they asked for, exactly as the ungrouped path does.
           next unless refund_payments && split.payment&.completed?
 
-          refundable = [split.net_captured_amount, remaining, grouped_balance_left].compact.min
+          # Bounded by the share's refund rows too, as Refunds::Create is: a
+          # refund still requested is not in the refunded column yet.
+          refundable = [split.net_captured_amount, split.refundable_amount, remaining, grouped_balance_left].compact.min
           next if refundable <= 0
 
           result = Spree.refund_create_workflow.call(
