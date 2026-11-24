@@ -54,6 +54,24 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
     end
   end
 
+  describe 'the purchase order number' do
+    it 'is sent from the cart' do
+      cart.update!(po_number: 'PO-4471')
+
+      expect(present[:purchaseOrderNo]).to eq('PO-4471')
+    end
+
+    it 'is sent from the order' do
+      order = create(:order, store: @default_store, po_number: 'PO-8812')
+
+      expect(present(owner: order, items: [], type: 'SalesInvoice', code: order.number)[:purchaseOrderNo]).to eq('PO-8812')
+    end
+
+    it 'is omitted when the sale has none' do
+      expect(present).not_to have_key(:purchaseOrderNo)
+    end
+  end
+
   describe 'addresses' do
     it 'ships to the tax address rather than re-deriving one' do
       expect(present[:addresses][:shipTo]).to include(city: 'Seattle', region: 'WA', postalCode: '98109')
