@@ -63,6 +63,10 @@ module Spree
           }]
         }.freeze
 
+        # What a `Record<string, …>` type may hold for its values to be documented.
+        PUBLISHED_TYPE_NAME = /\A[A-Z]\w*\z/
+        RECORD_VALUE_TYPES = %w[string number boolean].freeze
+
         def common_schemas
           {
             PaginationMeta: {
@@ -388,8 +392,23 @@ module Spree
           case type.delete_suffix(' | null')
           when /\AArray<(string|number|boolean)>\z/ then { type: :array, items: { type: Regexp.last_match(1).to_sym } }
           when /\AArray</ then { type: :array, items: { type: :object } }
+          when /\ARecord<string, (.+)>\z/ then record_schema(Regexp.last_match(1).split(' | '))
           when 'any', 'unknown' then {}
           end
+        end
+
+        # A map whose values are a published type keeps the link to it, so the
+        # reference documents what is under each key. A map of plain values
+        # stays the plain object Typelizer publishes.
+        def record_schema(value_types)
+          nullable = value_types.delete('null')
+          return unless value_types.any? { |type| type.match?(PUBLISHED_TYPE_NAME) } &&
+                        value_types.all? { |type| RECORD_VALUE_TYPES.include?(type) || type.match?(PUBLISHED_TYPE_NAME) }
+
+          values = value_types.map { |type| RECORD_VALUE_TYPES.include?(type) ? { type: type.to_sym } : ref(type) }
+          value = values.one? ? values.first : { anyOf: values }
+          value = value.merge(nullable: true) if nullable
+          { type: :object, additionalProperties: value }
         end
 
         # The calculator's TypeScript type has another name than its component.

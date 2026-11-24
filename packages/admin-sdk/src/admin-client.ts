@@ -266,43 +266,6 @@ export type ReportingQuery = {
   currency?: string
 }
 
-export interface ReportingMetricValue {
-  /** A decimal string for money, decimal and percent metrics (`"110.00"`); a number for integer metrics. */
-  value: string | number
-  /** Formatted money string — present on money metrics only. */
-  display?: string
-  /** Present when the query requested a comparison; the same shape as `value`. */
-  previous?: string | number
-  /** Percentage change vs the previous period, as a decimal string (`"12.5"`); null when there is no baseline. */
-  growth?: string | null
-}
-
-/** Hydrated display payload for lookup-backed dimensions. */
-export interface ReportingDimensionValue {
-  /** Prefixed id (e.g. `cust_…`); null when the underlying record is gone (e.g. guest customers). */
-  id: string | null
-  label: string
-  meta: Record<string, unknown>
-}
-
-export interface ReportingRow {
-  /** Raw values for plain dimensions (time buckets, statuses); display payloads for lookups. */
-  dimensions: Record<string, string | ReportingDimensionValue>
-  metrics: Record<string, ReportingMetricValue>
-}
-
-export interface ReportingResult {
-  meta: {
-    currency: string
-    time_range: { since: string; until: string }
-    previous_time_range: { since: string; until: string } | null
-    metrics: string[]
-    dimensions: Array<{ name: string; grain?: string }>
-  }
-  totals: Record<string, ReportingMetricValue>
-  rows: ReportingRow[]
-}
-
 export interface ReportingSchemaMetric {
   name: string
   /** Metrics from different families cannot be combined in one query. */
@@ -718,6 +681,7 @@ import type {
   PurchaseOrder,
   Refund,
   RefundReason,
+  ReportingResult,
   ResourceTranslations,
   ResourceTranslationsNode,
   ResourceTypeDefinition,
