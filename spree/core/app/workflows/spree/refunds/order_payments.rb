@@ -69,12 +69,12 @@ module Spree
       # @param order [Spree::Order]
       # @param shares [Hash{Spree::Payment => BigDecimal}, nil] already read
       # @param lock [Boolean] whether to lock the order row first
-      # @param report_in_flight [Boolean] see #refundable_shares
+      # @param count_in_flight [Boolean] see #refundable_shares
       # @return [BigDecimal]
-      def refundable_balance(order, shares = nil, lock: true, report_in_flight: lock)
+      def refundable_balance(order, shares = nil, lock: true, count_in_flight: false)
         Spree::Order.lock.find(order.id) if lock
 
-        (shares || refundable_shares(order, report_in_flight: report_in_flight)).values.sum(0.to_d) -
+        (shares || refundable_shares(order, count_in_flight: count_in_flight)).values.sum(0.to_d) -
           Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
       end
 
@@ -154,10 +154,12 @@ module Spree
       # sale is holding.
       #
       # @param order [Spree::Order]
-      # @param report_in_flight [Boolean] whether a share mid-capture is
-      #   reported; a pre-flight read leaves that to the read that acts on it
+      # @param count_in_flight [Boolean] whether a share mid-capture counts
+      #   what it has already captured, rather than being reported and left
+      #   out. A bound on the whole order counts it: that money was paid, and
+      #   leaving the share out would refuse a refund the order can afford.
       # @return [Hash{Spree::Payment => BigDecimal}]
-      def refundable_shares(order, report_in_flight: true)
+      def refundable_shares(order, count_in_flight: false)
         unless order.grouped?
           return order.payments.completed.order(:created_at).
                  to_h { |payment| [payment, payment.credit_allowed.to_d] }
@@ -172,7 +174,7 @@ module Spree
 
         order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, found|
           next unless split.payment&.completed?
-          next if split.capture_in_flight? && (!report_in_flight || capture_in_flight?(order, split))
+          next if !count_in_flight && capture_in_flight?(order, split)
 
           found[split.payment] = split.captured_amount - refunded.fetch(split.payment_id, 0)
         end

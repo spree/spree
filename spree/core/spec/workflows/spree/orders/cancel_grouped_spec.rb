@@ -99,6 +99,20 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       expect(first_party_split.reload.captured_amount).to eq(60)
     end
 
+    # The order's reported refunded figure trails its refund rows, so a check
+    # against it would pass an amount settlement then cannot refund, and the
+    # order would be canceled with less given back than was asked.
+    it 'refuses an amount settlement cannot refund before canceling anything' do
+      create(:refund, payment: payment, order: seller_order, amount: 25)
+      seller_split.update_columns(refunded_amount: 0)
+
+      result = described_class.call(order: seller_order, refund_payments: true, refund_amount: 40)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_exceeds_order_balance)
+      expect(seller_order.reload).not_to be_canceled
+    end
+
     it 'honours an explicit smaller amount' do
       described_class.call(order: seller_order, refund_payments: true, refund_amount: 15)
 

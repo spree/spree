@@ -247,18 +247,32 @@ RSpec.describe Spree::Refunds::Create do
     # together overdraw this child. `Spree::Refund` cannot catch it: it
     # validates `credit_allowed`, which is the whole payment's balance.
     it 'refuses when another refund claimed the share after the pre-flight check' do
-      # Injected once the payment row is locked, past the order-level check,
-      # so only the share re-read can catch it. The competing row shares this
-      # connection's transaction and rolls back with the refusal.
-      allow(shared_payment).to receive(:with_lock).and_wrap_original do |original, &block|
+      # A second payment keeps the order-level bound above the amount, so only
+      # the share re-read can catch the competing refund. It is written from a
+      # hook, outside the workflow's transaction, so it survives the refusal.
+      other_payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 100, status: 'completed')
+      create(:payment_split, payment: other_payment, order: order, authorized_amount: 100, captured_amount: 100)
+      Spree.hooks.register('refunds.create.before_refund') do
         create(:refund, payment: shared_payment, order: order, amount: 100)
-        original.call(&block)
       end
 
       result = described_class.call(payment: shared_payment, order: order, amount: 100)
 
       expect(result).to be_failure
       expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+      # Only the refund that got there first survives.
+      expect(Spree::Refund.where(order_id: order.id).sum(:amount)).to eq(100)
+    end
+
+    # A parcel mid-capture leaves what the share already captured paid, so a
+    # refund within it is not refused for the order as a whole.
+    it 'refunds from a share whose next capture is still in flight' do
+      split.update!(authorized_amount: 150, claimed_amount: 50)
+
+      result = described_class.call(payment: shared_payment, order: order, amount: 60)
+
+      expect(result).to be_success
+      expect(result.value.amount).to eq(60)
     end
   end
 end

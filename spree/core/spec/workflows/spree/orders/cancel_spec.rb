@@ -245,6 +245,100 @@ module Spree
           expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
         end
       end
+
+      # Releasing a store-credit payment hands back all of it whatever the
+      # caller asked, so it is held to what the order has left to give once
+      # the card is settled.
+      context 'with part of the order paid in store credit' do
+        let!(:payment) { create(:payment, order: order, amount: order.total - 20, status: 'completed') }
+        let(:credit) { create(:store_credit, store: order.store, customer: order.customer, amount: 20) }
+        let!(:credit_payment) do
+          create(:store_credit_payment, order: order, source: credit, amount: 20, status: 'completed').tap do |credit_payment|
+            code = credit.authorize(BigDecimal(20), order.currency)
+            credit.capture(BigDecimal(20), code, order.currency)
+            credit_payment.update_columns(response_code: code)
+          end
+        end
+
+        def credit_released
+          Spree::StoreCreditEvent.where(store_credit: credit, action: Spree::StoreCredit::CREDIT_ACTION).sum(:amount)
+        end
+
+        it 'releases it all when nothing was given back yet' do
+          subject.call(order: order, canceler: user)
+
+          expect(credit_payment.reload).to be_void
+          expect(credit_released).to eq(20)
+        end
+
+        it 'releases none of it once a return gave the same back as store credit' do
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_void
+          expect(credit_payment.reload).to be_completed
+          expect(credit_released).to eq(0)
+        end
+
+        context 'on a gateway that cannot void a captured charge' do
+          before do
+            allow_any_instance_of(Spree::Gateway::Bogus).to receive(:can_void?) { |_gateway, payment| !payment.completed? }
+            allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_wrap_original do |original, response_code, payment, refund:|
+              next original.call(response_code, payment, refund: refund) unless refund
+
+              result = Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+              raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
+              Spree::PaymentResponse.new(true, 'refunded', {}, authorization: payment.response_code)
+            end
+          end
+
+          it 'refunds the card and releases no credit once a return gave the credit back' do
+            create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+
+            subject.call(order: order, canceler: user, refund_payments: true)
+
+            expect(payment.refunds.sum(:amount)).to eq(payment.amount)
+            expect(credit_payment.reload).to be_completed
+            expect(credit_released).to eq(0)
+          end
+
+          it 'releases only the credit the return left' do
+            create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 5)
+
+            subject.call(order: order, canceler: user, refund_payments: true)
+
+            expect(payment.refunds.sum(:amount)).to eq(payment.amount)
+            expect(credit_payment.refunds.sum(:amount)).to eq(15)
+            expect(credit_released).to eq(15)
+          end
+        end
+      end
+    end
+
+    # An order paid in full by gift card is settled by voiding its payment,
+    # which writes the whole payment off as given back.
+    describe 'an order paid in full by gift card' do
+      let!(:credit_payment) { create(:store_credit_payment, order: order, amount: order.total, status: 'completed') }
+
+      before do
+        allow(order).to receive_messages(gift_card: build_stubbed(:gift_card), covered_by_store_credit?: true)
+      end
+
+      it 'voids the payment' do
+        subject.call(order: order, canceler: user)
+
+        expect(credit_payment.reload).to be_void
+      end
+
+      it 'keeps the payment once a return gave its money back as store credit' do
+        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+
+        subject.call(order: order, canceler: user)
+
+        expect(credit_payment.reload).to be_completed
+      end
     end
 
     describe 'a payment waiting on its provider' do
