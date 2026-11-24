@@ -109,6 +109,32 @@ describe Spree::StoreCredit, type: :model do
         expect(payment.reload.credit_allowed).to eq(payment.amount)
       end
 
+      # Refreshed with the credit already gone, inside the destroy, so the
+      # order reads right without any event consumer.
+      it 'leaves the order paid without relying on refund.failed' do
+        order.update_columns(payment_total: payment.amount - 10, payment_status: 'partially_refunded')
+
+        Spree::Events.disable { credit.destroy! }
+
+        expect(order.reload.payment_status).to eq('paid')
+        expect(order.payment_total).to eq(payment.amount)
+      end
+
+      # Refund creation locks the order before its payment and refund rows;
+      # withdrawing in the other order could deadlock against it.
+      it 'locks the order before the refunds it fails' do
+        locked = []
+        allow_any_instance_of(ActiveRecord::Relation).to receive(:lock).and_wrap_original do |original, *args|
+          locked << original.receiver.klass.base_class
+          original.call(*args)
+        end
+
+        credit.destroy!
+
+        expect(locked).to include(Spree::Order, Spree::Refund)
+        expect(locked.index(Spree::Order)).to be < locked.index(Spree::Refund)
+      end
+
       it 'announces each failed refund once committed' do
         refund = credit.refunds.sole
         expect_any_instance_of(Spree::Refund).to receive(:publish_event).with('refund.failed') do |instance|

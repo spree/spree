@@ -397,6 +397,35 @@ RSpec.describe 'Spree::Returns workflows' do
         end
       end
 
+      # The credit being issued has no refund rows until they are written, so
+      # it must not count against the balance it is drawing on.
+      context 'when the credit takes everything the payment can still give back' do
+        let(:payment) { return_record.order.payments.completed.sole }
+
+        before { payment.update_columns(amount: return_record.refund_total) }
+
+        it 'records all of it' do
+          result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+          expect(result).to be_success
+          expect(payment.reload.credit_allowed).to eq(0)
+        end
+
+        it 'records what credit not yet recorded as refunds left, and refuses more' do
+          order = return_record.order
+          legacy = (return_record.refund_total / 4).round(2)
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: legacy)
+
+          refused = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+          expect(refused.error.value).to eq(:refund_exceeds_paid)
+
+          result = Spree::Returns::Refund.call(return_record: return_record.reload, refund_method: 'store_credit',
+                                               amount: return_record.refund_total - legacy)
+          expect(result).to be_success
+          expect(payment.reload.credit_allowed).to eq(legacy)
+        end
+      end
+
       # Credit issued before credit was recorded as refunds has no refund row
       # until the upgrade backfills it, and still counts against the order.
       it 'refuses a return once credit not yet recorded as refunds gave the order back' do

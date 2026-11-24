@@ -59,6 +59,19 @@ RSpec.describe Spree::MaintenanceTasks::Upgrade::BackfillStoreCreditRefunds do
     expect(run.tallies).not_to have_key('credits_backfilled')
   end
 
+  # Another run may record the credit after this one listed it.
+  it 'skips a credit recorded since it was listed' do
+    task = described_class.new
+    task.run = Spree::MaintenanceTasks::Start.call(task_name: described_class.name, dry_run: false, initiated_via: 'cli').value
+    listed = task.collection.to_a
+    create(:refund, payment: card, amount: 5, store_credit: credit, transaction_id: credit.prefixed_id)
+
+    listed.each { |record| task.process(record) }
+
+    expect(credit.refunds.count).to eq(1)
+    expect(task.tallies).to include('credits_already_recorded' => 1)
+  end
+
   it 'changes nothing on a second run' do
     run_task
 

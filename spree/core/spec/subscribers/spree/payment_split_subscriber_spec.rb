@@ -77,6 +77,17 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
     expect(seller_order.reload.payment_status).to eq('refunded')
   end
 
+  # Refreshed inside the destroy itself, so no event consumer is needed.
+  it 'takes a withdrawn credit back off the share without relying on refund.failed' do
+    credit = give_back_as_store_credit(seller_order, 30)
+
+    Spree::Events.disable { credit.destroy! }
+
+    expect(seller_split.reload.refunded_amount).to eq(0)
+    expect(seller_order.reload.payment_status).to eq('paid')
+    expect(seller_order.payment_total).to eq(40)
+  end
+
   # Withdrawing an unspent credit means the order gave nothing back after
   # all, so its refund fails and comes off the share.
   it 'takes a withdrawn credit back off the share' do

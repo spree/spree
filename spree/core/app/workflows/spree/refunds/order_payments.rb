@@ -104,8 +104,10 @@ module Spree
         tax_remaining = tax_amount.to_d
         refunds = []
         shares = refundable_shares(order)
-        # With no payment to draw on the caller reports that instead.
-        failure(record, :refund_exceeds_paid) if shares.any? && remaining > refundable_balance(order, shares)
+        # With no payment to draw on the caller reports that instead. Store
+        # credit was checked by its issuer before the credit existed; checked
+        # here, the credit would count against itself before its rows exist.
+        failure(record, :refund_exceeds_paid) if store_credit.nil? && shares.any? && remaining > refundable_balance(order, shares)
         # Resolved once rather than per payment — but only once there is
         # something to refund, since it is a find_or_create_by and a run that
         # refunds nothing should leave no reason row behind.

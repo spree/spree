@@ -109,6 +109,7 @@ module Spree
     after_save :store_event
     before_destroy :validate_no_amount_used
     before_destroy :withdraw_refunds
+    after_destroy :refresh_withdrawn_orders
     after_commit :announce_withdrawn_refunds, on: :destroy
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
@@ -358,22 +359,40 @@ module Spree
     # all, so the refunds that recorded it fail — in the same transaction, so
     # they cannot be left standing. Not when the credit goes with its
     # customer: that money was given back, and the refunds stand.
+    #
+    # The orders are locked first, in id order, as refund creation locks them
+    # before its payment and refund rows, so the two cannot deadlock.
     def withdraw_refunds
       return if destroyed_by_association
 
-      @withdrawn_refunds = refunds.not_failed.includes(:order).to_a
+      order_ids = refunds.not_failed.distinct.pluck(:order_id).compact.sort
+      @withdrawn_orders = Spree::Order.where(id: order_ids).order(:id).lock.to_a
+
+      @withdrawn_refunds = refunds.not_failed.lock.to_a
       @withdrawn_refunds.each do |refund|
         refund.update!(status: 'failed', failure_reason: I18n.t('spree.store_credit_withdrawn'))
       end
-      @withdrawn_refunds.filter_map(&:order).uniq.each { |order| refresh_refunded_order(order) }
+    end
+
+    # Once the credit is gone, still inside the destroy's transaction: before
+    # then the order would count it as credit given back that no refund
+    # records.
+    def refresh_withdrawn_orders
+      Array(@withdrawn_orders).each { |order| refresh_refunded_order(order) }
+      @withdrawn_orders = nil
     end
 
     # What refund.failed would move, moved here so it cannot be skipped: each
-    # share's refunded figure, the order's payment total and its statuses.
+    # share's refunded figure — under the share's lock, from a locking read,
+    # so a refund landing on it meanwhile is not overwritten — and the
+    # order's payment total and statuses.
     def refresh_refunded_order(order)
-      order.payment_splits.each do |split|
-        refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: order.id).sum(:amount)
-        split.update!(refunded_amount: refunded)
+      order.payment_splits.order(:id).each do |split|
+        split.with_lock do
+          refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: order.id).
+                     lock.pluck(:amount).sum(0.to_d)
+          split.update!(refunded_amount: refunded)
+        end
       end
       order.refresh_payment_total!
       order.update_statuses!

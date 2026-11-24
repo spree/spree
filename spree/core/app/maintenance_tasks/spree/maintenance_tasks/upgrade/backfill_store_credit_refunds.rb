@@ -32,15 +32,19 @@ module Spree
           return tally(:credits_without_order) if order.nil?
 
           # One transaction for the rows and the figures they move, so a
-          # failure leaves neither behind.
+          # failure leaves neither behind. The credit is re-checked under the
+          # order's lock, so two overlapping runs cannot both record it.
           unallocated = Spree::Events.disable do
             ApplicationRecord.transaction do
               Spree::Order.lock.find(order.id) unless dry_run?
+              next if credit.refunds.exists?
+
               record_refunds(credit, order).tap do |left|
                 refresh_order(order) unless dry_run? || left == credit.amount.to_d
               end
             end
           end
+          return tally(:credits_already_recorded) if unallocated.nil?
           return tally(:credits_unallocatable) if unallocated == credit.amount.to_d
 
           tally(dry_run? ? :credits_would_be_partly_unallocated : :credits_partly_unallocated) if unallocated.positive?
