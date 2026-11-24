@@ -3,9 +3,9 @@
   collection instructions, as column content. Arguments: location.
 {%- endcomment -%}
 {%- assign locality = location.city | default: '' -%}
-{%- if location.state_code != blank -%}
+{%- if location.state_text != blank -%}
   {%- if locality != blank -%}{%- assign locality = locality | append: ', ' -%}{%- endif -%}
-  {%- assign locality = locality | append: location.state_code -%}
+  {%- assign locality = locality | append: location.state_text -%}
 {%- endif -%}
 {%- if location.zipcode != blank -%}
   {%- if locality != blank -%}{%- assign locality = locality | append: ' ' -%}{%- endif -%}

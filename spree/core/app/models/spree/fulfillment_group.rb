@@ -65,11 +65,13 @@ module Spree
 
     # Where the customer collects the parcel when it is a pickup — see
     # {Spree::Fulfillment#pickup_location}. Split orders share the counter
-    # the customer chose, so the first answers for all of them.
+    # the customer chose, so the first answers for all of them. A parcel
+    # canceled in every order it belongs to has nothing left to collect.
     #
     # @return [Spree::StockLocation, nil]
     def pickup_location
       return unless delivery_method&.pickup?
+      return if fulfillments.all?(&:canceled?)
 
       orders.first&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
     end

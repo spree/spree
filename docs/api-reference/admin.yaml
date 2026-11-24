@@ -60373,9 +60373,12 @@ components:
           type: string
           nullable: true
         owner:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/AddressOwner"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -60460,9 +60463,12 @@ components:
           items:
             "$ref": "#/components/schemas/Session"
         inviter:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Actor"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         avatar_url:
           type: string
           nullable: true
@@ -61180,9 +61186,12 @@ components:
           type: boolean
           nullable: true
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_eq_billing_address:
           type: boolean
         items:
@@ -61190,17 +61199,26 @@ components:
           items:
             "$ref": "#/components/schemas/LineItem"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         completed_at:
           type: string
           nullable: true
@@ -61726,9 +61744,12 @@ components:
           type: string
           nullable: true
         quantity_rule:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/CatalogProductTerm"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         catalog_variants:
           type: array
           items:
@@ -63383,9 +63404,12 @@ components:
           items:
             "$ref": "#/components/schemas/State"
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - iso
       - iso3
@@ -63619,17 +63643,26 @@ components:
           items:
             "$ref": "#/components/schemas/Address"
         default_billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         default_shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         newsletter_subscriber:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/NewsletterSubscriber"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         customer_groups:
           type: array
           items:
@@ -63933,9 +63966,12 @@ components:
           description: 'Rate provider; null prices through the calculator. Built-in:
             internal, freight. Provider gems register more (e.g. easy_post).'
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/DeliveryMethodCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -64141,9 +64177,12 @@ components:
         unpriced:
           type: boolean
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
         metadata:
@@ -64906,9 +64945,12 @@ components:
           type: string
           nullable: true
         draft:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/EmailTemplateDraft"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - key
@@ -65207,9 +65249,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -68493,13 +68538,19 @@ components:
           type: string
           nullable: true
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         orders:
           type: array
           items:
@@ -69104,21 +69155,33 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -69282,9 +69345,12 @@ components:
           items:
             "$ref": "#/components/schemas/Claim"
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - market_id
@@ -70638,13 +70704,19 @@ components:
           items:
             type: string
         price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -70679,9 +70751,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         translations:
@@ -70711,9 +70786,12 @@ components:
           type: string
           nullable: true
         submission:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/ProductSubmission"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_name:
           type: string
           nullable: true
@@ -70928,9 +71006,12 @@ components:
         preferences:
           type: object
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         line_items:
           type: array
           items:
@@ -78322,9 +78403,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -78345,9 +78429,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         metadata:

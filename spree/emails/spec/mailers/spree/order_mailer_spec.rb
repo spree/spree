@@ -106,6 +106,16 @@ describe Spree::OrderMailer, type: :mailer do
       end
     end
 
+    it 'names a region typed as free text when the location has no coded state' do
+      pickup_location.update_columns(state_name: 'Kings County')
+
+      message = described_class.confirm_email(order)
+
+      [message.html_part, message.text_part].each do |part|
+        expect(part.body.to_s).to include('Brooklyn, Kings County 11201')
+      end
+    end
+
     context 'when it ships to the chosen counter from a warehouse without pickup' do
       let(:counter) do
         create(:stock_location, store: store, name: 'Brooklyn counter', address1: '9 Front Street',

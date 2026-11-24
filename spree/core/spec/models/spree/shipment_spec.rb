@@ -70,12 +70,24 @@ describe Spree::Fulfillment, type: :model do
       expect(fulfillment.reload.fulfillment_type).to eq('shipping')
     end
 
-    it 'reads an unselected rate when none is selected, as #delivery_method does' do
+    it 'keeps the stored kind over an offered rate when none is selected' do
       choose(:pickup_delivery_method)
       fulfillment.delivery_rates.update_all(selected: false)
       fulfillment.update_columns(fulfillment_type: 'shipping')
 
-      expect(fulfillment.reload.fulfillment_type).to eq('pickup')
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+    end
+
+    it 'falls back to digital or shipping when none is selected and no kind is stored' do
+      choose(:digital_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: nil)
+      expect(fulfillment.reload.fulfillment_type).to eq('digital')
+
+      choose(:pickup_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: nil)
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
     end
 
     it 'falls back to the stored kind, then shipping, without a delivery method' do

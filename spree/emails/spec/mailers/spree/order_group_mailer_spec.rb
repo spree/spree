@@ -90,6 +90,18 @@ describe Spree::OrderGroupMailer, type: :mailer do
       end
     end
 
+    it 'names no pickup location for a pickup parcel that was canceled' do
+      fulfillment = group.orders.first.fulfillments.first
+      fulfillment.stock_location.update!(name: 'Pickup counter', pickup_enabled: true)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+      fulfillment.update_columns(status: 'canceled')
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        expect(body).not_to include('Pickup location')
+      end
+    end
+
     it 'names no pickup location when every parcel is shipped' do
       parts_of(described_class.confirm_email(group)).each { |body| expect(body).not_to include('Pickup location') }
     end
