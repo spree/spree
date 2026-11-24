@@ -58,6 +58,7 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 - `order.fulfillments.deliveries`: `id`, `tracking_number`, `carrier`, `carrier_name`, `service`, `status`, `tracking_url`, `estimated_delivery_at`, `delivered_at`
 - `order.fulfillments.delivery_method`: `id`, `name`, `code`, `estimated_transit_business_days_min`, `estimated_transit_business_days_max`, `digital`, `pickup`, `pickup_point`
 - `order.fulfillments.stock_location`: `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`, `pickup_ready_in_minutes`, `pickup_instructions`, `address2`
+- `order.fulfillments.pickup_location`: `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`, `pickup_ready_in_minutes`, `pickup_instructions`, `address2`
 - `order.fulfillments.delivery_rates`: `id`, `delivery_method_id`, `name`, `selected`, `cost`, `total`, `additional_tax_total`, `included_tax_total`, `tax_total`, `carrier`, `service_level`, `estimated_delivery_date`, `unpriced`
 - `order.payments`: `id`, `payment_method_id`, `response_code`, `number`, `status`, `amount`, `source_type`, `source_id`, `source`
 - `order.payments.payment_method`: `id`, `name`, `description`, `type`, `session_required`, `source_required`
@@ -95,6 +96,7 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 - `fulfillment.deliveries`: `id`, `tracking_number`, `carrier`, `carrier_name`, `service`, `status`, `tracking_url`, `estimated_delivery_at`, `delivered_at`
 - `fulfillment.delivery_method`: `id`, `name`, `code`, `estimated_transit_business_days_min`, `estimated_transit_business_days_max`, `digital`, `pickup`, `pickup_point`
 - `fulfillment.stock_location`: `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`, `pickup_ready_in_minutes`, `pickup_instructions`, `address2`
+- `fulfillment.pickup_location`: `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`, `pickup_ready_in_minutes`, `pickup_instructions`, `address2`
 - `fulfillment.delivery_rates`: `id`, `delivery_method_id`, `name`, `selected`, `cost`, `total`, `additional_tax_total`, `included_tax_total`, `tax_total`, `carrier`, `service_level`, `estimated_delivery_date`, `unpriced`
 - `fulfillment.delivery_rates.freight_summary`: `total_units`, `total_cartons`, `total_pallets`, `total_volume`, `total_weight`, `complete`
 - `fulfillment.delivery_rates.delivery_method`: `id`, `name`, `code`, `estimated_transit_business_days_min`, `estimated_transit_business_days_max`, `digital`, `pickup`, `pickup_point`

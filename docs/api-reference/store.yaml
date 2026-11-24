@@ -2227,6 +2227,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -2932,6 +2933,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -5960,6 +5962,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -7272,6 +7275,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -7601,6 +7605,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -10856,6 +10861,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -17159,6 +17165,13 @@ components:
           "$ref": "#/components/schemas/DeliveryMethod"
         stock_location:
           "$ref": "#/components/schemas/StockLocation"
+        pickup_location:
+          allOf:
+          - "$ref": "#/components/schemas/StockLocation"
+          nullable: true
+          description: Where the customer collects a pickup — the counter chosen at
+            checkout, which can differ from the stock location it ships from. Null
+            unless the delivery is a pickup.
         delivery_rates:
           type: array
           items:
@@ -17199,6 +17212,7 @@ components:
       - deliveries
       - delivery_method
       - stock_location
+      - pickup_location
       - delivery_rates
       x-typelizer: true
     GiftCardBatch:

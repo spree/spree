@@ -106,6 +106,35 @@ describe Spree::OrderMailer, type: :mailer do
       end
     end
 
+    context 'when it ships to the chosen counter from a warehouse without pickup' do
+      let(:counter) do
+        create(:stock_location, store: store, name: 'Brooklyn counter', address1: '9 Front Street',
+                                pickup_enabled: true, pickup_stock_policy: 'any')
+      end
+
+      before do
+        pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+        order.update_columns(preferred_stock_location_id: counter.id)
+        order.fulfillments.reset
+      end
+
+      it 'names the counter the customer chose, not the warehouse it ships from' do
+        message = described_class.confirm_email(order)
+
+        [message.html_part, message.text_part].each do |part|
+          body = part.body.to_s
+          expect(body).to include('Pickup location', 'Brooklyn counter', '9 Front Street')
+          expect(body).not_to include('Back warehouse')
+        end
+      end
+    end
+
+    it 'names no location when the origin is not a pickup counter and none was chosen' do
+      pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location', 'Back warehouse')
+    end
+
     it 'leaves out a canceled pickup' do
       order.fulfillments.first.update_columns(status: 'canceled')
 

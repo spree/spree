@@ -63,6 +63,17 @@ module Spree
       primary.stock_location
     end
 
+    # Where the customer collects the parcel when it is a pickup — see
+    # {Spree::Fulfillment#pickup_location}. Split orders share the counter
+    # the customer chose, so the first answers for all of them.
+    #
+    # @return [Spree::StockLocation, nil]
+    def pickup_location
+      return unless delivery_method&.pickup?
+
+      orders.first&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
+    end
+
     # What this parcel costs to deliver: the halves' apportioned shares added
     # back up, which is what the customer was quoted for it before the split
     # divided anything.

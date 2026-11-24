@@ -271,14 +271,14 @@ module Spree
       delivery_method&.digital? || false
     end
 
-    # How the goods reach the customer, read from the selected delivery
-    # method's provider the way the 6.0 upgrade backfill did, so it follows a
-    # later change of rate. The column (only the backfill writes it) answers
-    # for a fulfillment with no selected rate.
+    # How the goods reach the customer, read from the delivery method's
+    # provider the way the 6.0 upgrade backfill did, so it follows a later
+    # change of rate. The column (only the backfill writes it) answers for a
+    # fulfillment with no delivery method.
     #
     # @return [String] shipping, digital, pickup or pickup_point
     def fulfillment_type
-      provider_class = selected_delivery_rate&.delivery_method&.provider_class
+      provider_class = delivery_method&.provider_class
       return super.presence || 'shipping' if provider_class.nil?
 
       if provider_class.digital? then 'digital'
@@ -286,6 +286,18 @@ module Spree
       elsif provider_class.pickup? then 'pickup'
       else 'shipping'
       end
+    end
+
+    # Where the customer collects a pickup: the counter they chose at
+    # checkout, else the origin when it is itself a pickup counter. Under the
+    # 'any' pickup stock policy the origin can be a warehouse that ships to
+    # the counter, which the customer cannot visit.
+    #
+    # @return [Spree::StockLocation, nil] nil unless this is a pickup
+    def pickup_location
+      return unless delivery_method&.pickup?
+
+      (order || cart)&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
     end
 
     # @deprecated Use {#delivery_method}; removed in 6.3.

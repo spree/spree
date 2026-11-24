@@ -70,12 +70,56 @@ describe Spree::Fulfillment, type: :model do
       expect(fulfillment.reload.fulfillment_type).to eq('shipping')
     end
 
-    it 'falls back to the stored kind, then shipping, without a selected rate' do
+    it 'reads an unselected rate when none is selected, as #delivery_method does' do
+      choose(:pickup_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: 'shipping')
+
+      expect(fulfillment.reload.fulfillment_type).to eq('pickup')
+    end
+
+    it 'falls back to the stored kind, then shipping, without a delivery method' do
       fulfillment.delivery_rates.destroy_all
       expect(fulfillment.reload.fulfillment_type).to eq('shipping')
 
       fulfillment.update_columns(fulfillment_type: 'digital')
       expect(fulfillment.fulfillment_type).to eq('digital')
+    end
+  end
+
+  describe '#pickup_location' do
+    let(:order) { create(:order_ready_to_ship) }
+    let(:fulfillment) { order.fulfillments.first }
+    let(:counter) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any') }
+
+    before do
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+      fulfillment.stock_location.update!(pickup_enabled: false)
+    end
+
+    it 'is the counter the customer chose, over a warehouse that ships to it' do
+      order.update_columns(preferred_stock_location_id: counter.id)
+
+      expect(fulfillment.reload.pickup_location).to eq(counter)
+    end
+
+    it 'is the origin when none was chosen and the origin is a pickup counter' do
+      fulfillment.stock_location.update!(pickup_enabled: true)
+
+      expect(fulfillment.reload.pickup_location).to eq(fulfillment.stock_location)
+    end
+
+    it 'is nil when none was chosen and the origin does not offer pickup' do
+      expect(fulfillment.reload.pickup_location).to be_nil
+    end
+
+    it 'is nil for a delivery that is not a pickup' do
+      order.update_columns(preferred_stock_location_id: counter.id)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:delivery_method), true)
+
+      expect(fulfillment.reload.pickup_location).to be_nil
     end
   end
 

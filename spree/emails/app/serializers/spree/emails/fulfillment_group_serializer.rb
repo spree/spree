@@ -20,8 +20,7 @@ module Spree
       end
 
       typelize pickup_location: { nullable: true }
-      one :pickup_location, source: proc { stock_location if delivery_method&.pickup? },
-                            resource: Spree::Emails::StockLocationSerializer
+      one :pickup_location, resource: Spree::Emails::StockLocationSerializer
 
       many :manifest, key: :items, source: proc { manifest.select(&:line_item) },
                      resource: Spree::Emails::ParcelItemSerializer
