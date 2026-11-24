@@ -435,6 +435,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         let(:price_list_id) { price_list.prefixed_id }
         let(:body) { { product_ids: [product.prefixed_id] } }
 
+        schema type: :object, properties: { added_count: { type: :integer } }, required: %w[added_count]
+
         run_test! do |response|
           expect(JSON.parse(response.body)['added_count']).to eq(1)
         end
@@ -463,6 +465,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         let(:body) { { product_ids: [product.prefixed_id] } }
 
         before { price_list.add_products([product.id]) }
+
+        schema type: :object, properties: { removed_count: { type: :integer } }, required: %w[removed_count]
 
         run_test! do |response|
           expect(JSON.parse(response.body)['removed_count']).to eq(1)

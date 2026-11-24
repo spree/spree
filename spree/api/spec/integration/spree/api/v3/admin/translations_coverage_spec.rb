@@ -39,6 +39,52 @@ RSpec.describe 'Admin Translations Coverage API', type: :request, swagger_doc: '
           Mobility.with_locale(:de) { product.update!(name: 'Espressomaschine') }
         end
 
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :object,
+                   properties: {
+                     resource_type: { type: :string, example: 'product' },
+                     default_locale: { type: :string, example: 'en' },
+                     locales: {
+                       type: :array, items: { type: :string },
+                       description: 'The locales translated into: every supported locale but the default'
+                     },
+                     field_count: { type: :integer, description: 'How many fields of a record can be translated' },
+                     search_field: { type: :string, nullable: true, description: 'The predicate `search` was applied through' },
+                     coverage: {
+                       type: :array,
+                       items: {
+                         type: :object,
+                         properties: {
+                           locale: { type: :string, example: 'de' },
+                           translated: { type: :integer, description: 'Records with every field translated' },
+                           total: { type: :integer, description: 'Records of this type in the store' },
+                           coverage: { type: :number, example: 0.25, description: 'The share translated, from 0 to 1' }
+                         },
+                         required: %w[locale translated total coverage]
+                       }
+                     },
+                     records: {
+                       type: :array,
+                       description: 'This page of records, each with how many of its fields are translated per locale',
+                       items: {
+                         type: :object,
+                         properties: {
+                           id: { type: :string, example: 'prod_UkLWZg9DAJ' },
+                           label: { type: :string, nullable: true },
+                           locales: { type: :object, additionalProperties: { type: :integer }, example: { de: 2 } }
+                         },
+                         required: %w[id label locales]
+                       }
+                     }
+                   },
+                   required: %w[resource_type default_locale locales field_count search_field coverage records]
+                 },
+                 meta: { '$ref' => '#/components/schemas/PaginationMeta' }
+               },
+               required: %w[data meta]
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data['resource_type']).to eq('product')

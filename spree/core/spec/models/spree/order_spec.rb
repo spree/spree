@@ -456,6 +456,15 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#fee_total' do
+    it 'is zero for an order no fee was ever worked out for' do
+      order = build(:order, fee_total: nil)
+
+      expect(order.fee_total).to eq(0)
+      expect(order.display_fee_total.to_s).to eq('$0.00')
+    end
+  end
+
   describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55

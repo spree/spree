@@ -24,6 +24,13 @@ RSpec.describe 'Admin Permissions API', type: :request, swagger_doc: 'api-refere
       response '200', 'catalog returned' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Permission' } },
+                 meta: { type: :object, properties: { count: { type: :integer } }, required: %w[count] }
+               },
+               required: %w[data meta]
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].pluck('key')).to include('read_orders', 'write_orders', 'write_staff')

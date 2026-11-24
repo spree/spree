@@ -80,6 +80,8 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       response '201', 'discount created' do
         let(:body) { { label: 'Appeasement', value: '3.00', value_type: 'flat', line_item_id: line_item.prefixed_id } }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('Discount'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].first['amount']).to eq('-3.00')

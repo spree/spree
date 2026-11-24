@@ -713,6 +713,13 @@ paths:
               example:
                 message: If an account exists for that email, password reset instructions
                   have been sent.
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                - message
       requestBody:
         content:
           application/json:
@@ -840,6 +847,13 @@ paths:
             application/json:
               example:
                 setup_required: true
+              schema:
+                type: object
+                properties:
+                  setup_required:
+                    type: boolean
+                required:
+                - setup_required
     post:
       summary: Complete first-run setup
       tags:
@@ -904,6 +918,8 @@ paths:
                   - id: store_UkLWZg9DAJ
                     name: My Store
                     code: spree_1
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
         '404':
           description: setup not available
           content:
@@ -2023,6 +2039,36 @@ paths:
                   - en
                   - sn
                   - nd
+              schema:
+                type: object
+                properties:
+                  countries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: US
+                          description: ISO 3166-1 alpha-2 code
+                        currency:
+                          type: string
+                          example: USD
+                          description: The currency a store in this country starts
+                            with
+                        locales:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                          - en
+                          - es
+                      required:
+                      - code
+                      - currency
+                      - locales
+                required:
+                - countries
   "/api/v3/admin/allowed_origins":
     get:
       summary: List allowed origins
@@ -2570,6 +2616,18 @@ paths:
                   in: 3
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ApiKey"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an API key
       tags:
@@ -2634,6 +2692,8 @@ paths:
                 created_by_email: estella@okon.us
                 created_by_type: admin_user
                 created_by_label: Mana Cremin
+              schema:
+                "$ref": "#/components/schemas/ApiKey"
         '422':
           description: validation error
           content:
@@ -2717,6 +2777,8 @@ paths:
                 created_by_email:
                 created_by_type:
                 created_by_label:
+              schema:
+                "$ref": "#/components/schemas/ApiKey"
     patch:
       summary: Update an API key
       tags:
@@ -2781,6 +2843,8 @@ paths:
                 created_by_email:
                 created_by_type:
                 created_by_label:
+              schema:
+                "$ref": "#/components/schemas/ApiKey"
       requestBody:
         content:
           application/json:
@@ -2883,6 +2947,8 @@ paths:
                 created_by_email:
                 created_by_type:
                 created_by_label:
+              schema:
+                "$ref": "#/components/schemas/ApiKey"
   "/api/v3/admin/api_keys/{id}/revoke":
     patch:
       summary: Revoke an API key
@@ -2947,6 +3013,8 @@ paths:
                 created_by_email:
                 created_by_type:
                 created_by_label:
+              schema:
+                "$ref": "#/components/schemas/ApiKey"
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -3055,6 +3123,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Catalog"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a catalog
       tags:
@@ -3115,6 +3195,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 products_count: 0
                 pricing_strategy: base
+              schema:
+                "$ref": "#/components/schemas/Catalog"
         '422':
           description: invalid request
           content:
@@ -3267,6 +3349,8 @@ paths:
                 assignable_type: company
                 assignable_id: comp_UkLWZg9DAJ
                 assignable_name: Acme Corp 1
+              schema:
+                "$ref": "#/components/schemas/CatalogAssignment"
       requestBody:
         content:
           application/json:
@@ -3674,6 +3758,13 @@ paths:
             application/json:
               example:
                 added_count: 1
+              schema:
+                type: object
+                properties:
+                  added_count:
+                    type: integer
+                required:
+                - added_count
       requestBody:
         content:
           application/json:
@@ -3731,6 +3822,13 @@ paths:
             application/json:
               example:
                 removed_count: 1
+              schema:
+                type: object
+                properties:
+                  removed_count:
+                    type: integer
+                required:
+                - removed_count
       requestBody:
         content:
           application/json:
@@ -3831,6 +3929,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CatalogOrderMinimum"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a catalog order minimum
       tags:
@@ -3887,6 +3997,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '500.00'
+              schema:
+                "$ref": "#/components/schemas/CatalogOrderMinimum"
         '422':
           description: invalid request
           content:
@@ -3971,6 +4083,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '750.00'
+              schema:
+                "$ref": "#/components/schemas/CatalogOrderMinimum"
       requestBody:
         content:
           application/json:
@@ -5123,6 +5237,13 @@ paths:
             application/json:
               example:
                 added_count: 1
+              schema:
+                type: object
+                properties:
+                  added_count:
+                    type: integer
+                required:
+                - added_count
       requestBody:
         content:
           application/json:
@@ -5182,6 +5303,13 @@ paths:
             application/json:
               example:
                 removed_count: 1
+              schema:
+                type: object
+                properties:
+                  removed_count:
+                    type: integer
+                required:
+                - removed_count
       requestBody:
         content:
           application/json:
@@ -5587,6 +5715,8 @@ paths:
                 order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
+              schema:
+                "$ref": "#/components/schemas/Channel"
       requestBody:
         content:
           application/json:
@@ -5652,6 +5782,8 @@ paths:
                 order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
+              schema:
+                "$ref": "#/components/schemas/Channel"
     patch:
       summary: Update a channel
       tags:
@@ -5707,6 +5839,8 @@ paths:
                 order_routing_strategy:
                 stock_location_ids: []
                 default_catalog_id:
+              schema:
+                "$ref": "#/components/schemas/Channel"
       requestBody:
         content:
           application/json:
@@ -6009,6 +6143,18 @@ paths:
                   in: 3
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderRoutingRule"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an order routing rule on a channel
       tags:
@@ -6062,6 +6208,8 @@ paths:
                 type: default_location
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
+              schema:
+                "$ref": "#/components/schemas/OrderRoutingRule"
         '422':
           description: unknown rule type
           content:
@@ -6143,6 +6291,8 @@ paths:
                 type: preferred_location
                 channel_id: ch_UkLWZg9DAJ
                 preferences: {}
+              schema:
+                "$ref": "#/components/schemas/OrderRoutingRule"
       requestBody:
         content:
           application/json:
@@ -6254,6 +6404,30 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        label:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - label
+                      - schema
+                required:
+                - data
   "/api/v3/admin/collections":
     get:
       summary: List collections
@@ -7020,6 +7194,13 @@ paths:
             application/json:
               example:
                 added_count: 1
+              schema:
+                type: object
+                properties:
+                  added_count:
+                    type: integer
+                required:
+                - added_count
       requestBody:
         content:
           application/json:
@@ -7079,6 +7260,13 @@ paths:
             application/json:
               example:
                 removed_count: 1
+              schema:
+                type: object
+                properties:
+                  removed_count:
+                    type: integer
+                required:
+                - removed_count
       requestBody:
         content:
           application/json:
@@ -7217,6 +7405,30 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        label:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - label
+                      - schema
+                required:
+                - data
   "/api/v3/admin/collections/{collection_id}/custom_fields":
     get:
       summary: List collection custom fields
@@ -8798,6 +9010,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add a member
       tags:
@@ -8845,6 +9069,8 @@ paths:
                 email: buyer@example.com
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CompanyMembership"
       requestBody:
         content:
           application/json:
@@ -8977,6 +9203,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxExemptionCertificate"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a tax exemption certificate
       tags:
@@ -9043,6 +9281,8 @@ paths:
                 document_filename: resale.pdf
                 document_byte_size: 20
                 document_url: "/api/v3/admin/companies/comp_UkLWZg9DAJ/tax_exemption_certificates/cert_gbHJdmfrXB/download"
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionCertificate"
         '422':
           description: invalid request
           content:
@@ -9234,6 +9474,8 @@ paths:
                 document_filename:
                 document_byte_size:
                 document_url:
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionCertificate"
   "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}/revoke":
     parameters:
     - name: x-spree-api-key
@@ -9314,6 +9556,8 @@ paths:
                 document_filename:
                 document_byte_size:
                 document_url:
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionCertificate"
   "/api/v3/admin/companies/{company_id}/tax_exemption_certificates/{id}/download":
     parameters:
     - name: x-spree-api-key
@@ -9501,6 +9745,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxIdentifier"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a company tax registration
       tags:
@@ -9554,6 +9810,8 @@ paths:
                 customer_id:
                 cart_id:
                 order_id:
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
         '422':
           description: invalid request
           content:
@@ -9770,6 +10028,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Company"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a company
       tags:
@@ -9829,6 +10099,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 children_count: 0
                 members_count: 0
+              schema:
+                "$ref": "#/components/schemas/Company"
         '422':
           description: invalid request
           content:
@@ -9914,6 +10186,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 children_count: 0
                 members_count: 0
+              schema:
+                "$ref": "#/components/schemas/Company"
       requestBody:
         content:
           application/json:
@@ -10326,6 +10600,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomFieldDefinition"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a custom field definition
       tags:
@@ -10386,6 +10672,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+              schema:
+                "$ref": "#/components/schemas/CustomFieldDefinition"
       requestBody:
         content:
           application/json:
@@ -10464,6 +10752,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+              schema:
+                "$ref": "#/components/schemas/CustomFieldDefinition"
     patch:
       summary: Update a custom field definition
       tags:
@@ -10525,6 +10815,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+              schema:
+                "$ref": "#/components/schemas/CustomFieldDefinition"
       requestBody:
         content:
           application/json:
@@ -11861,6 +12153,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Address"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a customer address
       tags:
@@ -11951,6 +12255,8 @@ paths:
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:
@@ -12042,6 +12348,8 @@ paths:
                 latitude:
                 longitude:
                 customer_id: cust_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:
@@ -12216,6 +12524,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CreditCard"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/customers/{customer_id}/credit_cards/{id}":
     get:
       summary: Show a customer credit card
@@ -12297,6 +12617,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CreditCard"
     delete:
       summary: Delete a customer credit card
       tags:
@@ -12511,6 +12833,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreCredit"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Issue a store credit to a customer
       tags:
@@ -12580,6 +12914,8 @@ paths:
                 created_by_type: admin_user
                 originator_type:
                 originator_id:
+              schema:
+                "$ref": "#/components/schemas/StoreCredit"
       requestBody:
         content:
           application/json:
@@ -12659,6 +12995,8 @@ paths:
                 created_by_type: admin_user
                 originator_type:
                 originator_id:
+              schema:
+                "$ref": "#/components/schemas/StoreCredit"
       requestBody:
         content:
           application/json:
@@ -13197,6 +13535,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Customer"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a customer
       tags:
@@ -13273,6 +13623,8 @@ paths:
                 total_spent: '0.00'
                 last_order_completed_at:
                 customer_group_ids: []
+              schema:
+                "$ref": "#/components/schemas/Customer"
       requestBody:
         content:
           application/json:
@@ -13370,6 +13722,8 @@ paths:
                 total_spent: '0.00'
                 last_order_completed_at:
                 customer_group_ids: []
+              schema:
+                "$ref": "#/components/schemas/Customer"
     patch:
       summary: Update a customer
       tags:
@@ -13446,6 +13800,8 @@ paths:
                 total_spent: '0.00'
                 last_order_completed_at:
                 customer_group_ids: []
+              schema:
+                "$ref": "#/components/schemas/Customer"
       requestBody:
         content:
           application/json:
@@ -13876,6 +14232,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Delivery"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Record a delivery
       tags:
@@ -13952,6 +14320,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 shipping_label_id:
+              schema:
+                "$ref": "#/components/schemas/Delivery"
         '422':
           description: tracking number already recorded on this parcel
           content:
@@ -14055,6 +14425,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 shipping_label_id:
+              schema:
+                "$ref": "#/components/schemas/Delivery"
       requestBody:
         content:
           application/json:
@@ -14207,6 +14579,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 shipping_label_id:
+              schema:
+                "$ref": "#/components/schemas/Delivery"
       requestBody:
         content:
           application/json:
@@ -14450,6 +14824,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryProfile"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a delivery profile
       tags:
@@ -14515,6 +14901,8 @@ paths:
                 products_count: 0
                 delivery_methods_count: 0
                 delivery_zones_count: 0
+              schema:
+                "$ref": "#/components/schemas/DeliveryProfile"
         '422':
           description: validation error
           content:
@@ -14715,6 +15103,8 @@ paths:
                 - sloc_UkLWZg9DAJ
                 delivery_zones_count: 0
                 delivery_methods_count: 0
+              schema:
+                "$ref": "#/components/schemas/DeliveryOriginGroup"
       requestBody:
         content:
           application/json:
@@ -14792,6 +15182,8 @@ paths:
                 products_count: 0
                 delivery_methods_count: 0
                 delivery_zones_count: 0
+              schema:
+                "$ref": "#/components/schemas/DeliveryProfile"
       requestBody:
         content:
           application/json:
@@ -14981,6 +15373,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create delivery method
       tags:
@@ -15063,6 +15467,8 @@ paths:
                     amounts: {}
                     amount: '12.50'
                     currency: USD
+              schema:
+                "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
         content:
           application/json:
@@ -15157,6 +15563,8 @@ paths:
                     amounts: {}
                     amount: '10.00'
                     currency: USD
+              schema:
+                "$ref": "#/components/schemas/DeliveryMethod"
       requestBody:
         content:
           application/json:
@@ -15350,6 +15758,28 @@ paths:
                         format: currency
                         pattern: "^[A-Z]{3}$"
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        name:
+                          type: string
+                          example: Flat rate
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - name
+                      - schema
+                required:
+                - data
   "/api/v3/admin/delivery_zones":
     get:
       summary: List delivery zones
@@ -15544,6 +15974,8 @@ paths:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_origin_group_id: og_UkLWZg9DAJ
                 delivery_method_ids: []
+              schema:
+                "$ref": "#/components/schemas/DeliveryZone"
       requestBody:
         content:
           application/json:
@@ -15636,6 +16068,8 @@ paths:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_origin_group_id: og_UkLWZg9DAJ
                 delivery_method_ids: []
+              schema:
+                "$ref": "#/components/schemas/DeliveryZone"
       requestBody:
         content:
           application/json:
@@ -16159,6 +16593,19 @@ paths:
                   base_body:
                   draft:
                 meta: {}
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/EmailTemplate"
+                  meta:
+                    type: object
+                    description: 'Always empty: the list is not paginated'
+                required:
+                - data
+                - meta
   "/api/v3/admin/email_templates/{id}":
     parameters:
     - name: id
@@ -17017,6 +17464,15 @@ paths:
                 - id: or_UkLWZg9DAJ
                   label: R1001
                   created_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/EmailTemplateSampleRecord"
+                required:
+                - data
   "/api/v3/admin/email_templates/{email_template_id}/revisions":
     parameters:
     - name: email_template_id
@@ -17141,6 +17597,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/EmailTemplateRevision"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/email_templates/{email_template_id}/revisions/{revision_id}/restoration":
     parameters:
     - name: email_template_id
@@ -17355,6 +17823,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Export"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an export
       tags:
@@ -17422,6 +17902,8 @@ paths:
                 filename:
                 byte_size:
                 download_url:
+              schema:
+                "$ref": "#/components/schemas/Export"
       requestBody:
         content:
           application/json:
@@ -17491,6 +17973,8 @@ paths:
                 filename:
                 byte_size:
                 download_url:
+              schema:
+                "$ref": "#/components/schemas/Export"
     delete:
       summary: Delete an export
       tags:
@@ -17865,6 +18349,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Fulfillment"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a fulfillment
       tags:
@@ -17967,6 +18463,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
         '422':
           description: order not completed
           content:
@@ -18100,6 +18598,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
     patch:
       summary: Update a shipment
       tags:
@@ -18204,6 +18704,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
       requestBody:
         content:
           application/json:
@@ -18314,6 +18816,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
       requestBody:
         content:
           application/json:
@@ -18427,6 +18931,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
         '422':
           description: fulfillment has not shipped
           content:
@@ -18545,6 +19051,8 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+              schema:
+                "$ref": "#/components/schemas/Fulfillment"
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
     patch:
       summary: Split a fulfillment
@@ -18647,6 +19155,15 @@ paths:
                   documents: []
                   labels: []
                   provider_generates_labels: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Fulfillment"
+                required:
+                - data
       requestBody:
         content:
           application/json:
@@ -19892,6 +20409,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Import"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an import
       tags:
@@ -20296,6 +20825,8 @@ paths:
                   schema_field: category3
                   file_column:
                   required: false
+              schema:
+                "$ref": "#/components/schemas/Import"
         '422':
           description: unknown import type
           content:
@@ -20631,6 +21162,8 @@ paths:
                 csv_headers: []
                 sample_row: {}
                 mappings: []
+              schema:
+                "$ref": "#/components/schemas/Import"
     delete:
       summary: Delete an import
       tags:
@@ -21134,6 +21667,8 @@ paths:
                   schema_field: category3
                   file_column: category3
                   required: false
+              schema:
+                "$ref": "#/components/schemas/Import"
       requestBody:
         content:
           application/json:
@@ -21346,6 +21881,8 @@ paths:
                 csv_headers: []
                 sample_row: {}
                 mappings: []
+              schema:
+                "$ref": "#/components/schemas/Import"
   "/api/v3/admin/imports/{import_id}/rows":
     get:
       summary: List import rows
@@ -21454,6 +21991,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ImportRow"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/integrations":
     get:
       summary: List integrations
@@ -21548,6 +22097,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Integration"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Connect integration
       tags:
@@ -21604,6 +22165,8 @@ paths:
                 preferences:
                   api_key: "•••••cret"
                   account_number:
+              schema:
+                "$ref": "#/components/schemas/Integration"
       requestBody:
         content:
           application/json:
@@ -21674,6 +22237,40 @@ paths:
                         - string
                         - 'null'
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: klaviyo
+                        name:
+                          type: string
+                        group:
+                          type: string
+                          example: marketing
+                        description:
+                          type: string
+                          nullable: true
+                        logo_url:
+                          type: string
+                          nullable: true
+                        docs_url:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - name
+                      - group
+                      - schema
+                required:
+                - data
   "/api/v3/admin/integrations/{id}":
     patch:
       summary: Update integration
@@ -21736,6 +22333,8 @@ paths:
                 preferences:
                   api_key: "•••••cret"
                   account_number: demo-0001
+              schema:
+                "$ref": "#/components/schemas/Integration"
       requestBody:
         content:
           application/json:
@@ -21793,6 +22392,18 @@ paths:
               example:
                 connected: true
                 error_message:
+              schema:
+                type: object
+                properties:
+                  connected:
+                    type: boolean
+                  error_message:
+                    type: string
+                    nullable: true
+                    description: What the provider answered when the connection failed
+                required:
+                - connected
+                - error_message
   "/api/v3/admin/maintenance_task_runs":
     get:
       summary: List maintenance task runs
@@ -27331,6 +27942,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxLine"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/orders/{order_id}/discounts":
     get:
       summary: List discounts
@@ -27434,6 +28057,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Discount"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create manual discount
       tags:
@@ -27504,6 +28139,15 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Discount"
+                required:
+                - data
         '422':
           description: invalid discount
           content:
@@ -27594,6 +28238,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/Discount"
       requestBody:
         content:
           application/json:
@@ -27773,6 +28419,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/Fee"
         '422':
           description: invalid fee
           content:
@@ -28170,6 +28818,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
         '422':
           description: unknown discount code
           content:
@@ -28253,6 +28903,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 customer_id:
                 created_by_id:
+              schema:
+                "$ref": "#/components/schemas/GiftCard"
       requestBody:
         content:
           application/json:
@@ -28519,6 +29171,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/LineItem"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add an item
       tags:
@@ -28619,6 +29283,8 @@ paths:
                 cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 product_id: prod_gbHJdmfrXB
+              schema:
+                "$ref": "#/components/schemas/LineItem"
       requestBody:
         content:
           application/json:
@@ -28743,6 +29409,8 @@ paths:
                 cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 product_id: prod_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/LineItem"
     patch:
       summary: Update an item
       tags:
@@ -28848,6 +29516,8 @@ paths:
                 cost_price: '17.00'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 product_id: prod_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/LineItem"
       requestBody:
         content:
           application/json:
@@ -29044,6 +29714,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
       requestBody:
         content:
           application/json:
@@ -29342,7 +30014,7 @@ paths:
                   included_tax_total: '0.00'
                   additional_tax_total: '0.00'
                   delivery_total: '0.00'
-                  fee_total:
+                  fee_total: '0.00'
                   gift_card_total: '0.00'
                   store_credit_total: '0.00'
                   total: '0.00'
@@ -29408,6 +30080,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Order"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -29625,6 +30309,8 @@ paths:
                 cancel_reason_name:
                 customer_id:
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
       requestBody:
         content:
           application/json:
@@ -29727,7 +30413,7 @@ paths:
                 included_tax_total: '0.00'
                 additional_tax_total: '0.00'
                 delivery_total: '0.00'
-                fee_total:
+                fee_total: '0.00'
                 gift_card_total: '0.00'
                 store_credit_total: '0.00'
                 total: '0.00'
@@ -29783,6 +30469,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
         '404':
           description: order not found
           content:
@@ -29931,6 +30619,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
       requestBody:
         content:
           application/json:
@@ -30131,6 +30821,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
         '422':
           description: order cannot be completed
           content:
@@ -30311,6 +31003,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
       requestBody:
         content:
           application/json:
@@ -30452,6 +31146,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
   "/api/v3/admin/orders/{id}/resend_confirmation":
     post:
       summary: Resend confirmation email
@@ -30587,6 +31283,8 @@ paths:
                 cancel_reason_name:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
+              schema:
+                "$ref": "#/components/schemas/Order"
   "/api/v3/admin/orders/{id}/resend_digital_links":
     post:
       summary: Resend digital download links
@@ -32595,6 +33293,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PaymentMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a payment method
       tags:
@@ -32667,6 +33377,8 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+              schema:
+                "$ref": "#/components/schemas/PaymentMethod"
         '422':
           description: unknown payment method type
           content:
@@ -32780,6 +33492,44 @@ paths:
                   docs_url:
                   third_party: false
                   installed: true
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        label:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                        logo_url:
+                          type: string
+                          nullable: true
+                        docs_url:
+                          type: string
+                          nullable: true
+                        third_party:
+                          type: boolean
+                          description: Whether the provider is an outside service,
+                            as opposed to a method the store handles itself
+                        installed:
+                          type: boolean
+                          description: Whether the store has a payment method of this
+                            type already
+                      required:
+                      - type
+                      - label
+                      - schema
+                required:
+                - data
   "/api/v3/admin/payment_methods/{id}":
     get:
       summary: Show a payment method
@@ -32861,6 +33611,8 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+              schema:
+                "$ref": "#/components/schemas/PaymentMethod"
     patch:
       summary: Update a payment method
       tags:
@@ -32931,6 +33683,8 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+              schema:
+                "$ref": "#/components/schemas/PaymentMethod"
       requestBody:
         content:
           application/json:
@@ -33114,6 +33868,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Payment"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a payment
       tags:
@@ -33190,6 +33956,8 @@ paths:
                 can_capture: true
                 captured_amount: '0.00'
                 order_id: or_gbHJdmfrXB
+              schema:
+                "$ref": "#/components/schemas/Payment"
       requestBody:
         content:
           application/json:
@@ -33302,6 +34070,8 @@ paths:
                 can_capture: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Payment"
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
     patch:
       summary: Capture a payment
@@ -33395,6 +34165,8 @@ paths:
                 can_capture: false
                 captured_amount: '110.00'
                 order_id: or_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Payment"
         '422':
           description: capture failed
           content:
@@ -33502,6 +34274,8 @@ paths:
                 can_capture: false
                 captured_amount: '0.00'
                 order_id: or_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Payment"
   "/api/v3/admin/policies":
     get:
       summary: List policies
@@ -34269,6 +35043,13 @@ paths:
             application/json:
               example:
                 added_count: 1
+              schema:
+                type: object
+                properties:
+                  added_count:
+                    type: integer
+                required:
+                - added_count
       requestBody:
         content:
           application/json:
@@ -34326,6 +35107,13 @@ paths:
             application/json:
               example:
                 removed_count: 1
+              schema:
+                type: object
+                properties:
+                  removed_count:
+                    type: integer
+                required:
+                - removed_count
       requestBody:
         content:
           application/json:
@@ -36255,6 +37043,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomField"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a product custom field
       tags:
@@ -36315,6 +37115,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_gbHJdmfrXB
+              schema:
+                "$ref": "#/components/schemas/CustomField"
         '422':
           description: duplicate definition for the same product
           content:
@@ -36409,6 +37211,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/CustomField"
     patch:
       summary: Update a product custom field
       tags:
@@ -36473,6 +37277,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/CustomField"
       requestBody:
         content:
           application/json:
@@ -36916,6 +37722,13 @@ paths:
                   - de
                   - en
                   - fr
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ResourceTranslations"
+                required:
+                - data
   "/api/v3/admin/products":
     get:
       summary: List products
@@ -38016,6 +38829,13 @@ paths:
               example:
                 product_count: 1
                 category_count: 1
+              schema:
+                type: object
+                properties:
+                  product_count:
+                    type: integer
+                  category_count:
+                    type: integer
       requestBody:
         content:
           application/json:
@@ -38135,6 +38955,13 @@ paths:
               example:
                 product_count: 1
                 collection_count: 1
+              schema:
+                type: object
+                properties:
+                  product_count:
+                    type: integer
+                  collection_count:
+                    type: integer
       requestBody:
         content:
           application/json:
@@ -38382,6 +39209,13 @@ paths:
               example:
                 product_count: 1
                 tag_count: 1
+              schema:
+                type: object
+                properties:
+                  product_count:
+                    type: integer
+                  tag_count:
+                    type: integer
       requestBody:
         content:
           application/json:
@@ -39166,6 +40000,90 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      resource_type:
+                        type: string
+                        example: product
+                      default_locale:
+                        type: string
+                        example: en
+                      locales:
+                        type: array
+                        items:
+                          type: string
+                        description: 'The locales translated into: every supported
+                          locale but the default'
+                      field_count:
+                        type: integer
+                        description: How many fields of a record can be translated
+                      search_field:
+                        type: string
+                        nullable: true
+                        description: The predicate `search` was applied through
+                      coverage:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            locale:
+                              type: string
+                              example: de
+                            translated:
+                              type: integer
+                              description: Records with every field translated
+                            total:
+                              type: integer
+                              description: Records of this type in the store
+                            coverage:
+                              type: number
+                              example: 0.25
+                              description: The share translated, from 0 to 1
+                          required:
+                          - locale
+                          - translated
+                          - total
+                          - coverage
+                      records:
+                        type: array
+                        description: This page of records, each with how many of its
+                          fields are translated per locale
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: prod_UkLWZg9DAJ
+                            label:
+                              type: string
+                              nullable: true
+                            locales:
+                              type: object
+                              additionalProperties:
+                                type: integer
+                              example:
+                                de: 2
+                          required:
+                          - id
+                          - label
+                          - locales
+                    required:
+                    - resource_type
+                    - default_locale
+                    - locales
+                    - field_count
+                    - search_field
+                    - coverage
+                    - records
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '404':
           description: resource type is not translatable
           content:
@@ -39294,6 +40212,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CouponCode"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/promotions/{promotion_id}/custom_fields":
     get:
       summary: List promotion custom fields
@@ -39515,6 +40445,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PromotionAction"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an action on a promotion
       tags:
@@ -39568,6 +40510,8 @@ paths:
                 preferences: {}
                 calculator:
                 line_items:
+              schema:
+                "$ref": "#/components/schemas/PromotionAction"
         '422':
           description: unknown action type
           content:
@@ -39656,6 +40600,8 @@ paths:
                     percent: '15.0'
                     apply_only_on_full_priced_items: false
                 line_items:
+              schema:
+                "$ref": "#/components/schemas/PromotionAction"
       requestBody:
         content:
           application/json:
@@ -39797,6 +40743,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PromotionRule"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a rule on a promotion
       tags:
@@ -39854,6 +40812,8 @@ paths:
                 category_ids:
                 customer_ids:
                 option_value_ids:
+              schema:
+                "$ref": "#/components/schemas/PromotionRule"
         '422':
           description: unknown rule type
           content:
@@ -39934,6 +40894,8 @@ paths:
                 category_ids:
                 customer_ids:
                 option_value_ids:
+              schema:
+                "$ref": "#/components/schemas/PromotionRule"
       requestBody:
         content:
           application/json:
@@ -40110,6 +41072,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Promotion"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a promotion
       tags:
@@ -40224,6 +41198,8 @@ paths:
                 - prorule_UkLWZg9DAJ
                 - prorule_gbHJdmfrXB
                 - prorule_EfhxLZ9ck8
+              schema:
+                "$ref": "#/components/schemas/Promotion"
         '422':
           description: invalid params
           content:
@@ -40319,6 +41295,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 action_ids: []
                 rule_ids: []
+              schema:
+                "$ref": "#/components/schemas/Promotion"
     patch:
       summary: Update a promotion
       tags:
@@ -40428,6 +41406,8 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 action_ids: []
                 rule_ids: []
+              schema:
+                "$ref": "#/components/schemas/Promotion"
       requestBody:
         content:
           application/json:
@@ -40550,6 +41530,30 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        label:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - label
+                      - schema
+                required:
+                - data
   "/api/v3/admin/promotion_rules/types":
     get:
       summary: List available promotion rule types
@@ -40777,6 +41781,30 @@ paths:
                         - none
                         default: any
                     additionalProperties: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: flat_rate
+                        label:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        schema:
+                          "$ref": "#/components/schemas/PreferenceSchema"
+                      required:
+                      - type
+                      - label
+                      - schema
+                required:
+                - data
   "/api/v3/admin/purchase_orders/{purchase_order_id}/custom_fields":
     get:
       summary: List purchase order custom fields
@@ -41654,6 +42682,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockReceipt"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Book in a delivery
       tags:
@@ -42142,6 +43182,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ClaimReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -42204,6 +43256,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ClaimReason"
         '422':
           description: validation error
           content:
@@ -42283,6 +43337,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ClaimReason"
         '404':
           description: claim reason not found
           content:
@@ -42347,6 +43403,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ClaimReason"
       requestBody:
         content:
           application/json:
@@ -42515,6 +43573,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderCancellationReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -42577,6 +43647,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/OrderCancellationReason"
         '422':
           description: validation error
           content:
@@ -42656,6 +43728,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/OrderCancellationReason"
         '404':
           description: order cancellation reason not found
           content:
@@ -42720,6 +43794,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/OrderCancellationReason"
       requestBody:
         content:
           application/json:
@@ -42888,6 +43964,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/RefundReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -42950,6 +44038,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/RefundReason"
         '422':
           description: validation error
           content:
@@ -43029,6 +44119,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/RefundReason"
         '404':
           description: refund reason not found
           content:
@@ -43093,6 +44185,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/RefundReason"
       requestBody:
         content:
           application/json:
@@ -43261,6 +44355,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ReturnReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -43323,6 +44429,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ReturnReason"
         '422':
           description: validation error
           content:
@@ -43402,6 +44510,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ReturnReason"
         '404':
           description: return reason not found
           content:
@@ -43466,6 +44576,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/ReturnReason"
       requestBody:
         content:
           application/json:
@@ -43641,6 +44753,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxExemptionReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -43708,6 +44832,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionReason"
         '422':
           description: validation error
           content:
@@ -43793,6 +44919,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionReason"
         '404':
           description: tax exemption reason not found
           content:
@@ -43861,6 +44989,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 can_be_deleted: true
+              schema:
+                "$ref": "#/components/schemas/TaxExemptionReason"
       requestBody:
         content:
           application/json:
@@ -44023,6 +45153,18 @@ paths:
                   in: 0
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Refund"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a refund
       tags:
@@ -44090,6 +45232,8 @@ paths:
                 tax_amount: '0.00'
                 refunder_id: adm_UkLWZg9DAJ
                 refunder_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/Refund"
       requestBody:
         content:
           application/json:
@@ -44537,6 +45681,120 @@ paths:
                       value: 0
                       previous: 0
                       growth: '0'
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                        example: USD
+                      time_range:
+                        type: object
+                        properties:
+                          since:
+                            type: string
+                          until:
+                            type: string
+                        required:
+                        - since
+                        - until
+                      previous_time_range:
+                        type: object
+                        properties:
+                          since:
+                            type: string
+                          until:
+                            type: string
+                        required:
+                        - since
+                        - until
+                        nullable: true
+                      metrics:
+                        type: array
+                        items:
+                          type: string
+                      dimensions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            grain:
+                              type: string
+                          required:
+                          - name
+                    required:
+                    - currency
+                    - time_range
+                    - metrics
+                    - dimensions
+                  totals:
+                    type: object
+                    description: Keyed by metric
+                    additionalProperties:
+                      type: object
+                      properties:
+                        value:
+                          description: A decimal string for a money metric, a number
+                            for a count
+                        display:
+                          type: string
+                          description: The value formatted with its currency. Money
+                            metrics only.
+                        previous:
+                          description: The value in the period compared against. Present
+                            when the query asks for a comparison.
+                        growth:
+                          type: string
+                          nullable: true
+                          description: Percentage change from the previous period;
+                            null when that period has nothing to compare with
+                      required:
+                      - value
+                  rows:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        dimensions:
+                          type: object
+                          description: 'Keyed by dimension: the value itself for a
+                            time bucket or a status, and `{ id, label, meta }` for
+                            a record such as a product or a customer'
+                          additionalProperties: true
+                        metrics:
+                          type: object
+                          description: Keyed by metric
+                          additionalProperties:
+                            type: object
+                            properties:
+                              value:
+                                description: A decimal string for a money metric,
+                                  a number for a count
+                              display:
+                                type: string
+                                description: The value formatted with its currency.
+                                  Money metrics only.
+                              previous:
+                                description: The value in the period compared against.
+                                  Present when the query asks for a comparison.
+                              growth:
+                                type: string
+                                nullable: true
+                                description: Percentage change from the previous period;
+                                  null when that period has nothing to compare with
+                            required:
+                            - value
+                      required:
+                      - dimensions
+                      - metrics
+                required:
+                - meta
+                - totals
+                - rows
       requestBody:
         content:
           application/json:
@@ -48150,6 +49408,15 @@ paths:
                 - code: fr
                   default: false
                   rtl: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Locale"
+                required:
+                - data
   "/api/v3/admin/store":
     get:
       summary: Get the current store
@@ -48972,6 +50239,21 @@ paths:
                 data:
                 - name: vip
                 - name: wholesale
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: vip
+                      required:
+                      - name
+                required:
+                - data
         '422':
           description: invalid taggable type
           content:
@@ -49805,6 +51087,43 @@ paths:
                   - key: about
                     type: html
                   readable: false
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resource_type:
+                          type: string
+                          example: product
+                        fields:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              key:
+                                type: string
+                                example: name
+                              type:
+                                type: string
+                                example: string
+                                description: 'How the field is edited: `string`, `text`
+                                  or `html`'
+                            required:
+                            - key
+                            - type
+                        readable:
+                          type: boolean
+                          description: Whether the caller may read records of this
+                            type
+                      required:
+                      - resource_type
+                      - fields
+                      - readable
+                required:
+                - data
   "/api/v3/admin/translations/batch":
     post:
       summary: Batch upsert translations
@@ -49890,6 +51209,15 @@ paths:
                   - de
                   - en
                   - fr
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ResourceTranslations"
+                required:
+                - data
         '422':
           description: unsupported locale rolls back the whole batch
           content:
@@ -50098,6 +51426,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ShippingLabel"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Buy or record a shipping label
       tags:
@@ -50182,6 +51522,8 @@ paths:
                 integration_id:
                 file_pending: true
                 download_url: "/api/v3/admin/orders/or_UkLWZg9DAJ/fulfillments/ful_UkLWZg9DAJ/labels/lbl_UkLWZg9DAJ/download"
+              schema:
+                "$ref": "#/components/schemas/ShippingLabel"
         '422':
           description: provider does not produce labels
           content:
@@ -50283,6 +51625,8 @@ paths:
                 integration_id:
                 file_pending: false
                 download_url:
+              schema:
+                "$ref": "#/components/schemas/ShippingLabel"
     delete:
       summary: Delete an uploaded label
       tags:
@@ -50435,6 +51779,8 @@ paths:
                 integration_id:
                 file_pending: false
                 download_url:
+              schema:
+                "$ref": "#/components/schemas/ShippingLabel"
         '422':
           description: uploaded labels cannot be refunded
           content:
@@ -50562,6 +51908,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/AdminUser"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/admin_users/{id}":
     get:
       summary: Show a staff member
@@ -50641,6 +51999,8 @@ paths:
                   id: adm_gbHJdmfrXB
                   type: admin_user
                   label: Ada Inviter
+              schema:
+                "$ref": "#/components/schemas/AdminUser"
     patch:
       summary: Update a staff member
       tags:
@@ -50710,6 +52070,8 @@ paths:
                 - id: store_UkLWZg9DAJ
                   name: Spree Test Store
                   code: spree_1
+              schema:
+                "$ref": "#/components/schemas/AdminUser"
       requestBody:
         content:
           application/json:
@@ -50858,6 +52220,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Invitation"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an invitation
       tags:
@@ -50917,6 +52291,8 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/Invitation"
       requestBody:
         content:
           application/json:
@@ -51088,6 +52464,8 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/Invitation"
         '422':
           description: the invitation has expired, was already accepted or failed
             validation
@@ -51584,6 +52962,23 @@ paths:
                   description: Team members, invitations, roles and their permissions
                 meta:
                   count: 61
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Permission"
+                  meta:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                    required:
+                    - count
+                required:
+                - data
+                - meta
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -51739,6 +53134,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Role"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a role
       tags:
@@ -51797,6 +53204,8 @@ paths:
                 - read_customers
                 mutable: true
                 users_count: 0
+              schema:
+                "$ref": "#/components/schemas/Role"
         '422':
           description: invalid request
           content:
@@ -51882,6 +53291,8 @@ paths:
                 - read_customers
                 mutable: true
                 users_count: 0
+              schema:
+                "$ref": "#/components/schemas/Role"
       requestBody:
         content:
           application/json:
@@ -52231,6 +53642,13 @@ paths:
             application/json:
               example:
                 stock_level_count: 1
+              schema:
+                type: object
+                properties:
+                  stock_level_count:
+                    type: integer
+                required:
+                - stock_level_count
         '422':
           description: row is missing a level
           content:
@@ -54385,6 +55803,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockReceipt"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Count a delivery in
       tags:
@@ -56231,6 +57661,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Variant"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create a variant
       tags:
@@ -56367,6 +57809,8 @@ paths:
                 total_on_hand: 0
                 product_name: Product 2401771
                 delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Variant"
         '422':
           description: validation error
           content:
@@ -56534,6 +57978,8 @@ paths:
                 total_on_hand: 0
                 product_name: Product 2424025
                 delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Variant"
         '404':
           description: variant not found
           content:
@@ -56674,6 +58120,8 @@ paths:
                 total_on_hand: 0
                 product_name: Product 2445672
                 delivery_profile_id: fp_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/Variant"
       requestBody:
         content:
           application/json:
@@ -57286,6 +58734,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/WebhookDelivery"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '404':
           description: parent webhook endpoint not found
           content:
@@ -57381,6 +58841,8 @@ paths:
                     id: 1
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks
+              schema:
+                "$ref": "#/components/schemas/WebhookDelivery"
         '404':
           description: delivery not found
           content:
@@ -57472,6 +58934,8 @@ paths:
                     id: 1
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks
+              schema:
+                "$ref": "#/components/schemas/WebhookDelivery"
   "/api/v3/admin/webhook_endpoints":
     get:
       summary: List webhook endpoints
@@ -57616,6 +59080,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/WebhookEndpoint"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -57702,6 +59178,8 @@ paths:
                 total_delivery_count: 0
                 successful_delivery_count: 0
                 failed_delivery_count: 0
+              schema:
+                "$ref": "#/components/schemas/WebhookEndpoint"
         '422':
           description: validation error
           content:
@@ -57801,6 +59279,8 @@ paths:
                 total_delivery_count: 0
                 successful_delivery_count: 0
                 failed_delivery_count: 0
+              schema:
+                "$ref": "#/components/schemas/WebhookEndpoint"
         '404':
           description: webhook endpoint not found
           content:
@@ -57881,6 +59361,8 @@ paths:
                 total_delivery_count: 0
                 successful_delivery_count: 0
                 failed_delivery_count: 0
+              schema:
+                "$ref": "#/components/schemas/WebhookEndpoint"
         '422':
           description: validation error
           content:
@@ -58016,6 +59498,8 @@ paths:
                 payload:
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
+              schema:
+                "$ref": "#/components/schemas/WebhookDelivery"
   "/api/v3/admin/webhook_endpoints/{id}/enable":
     parameters:
     - name: id
@@ -58088,6 +59572,8 @@ paths:
                 total_delivery_count: 0
                 successful_delivery_count: 0
                 failed_delivery_count: 0
+              schema:
+                "$ref": "#/components/schemas/WebhookEndpoint"
   "/api/v3/admin/webhook_endpoints/{id}/disable":
     parameters:
     - name: id
@@ -58166,6 +59652,8 @@ paths:
                 total_delivery_count: 0
                 successful_delivery_count: 0
                 failed_delivery_count: 0
+              schema:
+                "$ref": "#/components/schemas/WebhookEndpoint"
       requestBody:
         content:
           application/json:
@@ -59803,6 +61291,23 @@ paths:
                   replaced_by:
                 meta:
                   count: 264
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/WebhookEvent"
+                  meta:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                    required:
+                    - count
+                required:
+                - data
+                - meta
 servers:
 - url: http://{defaultHost}
   variables:
@@ -60075,6 +61580,72 @@ components:
       required:
       - user
       - permissions
+    ResourceTranslations:
+      type: object
+      description: A record's translatable fields and their value in each locale
+      properties:
+        resource_id:
+          type: string
+          example: prod_UkLWZg9DAJ
+        resource_type:
+          type: string
+          example: product
+        translations:
+          type: object
+          description: Keyed by locale. Each entry holds every field's translation,
+            null where there is none, and `translated_field_count`.
+          additionalProperties:
+            type: object
+            additionalProperties: true
+          example:
+            de:
+              name: Espressomaschine
+              description:
+              translated_field_count: 1
+        fields:
+          type: array
+          description: The translatable fields and their value in the default locale.
+            Present when reading a record.
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                example: name
+              type:
+                type: string
+                example: string
+                description: 'How the field is edited: `string` or `html`'
+              source:
+                type: string
+                nullable: true
+                example: Espresso Machine
+            required:
+            - key
+            - type
+            - source
+        default_locale:
+          type: string
+          example: en
+          description: Absent on nested `children`
+        supported_locales:
+          type: array
+          items:
+            type: string
+          example:
+          - en
+          - de
+          description: Absent on nested `children`
+        children:
+          type: array
+          description: Nested translatable records, such as the option values of an
+            option type
+          items:
+            "$ref": "#/components/schemas/ResourceTranslations"
+      required:
+      - resource_id
+      - resource_type
+      - translations
     Actor:
       type: object
       properties:
@@ -63958,6 +65529,7 @@ components:
           type: string
         deleted_at:
           type: string
+          nullable: true
         markup_flat:
           type: string
           nullable: true

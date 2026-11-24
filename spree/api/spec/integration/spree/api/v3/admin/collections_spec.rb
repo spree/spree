@@ -227,6 +227,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         let(:collection_id) { collection.prefixed_id }
         let(:body) { { product_ids: [product.prefixed_id] } }
 
+        schema type: :object, properties: { added_count: { type: :integer } }, required: %w[added_count]
+
         run_test! do |response|
           expect(JSON.parse(response.body)['added_count']).to eq(1)
         end
@@ -257,6 +259,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         let(:body) { { product_ids: [product.prefixed_id] } }
 
         before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
+
+        schema type: :object, properties: { removed_count: { type: :integer } }, required: %w[removed_count]
 
         run_test! do |response|
           expect(JSON.parse(response.body)['removed_count']).to eq(1)
@@ -313,6 +317,8 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
 
       response '200', 'types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema SwaggerSchemaHelpers.preference_types
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']

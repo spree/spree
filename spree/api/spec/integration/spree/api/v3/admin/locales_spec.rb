@@ -25,6 +25,8 @@ RSpec.describe 'Admin Locales API', type: :request, swagger_doc: 'api-reference/
       response '200', 'locales found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('Locale'))
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.pluck('code')).to include('en', 'de', 'fr')

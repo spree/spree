@@ -24,6 +24,13 @@ RSpec.describe 'Admin Webhook Events API', type: :request, swagger_doc: 'api-ref
       response '200', 'events returned' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/WebhookEvent' } },
+                 meta: { type: :object, properties: { count: { type: :integer } }, required: %w[count] }
+               },
+               required: %w[data meta]
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].pluck('name')).to include('order.placed', 'customer.password_reset_requested')

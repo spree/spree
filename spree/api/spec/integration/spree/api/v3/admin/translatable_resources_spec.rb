@@ -23,6 +23,26 @@ RSpec.describe 'Admin Translatable Resources API', type: :request, swagger_doc: 
       response '200', 'translatable resources found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema SwaggerSchemaHelpers.list(
+          type: :object,
+          properties: {
+            resource_type: { type: :string, example: 'product' },
+            fields: {
+              type: :array,
+              items: {
+                type: :object,
+                properties: {
+                  key: { type: :string, example: 'name' },
+                  type: { type: :string, example: 'string', description: 'How the field is edited: `string`, `text` or `html`' }
+                },
+                required: %w[key type]
+              }
+            },
+            readable: { type: :boolean, description: 'Whether the caller may read records of this type' }
+          },
+          required: %w[resource_type fields readable]
+        )
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)

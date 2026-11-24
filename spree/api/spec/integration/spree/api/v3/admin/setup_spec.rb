@@ -16,6 +16,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
       admin_sdk_example 'auth/setup-status'
 
       response '200', 'setup status' do
+        schema type: :object, properties: { setup_required: { type: :boolean } }, required: %w[setup_required]
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['setup_required']).to be(true)
@@ -52,6 +54,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
             country_code: 'US'
           }
         end
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -90,6 +94,23 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
       admin_sdk_example 'auth/setup-countries'
 
       response '200', 'countries' do
+        schema type: :object,
+               properties: {
+                 countries: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       code: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 code' },
+                       currency: { type: :string, example: 'USD', description: 'The currency a store in this country starts with' },
+                       locales: { type: :array, items: { type: :string }, example: %w[en es] }
+                     },
+                     required: %w[code currency locales]
+                   }
+                 }
+               },
+               required: %w[countries]
+
         run_test! do |response|
           data = JSON.parse(response.body)
           switzerland = data['countries'].find { |country| country['code'] == 'CH' }

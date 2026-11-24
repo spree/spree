@@ -34,6 +34,8 @@ RSpec.describe 'Seller Password Resets API', type: :request, swagger_doc: 'api-r
       response '202', 'reset requested' do
         let(:body) { { email: seller_user.email } }
 
+        schema type: :object, properties: { message: { type: :string } }, required: %w[message]
+
         run_test! do |response|
           expect(JSON.parse(response.body)['message']).to be_present
         end

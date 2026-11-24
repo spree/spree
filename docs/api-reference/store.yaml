@@ -1196,6 +1196,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Cart"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -5048,6 +5060,22 @@ paths:
                     po_number_required: false
                     parent_id:
                     ancestors: []
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - "$ref": "#/components/schemas/CompanyMembership"
+                      - type: object
+                        properties:
+                          company:
+                            "$ref": "#/components/schemas/Company"
+                        required:
+                        - company
+                required:
+                - data
         '401':
           description: not authenticated
           content:
@@ -5110,6 +5138,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
         '404':
           description: no standing over this node
           content:
@@ -5150,6 +5180,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
       requestBody:
         content:
           application/json:
@@ -5234,6 +5266,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add a member by email
       tags:
@@ -5286,6 +5330,8 @@ paths:
                 expires_at: '2026-02-14T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
                 status: pending
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
       requestBody:
         content:
           application/json:
@@ -5504,6 +5550,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Address"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add an address book entry
       tags:
@@ -6062,6 +6120,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Order"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/company_invitations/{token}":
     parameters:
     - name: token
@@ -6099,6 +6169,8 @@ paths:
                 status: pending
                 company_name: Acme Industrial
                 store_name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
         '404':
           description: token spent, revoked or expired
           content:
@@ -6159,6 +6231,8 @@ paths:
                 company_id: comp_UkLWZg9DAJ
                 customer_id: cust_UkLWZg9DAJ
                 email: new@acme.test
+              schema:
+                "$ref": "#/components/schemas/CompanyMembership"
       requestBody:
         content:
           application/json:
@@ -9323,6 +9397,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/delivery_methods/{id}/pickup_locations":
     get:
       summary: List pickup locations
@@ -9385,6 +9471,15 @@ paths:
                   state_abbr: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockLocation"
+                required:
+                - data
   "/api/v3/store/customers/me/digital_links":
     get:
       summary: List my digital links

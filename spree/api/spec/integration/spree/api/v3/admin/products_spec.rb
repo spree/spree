@@ -310,6 +310,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:other_store_product) { create(:product, store: create(:store)) }
         let(:body) { { ids: [other_store_product.prefixed_id], status: 'archived' } }
 
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          status: { type: :string }
+        }
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['product_count']).to eq(0)
@@ -378,6 +383,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
         before { product.categories << category }
 
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          category_count: { type: :integer }
+        }
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1, 'category_count' => 1)
@@ -445,6 +455,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:body) { { ids: [product.prefixed_id], collection_ids: [collection.prefixed_id] } }
 
         before { Spree::Collections::AddProducts.call(collections: [collection], products: [product]) }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          collection_count: { type: :integer }
+        }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -583,6 +598,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:body) { { ids: [product.prefixed_id], tags: ['summer'] } }
 
         before { product.tag_list.add('summer'); product.save! }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          tag_count: { type: :integer }
+        }
 
         run_test! do |response|
           data = JSON.parse(response.body)
