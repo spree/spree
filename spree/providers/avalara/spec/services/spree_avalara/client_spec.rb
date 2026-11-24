@@ -143,6 +143,42 @@ RSpec.describe SpreeAvalara::Client do
     end
   end
 
+  describe '#company_exists?' do
+    let(:companies_url) { %r{/api/v2/companies\?} }
+
+    def stub_companies(value)
+      stub_request(:get, companies_url).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' }, body: { value: value }.to_json
+      )
+    end
+
+    it 'is true when the account holds a company with the code' do
+      stub_companies([{ id: 1, companyCode: 'DEFAULT' }])
+
+      expect(client.company_exists?('DEFAULT')).to be(true)
+      expect(WebMock).to have_requested(:get, companies_url).with(
+        query: hash_including('$filter' => "companyCode eq 'DEFAULT'", '$top' => '1')
+      )
+    end
+
+    it 'is false when it holds none' do
+      stub_companies([])
+
+      expect(client.company_exists?('MISSING')).to be(false)
+    end
+
+    # OData escapes a quote inside a literal by doubling it.
+    it 'escapes a quote in the code' do
+      stub_companies([])
+
+      client.company_exists?("O'BRIEN")
+
+      expect(WebMock).to have_requested(:get, companies_url).with(
+        query: hash_including('$filter' => "companyCode eq 'O''BRIEN'")
+      )
+    end
+  end
+
   describe 'logging' do
     subject(:logging_client) do
       described_class.new(account_number: '2000000000', license_key: 'test_license_key',

@@ -40,8 +40,11 @@ RSpec.describe 'AvaTax API contract', :vcr do
   describe 'ping' do
     # Deliberately without the :active trait, which answers can_connect? with a
     # stub — this example is about the real call.
+    # About the ping alone: this cassette holds no company lookup, which the
+    # company examples below record as part of the whole connection test.
     it 'reports an authenticated account', vcr: { cassette_name: 'ping/authenticated' } do
       connected = build(:avalara_integration, store: @default_store, **credentials)
+      allow(connected.client).to receive(:company_exists?).and_return(true)
 
       expect(connected.can_connect?).to be(true)
     end
@@ -52,6 +55,22 @@ RSpec.describe 'AvaTax API contract', :vcr do
 
       expect(rejected.can_connect?).to be(false)
       expect(rejected.connection_error_message).to be_present
+    end
+  end
+
+  describe 'the company code' do
+    it 'connects when the account holds the company', vcr: { cassette_name: 'company/found' } do
+      connected = build(:avalara_integration, store: @default_store, **credentials)
+
+      expect(connected.can_connect?).to be(true)
+    end
+
+    it 'refuses a company code the account does not hold', vcr: { cassette_name: 'company/not_found' } do
+      mistyped = build(:avalara_integration, store: @default_store, **credentials,
+                                             preferred_company_code: 'NO_SUCH_COMPANY')
+
+      expect(mistyped.can_connect?).to be(false)
+      expect(mistyped.connection_error_message).to include('NO_SUCH_COMPANY')
     end
   end
 

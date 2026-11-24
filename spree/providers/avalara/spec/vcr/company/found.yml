@@ -1,0 +1,138 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/utilities/ping
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.8.3
+      X-Avalara-Client:
+      - SpreebyAVALARA_COMPANY;a0n0b00000PqwGxAAJ;6.0.5;RubySdk;26.8.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 24 Nov 2026 12:54:46 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '226'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 1fc5f730-4d73-4368-a506-e4848188066c
+      X-Avalara-Uid:
+      - 1fc5f730-4d73-4368-a506-e4848188066c
+      X-Avalara-Gateway-Pod:
+      - avagateway-cf5f77d9d-tjzzs
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
+      Serverduration:
+      - '00:00:00.0000846'
+      Databasecalls:
+      - '0'
+      Databaseduration:
+      - '00:00:00'
+      Serviceduration:
+      - '00:00:00'
+      Api-Supported-Versions:
+      - '2.0'
+    body:
+      encoding: UTF-8
+      string: '{"version":"26.11.1","authenticated":true,"authenticationType":"AccountIdLicenseKey","authenticatedUserName":"redacted","authenticatedUserId":0,"authenticatedAccountId":0,"crmid":"redacted"}'
+  recorded_at: Tue, 24 Nov 2026 12:54:46 GMT
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/companies?$filter=companyCode%20eq%20%27AVALARA_COMPANY%27&$top=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.8.3
+      X-Avalara-Client:
+      - SpreebyAVALARA_COMPANY;a0n0b00000PqwGxAAJ;6.0.5;RubySdk;26.8.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 24 Nov 2026 12:54:47 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '748'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Location:
+      - "/api/v2/companies/848106"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 5ad4def3-f852-4634-a140-8ce07628f140
+      X-Avalara-Uid:
+      - 5ad4def3-f852-4634-a140-8ce07628f140
+      X-Avalara-Gateway-Pod:
+      - avagateway-cf5f77d9d-nm4dk
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
+      Serverduration:
+      - '00:00:00.0163579'
+      Databasecalls:
+      - '1'
+      Databaseduration:
+      - '00:00:00.0150000'
+      Serviceduration:
+      - '00:00:00'
+      Api-Supported-Versions:
+      - '2.0'
+    body:
+      encoding: UTF-8
+      string: '{"@recordsetCount":1,"value":[{"id":848106,"accountId":0,"sstPid":"","companyCode":"AVALARA_COMPANY","name":"AVALARA_COMPANY
+        Solutions","isDefault":true,"defaultLocationId":0,"isActive":true,"taxpayerIdNumber":"redacted","IsFein":false,"hasProfile":true,"isReportingEntity":true,"defaultCountry":"US","baseCurrencyCode":"USD","roundingLevelId":"Line","warningsEnabled":false,"isTest":false,"taxDependencyLevelId":"Document","inProgress":false,"businessIdentificationNo":"","createdDate":"2019-01-16T17:10:08.577","createdUserId":0,"modifiedDate":"2019-01-16T17:10:51.257","modifiedUserId":0,"mossId":"","mossCountry":"","IsDeleted":false,"isAdvSave":false}],"@nextLink":"/api/v2/companies?%24filter=companyCode+eq+%27AVALARA_COMPANY%27&%24top=1&%24skip=1"}'
+  recorded_at: Tue, 24 Nov 2026 12:54:47 GMT
+recorded_with: VCR 6.4.0

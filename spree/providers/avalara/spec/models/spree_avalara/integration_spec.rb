@@ -130,11 +130,33 @@ RSpec.describe SpreeAvalara::Integration do
 
     before { allow(integration).to receive(:client).and_return(client) }
 
-    it 'is true when AvaTax reports the credentials authenticate' do
+    it 'is true when the credentials authenticate and the account holds the company' do
       allow(client).to receive(:ping).and_return('authenticated' => true, 'version' => '26.7.0')
+      allow(client).to receive(:company_exists?).with(integration.preferred_company_code).and_return(true)
 
       expect(integration.can_connect?).to be(true)
       expect(integration.connection_error_message).to be_nil
+    end
+
+    # A ping proves the credentials only, so a mistyped company code would
+    # otherwise surface at the first checkout.
+    it 'refuses a company code the account does not hold, naming it' do
+      allow(client).to receive(:ping).and_return('authenticated' => true)
+      allow(client).to receive(:company_exists?).and_return(false)
+
+      expect(integration.can_connect?).to be(false)
+      expect(integration.connection_error_message).to eq(
+        "Company code #{integration.preferred_company_code} was not found in this Avalara account"
+      )
+    end
+
+    it 'does not look for the company when the credentials are rejected' do
+      allow(client).to receive(:ping).and_return('authenticated' => false)
+      allow(client).to receive(:company_exists?)
+
+      integration.can_connect?
+
+      expect(client).not_to have_received(:company_exists?)
     end
 
     # A rejected key still answers 200, so a successful response has to be read.

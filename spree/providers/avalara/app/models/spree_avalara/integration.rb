@@ -111,13 +111,21 @@ module SpreeAvalara
     end
 
     # Verifies the credentials with a ping, the one AvaTax call that costs
-    # nothing and files nothing. It reports authentication rather than raising on
-    # a bad key, so a successful response still has to be read.
+    # nothing and files nothing, then that the account holds the company code.
+    # The ping reports authentication rather than raising on a bad key, so a
+    # successful response still has to be read.
     #
     # @return [Boolean]
     def can_connect?
       body = client.ping
-      return true if body.is_a?(Hash) && body['authenticated']
+
+      if body.is_a?(Hash) && body['authenticated']
+        return true if client.company_exists?(preferred_company_code)
+
+        self.connection_error_message =
+          I18n.t('spree.integrations.avalara.errors.company_not_found', company_code: preferred_company_code)
+        return false
+      end
 
       self.connection_error_message =
         if body.is_a?(Hash) && body.key?('authenticated')

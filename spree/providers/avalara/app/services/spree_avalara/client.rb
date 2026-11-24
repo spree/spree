@@ -64,6 +64,20 @@ module SpreeAvalara
       end
     end
 
+    # Whether the account holds a company with this code. A ping proves the
+    # credentials and nothing else, so a mistyped code would otherwise surface
+    # only at the first checkout.
+    #
+    # @param code [String]
+    # @return [Boolean]
+    def company_exists?(code)
+      # OData quotes a literal with single quotes and escapes one by doubling it.
+      options = { '$filter' => "companyCode eq '#{code.to_s.gsub("'", "''")}'", '$top' => 1 }
+      body = request(:query_companies, options) { avatax_client.query_companies(options) }
+
+      Array(body['value']).any?
+    end
+
     # @param params [Hash] address parts (line1, city, region, postalCode, country)
     # @return [Hash] the resolved address with Avalara's messages
     def resolve_address(params)

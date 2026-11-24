@@ -30,6 +30,20 @@ VCR.configure do |c|
   # rewritten inside the parsed body rather than substituted as text. Replacing
   # a numeric field with a placeholder leaves invalid JSON, and a cassette that
   # no longer parses does not fail loudly — it reads as "not authenticated".
+  # Walked at every depth: a company listing carries the account id per company.
+  redact = lambda do |node|
+    case node
+    when Hash
+      %w[authenticatedAccountId authenticatedUserId accountId createdUserId modifiedUserId].each do |field|
+        node[field] = 0 if node.key?(field)
+      end
+      %w[authenticatedUserName crmid taxpayerIdNumber].each { |field| node[field] = 'redacted' if node.key?(field) }
+      node.each_value { |value| redact.call(value) }
+    when Array
+      node.each { |value| redact.call(value) }
+    end
+  end
+
   c.before_record do |interaction|
     body = interaction.response.body.to_s
     next if body.blank?
@@ -41,8 +55,7 @@ VCR.configure do |c|
     end
     next unless parsed.is_a?(Hash)
 
-    %w[authenticatedAccountId authenticatedUserId].each { |field| parsed[field] = 0 if parsed.key?(field) }
-    %w[authenticatedUserName crmid].each { |field| parsed[field] = 'redacted' if parsed.key?(field) }
+    redact.call(parsed)
 
     interaction.response.body = JSON.generate(parsed)
   end
