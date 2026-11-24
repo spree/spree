@@ -17,7 +17,8 @@ module Spree
 
           scoped_resource :seller_profile
 
-          before_action :set_invitation, only: [:destroy, :resend]
+          before_action :set_invitation, only: [:destroy]
+          before_action :set_resend_invitation, only: [:resend]
 
           # Pending only: an accepted invitation is a team member, and the
           # panel already lists those.
@@ -50,6 +51,12 @@ module Spree
 
           def set_invitation
             @invitation = current_seller.invitations.pending.find_by_prefix_id!(params[:id])
+          end
+
+          # Any status, so an accepted invitation is refused with the reason
+          # rather than reported as missing.
+          def set_resend_invitation
+            @invitation = current_seller.invitations.find_by_prefix_id!(params[:id])
           end
 
           def serialize(invitation)

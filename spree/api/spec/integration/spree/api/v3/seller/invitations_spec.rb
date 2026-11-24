@@ -96,8 +96,9 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         Sends the invitation email again, for a colleague who never got the first
         one. The invitation's `expires_at` moves to 14 days after the resend,
         but never past 30 days after the invitation was created. An
-        invitation whose window has closed is refused rather than
-        re-sent.
+        invitation whose window has closed, or that was already accepted, is
+        refused with 422 rather than re-sent; a revoked invitation is not
+        found (404).
       DESC
 
       seller_sdk_example 'invitations/resend'

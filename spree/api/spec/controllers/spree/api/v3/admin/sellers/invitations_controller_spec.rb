@@ -108,6 +108,15 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::InvitationsController, type: :con
       expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_expired'))
     end
 
+    it 'says the offer was accepted rather than 404ing on it' do
+      invitation.update_columns(status: 'accepted', accepted_at: Time.current)
+
+      patch :resend, params: { seller_id: seller.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_already_accepted'))
+    end
+
     # Loaded as pending, then accepted or revoked by another request before
     # the resend took its lock.
     it 'says the offer was accepted when it was accepted in the meantime' do

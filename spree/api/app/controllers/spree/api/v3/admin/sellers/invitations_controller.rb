@@ -23,7 +23,8 @@ module Spree
             # Every write hands out or withdraws a way onto the team, so it
             # needs the same right as changing the seller.
             before_action :authorize_seller_update, only: [:create, :destroy, :resend]
-            before_action :set_invitation, only: [:destroy, :resend]
+            before_action :set_invitation, only: [:destroy]
+            before_action :set_resend_invitation, only: [:resend]
 
             request_params 'SellerInvitationCreateParams', action: :create do |body|
               body.attribute :email, :string, required: true, example: 'teammate@example.com'
@@ -91,6 +92,12 @@ module Spree
 
             def set_invitation
               @invitation = @seller.invitations.pending.find_by_prefix_id!(params[:id])
+            end
+
+            # Any status, so an accepted invitation is refused with the reason
+            # rather than reported as missing.
+            def set_resend_invitation
+              @invitation = @seller.invitations.find_by_prefix_id!(params[:id])
             end
 
             def serialize(invitation)
