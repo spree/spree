@@ -1,7 +1,7 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
-import { subtractMoney } from '@spree/core'
+import { formatMoney, subtractMoney } from '@spree/core'
 import {
   addNewOrderItem,
   adminRequest,
@@ -729,6 +729,12 @@ test.describe('order customer', () => {
     expect(withCredit.amount_due).not.toBe(withCredit.total)
 
     await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const outstanding = section(page, /^summary$/i)
+      .getByText(/^outstanding balance$/i)
+      .locator('..')
+    await expect(outstanding).toContainText(formatMoney(withCredit.amount_due, 'USD', 'en'), {
+      timeout: 15_000,
+    })
     await page.getByRole('button', { name: /edit customer/i }).click({ timeout: 15_000 })
     const editor = page.getByRole('form', { name: /edit customer/i })
     await editor.locator('[data-slot="combobox-clear"]').click()
@@ -738,6 +744,11 @@ test.describe('order customer', () => {
 
     await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(page.getByRole('link', { name: 'Promo Customer', exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // The credit goes back to its owner, so the whole total is owed again.
+    await expect(outstanding).toContainText(formatMoney(withCredit.total, 'USD', 'en'), {
       timeout: 15_000,
     })
 

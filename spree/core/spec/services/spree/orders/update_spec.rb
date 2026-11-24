@@ -346,10 +346,21 @@ module Spree
               { customer_id: create(:user).id, shipping_address: { id: initial_address.id, address1: '5 Edited Way' } }
             end
 
+            # Releasing the first customer's credit reloads the order mid-update.
+            let!(:store_credit) { create(:store_credit, customer: user, store: store, amount: 3, currency: order.currency) }
+
+            before do
+              create(:store_credit_payment_method, store: store)
+              expect(Spree::StoreCredits::Apply.call(order: order)).to be_success
+              expect(order.payments.store_credits.valid.sum(:amount)).to eq(3)
+            end
+
             it 'still rebuilds from the default rate' do
               expect(subject).to be_success
 
               order.reload
+              expect(order.payments.store_credits.valid).to be_empty
+              expect(store_credit.reload.amount_remaining).to eq(3)
               expect(order.ship_address.address1).to eq('5 Edited Way')
               expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
               expect(order.delivery_total).to eq(5)
