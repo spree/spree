@@ -193,7 +193,8 @@ module Spree
 
           def valid_oauth_state?
             state = params[:state]
-            return false if state.blank?
+            # `state[]=x` arrives as an Array, which the verifier cannot read.
+            return false unless state.is_a?(String) && state.present?
 
             # The verifier round-trips through JSON, so payload keys come back as strings.
             payload = Rails.application.message_verifier(OAUTH_STATE_PURPOSE).verified(state)

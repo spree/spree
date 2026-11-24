@@ -582,6 +582,19 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
 
+      # `state[]=x` and `state[k]=x` are not strings; they once raised a 500.
+      it 'rejects a state sent as an array' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: [valid_state] }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'rejects a state sent as a hash' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: { token: valid_state } }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
       it 'rejects an expired state' do
         expired = travel_to(20.minutes.ago) { state_for('entra') }
 
