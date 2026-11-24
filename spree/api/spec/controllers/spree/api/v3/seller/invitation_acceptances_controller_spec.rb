@@ -24,6 +24,13 @@ RSpec.describe Spree::Api::V3::Seller::InvitationAcceptancesController, type: :c
       expect(response).to have_http_status(:not_found)
     end
 
+    # `token[k]=x` and `password[]=x` arrive as a Hash and an Array, not a string.
+    it 'refuses a token sent as a hash' do
+      get :lookup, params: { id: invitation.prefixed_id, token: { a: 'x' } }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     # The seller panel must not become a way to accept a staff invitation:
     # that carries no seller membership, so it would mint a seller token for
     # someone who runs no seller.
@@ -73,6 +80,20 @@ RSpec.describe Spree::Api::V3::Seller::InvitationAcceptancesController, type: :c
       post :accept, params: { id: invitation.prefixed_id, token: invitation.token }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(invitation.reload).not_to be_accepted
+    end
+
+    it 'requires a password when it is sent as an array' do
+      invitation
+
+      expect {
+        post :accept,
+             params: { id: invitation.prefixed_id, token: invitation.token, password: ['sekrit123'] },
+             as: :json
+      }.not_to change(Spree.admin_user_class, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('parameter_missing')
       expect(invitation.reload).not_to be_accepted
     end
 

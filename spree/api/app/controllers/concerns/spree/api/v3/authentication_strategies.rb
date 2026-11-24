@@ -16,12 +16,15 @@ module Spree
         def authentication_strategy(provider = nil)
           provider ||= params[:provider].presence || 'email'
 
-          strategy = authentication_strategies.build(
-            provider,
-            params: params,
-            request_env: request.headers.env,
-            user_class: authentication_user_class
-          )
+          # `provider[]=email` is not a provider name the registry can look up.
+          strategy = if provider.is_a?(String) || provider.is_a?(Symbol)
+                       authentication_strategies.build(
+                         provider,
+                         params: params,
+                         request_env: request.headers.env,
+                         user_class: authentication_user_class
+                       )
+                     end
 
           return strategy if strategy
 

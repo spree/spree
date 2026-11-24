@@ -163,6 +163,14 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
         expect(response).to have_http_status(:bad_request)
         expect(json_response['error']['code']).to eq('invalid_provider')
       end
+
+      # `provider[]=email` and `refresh_token[k]=x` arrive as an Array and a Hash, not a string.
+      it 'returns bad_request for a provider sent as an array' do
+        post :create, params: { provider: ['email'], email: existing_user.email, password: 'password123' }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
     end
   end
 
@@ -202,6 +210,13 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
     context 'without refresh_token param' do
       it 'returns unauthorized' do
         post :refresh
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_refresh_token')
+      end
+
+      it 'returns unauthorized for a refresh token sent as a hash' do
+        post :refresh, params: { refresh_token: { a: 'x' } }
 
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']['code']).to eq('invalid_refresh_token')
@@ -268,6 +283,14 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
     it 'succeeds without refresh token param' do
       post :logout
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'succeeds with a refresh token sent as a hash, revoking nothing' do
+      expect {
+        post :logout, params: { refresh_token: { a: 'x' } }
+      }.not_to change(Spree::RefreshToken, :count)
 
       expect(response).to have_http_status(:no_content)
     end

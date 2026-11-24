@@ -79,7 +79,7 @@ module Spree
             decoded_id = Spree::Invitation.decode_prefixed_id(params[:id])
             @invitation = Spree::Invitation.pending.not_expired.
                           where(resource_type: Spree::Seller.to_s).
-                          find_by(id: decoded_id, token: params[:token])
+                          find_by(id: decoded_id, token: string_param(:token).to_s)
 
             unless @invitation
               render_error(
@@ -122,7 +122,7 @@ module Spree
           end
 
           def create_new_invitee(invitation)
-            if params[:password].blank?
+            if string_param(:password).blank?
               render_error(
                 code: ErrorHandler::ERROR_CODES[:parameter_missing],
                 message: I18n.t('spree.password_required_to_create_account'),

@@ -68,7 +68,15 @@ module Spree
             # its password or sign it in.
             return render_account_deactivated if account_deactivated?(user)
 
-            if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
+            password = string_param(:password)
+            # Without this a reset link could clear the password, or sign in
+            # without setting one: the model only validates a password it is given.
+            if password.blank?
+              user.errors.add(:password, :blank)
+              return render_errors(user.errors)
+            end
+
+            if user.update(password: password, password_confirmation: string_param(:password_confirmation))
               user.publish_event('admin_user.password_reset')
               # A password reset must kill every existing session — a stolen
               # refresh token must not survive the victim resetting their

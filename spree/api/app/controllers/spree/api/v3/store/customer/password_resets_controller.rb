@@ -62,7 +62,15 @@ module Spree
                 )
               end
 
-              if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
+              password = string_param(:password)
+              # Without this a reset link could clear the password, or sign in
+              # without setting one: the model only validates a password it is given.
+              if password.blank?
+                user.errors.add(:password, :blank)
+                return render_errors(user.errors)
+              end
+
+              if user.update(password: password, password_confirmation: string_param(:password_confirmation))
                 jwt = generate_jwt(user)
                 # Kill every existing session before minting the new one —
                 # a stolen refresh token must not survive a password reset.
