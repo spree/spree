@@ -155,5 +155,28 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_already_accepted'))
     end
+
+    it 'gives an invitation with no expiry a fresh window instead of failing' do
+      invitation.update_column(:expires_at, nil)
+
+      freeze_time do
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(invitation.reload.expires_at).to eq(14.days.from_now)
+      end
+    end
+
+    it "answers 422 with the record's errors when it fails validation" do
+      invitation.update_column(:email, 'not-an-email')
+
+      expect {
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+      }.not_to change { invitation.reload.attributes }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['details']).to have_key('email')
+    end
   end
 end

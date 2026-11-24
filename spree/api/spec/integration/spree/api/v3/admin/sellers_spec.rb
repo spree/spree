@@ -325,8 +325,9 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       description <<~DESC
         Sends a pending invitation to the seller's team again, with a fresh
         acceptance link. The invitation's `expires_at` moves to 14 days after
-        the resend. Use it when the email never arrived; an invitation that
-        has expired is refused, so invite the person again instead.
+        the resend, but never past 30 days after the invitation was created.
+        Use it when the email never arrived; an invitation that has expired is
+        refused, so invite the person again instead.
       DESC
       admin_scope :write, :sellers
 

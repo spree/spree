@@ -15,6 +15,8 @@ module Spree
           # `invite` action on the seller is the lifecycle step that opens a
           # pending seller for its first owner.
           class InvitationsController < Admin::BaseController
+            include Spree::Api::V3::InvitationResend
+
             scoped_resource :sellers
 
             before_action :set_seller
@@ -65,17 +67,9 @@ module Spree
             end
 
             # Sends the email again. The model refuses once the invitation has
-            # expired, and says so rather than silently doing nothing.
+            # expired, been accepted or been revoked, and says which.
             def resend
-              unless @invitation.resend!
-                return render_error(
-                  code: ErrorHandler::ERROR_CODES[:processing_error],
-                  message: I18n.t('spree.invitation_expired'),
-                  status: :unprocessable_content
-                )
-              end
-
-              render json: serialize(@invitation)
+              render_invitation_resend(@invitation) { |invitation| serialize(invitation) }
             end
 
             protected

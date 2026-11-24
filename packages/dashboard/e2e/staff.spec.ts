@@ -16,11 +16,12 @@ const railsEnv = {
   DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
 }
 
-// Moves an invitation's expiry, standing in for the days that pass between
+// Moves an invitation's dates, standing in for the days that pass between
 // sending it and pressing Resend.
-function setInvitationExpiry(email: string, rubyTime: string) {
+function setInvitationExpiry(email: string, rubyTime: string, rubyCreatedAt?: string) {
+  const createdAt = rubyCreatedAt ? `, created_at: ${rubyCreatedAt}` : ''
   runRailsBootstrap(
-    `Spree::Invitation.find_by!(email: '${email}').update_columns(expires_at: ${rubyTime})
+    `Spree::Invitation.find_by!(email: '${email}').update_columns(expires_at: ${rubyTime}${createdAt})
     puts({ ok: true }.to_json)`,
     railsEnv,
   )
@@ -88,7 +89,26 @@ test.describe('staff', () => {
     await openRowMenu(page, email)
     await page.getByRole('menuitem', { name: /^resend$/i }).click()
     await expect(page.getByText(/this invitation has expired/i)).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByText(/invitation resent/i)).toHaveCount(0)
+
+    await page.reload()
+    const row = page.getByRole('row').filter({ hasText: email })
+    await expect(row.getByText(/about 1 hour ago/i)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('never extends an invitation past 30 days from when it was sent', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STAFF_PATH(creds.store_id))
+
+    const email = `e2e-resend-capped-${Date.now()}@example.com`
+    await inviteFromDialog(page, email)
+    setInvitationExpiry(email, '1.hour.from_now', '20.days.ago')
+    await page.reload()
+
+    await openRowMenu(page, email)
+    await page.getByRole('menuitem', { name: /^resend$/i }).click()
+    await expect(page.getByText(/invitation resent/i)).toBeVisible({ timeout: 15_000 })
+    const row = page.getByRole('row').filter({ hasText: email })
+    await expect(row.getByText(/in 10 days/i)).toBeVisible({ timeout: 15_000 })
   })
 
   test('revokes a pending invitation after confirming', async ({ page }) => {

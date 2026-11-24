@@ -24108,7 +24108,8 @@ paths:
       - bearer_auth: []
       description: |
         Sends the invitation email again, for a colleague who never got the first
-        one. The invitation's `expires_at` moves to 14 days after the resend. An
+        one. The invitation's `expires_at` moves to 14 days after the resend,
+        but never past 30 days after the invitation was created. An
         invitation whose window has closed is refused rather than
         re-sent.
       x-codeSamples:

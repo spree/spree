@@ -6,6 +6,9 @@ module Spree
 
     # How long an invitation link works, from the email that carries it.
     VALID_FOR = 2.weeks
+    # However often it is resent, an invitation stops working this long after
+    # it was first sent.
+    MAX_LIFETIME = 30.days
 
     has_secure_token
     acts_as_paranoid
@@ -76,7 +79,7 @@ module Spree
     # returns true if the invitation has expired
     # @return [Boolean]
     def expired?
-      expires_at < Time.current
+      expires_at.present? && expires_at < Time.current
     end
 
     # @deprecated Call Spree.invitation_accept_workflow — removed in 6.3.
@@ -113,19 +116,35 @@ module Spree
       Rails.application.routes.url_helpers.admin_invitation_acceptance_url(self)
     end
 
+    # Why the last #resend! refused: :expired, :already_accepted or :revoked.
+    # Nil when it sent the email, or when the record failed validation, in
+    # which case `errors` says why.
+    attr_reader :resend_refusal
+
     # Resends the invitation email if the invitation is pending and not expired.
     # The token is rotated first, so a link that leaked with the earlier email
     # stops working, and the invitee gets the full window again from the new
-    # email rather than whatever was left of the old one.
+    # email rather than whatever was left of the old one, up to MAX_LIFETIME
+    # after the invitation was created. The row is locked and re-read first,
+    # so a resend racing an acceptance or a revoke is refused, not reported as
+    # sent.
     #
     # @return [Boolean] true when the email went out again, false when refused
     def resend!
-      return false if expired? || deleted? || accepted?
+      sent = with_lock do
+        @resend_refusal = resend_refusal_reason
+        next false if @resend_refusal
 
-      self.expires_at = VALID_FOR.from_now
-      regenerate_token # saves the new expiry along with the token
-      publish_event('invitation.resent')
-      true
+        self.expires_at = [VALID_FOR.from_now, lifetime_ends_at].min
+        regenerate_token # saves the new expiry along with the token
+        true
+      rescue ActiveRecord::RecordInvalid
+        restore_attributes
+        false
+      end
+
+      publish_event('invitation.resent') if sent
+      sent
     end
 
     # The staff account holding the invited address, if one exists. Matched
@@ -155,6 +174,20 @@ module Spree
 
     def set_defaults
       self.expires_at ||= VALID_FOR.from_now
+    end
+
+    def resend_refusal_reason
+      if deleted?
+        :revoked
+      elsif accepted?
+        :already_accepted
+      elsif expired? || lifetime_ends_at <= Time.current
+        :expired
+      end
+    end
+
+    def lifetime_ends_at
+      created_at + MAX_LIFETIME
     end
 
     # A role names what it governs, so the invitation follows it — one carrying

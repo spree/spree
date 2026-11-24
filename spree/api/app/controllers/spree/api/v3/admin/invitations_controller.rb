@@ -8,6 +8,7 @@ module Spree
         # becomes a member of the staff list for this store.
         class InvitationsController < ResourceController
           include Spree::Api::V3::Admin::RoleGrantGuard
+          include Spree::Api::V3::InvitationResend
 
           # Staff management is the escalation path — its own scope pair,
           # grantable separately from store configuration (6.0-admin-rbac.md).
@@ -31,36 +32,15 @@ module Spree
 
           # PATCH /api/v3/admin/invitations/:id/resend
           # Issues a fresh token + email for an existing pending invitation, and
-          # starts its expiry window again. An invitation that has expired or was
-          # already accepted is refused with a reason, the way the seller
-          # invitation endpoints refuse one, rather than answering success
-          # without sending anything.
+          # starts its expiry window again.
           def resend
             @resource = find_resource
             authorize!(:update, @resource)
 
-            # The model re-checks the window, so an invitation that expires
-            # between these checks and the send is still refused, not reported
-            # as sent.
-            if @resource.accepted?
-              return render_resend_refusal(I18n.t('spree.invitation_already_accepted'))
-            end
-            unless @resource.resend!
-              return render_resend_refusal(I18n.t('spree.invitation_expired'))
-            end
-
-            render json: serialize_resource(@resource)
+            render_invitation_resend(@resource) { |invitation| serialize_resource(invitation) }
           end
 
           protected
-
-          def render_resend_refusal(message)
-            render_error(
-              code: ErrorHandler::ERROR_CODES[:processing_error],
-              message: message,
-              status: :unprocessable_content
-            )
-          end
 
           def model_class
             Spree::Invitation

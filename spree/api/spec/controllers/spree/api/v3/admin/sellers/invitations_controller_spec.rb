@@ -105,6 +105,27 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::InvitationsController, type: :con
       patch :resend, params: { seller_id: seller.prefixed_id, id: invitation.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_expired'))
+    end
+
+    # Loaded as pending, then accepted or revoked by another request before
+    # the resend took its lock.
+    it 'says the offer was accepted when it was accepted in the meantime' do
+      allow_any_instance_of(Spree::Invitation).to receive(:accepted?).and_return(true)
+
+      patch :resend, params: { seller_id: seller.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_already_accepted'))
+    end
+
+    it 'says the offer was revoked when it was revoked in the meantime' do
+      allow_any_instance_of(Spree::Invitation).to receive(:deleted?).and_return(true)
+
+      patch :resend, params: { seller_id: seller.prefixed_id, id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_revoked'))
     end
   end
 end
