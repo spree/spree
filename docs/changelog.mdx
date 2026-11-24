@@ -15,6 +15,22 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Adyen payments" description="November 23, 2026" tags={["Payments", "Integrations"]}>
+  Spree now has an official Adyen integration, built for Spree 6 and released with it at the same version. Shoppers pay through Adyen's own payment form, with every payment method you enable in Adyen. Available in Spree 6.0.6.
+
+  - **More ways to pay.** Cards, Apple Pay and Google Pay, buy now pay later methods such as Klarna, and local methods such as iDEAL, BLIK and Bancontact.
+  - **Quick to set up.** Enter your API key and merchant account under **Settings → Payments**. Spree checks them with Adyen when you save, then sets up the client key, allowed origins and webhook for you.
+  - **Take the money when you choose.** Adyen follows your capture setting: at checkout, on dispatch or manually.
+  - **Saved cards.** Signed-in shoppers can save a card for their next purchase.
+  - **Verified notifications.** Spree checks the signature of every notification Adyen sends before acting on it.
+
+  Add it to your project with one command, `spree add adyen`. It needs Ruby 3.3 or newer.
+
+  Stores that used the earlier `spree_adyen` gem on Spree 5.x keep their payment methods and saved cards. The upgrade guide lists the steps.
+
+  **Learn more:** [Adyen integration](/integrations/payments/adyen) · [Upgrading from Spree 5.x](/developer/upgrades/5.6-to-6.0#adyen) · [Payments settings](/user/settings/payments)
+</Update>
+
 <Update label="PayPal payments" description="November 5, 2026" tags={["Payments", "Integrations"]}>
   Spree now has an official PayPal integration, built for Spree 6 and released with it at the same version. Shoppers can pay with their PayPal balance, a linked card or a bank account. Available in Spree 6.0.3.
 
@@ -642,7 +658,7 @@ Keep up with the latest features and improvements in Spree Commerce!
   - An order completes even if the customer closes the tab after paying: the provider's confirmation finishes the job, and whichever signal arrives first wins without charging twice.
   - Offline methods, such as check, cash on delivery, bank transfer or purchase order, work without any provider session.
 
-  **Learn more:** [Payments](/developer/core-concepts/payments) · [Stripe](/integrations/payments/stripe) · [PayPal](/integrations/payments/paypal)
+  **Learn more:** [Payments](/developer/core-concepts/payments) · [Stripe](/integrations/payments/stripe) · [Adyen](/integrations/payments/adyen) · [PayPal](/integrations/payments/paypal)
 </Update>
 
 <Update label="Commission engine" description="August 17, 2026" tags={["Marketplace", "Tax"]}>
