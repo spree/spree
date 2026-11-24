@@ -28,7 +28,7 @@ Click **Connect** and fill in the form:
 
 - **Account number** and **License key** — your AvaTax credentials, from your Avalara account.
 - **Company code** — the company in your Avalara account that orders are filed against.
-- **Environment** — **Sandbox** for testing (the default) or **Production** for your live store. It must match the account the credentials belong to.
+- **Endpoint** — **Sandbox** for testing (the default) or **Production** for your live store. It must match the account the credentials belong to.
 
 ![The Avalara connection form in Spree, with the account number, license key, company code and environment](/docs/images/integrations/avalara/2-connection-form.png)
 
@@ -62,7 +62,7 @@ When a market calculates through Avalara, the **Tax code** field searches Avalar
 ![Searching Avalara's tax codes on a tax category in Spree](/docs/images/integrations/avalara/3-tax-code.png)
 
 - A product is sent with its tax category's code. A product without one uses the store's default tax category, and then Avalara's general tangible goods code, `P0000000`.
-- A delivery is sent as its own line with the code of its delivery method's tax category, or Avalara's freight code, `FR`, when it has none. Set delivery methods' tax categories at **Settings → Shipping**.
+- A delivery is sent as its own line with the code of its delivery method's tax category, or Avalara's freight code, `FR`, when it has none. Set a delivery method's tax category at **Settings → Delivery profiles**: open the profile, then edit the delivery method.
 
 You can also browse every code at [taxcode.avatax.avalara.com](https://taxcode.avatax.avalara.com/).
 
