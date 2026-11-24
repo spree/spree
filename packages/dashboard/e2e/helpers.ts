@@ -715,7 +715,8 @@ export async function createShippedOrder(page: Page, accessToken: string, quanti
  * Places an order for the promo customer, paid by store credit, and ships it
  * unless `ship` is false. `firstName` / `lastName` set the billing name, so a
  * list test can tell its own orders apart from everyone else's. `locale`
- * places it in another of the store's languages.
+ * places it in another of the store's languages. `sku` orders another variant
+ * than the promo product.
  */
 export async function createPlacedOrder(
   page: Page,
@@ -726,12 +727,14 @@ export async function createPlacedOrder(
     firstName = 'Promo',
     lastName = 'Customer',
     locale,
+    sku = FIXTURE_PROMO_SKU,
   }: {
     quantity?: number
     ship?: boolean
     firstName?: string
     lastName?: string
     locale?: string
+    sku?: string
   } = {},
 ) {
   const headers = { Authorization: `Bearer ${accessToken}` }
@@ -746,7 +749,10 @@ export async function createPlacedOrder(
     `/api/v3/admin/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
   )
   const customerId = customers.data[0].id
-  const variants = await request('get', `/api/v3/admin/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`)
+  const variants = await request(
+    'get',
+    `/api/v3/admin/variants?q[sku_eq]=${encodeURIComponent(sku)}`,
+  )
   const address = {
     first_name: firstName,
     last_name: lastName,

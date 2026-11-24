@@ -59,6 +59,16 @@ module Spree
           to change { stock_level.reload.allocated_count }.by(-(placed_quantity + 1))
       end
 
+      # A canceled parcel's items keep their backordered status, but the stock
+      # they waited on is no longer owed, so the order stops reading backorder.
+      it 'moves a backordered order to canceled' do
+        order.fulfillment_items.update_all(status: 'backordered')
+        order.update_statuses!
+
+        expect { subject.call(order: order, canceler: user) }.
+          to change { order.reload.fulfillment_status }.from('backorder').to('canceled')
+      end
+
       # The carrier calls are batched after the order transaction commits, so
       # they must still happen — just not from inside the fulfillment workflow.
       it 'tells each provider to stand down' do
