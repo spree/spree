@@ -147,6 +147,12 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     end
   end
 
+  it 'bills the credit to the sale bill address' do
+    order.update!(bill_address: create(:address, city: 'Albany', state_code: 'NY', country_code: 'US', zipcode: '12207'))
+
+    expect(present.call[:addresses][:billTo]).to include(city: 'Albany', postalCode: '12207')
+  end
+
   describe 'the reporting location code' do
     it 'is the one the credited lines were sold from' do
       create(:stock_location, store: @default_store, default: true, country_code: 'US', state_code: 'CA',

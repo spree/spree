@@ -163,7 +163,8 @@ module SpreeAvalara
     def addresses
       {
         shipFrom: AddressPresenter.new(SpreeAvalara.origin_location(order)).call,
-        shipTo: AddressPresenter.new(order.tax_address).call
+        shipTo: AddressPresenter.new(order.tax_address).call,
+        billTo: AddressPresenter.new(order.bill_address).call
       }.compact
     end
   end

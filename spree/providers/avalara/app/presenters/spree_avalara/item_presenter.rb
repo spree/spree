@@ -41,7 +41,8 @@ module SpreeAvalara
       payload[:description] = description if description.present?
       payload[:itemCode] = item_code if item_code.present?
       payload[:taxCode] = tax_code if tax_code.present?
-      payload[:addresses] = line_addresses if line_addresses
+      addresses = line_addresses
+      payload[:addresses] = addresses if addresses
       payload.merge!(exemption_payload)
       payload
     end
@@ -173,12 +174,15 @@ module SpreeAvalara
     #
     # The origin is per line, because an order can ship from several warehouses;
     # the destination is the owner's, and identical on every line.
+    #
+    # Avalara expects the bill-to address beside them once lines carry their
+    # own addresses, so it repeats the document's.
     def line_addresses
       origin = AddressPresenter.new(SpreeAvalara.origin_location(owner, item: item)).call
       destination = AddressPresenter.new(owner.tax_address).call
       return if origin.blank? || destination.blank?
 
-      { shipFrom: origin, shipTo: destination }
+      { shipFrom: origin, shipTo: destination, billTo: AddressPresenter.new(owner.bill_address).call }.compact
     end
   end
 end

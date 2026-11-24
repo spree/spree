@@ -111,6 +111,18 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
       expect(present[:addresses][:shipTo]).to include(city: 'Seattle', region: 'WA', postalCode: '98109')
     end
 
+    it 'bills to the bill address' do
+      cart.update!(bill_address: create(:address, city: 'Tacoma', state_code: 'WA', country_code: 'US', zipcode: '98402'))
+
+      expect(present[:addresses][:billTo]).to include(city: 'Tacoma', postalCode: '98402')
+    end
+
+    it 'leaves the bill-to address out when the sale has none' do
+      cart.update_column(:bill_address_id, nil)
+
+      expect(present[:addresses]).not_to have_key(:billTo)
+    end
+
     # Avalara refuses a document with no origin, and a cart has no fulfillment
     # until delivery is proposed — so the store's own location stands in.
     it 'ships from the store default location before any fulfillment exists' do

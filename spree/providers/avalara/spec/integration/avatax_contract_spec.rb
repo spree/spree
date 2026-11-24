@@ -297,6 +297,41 @@ RSpec.describe 'AvaTax API contract', :vcr do
     end
   end
 
+  # Avalara ignores keys it does not recognise without erroring, so a bill-to
+  # address is only shown accepted by the document coming back carrying it.
+  describe 'the bill-to address' do
+    let(:ship_to) { create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001') }
+    let(:bill_to) do
+      create(:address, city: 'Boston', state_code: 'MA', country_code: 'US', zipcode: '02108', address1: '24 Beacon Street')
+    end
+    let(:order) do
+      create(:order, store: @default_store, completed_at: Time.current, ship_address: ship_to, bill_address: bill_to)
+    end
+
+    before do
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+      create(:stock_location, store: @default_store, default: true, country_code: 'US', state_code: 'CA',
+                              city: 'Irvine', zipcode: '92614', address1: '2000 Main Street', admin_name: 'WH-IRVINE')
+      create(:line_item, order: order, cart: nil, price: 100)
+      # A document of its own when recorded: refiling a committed code answers
+      # with no document to read. VCR never matches on the body, so the replayed
+      # code does not matter.
+      order.update_column(:number, "R-AVALARA-BILL-TO-#{SecureRandom.hex(3).upcase}")
+    end
+
+    it 'files it with the sale', vcr: { cassette_name: 'commit/bill_to' } do
+      filed = nil
+      allow(integration.client).to receive(:create_or_adjust_transaction).and_wrap_original do |original, *args, **kwargs|
+        filed = original.call(*args, **kwargs)
+      end
+
+      provider.commit(order)
+
+      expect(filed['addresses'].map { |address| address['city'] }).to include('Boston')
+      expect(filed['reportingLocationCode']).to eq('WH-IRVINE')
+    end
+  end
+
   describe 'refund' do
     let(:destination) { create(:address, city: 'New York', state_code: 'NY', country_code: 'US', zipcode: '10001') }
     # Sold well in the past, so the tax-date override has something to prove: a

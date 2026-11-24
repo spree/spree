@@ -117,7 +117,20 @@ RSpec.describe SpreeAvalara::ItemPresenter do
       addresses = present(fulfillment)[:addresses]
 
       expect(addresses[:shipTo]).to include(region: cart.tax_address.state_code)
-      expect(addresses.keys).to contain_exactly(:shipFrom, :shipTo)
+      expect(addresses.keys).to contain_exactly(:shipFrom, :shipTo, :billTo)
+    end
+
+    it 'repeats the bill-to address beside them' do
+      billing = create(:address, city: 'Billings', state_code: 'MT', country_code: 'US', zipcode: '59101')
+      cart.update!(bill_address: billing)
+
+      expect(present(fulfillment)[:addresses][:billTo]).to include(city: 'Billings', postalCode: '59101')
+    end
+
+    it 'leaves the bill-to address out when the sale has none' do
+      cart.update_column(:bill_address_id, nil)
+
+      expect(present(fulfillment.reload)[:addresses].keys).to contain_exactly(:shipFrom, :shipTo)
     end
   end
 

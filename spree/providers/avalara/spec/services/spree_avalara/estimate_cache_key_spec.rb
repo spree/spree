@@ -23,6 +23,16 @@ RSpec.describe SpreeAvalara::EstimateCacheKey do
     expect(key(owner: other, items: [])).not_to eq(key)
   end
 
+  # Tax follows the tax address (the ship address here), so a different bill
+  # address must not cost a fresh quote.
+  it 'ignores the bill address when tax follows the ship address' do
+    before = key
+
+    cart.update!(bill_address: create(:address, city: 'Tacoma', state_code: 'WA', country_code: 'US', zipcode: '98402'))
+
+    expect(key).to eq(before)
+  end
+
   describe 'what changes the answer changes the key' do
     it 'the tax address' do
       before_move = key

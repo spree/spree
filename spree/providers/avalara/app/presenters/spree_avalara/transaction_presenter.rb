@@ -93,10 +93,13 @@ module SpreeAvalara
       owner.customer&.prefixed_id.presence || owner.email.presence || owner.prefixed_id
     end
 
+    # The bill-to address rides along for the record; tax follows the tax
+    # address, which shipTo already carries.
     def addresses
       {
         shipFrom: AddressPresenter.new(SpreeAvalara.origin_location(owner)).call,
-        shipTo: AddressPresenter.new(owner.tax_address).call
+        shipTo: AddressPresenter.new(owner.tax_address).call,
+        billTo: AddressPresenter.new(owner.bill_address).call
       }.compact
     end
 
