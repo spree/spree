@@ -274,6 +274,16 @@ RSpec.describe Spree::Channel, type: :model do
       expect(shop.deleted_at).to be_nil
       expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
     end
+
+    it 'leaves the stock locations behind when the channel is destroyed' do
+      channel.stock_locations = [warehouse, shop]
+
+      expect { channel.destroy! }
+        .to change { Spree::ChannelStockLocation.where(channel_id: channel.id).count }.from(2).to(0)
+
+      expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
+      expect([warehouse, shop].map { |location| location.reload.deleted_at }).to all(be_nil)
+    end
   end
 
 end
