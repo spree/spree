@@ -46574,8 +46574,11 @@ paths:
         bearer_auth: []
       description: |-
         Sends a pending invitation to the seller's team again, with a fresh
-        acceptance link. Use it when the email never arrived; an invitation that
-        has expired is refused, so invite the person again instead.
+        acceptance link. The invitation's `expires_at` moves to 14 days after
+        the resend, but never past 30 days after the invitation was created.
+        Use it when the email never arrived. An invitation that has expired or
+        was already accepted is refused with 422, so invite the person again
+        instead; a revoked invitation is not found (404).
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
@@ -46612,7 +46615,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
-          description: the invitation has expired
+          description: the invitation has expired or was already accepted
           content:
             application/json:
               example:
@@ -46620,6 +46623,16 @@ paths:
                   code: processing_error
                   message: This invitation has expired. Invite them again to send
                     a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/sellers/{id}/approve":
@@ -51015,7 +51028,14 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Issues a fresh token and dispatches the invitation email again.
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend, but never
+        past 30 days after the invitation was created. An invitation that has
+        expired or was already accepted is refused with 422 (as is one revoked
+        while the request was in flight), so invite the person again instead;
+        a revoked invitation is not found (404). An invitation that no longer
+        passes validation answers 422 `validation_error` with its errors.
+
 
         **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
@@ -51068,6 +51088,28 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+        '422':
+          description: the invitation has expired, was already accepted or failed
+            validation
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/permissions":
     get:
       summary: List the permission catalog

@@ -96,6 +96,16 @@ RSpec.describe Spree::Invitation, type: :model do
       invitation.expires_at = 1.day.from_now
       expect(invitation.expired?).to be false
     end
+
+    it 'returns false for a recent invitation with no expiry' do
+      invitation.expires_at = nil
+      expect(invitation.expired?).to be false
+    end
+
+    it 'returns true for an invitation with no expiry created more than VALID_FOR ago' do
+      invitation.update_columns(expires_at: nil, created_at: 15.days.ago)
+      expect(invitation.reload.expired?).to be true
+    end
   end
 
   describe '#resend!' do
@@ -128,6 +138,88 @@ RSpec.describe Spree::Invitation, type: :model do
       invitation.update_column(:expires_at, 1.day.ago)
 
       expect { invitation.resend! }.not_to change { invitation.reload.token }
+    end
+
+    # The new email carries a link good for the full window, not whatever was
+    # left of the first one.
+    it 'starts the expiry window again from the resend' do
+      invitation.update_column(:expires_at, 1.hour.from_now)
+
+      freeze_time do
+        invitation.resend!
+
+        expect(invitation.reload.expires_at).to eq(2.weeks.from_now)
+      end
+    end
+
+    it 'leaves the expiry of an expired invitation alone and says it refused' do
+      invitation.update_column(:expires_at, 1.hour.ago)
+
+      result = nil
+      expect { result = invitation.resend! }.not_to change { invitation.reload.expires_at }
+      expect(result).to be(false)
+    end
+
+    it 'says it sent the invitation again' do
+      expect(invitation.resend!).to be(true)
+    end
+
+    it 'gives an invitation with no expiry a fresh window instead of raising' do
+      invitation.update_column(:expires_at, nil)
+
+      freeze_time do
+        expect(invitation.resend!).to be(true)
+        expect(invitation.reload.expires_at).to eq(2.weeks.from_now)
+      end
+    end
+
+    it 'never moves the expiry past MAX_LIFETIME after the invitation was created' do
+      invitation.update_columns(created_at: 20.days.ago, expires_at: 1.hour.from_now)
+
+      freeze_time do
+        expect(invitation.resend!).to be(true)
+        expect(invitation.reload.expires_at).to eq(invitation.created_at + described_class::MAX_LIFETIME)
+      end
+    end
+
+    it 'refuses an invitation older than MAX_LIFETIME as expired' do
+      invitation.update_columns(created_at: 31.days.ago, expires_at: 1.hour.from_now)
+
+      expect { expect(invitation.resend!).to be(false) }.not_to change { invitation.reload.token }
+      expect(invitation.resend_refusal).to eq(:expired)
+    end
+
+    it 'refuses an invalid record without raising and keeps its saved expiry and token', events: true do
+      invitation.update_column(:email, 'not-an-email')
+      saved = invitation.reload.attributes.slice('expires_at', 'token')
+      expect(invitation).not_to receive(:publish_event)
+
+      expect(invitation.resend!).to be(false)
+      expect(invitation.resend_refusal).to be_nil
+      expect(invitation.errors[:email]).to be_present
+      expect(invitation.attributes.slice('expires_at', 'token')).to eq(saved)
+      expect(invitation.reload.attributes.slice('expires_at', 'token')).to eq(saved)
+    end
+
+    # Another request accepted or revoked the invitation after this one loaded it.
+    context 'when the invitation changed after it was loaded' do
+      before { invitation }
+
+      it 'refuses one accepted in the meantime', events: true do
+        described_class.where(id: invitation.id).update_all(status: 'accepted', accepted_at: Time.current)
+        expect(invitation).not_to receive(:publish_event)
+
+        expect(invitation.resend!).to be(false)
+        expect(invitation.resend_refusal).to eq(:already_accepted)
+      end
+
+      it 'refuses one revoked in the meantime', events: true do
+        described_class.where(id: invitation.id).update_all(deleted_at: Time.current)
+        expect(invitation).not_to receive(:publish_event)
+
+        expect(invitation.resend!).to be(false)
+        expect(invitation.resend_refusal).to eq(:revoked)
+      end
     end
   end
 
