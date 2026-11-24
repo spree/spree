@@ -62,6 +62,9 @@ module Spree
           # cannot be recorded between this check and the cancel. Taken by
           # query: the order may carry figures not yet saved.
           Spree::Order.lock.find(order.id)
+          # Again under the lock: a before_cancel hook, or a refund landing
+          # meanwhile, may have given part of the balance back already.
+          step :ensure_refund_within_order_balance
           step :ensure_no_payment_in_flight
           step :mark_canceled
           step :cancel_fulfillments

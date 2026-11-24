@@ -113,6 +113,27 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       expect(seller_order.reload).not_to be_canceled
     end
 
+    # Checked again under the order lock: a before_cancel hook (or a refund
+    # landing meanwhile) can give money back after the first check passed.
+    context 'when a before_cancel hook gives part of the balance back' do
+      before do
+        Spree.hooks.clear!
+        Spree.hooks.register('orders.cancel.before_cancel') do |_flow|
+          create(:refund, payment: payment, order: seller_order, amount: 25)
+        end
+      end
+
+      after { Spree.hooks.clear! }
+
+      it 'refuses the amount before canceling anything' do
+        result = described_class.call(order: seller_order, refund_payments: true, refund_amount: 40)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_order_balance)
+        expect(seller_order.reload).not_to be_canceled
+      end
+    end
+
     it 'honours an explicit smaller amount' do
       described_class.call(order: seller_order, refund_payments: true, refund_amount: 15)
 
