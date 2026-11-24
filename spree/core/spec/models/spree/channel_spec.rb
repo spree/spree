@@ -128,8 +128,8 @@ RSpec.describe Spree::Channel, type: :model do
 
   describe '#ensure_default_order_routing_rules' do
     it 'creates the three built-in rules in priority order on create' do
-      expect { described_class.create!(store: store, name: 'POS', code: 'pos') }
-        .to change(Spree::OrderRoutingRule, :count).by(3)
+      expect { described_class.create!(store: store, name: 'POS', code: 'pos') }.
+        to change(Spree::OrderRoutingRule, :count).by(3)
 
       rules = described_class.find_by(code: 'pos').order_routing_rules.ordered
       expect(rules.map(&:class)).to eq([
@@ -142,8 +142,8 @@ RSpec.describe Spree::Channel, type: :model do
 
     it 'is idempotent — re-invoking does not create duplicates' do
       channel = described_class.create!(store: store, name: 'POS', code: 'pos')
-      expect { channel.send(:ensure_default_order_routing_rules) }
-        .not_to change(Spree::OrderRoutingRule, :count)
+      expect { channel.send(:ensure_default_order_routing_rules) }.
+        not_to change(Spree::OrderRoutingRule, :count)
     end
   end
 
@@ -155,15 +155,15 @@ RSpec.describe Spree::Channel, type: :model do
     before { Spree::ProductPublication.where(channel: channel).delete_all }
 
     it 'publishes the listed products' do
-      expect { channel.add_products([product.id, other_product.id]) }
-        .to change { Spree::ProductPublication.where(channel: channel).count }.by(2)
+      expect { channel.add_products([product.id, other_product.id]) }.
+        to change { Spree::ProductPublication.where(channel: channel).count }.by(2)
     end
 
     it 'is idempotent — upserts on the [channel_id, product_id, store_id] unique index' do
       channel.add_products([product.id])
 
-      expect { channel.add_products([product.id]) }
-        .not_to change { Spree::ProductPublication.where(channel: channel, product: product).count }
+      expect { channel.add_products([product.id]) }.
+        not_to change { Spree::ProductPublication.where(channel: channel, product: product).count }
     end
 
     it 'updates the publication window on re-publish' do
@@ -212,8 +212,8 @@ RSpec.describe Spree::Channel, type: :model do
     before { channel.add_products([product.id]) }
 
     it 'unpublishes the listed products' do
-      expect { channel.remove_products([product.id]) }
-        .to change { Spree::ProductPublication.where(channel: channel, product: product).count }.from(1).to(0)
+      expect { channel.remove_products([product.id]) }.
+        to change { Spree::ProductPublication.where(channel: channel, product: product).count }.from(1).to(0)
     end
 
     it 'returns the number of publications destroyed' do
@@ -267,8 +267,8 @@ RSpec.describe Spree::Channel, type: :model do
     it 'destroys only the join row, never the stock location itself' do
       channel.stock_locations = [warehouse, shop]
 
-      expect { channel.stock_locations = [warehouse] }
-        .to change { channel.channel_stock_locations.reload.count }.from(2).to(1)
+      expect { channel.stock_locations = [warehouse] }.
+        to change { channel.channel_stock_locations.reload.count }.from(2).to(1)
 
       expect(shop.reload).to be_persisted
       expect(shop.deleted_at).to be_nil
@@ -278,12 +278,11 @@ RSpec.describe Spree::Channel, type: :model do
     it 'leaves the stock locations behind when the channel is destroyed' do
       channel.stock_locations = [warehouse, shop]
 
-      expect { channel.destroy! }
-        .to change { Spree::ChannelStockLocation.where(channel_id: channel.id).count }.from(2).to(0)
+      expect { channel.destroy! }.
+        to change { Spree::ChannelStockLocation.where(channel_id: channel.id).count }.from(2).to(0)
 
       expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
       expect([warehouse, shop].map { |location| location.reload.deleted_at }).to all(be_nil)
     end
   end
-
 end
