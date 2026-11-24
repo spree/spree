@@ -6852,3 +6852,13 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Decision:** Remove the `after_update` sync. The default market is the only place a store's currency and locale are changed; the readers already delegate to it. Code that sets them writes the market, as setup does.
 
 **Consequences:** Writing `store.default_currency` or `store.default_locale` on a store that has markets changes only the legacy column, which nothing reads while markets exist. Specs that switched a store's language through the store now update its default market. The legacy columns remain the seed for the bootstrap market at creation and the answer for a store with no market.
+
+## 2026-11-24 — Avalara certification scope; tax providers can offer a tax code lookup
+
+**Context:** Avalara certifies the AvaTax integration against its Sales Tax Badge checklist. Reviewed against the new gem, the 5.x extension and its unmerged re-certification PR (spree/spree_avatax_official#193), ten rows need work. One of them, Tax Code Lookup, asks for Avalara's tax codes to be searchable where a merchant maps them, which in 6.0 is the store-wide tax category form in the dashboard. Core and the dashboard must not name a vendor.
+
+**Decision:** The ten rows become Phase 8 of the Avalara plan, numbered 8.1–8.10. The tax code lookup is a provider-agnostic seam: `Spree::TaxProvider::Base.tax_codes(store, query:)` returns nil (no lookup) unless a provider overrides it, `to_api_hash` reports `tax_code_lookup`, and `GET /api/v3/admin/tax_providers/:id/tax_codes?q=` serves it. The dashboard offers the search on a tax category when a market of the store uses a provider that has one — the rule that already decides when an engine's exemption reason codes are offered — and still accepts a typed code. One row is argued with Avalara rather than built: entity use codes on the customer record (company certificates are the customer record for B2B).
+
+**Consequences:** Any tax provider can offer a lookup by implementing one class method. The Avalara gem's `commit_transaction_enabled` preference becomes a three-way `document_recording` choice, translated by the upgrade task. A workflow failure carrying a hash renders its messages in the Admin and Store APIs instead of the hash printed as text.
+
+**Plan:** `6.0-avalara-provider-gem.md` (Key Decision "Sales Tax Badge certification scope", Phase 8).
