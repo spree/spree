@@ -113,6 +113,12 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(SpecCodedProvider.to_api_hash(order.store)[:exemption_reason_codes]).to eq([{ value: 'G', label: 'RESALE' }])
     end
 
+    it 'finds a registered engine by its shorthand, and nothing by a class name' do
+      expect(described_class.registered('internal')).to eq(Spree::TaxProvider::Internal)
+      expect(described_class.registered('Spree::TaxProvider::Internal')).to be_nil
+      expect(described_class.registered('no_such_engine')).to be_nil
+    end
+
     it 'searches no tax codes unless an engine has a catalogue of them' do
       expect(described_class.tax_codes(order.store, query: 'clothing')).to be_nil
       expect(described_class.tax_code_lookup?).to be(false)

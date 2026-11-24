@@ -51,6 +51,15 @@ module Spree
         nil
       end
 
+      # The registered engine an API caller names by its shorthand, or nil. Matches
+      # the shorthand only, so a Ruby class name arriving over the API is unknown.
+      #
+      # @param api_type [String] e.g. "internal", "avalara"
+      # @return [Class, nil]
+      def self.registered(api_type)
+        Spree::ApiTyped.find(Spree.tax_providers, api_type)
+      end
+
       # Tax codes a merchant can search when classifying a tax category, as
       # `[{ code:, description: }]`. Nil for an engine with no catalogue of codes
       # to search, Spree's own included.

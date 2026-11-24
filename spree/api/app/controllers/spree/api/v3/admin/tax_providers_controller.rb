@@ -30,7 +30,7 @@ module Spree
           def tax_codes
             authorize! :read, Spree::TaxCategory
 
-            provider = Spree::ApiTyped.find(Spree.tax_providers, params[:id])
+            provider = Spree::TaxProvider::Base.registered(params[:id])
             raise ActiveRecord::RecordNotFound unless provider
 
             query = params[:q].to_s.strip
