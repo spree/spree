@@ -156,7 +156,7 @@ module Spree
       # the outcome turns that claim into captured money, or releases it.
       def settle_claimed_share(amount, captured:)
         remaining = amount
-        payment.payment_splits.each do |split|
+        payment.payment_splits.order(:id).each do |split|
           next unless split.capture_in_flight? && remaining.positive?
 
           # Under the share's own lock, as dispatch writes it, so a parcel
@@ -170,7 +170,7 @@ module Spree
 
       def take_back_captured_share(amount)
         remaining = amount
-        payment.payment_splits.each do |split|
+        payment.payment_splits.order(:id).each do |split|
           taken_back = split.with_lock do
             [split.captured_amount, remaining].min.tap do |amount|
               split.update!(captured_amount: split.captured_amount - amount) if amount.positive?
