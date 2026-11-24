@@ -690,6 +690,12 @@ test.describe('order customer', () => {
     await expect(editor.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
     await editor.getByRole('button', { name: /^save$/i }).click()
 
+    // A draft without store credit or a gift card only warns about the move.
+    const confirmDialog = page.getByRole('dialog')
+    await expect(confirmDialog).toContainText('This order will become a guest order')
+    await expect(confirmDialog).not.toContainText('Store credit')
+    await confirmDialog.getByRole('button', { name: /^change customer$/i }).click()
+
     await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
@@ -741,6 +747,28 @@ test.describe('order customer', () => {
     await editor.locator('#order-customer-picker').fill('Promo')
     await page.getByRole('option').filter({ hasText: FIXTURE_PROMO_CUSTOMER_EMAIL }).first().click()
     await editor.getByRole('button', { name: /^save$/i }).click()
+
+    const confirmDialog = page.getByRole('dialog')
+    await expect(confirmDialog).toContainText('This order will move to the new customer.')
+    await expect(confirmDialog).toContainText(
+      'Store credit and gift cards the previous customer applied will be removed and returned to them, so the amount due goes back up.',
+    )
+    await confirmDialog.getByRole('button', { name: /^cancel$/i }).click()
+    await expect(confirmDialog).toBeHidden()
+
+    // Cancelling sends nothing: the order keeps its customer and its credit.
+    const kept = await adminRequest<{ customer_id: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(kept.customer_id).toBe(firstCustomer.id)
+    expect(kept.amount_due).toBe(withCredit.amount_due)
+    await expect(outstanding).toContainText(formatMoney(withCredit.amount_due, 'USD', 'en'))
+
+    await editor.getByRole('button', { name: /^save$/i }).click()
+    await confirmDialog.getByRole('button', { name: /^change customer$/i }).click()
 
     await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(page.getByRole('link', { name: 'Promo Customer', exact: true })).toBeVisible({

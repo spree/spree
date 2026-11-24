@@ -3375,7 +3375,11 @@
           "title": "Edit customer",
           "customer_help": "Clear the customer to make this a guest order.",
           "confirm_detach": "This order will no longer appear in the customer's order history or account. Remove the customer?",
-          "detach": "Remove customer"
+          "detach": "Remove customer",
+          "confirm_change": "This order will move to the new customer.",
+          "confirm_change_to_guest": "This order will become a guest order and leave the customer's order history.",
+          "confirm_change_releases_balance": "Store credit and gift cards the previous customer applied will be removed and returned to them, so the amount due goes back up.",
+          "change": "Change customer"
         }
       },
       "edit": {
