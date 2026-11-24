@@ -51,6 +51,25 @@ module Spree
         nil
       end
 
+      # Tax codes a merchant can search when classifying a tax category, as
+      # `[{ code:, description: }]`. Nil for an engine with no catalogue of codes
+      # to search, Spree's own included.
+      #
+      # @param store [Spree::Store]
+      # @param query [String]
+      # @return [Array<Hash>, nil]
+      def self.tax_codes(_store, query:)
+        nil
+      end
+
+      # Whether this engine offers {.tax_codes}, which decides whether the admin
+      # searches as a merchant types a tax category's code.
+      #
+      # @return [Boolean]
+      def self.tax_code_lookup?
+        method(:tax_codes).owner != Spree::TaxProvider::Base.singleton_class
+      end
+
       # The declared limits with the strings a merchant can act on. A capability
       # with no translation degrades to its humanized key rather than a missing
       # translation, so an extension that declares one without shipping strings
@@ -80,6 +99,7 @@ module Spree
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
           exemption_reason_codes: exemption_reason_codes&.map { |code, label| { value: code.to_s, label: label.to_s } },
+          tax_code_lookup: tax_code_lookup?,
           default: name == Spree.default_tax_provider.to_s
         }
       end

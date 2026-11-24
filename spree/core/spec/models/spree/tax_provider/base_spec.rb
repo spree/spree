@@ -65,6 +65,7 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)
       expect(hash[:exemption_reason_codes]).to be_nil
+      expect(hash[:tax_code_lookup]).to be(false)
       expect(hash[:unsupported_capabilities].map { |capability| capability[:key] }).to eq(
         %w[us_local_tax reverse_charge oss_thresholds proportional_delivery_tax]
       )
@@ -110,6 +111,22 @@ describe Spree::TaxProvider::Base, type: :model do
       end)
 
       expect(SpecCodedProvider.to_api_hash(order.store)[:exemption_reason_codes]).to eq([{ value: 'G', label: 'RESALE' }])
+    end
+
+    it 'searches no tax codes unless an engine has a catalogue of them' do
+      expect(described_class.tax_codes(order.store, query: 'clothing')).to be_nil
+      expect(described_class.tax_code_lookup?).to be(false)
+    end
+
+    it 'says so when an engine offers a tax code search' do
+      stub_const('SpecSearchableProvider', Class.new(described_class) do
+        def self.tax_codes(_store, query:)
+          [{ code: 'PC040100', description: "Clothing matching #{query}" }]
+        end
+      end)
+
+      expect(SpecSearchableProvider.tax_code_lookup?).to be(true)
+      expect(SpecSearchableProvider.to_api_hash(order.store)[:tax_code_lookup]).to be(true)
     end
   end
 
