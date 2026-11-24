@@ -134,6 +134,17 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
       expect(json_response['error']['code']).to eq('validation_error')
     end
 
+    it 'rejects a confirmation sent as an array, leaving the old password in place' do
+      token = admin_user.generate_token_for(:password_reset)
+
+      expect {
+        patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: ['different'] }
+      }.not_to change { admin_user.reload.password_digest }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
+
     # `password[k]=x` arrives as a Hash, not a password.
     it 'rejects a password sent as a hash' do
       token = admin_user.generate_token_for(:password_reset)

@@ -14,7 +14,10 @@ module Spree
         # @param provider [String, nil] defaults to the +provider+ param, then :email
         # @return [Object, nil] a strategy instance, or nil after rendering an error
         def authentication_strategy(provider = nil)
-          provider ||= params[:provider].presence || 'email'
+          # Only a missing or empty-string provider means email; `provider[]=`
+          # is malformed, not missing.
+          provider = params[:provider] if provider.nil?
+          provider = 'email' if provider.nil? || provider == ''
 
           # `provider[]=email` is not a provider name the registry can look up.
           strategy = if provider.is_a?(String) || provider.is_a?(Symbol)

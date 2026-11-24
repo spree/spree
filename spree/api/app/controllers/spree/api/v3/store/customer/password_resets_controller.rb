@@ -70,7 +70,9 @@ module Spree
                 return render_errors(user.errors)
               end
 
-              if user.update(password: password, password_confirmation: string_param(:password_confirmation))
+              # The confirmation goes in as sent: a malformed one has to fail to
+              # match, where a nil one would skip the check.
+              if user.update(password: password, password_confirmation: params[:password_confirmation])
                 jwt = generate_jwt(user)
                 # Kill every existing session before minting the new one —
                 # a stolen refresh token must not survive a password reset.

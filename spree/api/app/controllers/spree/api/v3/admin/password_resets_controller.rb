@@ -76,7 +76,9 @@ module Spree
               return render_errors(user.errors)
             end
 
-            if user.update(password: password, password_confirmation: string_param(:password_confirmation))
+            # The confirmation goes in as sent: a malformed one has to fail to
+            # match, where a nil one would skip the check.
+            if user.update(password: password, password_confirmation: params[:password_confirmation])
               user.publish_event('admin_user.password_reset')
               # A password reset must kill every existing session — a stolen
               # refresh token must not survive the victim resetting their

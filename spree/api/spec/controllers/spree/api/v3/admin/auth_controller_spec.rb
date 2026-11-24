@@ -122,6 +122,13 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(response).to have_http_status(:bad_request)
         expect(json_response['error']['code']).to eq('invalid_provider')
       end
+
+      it 'returns 400 invalid_provider for a provider sent as an empty array' do
+        post :create, params: { provider: [], email: existing_admin.email, password: 'password123' }, as: :json
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
     end
 
     context 'with a non-admin user' do
