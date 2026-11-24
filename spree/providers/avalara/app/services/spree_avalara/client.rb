@@ -22,8 +22,10 @@ module SpreeAvalara
     UNLOGGED_FIELDS = %w[authenticatedAccountId authenticatedUserId authenticatedUserName accountId
                          createdUserId modifiedUserId crmid].freeze
 
-    # How many tax codes one search returns; enough to pick from as you type.
-    TAX_CODE_SEARCH_LIMIT = 50
+    # Avalara's most per request. A broad word matches hundreds of codes
+    # ("clothing" matches over 200), and a smaller cap sorted by code cut off
+    # whole families, such as every business-to-consumer clothing code.
+    TAX_CODE_SEARCH_LIMIT = 1000
 
     attr_reader :account_number, :license_key, :endpoint, :company_code, :logging
 

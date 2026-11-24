@@ -44,7 +44,10 @@ module SpreeAvalara
       integration = Integration.active_for(store)
       return [] if integration.nil?
 
-      Rails.cache.fetch(['spree_avalara/tax_codes', integration.preferred_endpoint, query.downcase],
+      # Keyed on the limit too: an answer cut to a smaller page is not the answer
+      # to the same search under a larger one.
+      Rails.cache.fetch(['spree_avalara/tax_codes', integration.preferred_endpoint,
+                         SpreeAvalara::Client::TAX_CODE_SEARCH_LIMIT, query.downcase],
                         expires_in: TAX_CODES_EXPIRE_IN) do
         integration.client.list_tax_codes(query).map do |record|
           { code: record['taxCode'], description: record['description'] }

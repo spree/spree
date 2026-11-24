@@ -85,6 +85,9 @@ RSpec.describe 'AvaTax API contract', :vcr do
       expect(codes).not_to be_empty
       expect(codes).to all(include(code: a_string_matching(/\A\w+\z/), description: be_present))
       expect(codes.map { |code| code[:description] }).to include(a_string_matching(/clothing/i))
+      # Every match, not the first page: business-to-consumer clothing (PC04…)
+      # sorts after the business-to-business codes and was once cut off.
+      expect(codes.map { |code| code[:code] }).to include(a_string_starting_with('PC04'))
     end
   end
 

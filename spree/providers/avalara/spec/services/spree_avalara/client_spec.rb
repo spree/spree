@@ -194,7 +194,7 @@ RSpec.describe SpreeAvalara::Client do
       expect(WebMock).to have_requested(:get, tax_codes_url).with(
         query: hash_including(
           '$filter' => "(taxCode contains 'cloth' OR description contains 'cloth') AND isActive eq true",
-          '$top' => '50', '$orderBy' => 'taxCode ASC'
+          '$top' => '1000', '$orderBy' => 'taxCode ASC'
         )
       )
     end
