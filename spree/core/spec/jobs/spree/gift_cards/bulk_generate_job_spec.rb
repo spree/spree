@@ -9,5 +9,32 @@ describe Spree::GiftCards::BulkGenerateJob, type: :job do
     it 'generates gift cards' do
       expect { subject.perform(gift_card_batch.id) }.to change(Spree::GiftCard, :count).by(2)
     end
+
+    context 'with events', events: true do
+      let(:published) { [] }
+
+      around { |example| perform_enqueued_jobs { example.run } }
+
+      before do
+        gift_card_batch.update_column(:codes_count, 4)
+        Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
+        Spree::Events.activate!
+      end
+
+      after { Spree::Events.reset! }
+
+      it 'publishes gift_card.created for the cards it generates' do
+        subject.perform(gift_card_batch.id)
+
+        expect(published.size).to eq(2)
+      end
+
+      it 'stays silent when the batch was created with lifecycle events off' do
+        subject.perform(gift_card_batch.id, publish_events: false)
+
+        expect(gift_card_batch.gift_cards.count).to eq(4)
+        expect(published).to be_empty
+      end
+    end
   end
 end

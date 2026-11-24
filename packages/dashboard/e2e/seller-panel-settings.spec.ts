@@ -158,6 +158,34 @@ test.describe('seller panel — stock locations', () => {
 
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
   })
+
+  test('keeps customer pickup on through an edit', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings/stock-locations`)
+
+    const name = `E2E Pickup ${Date.now()}`
+    await page.getByRole('button', { name: /add stock location/i }).click({ timeout: 15_000 })
+    await page.locator('#name').fill(name)
+    await page.getByRole('switch', { name: /allow customer pickup/i }).click()
+    await page.getByRole('button', { name: /create stock location/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, name).click()
+    await expect(page.getByRole('switch', { name: /allow customer pickup/i })).toBeChecked({
+      timeout: 15_000,
+    })
+    // Save stays disabled until the form is dirty, so make an unrelated edit.
+    const renamed = `${name} (renamed)`
+    await page.locator('#name').fill(renamed)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(rowButton(page, renamed)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await rowButton(page, renamed).click({ timeout: 15_000 })
+    await expect(page.getByRole('switch', { name: /allow customer pickup/i })).toBeChecked({
+      timeout: 15_000,
+    })
+  })
 })
 
 test.describe('seller panel — team', () => {

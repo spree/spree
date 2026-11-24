@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
       get :index, as: :json
 
       expect(response).to have_http_status(:ok)
-      ids = json_response['data'].map { |b| b['id'] }
+      ids = json_response['data'].pluck('id')
       expect(ids).to include(batch.prefixed_id)
     end
 
@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
       other = create(:gift_card_batch, store: create(:store), prefix: 'OTHER', amount: 5, currency: 'USD', codes_count: 1)
 
       get :index, as: :json
-      ids = json_response['data'].map { |b| b['id'] }
+      ids = json_response['data'].pluck('id')
       expect(ids).to include(batch.prefixed_id)
       expect(ids).not_to include(other.prefixed_id)
     end
@@ -45,13 +45,46 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
     end
 
     it 'auto-generates the gift cards inline for small batches' do
-      expect { post :create, params: base_params.merge(codes_count: 3), as: :json }
-        .to change(Spree::GiftCard, :count).by(3)
+      expect { post :create, params: base_params.merge(codes_count: 3), as: :json }.
+        to change(Spree::GiftCard, :count).by(3)
 
       batch = Spree::GiftCardBatch.last
       expect(batch.gift_cards.count).to eq(3)
       expect(batch.gift_cards.all? { |g| g.code.start_with?('welcome') }).to be(true)
       expect(batch.gift_cards.all? { |g| g.currency == 'USD' && g.amount == 25 }).to be(true)
+    end
+
+    it 'publishes gift_card.created for every generated card', events: true do
+      published = []
+      Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
+      Spree::Events.activate!
+
+      perform_enqueued_jobs { post :create, params: base_params.merge(codes_count: 3), as: :json }
+
+      expect(response).to have_http_status(:created)
+      expect(published).to match_array(Spree::GiftCardBatch.last.gift_cards.map(&:prefixed_id))
+    ensure
+      Spree::Events.reset!
+    end
+
+    # Same serializer and params as a card created on its own: no field the
+    # single-create event does not already carry, and the code as it shows there.
+    it 'sends the payload a single gift card create sends', events: true do
+      payloads = {}
+      Spree::Events.subscribe('gift_card.created', async: false) { |event| payloads[event.payload['id']] = event.payload }
+      Spree::Events.activate!
+
+      perform_enqueued_jobs { post :create, params: base_params.merge(codes_count: 1), as: :json }
+      batch_card = Spree::GiftCardBatch.last.gift_cards.first
+      single_card = create(:gift_card, store: store, amount: 25)
+
+      batch_payload = payloads.fetch(batch_card.prefixed_id)
+      single_payload = payloads.fetch(single_card.prefixed_id)
+      expect(batch_payload.keys).to match_array(single_payload.keys)
+      expect(batch_payload['code']).to eq(batch_card.display_code)
+      expect(single_payload['code']).to eq(single_card.display_code)
+    ensure
+      Spree::Events.reset!
     end
 
     it 'returns 422 when prefix is blank' do
