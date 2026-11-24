@@ -175,7 +175,9 @@ module Spree
         def render_service_error(error, code: ERROR_CODES[:processing_error], status: :unprocessable_content)
           error = error.value if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Symbol)
 
-          if error.is_a?(ActiveModel::Errors)
+          if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Hash)
+            render_failure_hash(error.value, code: code, status: status)
+          elsif error.is_a?(ActiveModel::Errors)
             render_validation_error(error, code: code)
           elsif error.is_a?(String)
             render_error(code: code, message: error, status: status)
@@ -187,6 +189,26 @@ module Spree
           else
             render_error(code: code, message: error.to_s, status: status)
           end
+        end
+
+        # A workflow failure that names its reason in a hash (`failure(cart, code:,
+        # errors:)`) reads as its messages; printed whole it reached clients as a
+        # Ruby hash. The endpoint's own code stays the response code, so clients
+        # keyed on it are unaffected, and the hash's reason goes in the details.
+        #
+        # @param failure [Hash]
+        def render_failure_hash(failure, code:, status:)
+          failure = failure.to_h.symbolize_keys
+          messages = Array(failure[:errors]).filter_map do |entry|
+            entry.is_a?(Hash) ? (entry[:message] || entry['message']).presence : entry.to_s.presence
+          end
+
+          # A failure naming only its reason reads as that reason, translated
+          # the way a bare symbol failure is.
+          message = failure[:message].presence || messages.join(', ').presence
+          message ||= I18n.t("spree.#{failure[:code]}", default: failure[:code].to_s.humanize) if failure[:code].present?
+
+          render_error(code: code, message: message, status: status, details: failure.except(:message))
         end
 
         # Renders a failed workflow or service result. A tax engine failure the
