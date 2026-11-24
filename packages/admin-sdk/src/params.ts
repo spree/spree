@@ -74,6 +74,14 @@ export interface TaxProviderOption {
    * a tax exemption reason; null when any code will do.
    */
   exemption_reason_codes: Array<{ value: string; label: string }> | null
+  /** True when this engine offers a search of its own tax codes (`taxProviders.taxCodes()`). */
+  tax_code_lookup: boolean
+}
+
+/** One of a tax engine's own tax codes, from `taxProviders.taxCodes()`. */
+export interface TaxCodeOption {
+  code: string
+  description: string
 }
 
 export interface StoreDataSources {
