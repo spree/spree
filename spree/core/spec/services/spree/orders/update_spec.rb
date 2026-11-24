@@ -104,6 +104,15 @@ module Spree
             expect(order.payments.store_credits.valid).to be_empty
             expect(gift_card.reload.amount_remaining).to eq(25)
           end
+
+          it 'refuses the change once the gift card payment has been taken' do
+            order.payments.store_credits.update_all(status: 'completed')
+
+            expect(subject).to be_failure
+            expect(subject.error.to_s).to include('Refund or void that payment')
+            expect(order.reload.customer).to eq(user)
+            expect(order.gift_card).to eq(gift_card)
+          end
         end
 
         context 'with a gift card issued to no one applied' do

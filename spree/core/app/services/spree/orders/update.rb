@@ -105,9 +105,19 @@ module Spree
         gift_card = @order.gift_card
 
         if gift_card.nil?
+          # Nothing to give back: skip the service, which reloads the order.
+          return unless @order.payments.store_credits.valid.exists?
+
           result = Spree.store_credit_remove_service.call(order: @order)
           propagate_step_failure!(result, fallback: I18n.t('spree.store_credit_paid_by_previous_customer')) if result.failure?
         elsif gift_card.customer_id.present? && gift_card.customer_id != @order.customer_id
+          # The remove workflow voids only checkout payments and would detach
+          # the card from one already captured, so refuse as store credit does.
+          if @order.payments.store_credits.valid.where.not(status: 'checkout').exists?
+            @order.errors.add(:base, I18n.t('spree.gift_card_paid_by_previous_customer'))
+            raise ActiveRecord::RecordInvalid, @order
+          end
+
           result = Spree.gift_card_remove_workflow.call(order: @order)
           propagate_step_failure!(result, fallback: 'Failed to remove gift card from order') if result.failure?
         end
