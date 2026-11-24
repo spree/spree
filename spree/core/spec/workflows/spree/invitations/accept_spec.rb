@@ -44,6 +44,17 @@ RSpec.describe Spree::Invitations::Accept do
     end
   end
 
+  # A removal from staff revoked it after the caller loaded it.
+  context 'when revoked while loaded' do
+    before { Spree::Invitation.find(invitation.id).destroy }
+
+    it 'refuses and grants no role' do
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:invitation_not_acceptable)
+      expect(Spree::RoleUser.where(user: invitee)).not_to exist
+    end
+  end
+
   context 'without an invitee' do
     let(:invitee) { nil }
 

@@ -545,6 +545,77 @@ test.describe('removing a draft order line', () => {
   })
 })
 
+// An order placed with nothing on hand waits on stock. Cancelling it ends the
+// wait, so it must stop reading Backorder.
+test.describe('cancelling a backordered order', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('moves its fulfillment status from Backorder to Canceled', async ({ page }) => {
+    const session = await login(page)
+    const locations = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      '/stock_locations',
+    )
+    const channels = await adminRequest<{ data: { id: string; default: boolean }[] }>(
+      page,
+      session,
+      'get',
+      '/channels',
+    )
+    const defaultChannel = channels.data.find((channel) => channel.default)
+    expect(defaultChannel, 'the store has a default channel').toBeDefined()
+    const stamp = Date.now()
+    const sku = `E2E-BACKORDER-${stamp}`
+    await seedRecord(page, session, '/products', {
+      name: `Backordered ${stamp}`,
+      status: 'active',
+      prices: [{ amount: '10.00', currency: 'USD' }],
+      product_publications: [{ channel_id: defaultChannel?.id }],
+      variants: [
+        {
+          options: [],
+          sku,
+          track_inventory: true,
+          stock_levels: [
+            { stock_location_id: locations.data[0].id, count_on_hand: 0, backorderable: true },
+          ],
+        },
+      ],
+    })
+    const order = await createPlacedOrder(page, session.accessToken, {
+      sku,
+      quantity: 1,
+      ship: false,
+    })
+
+    await page.goto(`/${session.store_id}/orders/${order.id}`)
+    // The header's status badges: payment status, then fulfillment status.
+    const headerStatuses = page
+      .getByRole('heading', { level: 1 })
+      .first()
+      .locator('xpath=..')
+      .locator('[data-slot="status-badge"]')
+    await expect(headerStatuses.filter({ hasText: /^backorder$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: /more actions/i }).click()
+    await page.getByRole('menuitem', { name: /cancel order/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^cancel order$/i })
+      .click()
+
+    await expect(page.getByText(/^order canceled$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(headerStatuses.filter({ hasText: /^canceled$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/^backorder$/i)).toHaveCount(0)
+  })
+})
+
 test.describe('order addresses', () => {
   // Regression: the dashboard sent `shipping_address` while the API permitted
   // only `ship_address`, so the request succeeded and the address never

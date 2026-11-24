@@ -41,6 +41,17 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
     end
   end
 
+  describe 'POST #verify' do
+    # `token[k]=x` and `token[]=x` arrive as a Hash and an Array, not a token.
+    it 'treats a token sent as a hash as missing' do
+      post :verify, params: { token: { a: 'x' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('parameter_missing')
+      expect(json_response['error']['message']).to eq('token is required')
+    end
+  end
+
   describe 'DELETE #destroy' do
     # Opt in via update_column, not the factory — setting accepts_email_marketing
     # at create time auto-subscribes the customer and collides with our subscriber.
@@ -58,6 +69,22 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
       expect(response).to have_http_status(:no_content)
       expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(false)
       expect(marketing_customer.reload.accepts_email_marketing).to be(false)
+    end
+
+    it 'rejects a wrong token' do
+      delete :destroy, params: { id: subscriber.prefixed_id, token: 'wrong' }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_token')
+      expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(true)
+    end
+
+    it 'rejects a token sent as an array' do
+      delete :destroy, params: { id: subscriber.prefixed_id, token: ['x'] }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_token')
+      expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(true)
     end
   end
 

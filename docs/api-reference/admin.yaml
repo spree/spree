@@ -19579,8 +19579,10 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Deletes an unused gift card. Cards that have been redeemed or
-        partially redeemed cannot be deleted and return 422.
+        Deletes an unused gift card. A card applied to an open cart or
+        draft order is taken off it first, which voids its store credit
+        payment. Cards that have been redeemed or partially redeemed, or
+        that a checkout is completing with, cannot be deleted and return 422.
 
 
         **Required scope:** `write_gift_cards` (for API-key authentication).
@@ -84467,7 +84469,8 @@ components:
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: Captures part of the authorized amount. Defaults to all of
-            it, or to what the order still owes when that is less.
+            it, or to what the order still owes when that is less. A capture another
+            payment is waiting on its provider to confirm counts as paid.
     PaymentCreateParams:
       type: object
       properties:

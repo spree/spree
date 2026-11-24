@@ -1,5 +1,13 @@
 # @spree/admin-sdk
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/admin-sdk` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/admin-sdk/`.
+
+- [#15271](https://github.com/spree/spree/pull/15271) [`d6f8de8`](https://github.com/spree/spree/commit/d6f8de8207db74e72c0ea23d247f51745946a36a) Thanks [@mad-eel](https://github.com/mad-eel)! - The Admin API types gain `Payment.requested_action`, `PaymentCaptureEvent.status`, `Refund.status` and `Refund.failure_reason`, with the `PaymentCaptureEventStatus` and `RefundStatus` types, and `PaymentStatus` gains `requested`. A saved card (`CreditCard`) names the payment method it was saved with as `payment_method_id`.
+
 ## 6.0.5
 
 ### Patch Changes

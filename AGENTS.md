@@ -92,4 +92,6 @@ pnpm test:rspec api                   # a full engine suite (queued machine-wide
 
 The full suite is CI's job: push and watch `gh pr checks --watch`. Run a full suite locally only to reproduce a CI failure, or when a change touches everything (a factory, a migration, `Spree::Base`). Engines: `core`, `api`, `emails`, `dashboard`, `opentelemetry`, `avalara`, `easypost`, `meilisearch`, `stripe`.
 
+CI runs the Ruby suites on PostgreSQL. MySQL runs nightly against `main`, and on a pull request only when it adds a migration or cuts a release. To check any other branch on MySQL: `gh workflow run backend-mysql.yml --ref <branch>`.
+
 Every behaviour change a merchant or seller can see — including a backend-only validation or status rule — ships with a Playwright spec (see `packages/AGENTS.md`).

@@ -14,20 +14,26 @@ module Spree
         # @param provider [String, nil] defaults to the +provider+ param, then :email
         # @return [Object, nil] a strategy instance, or nil after rendering an error
         def authentication_strategy(provider = nil)
-          provider ||= params[:provider].presence || 'email'
+          # Only a missing or empty-string provider means email; `provider[]=`
+          # is malformed, not missing.
+          provider = params[:provider] if provider.nil?
+          provider = 'email' if provider.nil? || provider == ''
 
-          strategy = authentication_strategies.build(
-            provider,
-            params: params,
-            request_env: request.headers.env,
-            user_class: authentication_user_class
-          )
+          # `provider[]=email` is not a provider name the registry can look up.
+          strategy = if provider.is_a?(String) || provider.is_a?(Symbol)
+                       authentication_strategies.build(
+                         provider,
+                         params: params,
+                         request_env: request.headers.env,
+                         user_class: authentication_user_class
+                       )
+                     end
 
           return strategy if strategy
 
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_provider],
-            message: "Unsupported authentication provider: #{provider}",
+            message: "Unsupported authentication provider: #{provider if provider.is_a?(String)}".strip,
             status: :bad_request
           )
           nil

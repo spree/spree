@@ -98,6 +98,14 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(controller.send(:current_currency)).to eq('USD')
       end
+
+      # `currency[]=EUR` arrives as an Array, not a currency code.
+      it 'falls back to store default currency for a currency sent as an array' do
+        get :index, params: { currency: ['EUR'] }
+
+        expect(response).to have_http_status(:ok)
+        expect(controller.send(:current_currency)).to eq('USD')
+      end
     end
 
     describe 'market-aware locale resolution' do

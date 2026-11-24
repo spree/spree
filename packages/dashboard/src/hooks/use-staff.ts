@@ -41,21 +41,23 @@ export function useRoles() {
 export function useUpdateStaff() {
   return useResourceMutation<unknown, Error, { id: string; params: AdminUserUpdateParams }>({
     mutationFn: ({ id, params }) => adminClient.adminUsers.update(id, params),
-    // Role assignments change each role's users_count on the roles page.
-    invalidate: [['staff'], ['roles']],
+    // Role assignments change each role's users_count on the roles page, and
+    // clearing every role revokes the user's pending invitations.
+    invalidate: [['staff'], ['roles'], ['invitations']],
     successMessage: false,
     errorMessage: false,
   })
 }
 
 /**
- * Removes the user's role assignments on the current store. The account is
- * preserved — the user keeps access to any other stores.
+ * Removes the user's role assignments on the current store and revokes their
+ * pending invitations here. The account is preserved — the user keeps access
+ * to any other stores.
  */
 export function useRemoveStaff() {
   return useResourceMutation<unknown, Error, string>({
     mutationFn: (id) => adminClient.adminUsers.delete(id),
-    invalidate: [['staff'], ['roles']],
+    invalidate: [['staff'], ['roles'], ['invitations']],
     successMessage: false,
     errorMessage: false,
   })
