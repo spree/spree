@@ -12,6 +12,7 @@ import type {
   Account,
   AuthTokens,
   Balance,
+  BulkProductResult,
   Claim,
   Country,
   Delivery,
@@ -1540,16 +1541,6 @@ export interface OnboardingResponse {
 }
 
 /** The fields a seller may set on their own product. */
-/**
- * What a bulk product action did. `skipped_count` is present only when the
- * action left something alone — a key on every response would tell a caller
- * that never skips anything that nothing was skipped.
- */
-export interface BulkProductResult {
-  product_count: number
-  skipped_count?: number
-}
-
 /** What `/seller/me` answers. */
 /**
  * One CanCanCan rule, in the shape the panels' `<Can>` reads. Identical to

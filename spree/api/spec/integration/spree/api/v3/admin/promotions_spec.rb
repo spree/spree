@@ -299,7 +299,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       response '200', 'action types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema SwaggerSchemaHelpers.preference_types
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
@@ -326,7 +326,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       response '200', 'rule types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema SwaggerSchemaHelpers.preference_types
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']

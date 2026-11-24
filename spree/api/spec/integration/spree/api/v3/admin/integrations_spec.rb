@@ -94,19 +94,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '200', 'integration types found' do
-        schema SwaggerSchemaHelpers.list(
-          type: :object,
-          properties: {
-            type: { type: :string, example: 'klaviyo' },
-            name: { type: :string },
-            group: { type: :string, example: 'marketing' },
-            description: { type: :string, nullable: true },
-            logo_url: { type: :string, nullable: true },
-            docs_url: { type: :string, nullable: true },
-            schema: { '$ref' => '#/components/schemas/PreferenceSchema' }
-          },
-          required: %w[type name group schema]
-        )
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('IntegrationTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -167,12 +155,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
           SpreeCarrier::Integration.create!(store: store, preferences: { api_key: 'sk-secret' }).prefixed_id
         end
 
-        schema type: :object,
-               properties: {
-                 connected: { type: :boolean },
-                 error_message: { type: :string, nullable: true, description: 'What the provider answered when the connection failed' }
-               },
-               required: %w[connected error_message]
+        schema '$ref' => '#/components/schemas/IntegrationConnectionResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)

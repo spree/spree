@@ -107,12 +107,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           store.payment_methods.create!(type: 'Spree::PaymentMethod::StoreCredit', name: 'Store Credit')
         end
 
-        schema SwaggerSchemaHelpers.preference_types(
-          logo_url: { type: :string, nullable: true },
-          docs_url: { type: :string, nullable: true },
-          third_party: { type: :boolean, description: 'Whether the provider is an outside service, as opposed to a method the store handles itself' },
-          installed: { type: :boolean, description: 'Whether the store has a payment method of this type already' }
-        )
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('PaymentMethodType'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']

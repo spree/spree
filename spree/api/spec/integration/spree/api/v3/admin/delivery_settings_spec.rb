@@ -107,15 +107,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '200', 'calculators found' do
-        schema SwaggerSchemaHelpers.list(
-          type: :object,
-          properties: {
-            type: { type: :string, example: 'flat_rate' },
-            name: { type: :string, example: 'Flat rate' },
-            schema: { '$ref' => '#/components/schemas/PreferenceSchema' }
-          },
-          required: %w[type name schema]
-        )
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('CalculatorType'))
 
         run_test! do |response|
           data = JSON.parse(response.body)

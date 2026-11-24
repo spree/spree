@@ -2,6 +2,7 @@
 export { AccountSchema, type Account } from './Account';
 export { AddressSchema, type Address } from './Address';
 export { BalanceSchema, type Balance } from './Balance';
+export { BulkProductResultSchema, type BulkProductResult } from './BulkProductResult';
 export { CategorySchema, type Category } from './Category';
 export { ClaimSchema, type Claim } from './Claim';
 export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
@@ -32,6 +33,7 @@ export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
 export { OrderLineItemSchema, type OrderLineItem } from './OrderLineItem';
 export { PackageTypeSchema, type PackageType } from './PackageType';
+export { PasswordResetAcknowledgementSchema, type PasswordResetAcknowledgement } from './PasswordResetAcknowledgement';
 export { PaymentSplitSchema, type PaymentSplit } from './PaymentSplit';
 export { PayoutSchema, type Payout } from './Payout';
 export { PayoutAccountLinkSchema, type PayoutAccountLink } from './PayoutAccountLink';

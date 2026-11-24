@@ -207,7 +207,7 @@ module Spree
             # "nothing was skipped" to clients that never skip anything.
             payload[:skipped_in_review_count] = skipped if skipped.positive?
 
-            render json: payload
+            render json: Spree.api.admin_bulk_product_status_result_serializer.new(payload).to_h
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories
@@ -243,7 +243,9 @@ module Spree
             product_ids = bulk_collection.distinct.ids
             channels.add_products(product_ids)
 
-            render json: { product_count: product_ids.size, channel_count: channels.size }
+            render json: Spree.api.admin_bulk_product_channels_result_serializer.new(
+              { product_count: product_ids.size, channel_count: channels.size }
+            ).to_h
           end
 
           # POST /api/v3/admin/products/bulk_remove_from_channels
@@ -255,7 +257,9 @@ module Spree
             product_ids = bulk_collection.distinct.ids
             removed = channels.remove_products(product_ids)
 
-            render json: { product_count: product_ids.size, channel_count: channels.size, removed: removed }
+            render json: Spree.api.admin_bulk_product_channels_result_serializer.new(
+              { product_count: product_ids.size, channel_count: channels.size, removed: removed }
+            ).to_h
           end
 
           # DELETE /api/v3/admin/products/bulk_destroy
@@ -271,7 +275,7 @@ module Spree
                                        .where(id: decode_ids(params[:ids]))
             destroyed = destroy_scope.count(&:destroy)
 
-            render json: { product_count: destroyed }
+            render json: Spree.api.admin_bulk_product_result_serializer.new({ product_count: destroyed }).to_h
           end
 
           # DELETE /api/v3/admin/products/:id
@@ -450,6 +454,10 @@ module Spree
             :product_count
           end
 
+          def bulk_tags_response
+            Spree.api.admin_bulk_product_tags_result_serializer.new(super).to_h
+          end
+
           def apply_categories(service)
             authorize! :update, model_class
 
@@ -459,7 +467,9 @@ module Spree
 
             service.call(categories: categories, products: bulk_collection)
 
-            render json: { product_count: bulk_collection.size, category_count: categories.size }
+            render json: Spree.api.admin_bulk_product_categories_result_serializer.new(
+              { product_count: bulk_collection.size, category_count: categories.size }
+            ).to_h
           end
 
           def apply_collections(service)
@@ -474,7 +484,9 @@ module Spree
 
             service.call(collections: collections, products: bulk_collection)
 
-            render json: { product_count: bulk_collection.size, collection_count: collections.size }
+            render json: Spree.api.admin_bulk_product_collections_result_serializer.new(
+              { product_count: bulk_collection.size, collection_count: collections.size }
+            ).to_h
           end
 
           def scoped_channels

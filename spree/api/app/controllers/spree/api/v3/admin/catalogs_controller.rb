@@ -85,7 +85,7 @@ module Spree
               )
             end
 
-            render json: { added_count: @resource.import_products_from_price_list }
+            render json: Spree.api.admin_added_count_serializer.new({ added_count: @resource.import_products_from_price_list }).to_h
           end
 
           # POST /api/v3/admin/catalogs/:id/assign

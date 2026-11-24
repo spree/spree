@@ -435,12 +435,7 @@ paths:
                 message: If an account exists for that email, password reset instructions
                   have been sent.
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                - message
+                "$ref": "#/components/schemas/PasswordResetAcknowledgement"
       requestBody:
         content:
           application/json:
@@ -22420,15 +22415,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  skipped_count:
-                    type: integer
-                    description: Present only when something was skipped
-                required:
-                - product_count
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -22475,15 +22462,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  skipped_count:
-                    type: integer
-                    description: Present only when something was skipped
-                required:
-                - product_count
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -22531,15 +22510,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  skipped_count:
-                    type: integer
-                    description: Present only when something was skipped
-                required:
-                - product_count
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -25682,6 +25653,18 @@ components:
       - paid
       - balance
       x-typelizer: true
+    BulkProductResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        skipped_count:
+          type: number
+          description: Present only when something was skipped
+      required:
+      - product_count
+      x-typelizer: true
     ClaimLineItem:
       type: object
       properties:
@@ -27694,6 +27677,14 @@ components:
       - weight_unit
       - volume
       - editable
+      x-typelizer: true
+    PasswordResetAcknowledgement:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
       x-typelizer: true
     PaymentSplit:
       type: object

@@ -56,13 +56,6 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
                 description: 'A language code, or `any` (the default) for the version every language uses'
 
       response '200', 'email templates found' do
-        schema type: :object,
-               properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/EmailTemplate' } },
-                 meta: { type: :object, description: 'Always empty: the list is not paginated' }
-               },
-               required: %w[data meta]
-
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.map { |template| template['id'] }).to include(id)

@@ -16,12 +16,18 @@ module Spree
 
           # GET /api/v3/admin/permissions
           def index
-            entries = Spree.permissions.entries
+            entries = paginate_whole(Spree.permissions.entries)
 
             render json: {
-              data: entries.map { |entry| Spree.api.admin_permission_serializer.new(entry).to_h },
-              meta: { count: entries.size }
+              data: entries.map { |entry| serializer_class.new(entry).to_h },
+              meta: collection_meta(entries)
             }
+          end
+
+          private
+
+          def serializer_class
+            Spree.api.admin_permission_serializer
           end
         end
       end

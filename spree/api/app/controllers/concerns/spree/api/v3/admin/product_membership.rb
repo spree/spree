@@ -59,7 +59,7 @@ module Spree
               added = scope.where(id: new_products.map(&:id)).reorder(nil).distinct.count
             end
 
-            render json: { added_count: added }, status: :created
+            render json: Spree.api.admin_added_count_serializer.new({ added_count: added }).to_h, status: :created
           end
 
           # DELETE /{parents}/:parent_id/products
@@ -74,7 +74,7 @@ module Spree
               removed = products.size - still_members
             end
 
-            render json: { removed_count: removed }
+            render json: Spree.api.admin_removed_count_serializer.new({ removed_count: removed }).to_h
           end
 
           protected

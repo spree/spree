@@ -51,7 +51,7 @@ module Spree
               entry.merge(installed: installed_shorthands.include?(entry[:type]))
             end
 
-            render json: { data: entries }
+            render json: { data: serialize_types(entries, Spree.api.admin_payment_method_type_serializer) }
           end
 
           protected

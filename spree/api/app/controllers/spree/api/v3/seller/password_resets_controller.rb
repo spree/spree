@@ -50,7 +50,9 @@ module Spree
 
             # Always 202, whether or not anything matched — this endpoint must
             # not become a way to discover which addresses exist.
-            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
+            render json: Spree.api.seller_password_reset_acknowledgement_serializer.new(
+              { message: I18n.t('spree.api.password_reset_requested') }
+            ).to_h, status: :accepted
           end
 
           # PATCH /api/v3/seller/auth/password_resets/:id

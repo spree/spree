@@ -16,7 +16,7 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
       admin_sdk_example 'auth/setup-status'
 
       response '200', 'setup status' do
-        schema type: :object, properties: { setup_required: { type: :boolean } }, required: %w[setup_required]
+        schema '$ref' => '#/components/schemas/SetupStatus'
 
         run_test! do |response|
           data = JSON.parse(response.body)

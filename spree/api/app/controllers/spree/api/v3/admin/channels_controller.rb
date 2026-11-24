@@ -53,7 +53,7 @@ module Spree
               published_at: params[:published_at].presence,
               unpublished_at: params[:unpublished_at].presence
             )
-            render json: { product_count: count }
+            render json: Spree.api.admin_bulk_product_result_serializer.new({ product_count: count }).to_h
           end
 
           # POST /api/v3/admin/channels/:id/remove_products
@@ -62,7 +62,7 @@ module Spree
             authorize! :update, channel
 
             removed = channel.remove_products(scoped_product_ids)
-            render json: { product_count: removed }
+            render json: Spree.api.admin_bulk_product_result_serializer.new({ product_count: removed }).to_h
           end
 
           def create

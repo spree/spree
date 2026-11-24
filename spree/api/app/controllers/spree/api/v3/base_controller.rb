@@ -50,6 +50,16 @@ module Spree
 
         protected
 
+        # Paginates a list held in memory. The whole list is one page unless the
+        # caller asks for less: clients read these lists in full.
+        #
+        # @param entries [Array]
+        # @return [Array] the requested page
+        def paginate_whole(entries)
+          @pagy, page = pagy(:offset, entries, limit: [entries.size, 1].max)
+          page
+        end
+
         # Metadata for collection responses
         # @return [Hash] pagination metadata
         def collection_meta(_collection)

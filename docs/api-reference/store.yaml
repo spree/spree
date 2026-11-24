@@ -5066,14 +5066,7 @@ paths:
                   data:
                     type: array
                     items:
-                      allOf:
-                      - "$ref": "#/components/schemas/CompanyMembership"
-                      - type: object
-                        properties:
-                          company:
-                            "$ref": "#/components/schemas/Company"
-                        required:
-                        - company
+                      "$ref": "#/components/schemas/AccountCompanyMembership"
                 required:
                 - data
         '401':
@@ -6170,20 +6163,7 @@ paths:
                 company_name: Acme Industrial
                 store_name: Spree Test Store
               schema:
-                allOf:
-                - "$ref": "#/components/schemas/CompanyInvitation"
-                - type: object
-                  properties:
-                    company_name:
-                      type: string
-                      example: Acme Industrial
-                      description: The company the invitation is to
-                    store_name:
-                      type: string
-                      description: The store the company buys from
-                  required:
-                  - company_name
-                  - store_name
+                "$ref": "#/components/schemas/CompanyInvitationDetails"
         '404':
           description: token spent, revoked or expired
           content:
@@ -14004,6 +13984,27 @@ components:
             format: money
             default: '0.0'
         additionalProperties: false
+    AccountCompanyMembership:
+      type: object
+      properties:
+        id:
+          type: string
+        company_id:
+          type: string
+        customer_id:
+          type: string
+        email:
+          type: string
+          nullable: true
+        company:
+          "$ref": "#/components/schemas/Company"
+      required:
+      - id
+      - company_id
+      - customer_id
+      - email
+      - company
+      x-typelizer: true
     AddressOwner:
       type: object
       properties:
@@ -15470,6 +15471,40 @@ components:
       - description_html
       - image_url
       - square_image_url
+      x-typelizer: true
+    CompanyInvitationDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        expires_at:
+          type: string
+          nullable: true
+        company_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - pending
+          - accepted
+          - revoked
+          - expired
+        company_name:
+          type: string
+          description: The company the invitation is to
+        store_name:
+          type: string
+          description: The store the company buys from
+      required:
+      - id
+      - email
+      - expires_at
+      - company_id
+      - status
+      - company_name
+      - store_name
       x-typelizer: true
     CompanyInvitation:
       type: object

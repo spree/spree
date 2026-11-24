@@ -714,12 +714,7 @@ paths:
                 message: If an account exists for that email, password reset instructions
                   have been sent.
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                required:
-                - message
+                "$ref": "#/components/schemas/PasswordResetAcknowledgement"
       requestBody:
         content:
           application/json:
@@ -848,12 +843,7 @@ paths:
               example:
                 setup_required: true
               schema:
-                type: object
-                properties:
-                  setup_required:
-                    type: boolean
-                required:
-                - setup_required
+                "$ref": "#/components/schemas/SetupStatus"
     post:
       summary: Complete first-run setup
       tags:
@@ -4111,12 +4101,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                type: object
-                properties:
-                  added_count:
-                    type: integer
-                required:
-                - added_count
+                "$ref": "#/components/schemas/AddedCount"
         '422':
           description: the catalog has no price list
           content:
@@ -4458,12 +4443,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                type: object
-                properties:
-                  added_count:
-                    type: integer
-                required:
-                - added_count
+                "$ref": "#/components/schemas/AddedCount"
       requestBody:
         content:
           application/json:
@@ -4522,12 +4502,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                type: object
-                properties:
-                  removed_count:
-                    type: integer
-                required:
-                - removed_count
+                "$ref": "#/components/schemas/RemovedCount"
       requestBody:
         content:
           application/json:
@@ -5937,12 +5912,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                type: object
-                properties:
-                  added_count:
-                    type: integer
-                required:
-                - added_count
+                "$ref": "#/components/schemas/AddedCount"
       requestBody:
         content:
           application/json:
@@ -6003,12 +5973,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                type: object
-                properties:
-                  removed_count:
-                    type: integer
-                required:
-                - removed_count
+                "$ref": "#/components/schemas/RemovedCount"
       requestBody:
         content:
           application/json:
@@ -6644,10 +6609,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -6708,10 +6670,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -7109,22 +7068,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        label:
-                          type: string
-                        description:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - label
-                      - schema
+                      "$ref": "#/components/schemas/ResourceTypeDefinition"
                 required:
                 - data
   "/api/v3/admin/collections":
@@ -7894,12 +7838,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                type: object
-                properties:
-                  added_count:
-                    type: integer
-                required:
-                - added_count
+                "$ref": "#/components/schemas/AddedCount"
       requestBody:
         content:
           application/json:
@@ -7960,12 +7899,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                type: object
-                properties:
-                  removed_count:
-                    type: integer
-                required:
-                - removed_count
+                "$ref": "#/components/schemas/RemovedCount"
       requestBody:
         content:
           application/json:
@@ -8110,22 +8044,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        label:
-                          type: string
-                        description:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - label
-                      - schema
+                      "$ref": "#/components/schemas/ResourceTypeDefinition"
                 required:
                 - data
   "/api/v3/admin/collections/{collection_id}/custom_fields":
@@ -16463,20 +16382,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        name:
-                          type: string
-                          example: Flat rate
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - name
-                      - schema
+                      "$ref": "#/components/schemas/CalculatorType"
                 required:
                 - data
   "/api/v3/admin/delivery_zones":
@@ -17291,7 +17197,16 @@ paths:
                   base_subject:
                   base_body:
                   draft:
-                meta: {}
+                meta:
+                  page: 1
+                  limit: 2
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -17300,8 +17215,7 @@ paths:
                     items:
                       "$ref": "#/components/schemas/EmailTemplate"
                   meta:
-                    type: object
-                    description: 'Always empty: the list is not paginated'
+                    "$ref": "#/components/schemas/PaginationMeta"
                 required:
                 - data
                 - meta
@@ -22942,32 +22856,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: klaviyo
-                        name:
-                          type: string
-                        group:
-                          type: string
-                          example: marketing
-                        description:
-                          type: string
-                          nullable: true
-                        logo_url:
-                          type: string
-                          nullable: true
-                        docs_url:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - name
-                      - group
-                      - schema
+                      "$ref": "#/components/schemas/IntegrationTypeDefinition"
                 required:
                 - data
   "/api/v3/admin/integrations/{id}":
@@ -23092,17 +22981,7 @@ paths:
                 connected: true
                 error_message:
               schema:
-                type: object
-                properties:
-                  connected:
-                    type: boolean
-                  error_message:
-                    type: string
-                    nullable: true
-                    description: What the provider answered when the connection failed
-                required:
-                - connected
-                - error_message
+                "$ref": "#/components/schemas/IntegrationConnectionResult"
   "/api/v3/admin/maintenance_task_runs":
     get:
       summary: List maintenance task runs
@@ -34197,36 +34076,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        label:
-                          type: string
-                        description:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                        logo_url:
-                          type: string
-                          nullable: true
-                        docs_url:
-                          type: string
-                          nullable: true
-                        third_party:
-                          type: boolean
-                          description: Whether the provider is an outside service,
-                            as opposed to a method the store handles itself
-                        installed:
-                          type: boolean
-                          description: Whether the store has a payment method of this
-                            type already
-                      required:
-                      - type
-                      - label
-                      - schema
+                      "$ref": "#/components/schemas/PaymentMethodType"
                 required:
                 - data
   "/api/v3/admin/payment_methods/{id}":
@@ -35748,12 +35598,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                type: object
-                properties:
-                  added_count:
-                    type: integer
-                required:
-                - added_count
+                "$ref": "#/components/schemas/AddedCount"
       requestBody:
         content:
           application/json:
@@ -35812,12 +35657,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                type: object
-                properties:
-                  removed_count:
-                    type: integer
-                required:
-                - removed_count
+                "$ref": "#/components/schemas/RemovedCount"
       requestBody:
         content:
           application/json:
@@ -39398,12 +39238,7 @@ paths:
                 product_count: 0
                 status: archived
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  status:
-                    type: string
+                "$ref": "#/components/schemas/BulkProductStatusResult"
         '422':
           description: invalid status
           content:
@@ -39472,12 +39307,7 @@ paths:
                 product_count: 1
                 category_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  category_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductCategoriesResult"
       requestBody:
         content:
           application/json:
@@ -39534,12 +39364,7 @@ paths:
                 product_count: 1
                 category_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  category_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductCategoriesResult"
       requestBody:
         content:
           application/json:
@@ -39598,12 +39423,7 @@ paths:
                 product_count: 1
                 collection_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  collection_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductCollectionsResult"
       requestBody:
         content:
           application/json:
@@ -39660,12 +39480,7 @@ paths:
                 product_count: 1
                 collection_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  collection_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductCollectionsResult"
       requestBody:
         content:
           application/json:
@@ -39725,12 +39540,7 @@ paths:
                 product_count: 1
                 channel_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  channel_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductChannelsResult"
       requestBody:
         content:
           application/json:
@@ -39788,14 +39598,7 @@ paths:
                 channel_count: 1
                 removed: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  channel_count:
-                    type: integer
-                  removed:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductChannelsResult"
       requestBody:
         content:
           application/json:
@@ -39852,12 +39655,7 @@ paths:
                 product_count: 1
                 tag_count: 2
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  tag_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductTagsResult"
       requestBody:
         content:
           application/json:
@@ -39914,12 +39712,7 @@ paths:
                 product_count: 1
                 tag_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
-                  tag_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductTagsResult"
       requestBody:
         content:
           application/json:
@@ -39977,10 +39770,7 @@ paths:
               example:
                 product_count: 1
               schema:
-                type: object
-                properties:
-                  product_count:
-                    type: integer
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -42166,22 +41956,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        label:
-                          type: string
-                        description:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - label
-                      - schema
+                      "$ref": "#/components/schemas/ResourceTypeDefinition"
                 required:
                 - data
   "/api/v3/admin/promotion_rules/types":
@@ -42417,22 +42192,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: flat_rate
-                        label:
-                          type: string
-                        description:
-                          type: string
-                          nullable: true
-                        schema:
-                          "$ref": "#/components/schemas/PreferenceSchema"
-                      required:
-                      - type
-                      - label
-                      - schema
+                      "$ref": "#/components/schemas/ResourceTypeDefinition"
                 required:
                 - data
   "/api/v3/admin/purchase_orders/{purchase_order_id}/custom_fields":
@@ -50877,13 +50637,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          example: vip
-                      required:
-                      - name
+                      "$ref": "#/components/schemas/Tag"
                 required:
                 - data
         '422':
@@ -53565,7 +53319,15 @@ paths:
                   label: Staff & roles
                   description: Team members, invitations, roles and their permissions
                 meta:
+                  page: 1
+                  limit: 61
                   count: 61
+                  pages: 1
+                  from: 1
+                  to: 61
+                  in: 61
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -53574,12 +53336,7 @@ paths:
                     items:
                       "$ref": "#/components/schemas/Permission"
                   meta:
-                    type: object
-                    properties:
-                      count:
-                        type: integer
-                    required:
-                    - count
+                    "$ref": "#/components/schemas/PaginationMeta"
                 required:
                 - data
                 - meta
@@ -54247,12 +54004,7 @@ paths:
               example:
                 stock_level_count: 1
               schema:
-                type: object
-                properties:
-                  stock_level_count:
-                    type: integer
-                required:
-                - stock_level_count
+                "$ref": "#/components/schemas/BulkStockLevelResult"
         '422':
           description: row is missing a level
           content:
@@ -62317,6 +62069,14 @@ components:
       - type
       - label
       x-typelizer: true
+    AddedCount:
+      type: object
+      properties:
+        added_count:
+          type: number
+      required:
+      - added_count
+      x-typelizer: true
     AddressOwner:
       type: object
       properties:
@@ -62897,6 +62657,112 @@ components:
       - amount
       - created_at
       - updated_at
+      x-typelizer: true
+    BulkProductCategoriesResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        category_count:
+          type: number
+          description: Categories the action applied to
+      required:
+      - product_count
+      - category_count
+      x-typelizer: true
+    BulkProductChannelsResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        channel_count:
+          type: number
+          description: Channels the action applied to
+        removed:
+          type: number
+          description: Publications removed. Present when unpublishing.
+      required:
+      - product_count
+      - channel_count
+      x-typelizer: true
+    BulkProductCollectionsResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        collection_count:
+          type: number
+          description: Manual collections the action applied to
+      required:
+      - product_count
+      - collection_count
+      x-typelizer: true
+    BulkProductResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+      required:
+      - product_count
+      x-typelizer: true
+    BulkProductStatusResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        status:
+          type: string
+          description: The status the products were moved to
+        skipped_in_review_count:
+          type: number
+          description: Present only when products waiting for review were left alone
+      required:
+      - product_count
+      - status
+      x-typelizer: true
+    BulkProductTagsResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        tag_count:
+          type: number
+          description: Tags sent in the request
+      required:
+      - product_count
+      - tag_count
+      x-typelizer: true
+    BulkStockLevelResult:
+      type: object
+      properties:
+        stock_level_count:
+          type: number
+          description: Stock levels written
+      required:
+      - stock_level_count
+      x-typelizer: true
+    CalculatorType:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The value to send as the calculator `type`, e.g. flat_rate
+        name:
+          type: string
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/PreferenceSchema"
+          description: JSON Schema of the calculator's `preferences`
+      required:
+      - type
+      - name
+      - schema
       x-typelizer: true
     Cart:
       type: object
@@ -68884,6 +68750,19 @@ components:
       - sample_row
       - mappings
       x-typelizer: true
+    IntegrationConnectionResult:
+      type: object
+      properties:
+        connected:
+          type: boolean
+        error_message:
+          type: string
+          nullable: true
+          description: What the provider answered when the connection failed
+      required:
+      - connected
+      - error_message
+      x-typelizer: true
     Integration:
       type: object
       properties:
@@ -68915,6 +68794,42 @@ components:
       - type
       - group
       - preferences
+      x-typelizer: true
+    IntegrationTypeDefinition:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The value to send as `type`, e.g. klaviyo
+        name:
+          type: string
+        group:
+          type: string
+          nullable: true
+          description: Display grouping, e.g. shipping or tax
+        description:
+          type: string
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
+          description: 'Gallery logo: an absolute URL or a `data:` URI'
+        docs_url:
+          type: string
+          nullable: true
+          description: Absolute URL of the integration's setup guide
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/PreferenceSchema"
+          description: JSON Schema of the type's `preferences`
+      required:
+      - type
+      - name
+      - group
+      - description
+      - logo_url
+      - docs_url
+      - schema
       x-typelizer: true
     InvitationAcceptanceLink:
       type: object
@@ -72163,6 +72078,14 @@ components:
       - seller_id
       - seller_name
       x-typelizer: true
+    PasswordResetAcknowledgement:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+      x-typelizer: true
     PaymentCaptureEvent:
       type: object
       properties:
@@ -72257,6 +72180,50 @@ components:
       - logo_url
       - docs_url
       - third_party
+      x-typelizer: true
+    PaymentMethodType:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The value to send as `type`, e.g. flat_rate
+        label:
+          type: string
+        description:
+          type: string
+          nullable: true
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/PreferenceSchema"
+          description: JSON Schema of the type's `preferences`
+        superseded:
+          type: boolean
+          description: Present, and true, only on a type something better has replaced.
+            Existing records keep working; stop offering it for new ones.
+        logo_url:
+          type: string
+          nullable: true
+          description: 'Gallery logo: an absolute URL or a `data:` URI'
+        docs_url:
+          type: string
+          nullable: true
+          description: Absolute URL of the provider's setup guide
+        third_party:
+          type: boolean
+          description: Backed by an outside payment provider rather than handled by
+            the store itself
+        installed:
+          type: boolean
+          description: The store has a payment method of this type already
+      required:
+      - type
+      - label
+      - description
+      - schema
+      - logo_url
+      - docs_url
+      - third_party
+      - installed
       x-typelizer: true
     Payment:
       type: object
@@ -74487,6 +74454,39 @@ components:
       - refunder_id
       - refunder_type
       x-typelizer: true
+    RemovedCount:
+      type: object
+      properties:
+        removed_count:
+          type: number
+      required:
+      - removed_count
+      x-typelizer: true
+    ResourceTypeDefinition:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The value to send as `type`, e.g. flat_rate
+        label:
+          type: string
+        description:
+          type: string
+          nullable: true
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/PreferenceSchema"
+          description: JSON Schema of the type's `preferences`
+        superseded:
+          type: boolean
+          description: Present, and true, only on a type something better has replaced.
+            Existing records keep working; stop offering it for new ones.
+      required:
+      - type
+      - label
+      - description
+      - schema
+      x-typelizer: true
     ReturnLineItem:
       type: object
       properties:
@@ -76235,6 +76235,15 @@ components:
       - ip_address
       - user_agent
       - last_active_at
+      x-typelizer: true
+    SetupStatus:
+      type: object
+      properties:
+        setup_required:
+          type: boolean
+          description: True only while the installation has no admin user
+      required:
+      - setup_required
       x-typelizer: true
     SetupTask:
       type: object
@@ -79873,6 +79882,14 @@ components:
       - updated_at
       - deleted_at
       - can_be_deleted
+      x-typelizer: true
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+      - name
       x-typelizer: true
     TaxCategory:
       type: object

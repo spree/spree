@@ -413,7 +413,7 @@ module Spree
             # Only when it happened: a key on every response would tell clients
             # that never skip anything that nothing was skipped.
             payload[:skipped_count] = skipped if skipped.positive?
-            payload
+            Spree.api.seller_bulk_product_result_serializer.new(payload).to_h
           end
 
           # A block may answer with the workflow's own Result, or with a plain

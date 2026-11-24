@@ -34,21 +34,6 @@ module Spree
           { type: :object, properties: { data: { type: :array, items: items } }, required: %w[data] }
         end
 
-        # The `/types` list of a family selected by `type`: what each type is
-        # called and the JSON Schema of its `preferences`.
-        def preference_types(**properties)
-          list(
-            type: :object,
-            properties: {
-              type: { type: :string, example: 'flat_rate' },
-              label: { type: :string },
-              description: { type: :string, nullable: true },
-              schema: ref('PreferenceSchema')
-            }.merge(properties),
-            required: %w[type label schema]
-          )
-        end
-
         # Error response schema
         def error_response
           ref('ErrorResponse')

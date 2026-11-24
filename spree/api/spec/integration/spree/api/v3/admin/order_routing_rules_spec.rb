@@ -140,7 +140,7 @@ RSpec.describe 'Admin Order Routing Rules API', type: :request, swagger_doc: 'ap
       response '200', 'types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema SwaggerSchemaHelpers.preference_types
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']

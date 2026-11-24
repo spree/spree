@@ -57,7 +57,7 @@ module Spree
           # Leaks a single boolean that is self-evident on a fresh install —
           # the login page uses it to offer the setup screen.
           def show
-            render json: { setup_required: setup_required? }
+            render json: Spree.api.admin_setup_status_serializer.new({ setup_required: setup_required? }).to_h
           end
 
           # GET /api/v3/admin/auth/setup/countries

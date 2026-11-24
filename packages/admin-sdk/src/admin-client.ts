@@ -497,7 +497,6 @@ import type {
   ImportCompleteMappingParams,
   ImportCreateParams,
   IntegrationCreateParams,
-  IntegrationTypeDefinition,
   IntegrationUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
@@ -528,7 +527,6 @@ import type {
   PaymentCaptureParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
-  PaymentMethodType,
   PaymentMethodUpdateParams,
   PolicyCreateParams,
   PolicyUpdateParams,
@@ -564,7 +562,6 @@ import type {
   ReasonUpdateParams,
   ReceivableCloseParams,
   RefundCreateParams,
-  ResourceTypeDefinition,
   ReturnCancelParams,
   ReturnCreateParams,
   ReturnReceiveParams,
@@ -591,7 +588,6 @@ import type {
   SellerUpdateParams,
   SetupCountries,
   SetupParams,
-  SetupStatus,
   ShippingLabelCreateParams,
   StockLevelBulkUpsertParams,
   StockLevelUpdateParams,
@@ -633,6 +629,13 @@ import type {
   AdminUser,
   AllowedOrigin,
   ApiKey,
+  BulkProductCategoriesResult,
+  BulkProductChannelsResult,
+  BulkProductCollectionsResult,
+  BulkProductResult,
+  BulkProductStatusResult,
+  BulkProductTagsResult,
+  CalculatorType,
   Catalog,
   CatalogAssignment,
   CatalogOrderMinimum,
@@ -683,6 +686,8 @@ import type {
   Import,
   ImportRow,
   Integration,
+  IntegrationConnectionResult,
+  IntegrationTypeDefinition,
   Invitation,
   InvitationAcceptanceLink,
   LineItem,
@@ -702,6 +707,7 @@ import type {
   PackageType,
   Payment,
   PaymentMethod,
+  PaymentMethodType,
   Permission,
   Policy,
   Price,
@@ -717,6 +723,7 @@ import type {
   RefundReason,
   ResourceTranslations,
   ResourceTranslationsNode,
+  ResourceTypeDefinition,
   Return,
   ReturnReason,
   Role,
@@ -728,6 +735,7 @@ import type {
   SellerRequirementSubmission,
   SellerTeamMember,
   SellerTransfer,
+  SetupStatus,
   ShippingLabel,
   StockLevel,
   StockLocation,
@@ -739,6 +747,7 @@ import type {
   StoreCredit,
   StoreCreditEvent,
   Supplier,
+  Tag,
   TaxCategory,
   TaxExemptionCertificate,
   TaxExemptionReason,
@@ -1417,21 +1426,21 @@ export class AdminClient {
     bulkStatusUpdate: (
       params: ProductBulkStatusParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; status: string }> =>
+    ): Promise<BulkProductStatusResult> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
 
     /** Attach every product in `ids` to every category in `category_ids`. */
     bulkAddToCategories: (
       params: ProductBulkCategoriesParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; category_count: number }> =>
+    ): Promise<BulkProductCategoriesResult> =>
       this.request('POST', '/products/bulk_add_to_categories', { ...options, body: params }),
 
     /** Detach every product in `ids` from every category in `category_ids`. */
     bulkRemoveFromCategories: (
       params: ProductBulkCategoriesParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; category_count: number }> =>
+    ): Promise<BulkProductCategoriesResult> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
 
     /**
@@ -1442,49 +1451,49 @@ export class AdminClient {
     bulkAddToCollections: (
       params: ProductBulkCollectionsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; collection_count: number }> =>
+    ): Promise<BulkProductCollectionsResult> =>
       this.request('POST', '/products/bulk_add_to_collections', { ...options, body: params }),
 
     /** Detach every product in `ids` from every collection in `collection_ids`. */
     bulkRemoveFromCollections: (
       params: ProductBulkCollectionsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; collection_count: number }> =>
+    ): Promise<BulkProductCollectionsResult> =>
       this.request('POST', '/products/bulk_remove_from_collections', { ...options, body: params }),
 
     /** Publish every product in `ids` on every channel in `channel_ids`. */
     bulkAddToChannels: (
       params: ProductBulkChannelsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; channel_count: number }> =>
+    ): Promise<BulkProductChannelsResult> =>
       this.request('POST', '/products/bulk_add_to_channels', { ...options, body: params }),
 
     /** Unpublish every product in `ids` from every channel in `channel_ids`. */
     bulkRemoveFromChannels: (
       params: ProductBulkChannelsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; channel_count: number; removed: number }> =>
+    ): Promise<BulkProductChannelsResult> =>
       this.request('POST', '/products/bulk_remove_from_channels', { ...options, body: params }),
 
     /** Add each tag name to every product. Tags are upserted by name. */
     bulkAddTags: (
       params: BulkTagsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; tag_count: number }> =>
+    ): Promise<BulkProductTagsResult> =>
       this.request('POST', '/products/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every product. No-op for non-tagged. */
     bulkRemoveTags: (
       params: BulkTagsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number; tag_count: number }> =>
+    ): Promise<BulkProductTagsResult> =>
       this.request('POST', '/products/bulk_remove_tags', { ...options, body: params }),
 
     /** Soft-delete a list of products. */
     bulkDestroy: (
       params: ProductBulkDestroyParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number }> =>
+    ): Promise<BulkProductResult> =>
       this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
 
     media: {
@@ -2659,14 +2668,8 @@ export class AdminClient {
       this.request<void>('DELETE', `/delivery_methods/${id}`, options),
 
     /** Registered delivery calculator classes, each with the JSON Schema of its preferences. */
-    calculators: (
-      options?: RequestOptions,
-    ): Promise<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }> =>
-      this.request<{ data: Array<{ type: string; name: string; schema: PreferenceSchema }> }>(
-        'GET',
-        '/delivery_methods/calculators',
-        options,
-      ),
+    calculators: (options?: RequestOptions): Promise<{ data: CalculatorType[] }> =>
+      this.request<{ data: CalculatorType[] }>('GET', '/delivery_methods/calculators', options),
 
     /**
      * Registered fulfillment provider strategies plus the registered
@@ -2987,15 +2990,8 @@ export class AdminClient {
       this.request<{ data: IntegrationTypeDefinition[] }>('GET', '/integrations/types', options),
 
     /** Live connection check; nothing is persisted. */
-    test: (
-      id: string,
-      options?: RequestOptions,
-    ): Promise<{ connected: boolean; error_message: string | null }> =>
-      this.request<{ connected: boolean; error_message: string | null }>(
-        'POST',
-        `/integrations/${id}/test`,
-        options,
-      ),
+    test: (id: string, options?: RequestOptions): Promise<IntegrationConnectionResult> =>
+      this.request<IntegrationConnectionResult>('POST', `/integrations/${id}/test`, options),
   }
 
   // ============================================
@@ -3299,8 +3295,8 @@ export class AdminClient {
       /** `taggable_type` is the tagged resource's shorthand: `product`, `order` or `customer`. */
       params: { taggable_type: string; q?: string },
       options?: RequestOptions,
-    ): Promise<{ data: Array<{ name: string }> }> =>
-      this.request<{ data: Array<{ name: string }> }>('GET', '/tags', {
+    ): Promise<{ data: Tag[] }> =>
+      this.request<{ data: Tag[] }>('GET', '/tags', {
         ...options,
         params,
       }),
@@ -5469,8 +5465,8 @@ export class AdminClient {
       id: string,
       params: ChannelAddProductsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number }> =>
-      this.request<{ product_count: number }>('POST', `/channels/${id}/add_products`, {
+    ): Promise<BulkProductResult> =>
+      this.request<BulkProductResult>('POST', `/channels/${id}/add_products`, {
         ...options,
         body: params,
       }),
@@ -5480,8 +5476,8 @@ export class AdminClient {
       id: string,
       params: ChannelRemoveProductsParams,
       options?: RequestOptions,
-    ): Promise<{ product_count: number }> =>
-      this.request<{ product_count: number }>('POST', `/channels/${id}/remove_products`, {
+    ): Promise<BulkProductResult> =>
+      this.request<BulkProductResult>('POST', `/channels/${id}/remove_products`, {
         ...options,
         body: params,
       }),
@@ -6333,8 +6329,11 @@ export class AdminClient {
     list: (
       params?: EmailTemplateLanguageParams,
       options?: RequestOptions,
-    ): Promise<{ data: EmailTemplate[] }> =>
-      this.request<{ data: EmailTemplate[] }>('GET', '/email_templates', { ...options, params }),
+    ): Promise<PaginatedResponse<EmailTemplate>> =>
+      this.request<PaginatedResponse<EmailTemplate>>('GET', '/email_templates', {
+        ...options,
+        params,
+      }),
 
     /** One template in one language, with the draft (`expand: ['draft.updated_by']` names who saved it). */
     get: (
@@ -6613,8 +6612,8 @@ export class AdminClient {
   // ============================================
 
   readonly permissions = {
-    list: (options?: RequestOptions): Promise<{ data: Permission[]; meta: { count: number } }> =>
-      this.request<{ data: Permission[]; meta: { count: number } }>('GET', '/permissions', options),
+    list: (options?: RequestOptions): Promise<PaginatedResponse<Permission>> =>
+      this.request<PaginatedResponse<Permission>>('GET', '/permissions', options),
   }
 }
 

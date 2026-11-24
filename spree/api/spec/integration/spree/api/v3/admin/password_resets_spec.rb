@@ -35,7 +35,7 @@ RSpec.describe 'Admin Password Resets API', type: :request, swagger_doc: 'api-re
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) { { email: existing_admin.email } }
 
-        schema type: :object, properties: { message: { type: :string } }, required: %w[message]
+        schema '$ref' => '#/components/schemas/PasswordResetAcknowledgement'
 
         run_test! do |response|
           data = JSON.parse(response.body)

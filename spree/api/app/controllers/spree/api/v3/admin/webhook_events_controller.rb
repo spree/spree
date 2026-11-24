@@ -11,10 +11,7 @@ module Spree
           # GET /api/v3/admin/webhook_events
           def index
             authorize!(:show, Spree::WebhookEndpoint)
-            # The whole catalog on one page unless the caller asks for less:
-            # clients list every event to build a picker.
-            catalog = Spree::Events.catalog.webhook_events
-            @pagy, entries = pagy(:offset, catalog, limit: [catalog.size, 1].max)
+            entries = paginate_whole(Spree::Events.catalog.webhook_events)
 
             render json: {
               data: entries.map { |entry| serializer_class.new(entry).to_h },

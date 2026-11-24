@@ -99,7 +99,7 @@ RSpec.describe 'Admin Stock Levels API', type: :request, swagger_doc: 'api-refer
           }
         end
 
-        schema type: :object, properties: { stock_level_count: { type: :integer } }, required: %w[stock_level_count]
+        schema '$ref' => '#/components/schemas/BulkStockLevelResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['stock_level_count']).to eq(1)

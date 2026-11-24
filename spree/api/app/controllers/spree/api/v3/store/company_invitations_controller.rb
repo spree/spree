@@ -30,10 +30,7 @@ module Spree
           def show
             invitation = find_by_token!
 
-            render json: serialize_resource(invitation).merge(
-              'company_name' => invitation.company.name,
-              'store_name' => current_store.name
-            )
+            render json: serialize_resource(invitation)
           end
 
           # POST /api/v3/store/company_invitations/:token/accept
@@ -74,7 +71,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.company_invitation_serializer
+            Spree.api.company_invitation_details_serializer
           end
 
 

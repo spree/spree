@@ -25,7 +25,7 @@ module Spree
           def types
             authorize! :read, model_class
 
-            render json: { data: model_class.subclasses_with_preference_schema }
+            render json: { data: serialize_types(model_class.subclasses_with_preference_schema) }
           end
 
           protected
