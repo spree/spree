@@ -60,6 +60,9 @@ module SpreeAvalara
       # consumer refund, which declares VAT the sale never collected — the same
       # reasoning that keeps the tax code and exemption on every credit line.
       payload[:businessIdentificationNo] = tax_identifier.value if tax_identifier&.value.present?
+      # Reported under the locations the credited lines were sold from.
+      location_code = SpreeAvalara.reporting_location_code(order, return_items.map(&:line_item))
+      payload[:reportingLocationCode] = location_code if location_code
 
       payload
     end

@@ -147,6 +147,19 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     end
   end
 
+  describe 'the reporting location code' do
+    it 'is the one the credited lines were sold from' do
+      create(:stock_location, store: @default_store, default: true, country_code: 'US', state_code: 'CA',
+                              admin_name: 'WH-IRVINE')
+
+      expect(present.call[:reportingLocationCode]).to eq('WH-IRVINE')
+    end
+
+    it 'is omitted when no location has an admin name' do
+      expect(present.call).not_to have_key(:reportingLocationCode)
+    end
+  end
+
   describe 'the buyer registration' do
     let(:registration) { instance_double(Spree::TaxIdentifier, value: 'DE123456789') }
 

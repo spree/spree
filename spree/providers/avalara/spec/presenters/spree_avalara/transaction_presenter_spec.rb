@@ -72,6 +72,40 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
     end
   end
 
+  describe 'the reporting location code' do
+    def location(admin_name)
+      create(:stock_location, store: @default_store, country_code: 'US', state_code: 'CA', admin_name: admin_name)
+    end
+
+    it 'names the store location before any fulfillment exists' do
+      location('WH-IRVINE').update!(default: true)
+
+      expect(present[:reportingLocationCode]).to eq('WH-IRVINE')
+    end
+
+    it 'names every location the sale ships from, once each' do
+      west = location('WH-WEST')
+      east = location('WH-EAST')
+      items = [create(:fulfillment, cart: cart, order: nil, stock_location: west),
+               create(:fulfillment, cart: cart, order: nil, stock_location: east),
+               create(:fulfillment, cart: cart, order: nil, stock_location: west)]
+
+      expect(present(items: items)[:reportingLocationCode]).to eq('WH-WEST,WH-EAST')
+    end
+
+    it 'is omitted when no location has an admin name' do
+      location(nil).update!(default: true)
+
+      expect(present).not_to have_key(:reportingLocationCode)
+    end
+
+    it 'is cut to the length Avalara accepts' do
+      location('W' * 60).update!(default: true)
+
+      expect(present[:reportingLocationCode]).to eq('W' * 50)
+    end
+  end
+
   describe 'addresses' do
     it 'ships to the tax address rather than re-deriving one' do
       expect(present[:addresses][:shipTo]).to include(city: 'Seattle', region: 'WA', postalCode: '98109')

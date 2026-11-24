@@ -44,6 +44,8 @@ module SpreeAvalara
       payload[:code] = code if code.present?
       payload[:businessIdentificationNo] = tax_identifier.value if tax_identifier&.value.present?
       payload[:purchaseOrderNo] = owner.po_number if owner.po_number.present?
+      location_code = SpreeAvalara.reporting_location_code(owner, items)
+      payload[:reportingLocationCode] = location_code if location_code
 
       # `exemptionNo` here, `exemptionCode` on a line — see ItemPresenter for the
       # matrix. Each name is ignored at the other level, silently.

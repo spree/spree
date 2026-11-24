@@ -82,6 +82,23 @@ module SpreeAvalara
     owner.fulfillments.first&.stock_location || locations&.find_by(default: true) || locations&.first
   end
 
+  # Avalara's length limit for a reporting location code.
+  REPORTING_LOCATION_CODE_LIMIT = 50
+
+  # Which of the merchant's locations a document is reported under: the admin
+  # names of the locations its items ship from, read through the same origins
+  # the line-level shipFrom uses so the two cannot disagree.
+  #
+  # @param owner [Spree::Cart, Spree::Order]
+  # @param items [Array<Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ExchangeLineItem>]
+  # @return [String, nil] nil when no location has an admin name
+  def self.reporting_location_code(owner, items)
+    items = [nil] if items.blank?
+    names = items.filter_map { |item| origin_location(owner, item: item)&.admin_name.presence }.uniq
+
+    names.join(',').first(REPORTING_LOCATION_CODE_LIMIT).presence
+  end
+
   # The return, claim or exchange a post-sale line belongs to, whose number
   # keys the documents filed for it.
   #
