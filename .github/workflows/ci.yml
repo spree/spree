@@ -3,6 +3,9 @@ name: CI
 # Starts on every pull request, merge queue entry and push, so the two
 # required checks (backend, frontend) always report. Each suite runs only when
 # files it covers changed; a suite that was not needed counts as passing.
+#
+# The backend suite runs on PostgreSQL. MySQL runs nightly (backend-mysql.yml),
+# and here only for a change that adds a migration or cuts a release.
 on:
   push:
     branches: [main, '*-stable']
@@ -28,6 +31,9 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      # A release is a pull request from chore/release-<version>, then its
+      # squash merge on main, which release-on-merge.yml publishes from.
+      mysql: ${{ steps.filter.outputs.mysql == 'true' || startsWith(github.head_ref, 'chore/release-') || startsWith(github.event.head_commit.message, 'Released Spree ') }}
     steps:
       - uses: actions/checkout@v7
         if: github.event_name != 'pull_request'
@@ -42,6 +48,9 @@ jobs:
               - "spree/**"
               - ".github/workflows/ci.yml"
               - ".github/workflows/backend.yml"
+            mysql:
+              - "spree/**/db/migrate/**"
+              - ".github/workflows/backend-mysql.yml"
             frontend:
               - "packages/**"
               - ".changeset/**"
@@ -71,6 +80,12 @@ jobs:
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  backend-mysql-suite:
+    name: 'Backend (MySQL)'
+    needs: changes
+    if: needs.changes.outputs.mysql == 'true'
+    uses: ./.github/workflows/backend-mysql.yml
+
   frontend-suite:
     name: 'Frontend'
     needs: changes
@@ -81,7 +96,7 @@ jobs:
   # cancelled job in its suite, and passes when the suite passed or was skipped.
   backend:
     name: 'backend'
-    needs: [changes, backend-suite]
+    needs: [changes, backend-suite, backend-mysql-suite]
     if: always()
     runs-on: ubuntu-latest
     steps:

@@ -52,7 +52,7 @@ module Spree
 
           # POST /api/v3/store/newsletter_subscribers/verify
           def verify
-            token = params[:token]
+            token = string_param(:token)
 
             if token.blank?
               return render_error(
@@ -136,9 +136,10 @@ module Spree
           end
 
           def find_subscriber_by_unsubscribe_token
-            return if params[:token].blank?
+            token = string_param(:token)
+            return if token.blank?
 
-            subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by_token_for(:unsubscribe, params[:token])
+            subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by_token_for(:unsubscribe, token)
             subscriber if subscriber&.prefixed_id == params[:id]
           end
         end

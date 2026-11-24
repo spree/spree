@@ -195,5 +195,46 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
         expect(json_response['error']['code']).to eq('validation_error')
       end
     end
+
+    context 'without a password' do
+      it 'returns validation error and keeps the password' do
+        token = reset_token
+
+        expect {
+          patch :update, params: { id: token, password: '', password_confirmation: '' }
+        }.not_to change { user.reload.password_digest }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['token']).to be_nil
+      end
+    end
+
+    context 'with a confirmation sent as a hash' do
+      it 'returns validation error and keeps the password' do
+        token = reset_token
+
+        expect {
+          patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: { a: 'x' } }
+        }.not_to change { user.reload.password_digest }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
+
+    # `password[k]=x` arrives as a Hash, not a password.
+    context 'with a password sent as a hash' do
+      it 'returns validation error and keeps the password' do
+        token = reset_token
+
+        expect {
+          patch :update, params: { id: token, password: { a: 'x' }, password_confirmation: { a: 'x' } }
+        }.not_to change { user.reload.password_digest }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
   end
 end

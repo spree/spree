@@ -199,5 +199,39 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'reports a reset without a password, leaving the old one in place' do
+      token = reset_token
+
+      expect {
+        patch :update, params: { id: token }, as: :json
+      }.not_to change { seller_user.reload.password_digest }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
+
+    it 'reports a confirmation sent as a hash, leaving the old password in place' do
+      token = reset_token
+
+      expect {
+        patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: { a: 'x' } }, as: :json
+      }.not_to change { seller_user.reload.password_digest }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
+
+    # `password[k]=x` arrives as a Hash, not a password.
+    it 'reports a password sent as a hash' do
+      token = reset_token
+
+      expect {
+        patch :update, params: { id: token, password: { a: 'x' }, password_confirmation: { a: 'x' } }, as: :json
+      }.not_to change { seller_user.reload.password_digest }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
   end
 end

@@ -51,6 +51,20 @@ RSpec.describe Spree::Api::V3::Seller::StockLocationsController, type: :controll
       expect(json_response['name']).to eq('My Warehouse')
     end
 
+    # The shared form opens from this response and saves every field back, so
+    # a stored setting left out here would be shown off and then written off.
+    it 'returns every setting the shared form edits' do
+      mine.update!(admin_name: 'Internal', backorderable_default: true, propagate_all_variants: true,
+                   pickup_enabled: true, pickup_stock_policy: 'any', pickup_instructions: 'Ring the bell')
+
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      expect(json_response).to include(
+        'admin_name' => 'Internal', 'backorderable_default' => true, 'propagate_all_variants' => true,
+        'pickup_enabled' => true, 'pickup_stock_policy' => 'any', 'pickup_instructions' => 'Ring the bell'
+      )
+    end
+
     # 404 rather than 403: the caller must not learn whether it exists.
     it "404s on another seller's" do
       get :show, params: { id: theirs.prefixed_id }, as: :json
