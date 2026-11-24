@@ -1,10 +1,9 @@
 require 'spec_helper'
 
-# What Avalara actually returns, played back from cassettes the maintainer
-# records against a sandbox account. Every example here skips while its cassette
-# is absent, so the suite stays green until Phase 7 records them — and the moment
-# one exists, the claim it makes is checked against a real response rather than a
-# fixture somebody wrote.
+# What Avalara actually returns, played back from cassettes recorded against a
+# sandbox account, so each claim is checked against a real response rather than
+# a fixture somebody wrote. A missing cassette fails its example: VCR refuses the
+# unrecorded request.
 #
 # Recording: see the README. Never hand-author a cassette.
 RSpec.describe 'AvaTax API contract', :vcr do

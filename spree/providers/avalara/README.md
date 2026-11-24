@@ -116,8 +116,8 @@ bundle exec rspec
 ```
 
 The suite makes no network calls. Specs that assert what Avalara actually returns are backed by VCR
-cassettes recorded by the maintainer against a sandbox account, and skip themselves while their
-cassette is absent. To record:
+cassettes recorded by the maintainer against a sandbox account; a missing cassette fails its spec.
+To record:
 
 ```bash
 AVATAX_ACCOUNT_NUMBER=… AVATAX_LICENSE_KEY=… AVATAX_COMPANY_CODE=… VCR_RECORD_MODE=new_episodes bundle exec rspec spec/integration

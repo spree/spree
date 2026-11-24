@@ -60,31 +60,3 @@ VCR.configure do |c|
     interaction.response.body = JSON.generate(parsed)
   end
 end
-
-module SpreeAvalara
-  module CassetteSkipping
-    # Cassettes describe what Avalara actually returns, and only the maintainer
-    # can record them against a sandbox account. An example whose cassette has
-    # not been recorded yet skips rather than fails, so the suite stays green
-    # while the gem is built out.
-    def skip_without_cassette(name)
-      # While recording, an absent cassette is the point — skipping would make
-      # it impossible to ever create one.
-      return if VCR.configuration.default_cassette_options[:record] != :none
-      return if File.exist?(File.join(VCR.configuration.cassette_library_dir, "#{name}.yml"))
-
-      skip("cassette #{name}.yml has not been recorded yet")
-    end
-  end
-end
-
-RSpec.configure do |config|
-  config.include SpreeAvalara::CassetteSkipping
-
-  config.before(:each, :vcr) do |example|
-    metadata = example.metadata[:vcr]
-    name = metadata.is_a?(Hash) ? metadata[:cassette_name] : nil
-
-    skip_without_cassette(name) if name.present?
-  end
-end
