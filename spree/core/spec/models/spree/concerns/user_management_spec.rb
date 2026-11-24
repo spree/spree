@@ -41,6 +41,29 @@ describe Spree::UserManagement do
 
         expect(test_store.users.reload).not_to include(admin_user)
       end
+
+      context 'with invitations still pending for the user' do
+        # Sent before the account joined, as an invitation can't name a member.
+        let!(:pending_invitation) do
+          admin_user.role_users.destroy_all
+          invitation = create(:invitation, resource: test_store, role: role, email: admin_user.email.upcase)
+          test_store.add_user(admin_user)
+          invitation
+        end
+        let!(:other_invitation) { create(:invitation, resource: test_store, role: role) }
+        let!(:other_store_invitation) do
+          other_store = create(:store)
+          create(:invitation, resource: other_store, role: other_store.default_user_role, email: admin_user.email)
+        end
+
+        it 'revokes them, so they cannot rejoin by accepting one' do
+          test_store.remove_user(admin_user)
+
+          expect(Spree::Invitation.find_by(id: pending_invitation.id)).to be_nil
+          expect(other_invitation.reload).not_to be_deleted
+          expect(other_store_invitation.reload).not_to be_deleted
+        end
+      end
     end
 
     describe '#default_user_role' do
