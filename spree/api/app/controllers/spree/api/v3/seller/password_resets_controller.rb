@@ -75,9 +75,7 @@ module Spree
 
             # The confirmation goes in as sent: a malformed one has to fail to
             # match, where a nil one would skip the check.
-            unless user.update(password: password, password_confirmation: params[:password_confirmation])
-              return render_errors(user.errors)
-            end
+            return render_errors(user.errors) unless user.update(password: password, password_confirmation: params[:password_confirmation])
 
             user.publish_event('seller_user.password_reset')
 
