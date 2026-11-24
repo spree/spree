@@ -3375,7 +3375,11 @@
           "title": "Kunde bearbeiten",
           "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen.",
           "confirm_detach": "Diese Bestellung erscheint nicht mehr im Bestellverlauf und Konto des Kunden. Kunde entfernen?",
-          "detach": "Kunde entfernen"
+          "detach": "Kunde entfernen",
+          "confirm_change": "Diese Bestellung wird dem neuen Kunden zugeordnet.",
+          "confirm_change_to_guest": "Diese Bestellung wird zur Gastbestellung und verschwindet aus dem Bestellverlauf des Kunden.",
+          "confirm_change_releases_balance": "Guthaben und Geschenkkarten des bisherigen Kunden werden entfernt und ihm zurückgegeben, daher steigt der offene Betrag wieder.",
+          "change": "Kunde ändern"
         }
       },
       "edit": {
