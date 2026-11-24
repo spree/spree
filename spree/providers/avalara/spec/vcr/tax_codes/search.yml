@@ -1,0 +1,160 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/definitions/taxcodes?$filter=(taxCode%20contains%20%27clothing%27%20OR%20description%20contains%20%27clothing%27)%20AND%20isActive%20eq%20true&$orderBy=taxCode%20ASC&$top=50
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.8.3
+      X-Avalara-Client:
+      - SpreebyAVALARA_COMPANY;a0n0b00000PqwGxAAJ;6.0.5;RubySdk;26.8.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 24 Nov 2026 13:02:56 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '30774'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - b729f185-eedf-46c2-ab9a-bccf920838a7
+      X-Avalara-Uid:
+      - b729f185-eedf-46c2-ab9a-bccf920838a7
+      X-Avalara-Gateway-Pod:
+      - avagateway-cf5f77d9d-b6cvz
+      Content-Security-Policy:
+      - default-src 'none'; frame-ancestors 'none'; form-action 'none'
+    body:
+      encoding: UTF-8
+      string: '{"@recordsetCount":233,"value":[{"id":650181,"companyId":1,"taxCode":"PC020595","taxCodeTypeId":"P","description":"Clothing
+        And Related Products / Hydration packs","parentTaxCode":"P0000000","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2021-06-29T03:21:08.86Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Accessories
+        and supplies","hasParameters":true},{"id":38250,"companyId":1,"taxCode":"PC020598","taxCodeTypeId":"P","description":"Clothing
+        And Related Products - Youth Bicycle Helmets","parentTaxCode":"PC020000","isPhysical":true,"goodsServiceCode":0,"entityUseCode":"","isActive":true,"isSSTCertified":true,"createdDate":"2013-10-30T18:07:38.95Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Accessories
+        and supplies","hasParameters":true},{"id":5776600,"companyId":1,"taxCode":"PC020599","taxCodeTypeId":"P","description":"Clothing
+        and related products - Childrens Bicycle Helmet, described/labeled/marketed
+        for children 11 and under","parentTaxCode":"PC020598","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":false,"createdDate":"2026-04-01T02:55:24.513Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Accessories
+        and supplies","hasParameters":true},{"id":8108,"companyId":1,"taxCode":"PC030100","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-general","parentTaxCode":"PC030000","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8109,"companyId":1,"taxCode":"PC030101","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Aprons - household ","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8111,"companyId":1,"taxCode":"PC030103","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Athletic supporters","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8113,"companyId":1,"taxCode":"PC030105","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Bandanas","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8114,"companyId":1,"taxCode":"PC030106","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Bathing suits and caps","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8116,"companyId":1,"taxCode":"PC030108","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Belts and suspenders","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8117,"companyId":1,"taxCode":"PC030109","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Bibs","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8118,"companyId":1,"taxCode":"PC030110","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Boots","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8119,"companyId":1,"taxCode":"PC030111","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Coats and jackets","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8121,"companyId":1,"taxCode":"PC030113","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Coveralls","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8123,"companyId":1,"taxCode":"PC030115","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Dress shields","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8124,"companyId":1,"taxCode":"PC030116","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Ear muffs","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8125,"companyId":1,"taxCode":"PC030117","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Foot lets","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8126,"companyId":1,"taxCode":"PC030118","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Formal wear (not rented)","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8127,"companyId":1,"taxCode":"PC030119","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Galoshes","parentTaxCode":"PC030110","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8128,"companyId":1,"taxCode":"PC030120","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Garters and garter belts","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8129,"companyId":1,"taxCode":"PC030121","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Girdles","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8130,"companyId":1,"taxCode":"PC030122","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - cloth","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8131,"companyId":1,"taxCode":"PC030123","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - leather","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8132,"companyId":1,"taxCode":"PC030124","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - kid","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8133,"companyId":1,"taxCode":"PC030125","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - sheepskin","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8134,"companyId":1,"taxCode":"PC030126","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - fur","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8135,"companyId":1,"taxCode":"PC030127","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Gloves for general use - rubber","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8136,"companyId":1,"taxCode":"PC030128","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Golf clothing","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8137,"companyId":1,"taxCode":"PC030129","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Hats and caps","parentTaxCode":"PC030120","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8138,"companyId":1,"taxCode":"PC030130","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Hosiery","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8139,"companyId":1,"taxCode":"PC030131","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Insoles for shoes","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8141,"companyId":1,"taxCode":"PC030133","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Leather wearing apparel","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8142,"companyId":1,"taxCode":"PC030134","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Neckties","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8143,"companyId":1,"taxCode":"PC030135","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Nightgowns","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2005-11-23T20:32:41.42Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10307,"companyId":1,"taxCode":"PC030137","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Pantyhose","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.173Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10308,"companyId":1,"taxCode":"PC030138","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Ponchos","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.173Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10309,"companyId":1,"taxCode":"PC030139","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Prom dresses (not rented)","parentTaxCode":"PC030130","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.19Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10310,"companyId":1,"taxCode":"PC030140","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Rainwear","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.203Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10312,"companyId":1,"taxCode":"PC030142","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Sandals","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.22Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10313,"companyId":1,"taxCode":"PC030143","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Scarves","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.237Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10314,"companyId":1,"taxCode":"PC030144","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Shoes and shoe laces","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.25Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10315,"companyId":1,"taxCode":"PC030145","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Shoe inserts","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.25Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10316,"companyId":1,"taxCode":"PC030146","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Slippers","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.267Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10317,"companyId":1,"taxCode":"PC030147","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Sneakers","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.283Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10318,"companyId":1,"taxCode":"PC030148","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Socks and stockings","parentTaxCode":"PC030140","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.283Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10320,"companyId":1,"taxCode":"PC030150","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Suspenders","parentTaxCode":"PC030100","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.313Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10321,"companyId":1,"taxCode":"PC030151","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Tuxedos (not rentals)","parentTaxCode":"PC030150","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.33Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10322,"companyId":1,"taxCode":"PC030152","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Underwear","parentTaxCode":"PC030150","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.33Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10323,"companyId":1,"taxCode":"PC030153","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Uniform, non-athletic","parentTaxCode":"PC030150","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.347Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":10325,"companyId":1,"taxCode":"PC030155","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Wedding apparel (not rented)","parentTaxCode":"PC030150","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:59.36Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true},{"id":8975,"companyId":1,"taxCode":"PC030156","taxCodeTypeId":"P","description":"Clothing
+        And Related Products (Business-To-Business)-Work clothes (other)","parentTaxCode":"PC030150","isPhysical":true,"goodsServiceCode":0,"isActive":true,"isSSTCertified":true,"createdDate":"2006-01-24T04:59:32.977Z","createdUserId":0,"modifiedDate":"2026-09-17T14:02:45.41Z","modifiedUserId":0,"category":"Clothing","subCategory":"Clothing
+        business-to-business","hasParameters":true}],"@nextLink":"/api/v2/definitions/taxcodes?%24filter=(taxCode+contains+%27clothing%27+OR+description+contains+%27clothing%27)+AND+isActive+eq+true&%24orderBy=taxCode+ASC&%24top=50&%24skip=50"}'
+  recorded_at: Tue, 24 Nov 2026 13:02:56 GMT
+recorded_with: VCR 6.4.0

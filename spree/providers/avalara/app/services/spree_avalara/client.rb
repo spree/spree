@@ -17,6 +17,14 @@ module SpreeAvalara
     # 503, and the SDK retries that with backoff of its own.
     TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError].freeze
 
+    # Fields of Avalara's answers that identify the merchant's account rather
+    # than the sale; the ping names the account number as the user name.
+    UNLOGGED_FIELDS = %w[authenticatedAccountId authenticatedUserId authenticatedUserName accountId
+                         createdUserId modifiedUserId crmid].freeze
+
+    # How many tax codes one search returns; enough to pick from as you type.
+    TAX_CODE_SEARCH_LIMIT = 50
+
     attr_reader :account_number, :license_key, :endpoint, :company_code, :logging
 
     # @param account_number [String] AvaTax account number, sent as the username
@@ -71,11 +79,25 @@ module SpreeAvalara
     # @param code [String]
     # @return [Boolean]
     def company_exists?(code)
-      # OData quotes a literal with single quotes and escapes one by doubling it.
-      options = { '$filter' => "companyCode eq '#{code.to_s.gsub("'", "''")}'", '$top' => 1 }
+      options = { '$filter' => "companyCode eq #{odata_literal(code)}", '$top' => 1 }
       body = request(:query_companies, options) { avatax_client.query_companies(options) }
 
       Array(body['value']).any?
+    end
+
+    # Avalara's active tax codes whose code or description contains the query.
+    #
+    # @param query [String]
+    # @return [Array<Hash>] Avalara's tax code records
+    def list_tax_codes(query)
+      term = odata_literal(query)
+      options = {
+        '$filter' => "(taxCode contains #{term} OR description contains #{term}) AND isActive eq true",
+        '$top' => TAX_CODE_SEARCH_LIMIT,
+        '$orderBy' => 'taxCode ASC'
+      }
+
+      Array(request(:list_tax_codes, options) { avatax_client.list_tax_codes(options) }['value'])
     end
 
     # @param params [Hash] address parts (line1, city, region, postalCode, country)
@@ -178,14 +200,26 @@ module SpreeAvalara
     end
 
     # One line per call, for a merchant tracing what was sent and what came back.
-    # Bodies only: the credentials travel in the Authorization header.
+    # Bodies only, since the credentials travel in the Authorization header, and
+    # with the account's own identifiers taken out of the answers.
     def log_call(operation, payload, started, outcome:, response: nil)
       return unless logging
 
       duration = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - started) * 1000).round
       Rails.logger.info(
-        "[AVATAX] #{operation} #{outcome} #{duration}ms request=#{payload.to_json} response=#{response.to_json}"
+        "[AVATAX] #{operation} #{outcome} #{duration}ms request=#{payload.to_json} response=#{without_account(response).to_json}"
       )
+    end
+
+    def without_account(body)
+      @account_filter ||= ActiveSupport::ParameterFilter.new(UNLOGGED_FIELDS.map { |field| /\A#{field}\z/ })
+      body.is_a?(Hash) ? @account_filter.filter(body) : body
+    end
+
+    # OData quotes a literal with single quotes and escapes one inside it by
+    # doubling it.
+    def odata_literal(value)
+      "'#{value.to_s.gsub("'", "''")}'"
     end
 
     # AvaTax reports refusals two ways — an HTTP status and an `error` object in

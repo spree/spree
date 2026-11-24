@@ -179,6 +179,35 @@ RSpec.describe SpreeAvalara::Client do
     end
   end
 
+  describe '#list_tax_codes' do
+    let(:tax_codes_url) { %r{/api/v2/definitions/taxcodes\?} }
+
+    before do
+      stub_request(:get, tax_codes_url).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' },
+        body: { value: [{ taxCode: 'PC040100', description: 'Clothing and related products (B2C)' }] }.to_json
+      )
+    end
+
+    it 'searches active codes by code or description, a page at a time, in code order' do
+      expect(client.list_tax_codes('cloth')).to eq([{ 'taxCode' => 'PC040100', 'description' => 'Clothing and related products (B2C)' }])
+      expect(WebMock).to have_requested(:get, tax_codes_url).with(
+        query: hash_including(
+          '$filter' => "(taxCode contains 'cloth' OR description contains 'cloth') AND isActive eq true",
+          '$top' => '50', '$orderBy' => 'taxCode ASC'
+        )
+      )
+    end
+
+    it 'escapes a quote in the query' do
+      client.list_tax_codes("men's")
+
+      expect(WebMock).to have_requested(:get, tax_codes_url).with(
+        query: hash_including('$filter' => "(taxCode contains 'men''s' OR description contains 'men''s') AND isActive eq true")
+      )
+    end
+  end
+
   describe 'logging' do
     subject(:logging_client) do
       described_class.new(account_number: '2000000000', license_key: 'test_license_key',
@@ -205,6 +234,24 @@ RSpec.describe SpreeAvalara::Client do
       expect(line).to include('response={"status":"Cancelled"}')
       expect(line).not_to include('2000000000')
       expect(line).not_to include('test_license_key')
+    end
+
+    # The ping answers with the account number as the user name, and a company
+    # listing carries the account id on every company.
+    it "keeps the account's identifiers out of the logged answers" do
+      stub_ping(status: 200, body: { authenticated: true, authenticatedUserName: '2000000000',
+                                     authenticatedAccountId: 2_000_000_000 }.to_json)
+      stub_request(:get, %r{/api/v2/companies\?}).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' },
+        body: { value: [{ id: 1, accountId: 2_000_000_000, companyCode: 'DEFAULT' }] }.to_json
+      )
+
+      logging_client.ping
+      logging_client.company_exists?('DEFAULT')
+
+      expect(avatax_lines.size).to eq(2)
+      expect(avatax_lines).to all(satisfy { |line| !line.include?('2000000000') })
+      expect(avatax_lines.last).to include('"companyCode":"DEFAULT"')
     end
 
     it 'logs a refusal with the status Avalara answered' do

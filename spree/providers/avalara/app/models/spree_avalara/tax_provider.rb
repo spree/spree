@@ -14,6 +14,10 @@ module SpreeAvalara
     # would have worked is the wrong end of the contract.
     RETRYABLE_STATUSES = [408, 429].freeze
 
+    # Avalara's tax code catalogue changes rarely, and a merchant types several
+    # searches in a row while classifying a category.
+    TAX_CODES_EXPIRE_IN = 1.hour
+
     # AvaTax handles US local tax, reverse charge and proportional delivery tax
     # natively. EU one-stop-shop thresholds depend on the merchant's own Avalara
     # company profile rather than on this gem, so there is nothing here to warn
@@ -30,6 +34,51 @@ module SpreeAvalara
     # codes a merchant's exemption reasons should store.
     def self.exemption_reason_codes
       EntityUseCodes::ALL
+    end
+
+    # Avalara's own tax codes matching the query, for the tax category form.
+    # Nothing is searched with nothing connected.
+    #
+    # @see Spree::TaxProvider::Base.tax_codes
+    def self.tax_codes(store, query:)
+      integration = Integration.active_for(store)
+      return [] if integration.nil?
+
+      Rails.cache.fetch(['spree_avalara/tax_codes', integration.preferred_endpoint, query.downcase],
+                        expires_in: TAX_CODES_EXPIRE_IN) do
+        integration.client.list_tax_codes(query).map do |record|
+          { code: record['taxCode'], description: record['description'] }
+        end
+      end
+    rescue SpreeAvalara::Error => error
+      raise tax_failure(error)
+    end
+
+    # Which of core's two failures an AvaTax error is, decided by whether
+    # Avalara answered at all.
+    #
+    # No status means nothing was answered — the network, or a timeout — and a
+    # later attempt may well succeed. A 5xx is the same shape: Avalara's own
+    # fault, not the request's.
+    #
+    # Anything else is Avalara saying no to this particular request: an address
+    # it will not accept, a company code that does not exist. The service is
+    # working and retrying is pointless, so the caller must be able to tell the
+    # customer what was wrong instead of asking them to try again. Avalara's own
+    # message is carried across, because it names the problem better than
+    # anything this gem could invent.
+    #
+    # @param error [SpreeAvalara::Error]
+    # @return [Spree::Tax::ProviderError]
+    def self.tax_failure(error)
+      # A protocol violation carries no status at all, and lands as unavailable:
+      # the sale is refused either way, and telling a customer to correct an
+      # address when the response shape was wrong would send them nowhere.
+      status = error.try(:status).to_i
+      unavailable = error.try(:status).nil? || status >= 500 || RETRYABLE_STATUSES.include?(status)
+
+      failure = unavailable ? Spree::Tax::ProviderUnavailable : Spree::Tax::CalculationRefused
+      failure.new(error.message, provider_key: SpreeAvalara::PROVIDER_ID)
     end
 
     # Fails closed on a service failure — an Avalara that refuses or cannot be
@@ -86,12 +135,8 @@ module SpreeAvalara
     # @param order [Spree::Order]
     # @return [void]
     def commit(order)
-      integration = Integration.active_for(order.store)
-      # Nothing connected to file with. Reported rather than raised: refusing to
-      # complete an order the customer has already paid for is worse than a sale
-      # the merchant has to file by hand.
-      return report_disconnected(order) if integration.nil?
-      return unless integration.records_documents?
+      integration = filing_integration(order)
+      return if integration.nil?
 
       body = integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
@@ -116,12 +161,12 @@ module SpreeAvalara
     # @param order [Spree::Order]
     # @return [void]
     def void(order)
-      integration = Integration.active_for(order.store)
       # Nothing was ever filed through an integration that is not connected, so
-      # there is nothing to reverse. Unlike estimate, this does not fail closed:
-      # refusing to cancel an order because a tax service is unreachable helps
-      # nobody.
-      return if integration.nil? || !integration.records_documents?
+      # there is nothing to reverse and nothing to report. Unlike estimate, this
+      # does not fail closed: refusing to cancel an order because a tax service
+      # is unreachable helps nobody.
+      integration = filing_integration(order, report_missing: false)
+      return if integration.nil?
 
       integration.client.void_transaction(order.number)
     rescue SpreeAvalara::RequestError => error
@@ -186,9 +231,8 @@ module SpreeAvalara
       shipped = Array(items).select { |item| item.credited_quantity.to_i.positive? }
       return if shipped.empty?
 
-      integration = Integration.active_for(order.store)
-      return report_disconnected(order) if integration.nil?
-      return unless integration.records_documents?
+      integration = filing_integration(order)
+      return if integration.nil?
 
       integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
@@ -212,11 +256,8 @@ module SpreeAvalara
     # @param tax_date [Time, nil] the original supply date
     # @return [void]
     def refund(order, return_items, amount: nil, tax_date: nil)
-      integration = Integration.active_for(order.store)
-      # Nothing was filed through an integration that is not connected, so there
-      # is nothing to credit — the same reasoning as void.
-      return report_disconnected(order) if integration.nil?
-      return unless integration.records_documents?
+      integration = filing_integration(order)
+      return if integration.nil?
 
       presenter = RefundPresenter.new(
         order: order, integration: integration, return_items: return_items,
@@ -234,28 +275,20 @@ module SpreeAvalara
 
     private
 
-    # Which of core's two failures an AvaTax error is, decided by whether
-    # Avalara answered at all.
-    #
-    # No status means nothing was answered — the network, or a timeout — and a
-    # later attempt may well succeed. A 5xx is the same shape: Avalara's own
-    # fault, not the request's.
-    #
-    # Anything else is Avalara saying no to this particular request: an address
-    # it will not accept, a company code that does not exist. The service is
-    # working and retrying is pointless, so the caller must be able to tell the
-    # customer what was wrong instead of asking them to try again. Avalara's own
-    # message is carried across, because it names the problem better than
-    # anything this gem could invent.
     def tax_failure(error)
-      # A protocol violation carries no status at all, and lands as unavailable:
-      # the sale is refused either way, and telling a customer to correct an
-      # address when the response shape was wrong would send them nowhere.
-      status = error.try(:status).to_i
-      unavailable = error.try(:status).nil? || status >= 500 || RETRYABLE_STATUSES.include?(status)
+      self.class.tax_failure(error)
+    end
 
-      failure = unavailable ? Spree::Tax::ProviderUnavailable : Spree::Tax::CalculationRefused
-      failure.new(error.message, provider_key: SpreeAvalara::PROVIDER_ID)
+    # The integration to file a sale, void or credit with, or nil when nothing
+    # is to be filed: nothing is connected, or the merchant leaves recording to
+    # another system. A missing integration is reported rather than raised —
+    # refusing an order the customer has paid for is worse than a sale the
+    # merchant files by hand.
+    def filing_integration(order, report_missing: true)
+      integration = Integration.active_for(order.store)
+      report_disconnected(order) if integration.nil? && report_missing
+
+      integration if integration&.records_documents?
     end
 
     # A market calculating through Avalara with nothing connected produces no tax

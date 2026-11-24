@@ -74,6 +74,21 @@ RSpec.describe 'AvaTax API contract', :vcr do
     end
   end
 
+  describe 'the tax code search' do
+    before do
+      Rails.cache.clear
+      allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
+    end
+
+    it 'finds active codes by description', vcr: { cassette_name: 'tax_codes/search' } do
+      codes = SpreeAvalara::TaxProvider.tax_codes(@default_store, query: 'clothing')
+
+      expect(codes).not_to be_empty
+      expect(codes).to all(include(code: a_string_matching(/\A\w+\z/), description: be_present))
+      expect(codes.map { |code| code[:description] }).to include(a_string_matching(/clothing/i))
+    end
+  end
+
   describe 'estimate' do
     it 'prices a US sale line by line', vcr: { cassette_name: 'estimate/us_multi_line' } do
       cart = us_cart

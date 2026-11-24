@@ -286,6 +286,47 @@ RSpec.describe SpreeAvalara::TaxProvider do
     end
   end
 
+  describe '.tax_codes' do
+    before do
+      allow(client).to receive(:list_tax_codes).
+        and_return([{ 'taxCode' => 'PC040100', 'description' => 'Clothing and related products (B2C)' }])
+    end
+
+    it "answers Avalara's matching codes" do
+      expect(described_class.tax_codes(@default_store, query: 'Cloth')).to eq(
+        [{ code: 'PC040100', description: 'Clothing and related products (B2C)' }]
+      )
+      expect(client).to have_received(:list_tax_codes).with('Cloth')
+    end
+
+    it 'asks Avalara once for a search repeated while typing' do
+      # The dummy app runs on :null_store, so the cache needs a real store here.
+      allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
+      described_class.tax_codes(@default_store, query: 'Cloth')
+      described_class.tax_codes(@default_store, query: 'cloth')
+
+      expect(client).to have_received(:list_tax_codes).once
+    end
+
+    it 'searches nothing with nothing connected' do
+      allow(SpreeAvalara::Integration).to receive(:active_for).with(@default_store).and_return(nil)
+
+      expect(described_class.tax_codes(@default_store, query: 'cloth')).to eq([])
+      expect(client).not_to have_received(:list_tax_codes)
+    end
+
+    it 'reports an Avalara that cannot be reached as unavailable' do
+      allow(client).to receive(:list_tax_codes).and_raise(SpreeAvalara::RequestError.new('timeout', status: nil))
+
+      expect { described_class.tax_codes(@default_store, query: 'cloth') }.to raise_error(Spree::Tax::ProviderUnavailable)
+    end
+
+    it 'offers the search to the admin' do
+      expect(described_class.tax_code_lookup?).to be(true)
+    end
+  end
+
   describe '#commit' do
     let(:order) { create(:order, store: @default_store, completed_at: Time.current, ship_address: address, bill_address: address) }
     let!(:order_line) { create(:line_item, order: order, cart: nil, price: 100) }
