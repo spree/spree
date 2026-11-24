@@ -2468,7 +2468,10 @@
         },
         "tax_code": {
           "label": "税コード",
-          "placeholder": "外部の税プロバイダーのコード（Avalara など）"
+          "placeholder": "外部の税プロバイダーのコード（Avalara など）",
+          "search_placeholder": "コードを検索または入力",
+          "empty": "一致するコードはありません",
+          "typed": "このコードを使用"
         }
       },
       "tax_category_id": {

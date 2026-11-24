@@ -2486,7 +2486,10 @@
         },
         "tax_code": {
           "label": "رمز الضريبة",
-          "placeholder": "رمز مزود الضريبة الخارجي (Avalara، إلخ.)"
+          "placeholder": "رمز مزود الضريبة الخارجي (Avalara، إلخ.)",
+          "search_placeholder": "ابحث عن رمز أو اكتبه",
+          "empty": "لا توجد رموز مطابقة",
+          "typed": "استخدم هذا الرمز"
         }
       },
       "tax_category_id": {

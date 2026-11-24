@@ -71,3 +71,27 @@ export function useTaxProviders() {
     staleTime: Number.POSITIVE_INFINITY,
   })
 }
+
+/** Shorter queries match too much of a catalogue; the API answers them empty. */
+const TAX_CODE_SEARCH_MIN_LENGTH = 2
+
+/** Searches the tax codes of every engine named, in one list. */
+export function useTaxCodeSearch(providerIds: string[], query: string) {
+  return useQuery({
+    queryKey: useResourceKey('tax-codes', providerIds, query),
+    queryFn: async () => {
+      // One engine being down must not hide the codes the others found.
+      const answers = await Promise.allSettled(
+        providerIds.map((id) => adminClient.taxProviders.taxCodes(id, { q: query })),
+      )
+      const found = answers.flatMap((answer) =>
+        answer.status === 'fulfilled' ? answer.value.data : [],
+      )
+      const failure = answers.find((answer) => answer.status === 'rejected')
+      if (found.length === 0 && failure) throw failure.reason
+      return found
+    },
+    enabled: providerIds.length > 0 && query.length >= TAX_CODE_SEARCH_MIN_LENGTH,
+    staleTime: 5 * 60 * 1000,
+  })
+}

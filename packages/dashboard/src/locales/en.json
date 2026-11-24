@@ -2468,7 +2468,10 @@
         },
         "tax_code": {
           "label": "Tax code",
-          "placeholder": "External tax provider code (Avalara, etc.)"
+          "placeholder": "External tax provider code (Avalara, etc.)",
+          "search_placeholder": "Search codes or type one",
+          "empty": "No matching codes",
+          "typed": "Use this code"
         }
       },
       "tax_category_id": {
