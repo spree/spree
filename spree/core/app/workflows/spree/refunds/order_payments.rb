@@ -61,8 +61,9 @@ module Spree
       end
 
       # What the order can still give back, as store credit or to its
-      # payments. Store credit is recorded as refunds too, so this is simply
-      # what its payments can still refund.
+      # payments: what its payments can still refund, less credit issued
+      # before credit was recorded as refunds (see
+      # Spree::Order#unrecorded_store_credit_refund_total).
       #
       # The order row is locked first, so two settlements racing on one order
       # cannot both read the same headroom.
@@ -73,7 +74,7 @@ module Spree
       def refundable_balance(order, shares = nil)
         Spree::Order.lock.find(order.id)
 
-        (shares || refundable_shares(order)).values.sum(0.to_d)
+        (shares || refundable_shares(order)).values.sum(0.to_d) - order.unrecorded_store_credit_refund_total
       end
 
       # Puts `amount` back on `order`, oldest payment first, until it is

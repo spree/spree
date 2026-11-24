@@ -170,6 +170,30 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::Refund.where(originator: claim)).to be_empty
     end
 
+    # Credit issued before credit was recorded as refunds has no refund row
+    # until the upgrade backfills it; it still counts against the order.
+    context 'after store credit not yet recorded as refunds gave the order back' do
+      before { create(:store_credit, store: store, customer: order.customer, refunded_order: order, amount: order.total) }
+
+      it 'refuses more store credit' do
+        result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+        expect(result.error.value).to eq(:refund_exceeds_paid)
+        expect(Spree::StoreCredit.find_by(originator: claim)).to be_nil
+      end
+
+      it 'refuses a card refund' do
+        result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'original_payment')
+
+        expect(result.error.value).to eq(:refund_exceeds_paid)
+        expect(Spree::Refund.where(originator: claim)).to be_empty
+      end
+
+      it 'leaves the order reading refunded' do
+        expect { order.update_statuses! }.to change { order.reload.payment_status }.to('refunded')
+      end
+    end
+
     it 'ships a replacement' do
       claim = create(:approved_claim, store: store, order: order, send_replacement: true)
       claim.claim_line_items.each { |line| line.variant.stock_levels.first&.set_count_on_hand(10) }

@@ -241,6 +241,16 @@ module Spree
           expect(order.payment_state).to eq('refunded')
         end
 
+        # Until the upgrade backfills it, credit issued before credit was
+        # recorded as refunds counts on its own.
+        it 'is refunded when all of it came back as credit not yet recorded as refunds' do
+          create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order_total)
+
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('refunded')
+        end
+
         it 'ignores credit that settles no order' do
           create(:store_credit, store: order.store, customer: order.customer, amount: order_total)
 

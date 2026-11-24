@@ -705,8 +705,10 @@ exchange](/developer/core-concepts/returns-exchanges-claims) — is a refund too
 It is recorded against the order's payments, oldest first, and names the credit
 in `store_credit_id`; no money goes back through the payment's provider. It
 counts like any other refund: what the payment can still refund, the order's
-`payment_status`, and a marketplace seller's earnings. A credit's amount cannot
-change once it is issued; deleting an unspent one marks its refunds `failed`.
+`payment_status`, and a marketplace seller's earnings. It fires the same
+`refund.created` and `payment.refunded` events and refund hooks. A credit's
+amount cannot change once it is issued; deleting an unspent one marks its
+refunds `failed`.
 
 ## Payment Sources
 

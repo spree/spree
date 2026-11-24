@@ -33,8 +33,8 @@ module Spree
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     # The refund rows that record this credit as money an order gave back —
-    # one per payment it was drawn against. Kept when the credit is withdrawn:
-    # Spree::StoreCreditRefundSubscriber marks them failed instead.
+    # one per payment it was drawn against. Kept when the credit is withdrawn,
+    # and marked failed instead (see #withdraw_refunds).
     has_many :refunds, class_name: 'Spree::Refund', inverse_of: :store_credit, dependent: nil
     has_many :payments, as: :source, class_name: 'Spree::Payment'
     has_many :orders, through: :payments, class_name: 'Spree::Order'
@@ -108,6 +108,8 @@ module Spree
 
     after_save :store_event
     before_destroy :validate_no_amount_used
+    before_destroy :withdraw_refunds
+    after_commit :announce_withdrawn_refunds, on: :destroy
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
@@ -340,11 +342,48 @@ module Spree
       errors.add(:amount, :refunded) if amount_changed? && refunds.exists?
     end
 
+    # Also refused while part of it is authorized on a cart: that cart could
+    # still capture it once deleted.
     def validate_no_amount_used
       if amount_used > 0
         errors.add(:amount_used, :greater_than_zero_restrict_delete)
         throw(:abort)
+      elsif amount_authorized.positive?
+        errors.add(:amount_authorized, :greater_than_zero_restrict_delete)
+        throw(:abort)
       end
+    end
+
+    # A credit withdrawn before it was spent gave the order nothing back after
+    # all, so the refunds that recorded it fail — in the same transaction, so
+    # they cannot be left standing. Not when the credit goes with its
+    # customer: that money was given back, and the refunds stand.
+    def withdraw_refunds
+      return if destroyed_by_association
+
+      @withdrawn_refunds = refunds.not_failed.includes(:order).to_a
+      @withdrawn_refunds.each do |refund|
+        refund.update!(status: 'failed', failure_reason: I18n.t('spree.store_credit_withdrawn'))
+      end
+      @withdrawn_refunds.filter_map(&:order).uniq.each { |order| refresh_refunded_order(order) }
+    end
+
+    # What refund.failed would move, moved here so it cannot be skipped: each
+    # share's refunded figure, the order's payment total and its statuses.
+    def refresh_refunded_order(order)
+      order.payment_splits.each do |split|
+        refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: order.id).sum(:amount)
+        split.update!(refunded_amount: refunded)
+      end
+      order.refresh_payment_total!
+      order.update_statuses!
+    end
+
+    # Announced once committed, so the split share and the order's payment
+    # total and status follow, as for any refund that failed.
+    def announce_withdrawn_refunds
+      Array(@withdrawn_refunds).each { |refund| refund.publish_event('refund.failed') }
+      @withdrawn_refunds = nil
     end
   end
 end

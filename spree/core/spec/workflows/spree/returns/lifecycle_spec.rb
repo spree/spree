@@ -397,6 +397,19 @@ RSpec.describe 'Spree::Returns workflows' do
         end
       end
 
+      # Credit issued before credit was recorded as refunds has no refund row
+      # until the upgrade backfills it, and still counts against the order.
+      it 'refuses a return once credit not yet recorded as refunds gave the order back' do
+        order = return_record.order
+        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store,
+                              amount: order.payments.completed.sum(:amount))
+
+        result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(result.error.value).to eq(:refund_exceeds_paid)
+        expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
+      end
+
       # The credit is a refund against the card's payment, so the card's own
       # balance leaves out what the order already gave back (V-3832).
       it 'leaves the card only what the credit did not give back' do

@@ -74,8 +74,9 @@ module Spree
     end
     alias display_amount money
 
+    # What the money went back as: the payment's method, or store credit.
     def description
-      payment.payment_method.name
+      to_store_credit? ? I18n.t('spree.store_credit_name') : payment.payment_method.name
     end
 
     # @return [Boolean] whether the money went back as store credit

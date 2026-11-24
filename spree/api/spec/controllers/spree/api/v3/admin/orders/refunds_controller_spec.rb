@@ -83,5 +83,25 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
         expect(json_response['data'].first['amount']).to eq(Spree::Money::Rounding.format(credited, 'USD'))
       end
     end
+
+    # Credit issued before credit was recorded as refunds has no refund row
+    # until the upgrade backfills it; it still bounds a card refund (V-3832).
+    context 'after store credit not yet recorded as refunds gave the whole order back' do
+      before do
+        create(:store_credit, refunded_order: order, customer: order.customer, store: store, amount: payment.amount)
+      end
+
+      it 'refuses a card refund and records nothing' do
+        expect {
+          post :create, params: {
+            order_id: order.prefixed_id, payment_id: payment.prefixed_id,
+            amount: Spree::Money::Rounding.format(payment.amount, 'USD')
+          }, as: :json
+        }.not_to change(Spree::Refund, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(I18n.t('spree.refund_exceeds_order_balance'))
+      end
+    end
   end
 end

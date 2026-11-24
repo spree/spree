@@ -194,6 +194,15 @@ module Spree
         expect(payment.reload).to be_void
       end
 
+      it 'refunds instead of voiding when store credit not yet recorded as refunds gave part back' do
+        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+
+        subject.call(order: order, canceler: user, refund_payments: true)
+
+        expect(payment.reload).not_to be_void
+        expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
+      end
+
       # A void releases the whole charge, so a partly refunded one would give
       # back again what its refunds already returned. Only the rest goes back.
       it 'refunds only the remainder of a partly refunded charge instead of voiding it' do
@@ -254,6 +263,16 @@ module Spree
           subject.call(order: order, canceler: user, refund_payments: true)
 
           expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 10)
+        end
+
+        # Credit issued before credit was recorded as refunds has no refund
+        # row until the upgrade backfills it; it still counts against the order.
+        it 'refunds to the card only what store credit not yet recorded as refunds left' do
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
         end
       end
 
@@ -346,12 +365,15 @@ module Spree
         expect(credit_payment.reload).to be_void
       end
 
-      it 'keeps the payment once a return gave part of it back as store credit' do
+      # Voiding would release all of it again; only the rest goes back.
+      it 'refunds only the rest of the payment once a return gave part of it back as store credit' do
         give_back_as_store_credit(order, 20)
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
 
         subject.call(order: order, canceler: user)
 
         expect(credit_payment.reload).to be_completed
+        expect(credit_payment.refunds.to_original_payment.sum(:amount)).to eq(credit_payment.amount - 20)
       end
     end
 

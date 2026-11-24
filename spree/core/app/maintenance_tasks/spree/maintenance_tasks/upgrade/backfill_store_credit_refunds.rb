@@ -10,9 +10,12 @@ module Spree
       #
       # The rows record money that already went back, so no events are
       # published: nothing is sent to a gateway, a webhook or a seller's
-      # earnings. A credit larger than what its order's payments can still
-      # refund is recorded as far as they allow and counted under
-      # `credits_partly_unallocated` for the operator to review.
+      # earnings, and the rows carry no tax figure. A credit larger than what
+      # its order's payments can still refund is recorded as far as they allow
+      # and counted under `credits_partly_unallocated`; one they cannot take at
+      # all is counted under `credits_unallocatable` on every run. Whatever is
+      # left unrecorded is still counted against the order (see
+      # Spree::Order#unrecorded_store_credit_refund_total).
       class BackfillStoreCreditRefunds < Spree::MaintenanceTask
         supports_dry_run
         collection_batch_size 500
@@ -28,18 +31,20 @@ module Spree
           order = credit.refunded_order
           return tally(:credits_without_order) if order.nil?
 
+          # One transaction for the rows and the figures they move, so a
+          # failure leaves neither behind.
           unallocated = Spree::Events.disable do
             ApplicationRecord.transaction do
               Spree::Order.lock.find(order.id) unless dry_run?
-              record_refunds(credit, order)
+              record_refunds(credit, order).tap do |left|
+                refresh_order(order) unless dry_run? || left == credit.amount.to_d
+              end
             end
           end
-          tally(dry_run? ? :credits_partly_unallocatable : :credits_partly_unallocated) if unallocated.positive?
+          return tally(:credits_unallocatable) if unallocated == credit.amount.to_d
 
-          return tally(:credits_would_backfill) if dry_run?
-
-          tally(:credits_backfilled)
-          refresh_order(order)
+          tally(dry_run? ? :credits_would_be_partly_unallocated : :credits_partly_unallocated) if unallocated.positive?
+          tally(dry_run? ? :credits_would_backfill : :credits_backfilled)
         end
 
         private
@@ -52,14 +57,24 @@ module Spree
           refundable_shares(order).each do |payment, refundable|
             break unless remaining.positive?
 
-            amount = [refundable, remaining].min
+            amount = [refundable - previewed[[order.id, payment.id]], remaining].min
             next unless amount.positive?
 
-            write_refund(credit, order, payment, amount, reason) unless dry_run?
+            if dry_run?
+              previewed[[order.id, payment.id]] += amount
+            else
+              write_refund(credit, order, payment, amount, reason)
+            end
             remaining -= amount
           end
 
           remaining
+        end
+
+        # What a dry run has already set aside on each payment, so two credits
+        # of one order competing for it preview as they would run.
+        def previewed
+          @previewed ||= Hash.new(0.to_d)
         end
 
         def write_refund(credit, order, payment, amount, reason)
@@ -83,7 +98,9 @@ module Spree
           return order.payments.completed.order(:created_at).index_with { |payment| payment.credit_allowed.to_d } unless order.grouped?
 
           order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, shares|
-            shares[split.payment] = split.refundable_amount if split.payment&.completed?
+            next unless split.payment&.completed? && !split.capture_in_flight?
+
+            shares[split.payment] = split.refundable_amount
           end
         end
 

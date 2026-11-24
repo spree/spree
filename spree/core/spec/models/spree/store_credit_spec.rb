@@ -85,6 +85,49 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe 'withdrawing a credit' do
+    let(:order) { create(:completed_order_with_totals) }
+    let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+    # A cart holding the authorization could still capture it once deleted.
+    it 'is refused while part of it is authorized on a cart' do
+      credit = create(:store_credit, amount: 10, amount_authorized: 5)
+
+      expect(credit.destroy).to be(false)
+      expect(credit.reload).not_to be_deleted
+    end
+
+    context 'when it was issued as a refund' do
+      let!(:credit) { give_back_as_store_credit(order, 10) }
+
+      it 'fails its refunds in the same transaction, so the payment can give the money back again' do
+        credit.destroy!
+
+        refund = credit.refunds.sole
+        expect(refund).to be_failed
+        expect(refund.failure_reason).to eq(I18n.t('spree.store_credit_withdrawn'))
+        expect(payment.reload.credit_allowed).to eq(payment.amount)
+      end
+
+      it 'announces each failed refund once committed' do
+        refund = credit.refunds.sole
+        expect_any_instance_of(Spree::Refund).to receive(:publish_event).with('refund.failed') do |instance|
+          expect(instance.id).to eq(refund.id)
+        end
+
+        credit.destroy!
+      end
+
+      # The money was given back; the customer going does not undo that.
+      it 'keeps its refunds when it goes with its customer' do
+        credit.destroyed_by_association = Spree.customer_class.reflect_on_association(:store_credits)
+        credit.destroy!
+
+        expect(credit.refunds.sole.reload).to be_completed
+      end
+    end
+  end
+
   describe '.oldest_first' do
     it 'orders credits by issue time, oldest first' do
       newer = create(:store_credit, created_at: 1.day.ago)

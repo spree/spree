@@ -953,7 +953,10 @@ steps:
       first. It publishes no events: no webhook, gateway call or seller
       earnings reversal follows. A credit larger than what its order's
       payments can still refund is recorded as far as they allow and counted
-      under `credits_partly_unallocated`.
+      under `credits_partly_unallocated`; one they cannot take at all is
+      counted under `credits_unallocatable`. Until it runs, and for anything
+      it cannot record, the credit is still counted against its order, so the
+      same money cannot go back twice.
 
       Stores already on 6.0 run it after updating to that patch release, with
       `spree upgrade --step backfill_store_credit_refunds`.

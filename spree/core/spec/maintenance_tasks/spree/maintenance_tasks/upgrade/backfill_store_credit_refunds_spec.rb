@@ -48,10 +48,31 @@ RSpec.describe Spree::MaintenanceTasks::Upgrade::BackfillStoreCreditRefunds do
     expect(Spree::Events).not_to have_received(:publish).with(/\Arefund\.|\Apayment\.refunded/, any_args)
   end
 
+  it 'reports a credit no payment can take, and writes nothing for it' do
+    create(:refund, payment: card, amount: 30)
+    create(:refund, payment: second_card, amount: 20)
+
+    run = run_task
+
+    expect(credit.refunds).to be_empty
+    expect(run.tallies).to include('credits_unallocatable' => 1)
+    expect(run.tallies).not_to have_key('credits_backfilled')
+  end
+
   it 'changes nothing on a second run' do
     run_task
 
     expect { run_task }.not_to change(Spree::Refund, :count)
+  end
+
+  # The second credit finds only what the first left, as it would in a real run.
+  it 'previews two credits competing for the same payments as a run would record them' do
+    create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 30)
+
+    run = run_task(dry_run: true)
+
+    expect(Spree::Refund.count).to eq(0)
+    expect(run.tallies).to include('credits_would_backfill' => 2, 'credits_would_be_partly_unallocated' => 1)
   end
 
   it 'reports without writing in a dry run' do

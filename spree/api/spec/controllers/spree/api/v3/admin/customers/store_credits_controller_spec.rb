@@ -167,7 +167,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
       before { create(:refund, store_credit: store_credit, amount: 10) }
 
       it 'rejects amount changes with 422' do
-        patch :update, params: { customer_id: customer.prefixed_id, id: store_credit.prefixed_id, amount: 100.00 }, as: :json
+        patch :update, params: { customer_id: customer.prefixed_id, id: store_credit.prefixed_id, amount: '100.00' }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(store_credit.reload.amount).to eq(50)
@@ -189,6 +189,18 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
         delete :destroy, params: { customer_id: customer.prefixed_id, id: store_credit.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    # A cart holding the authorization could still capture it once deleted.
+    context 'when part of the store credit is authorized on a cart' do
+      before { store_credit.update_column(:amount_authorized, 10.00) }
+
+      it 'returns 422 and keeps the credit' do
+        delete :destroy, params: { customer_id: customer.prefixed_id, id: store_credit.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(store_credit.reload).not_to be_deleted
       end
     end
   end

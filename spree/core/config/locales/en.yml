@@ -428,6 +428,7 @@ en:
               refunded: cannot change on credit issued as a refund. Withdraw it and issue a new one instead.
             amount_authorized:
               exceeds_total_credits: Exceeds total credits.
+              greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit while it is being spent.
             amount_used:
               cannot_be_greater_than_amount: Cannot be greater than amount.
               greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.

@@ -282,8 +282,26 @@ so the payment cannot give the same money back again by card or when the order
 is canceled. This writes those refunds for credit issued before that change,
 oldest payment first, without sending webhooks or reversing seller earnings. A
 credit larger than what the order's payments can still refund is recorded as
-far as they allow and counted under `credits_partly_unallocated`. It supports a
-preview and is safe to re-run.
+far as they allow and counted under `credits_partly_unallocated`, and one they
+cannot take at all under `credits_unallocatable`. It supports a preview and is
+safe to re-run. Until it runs, and for any part it cannot record, the credit is
+still counted against its order, so nothing can be given back twice meanwhile.
+
+What changes for integrations:
+
+- Giving back store credit now also creates refunds, so `refund.created` and
+  `payment.refunded` webhooks and subscribers, and handlers registered on the
+  `refunds.create` hooks, run for it too. Those hooks run inside the
+  transaction of the return, claim or exchange. A refund paid as store credit
+  carries `store_credit_id`, and its `transaction_id` is the credit's id; no
+  payment provider is called.
+- On a marketplace, a store-credit refund on a seller's order reverses the
+  seller's earnings, as a refund to the card does. Withdrawing the credit later
+  fails its refunds but does not restore the earnings, the same as a provider
+  refund that fails after completing.
+- A credit issued as a refund cannot change amount. Deleting an unspent one
+  marks its refunds `failed`; a credit that is used, or authorized on a cart,
+  cannot be deleted.
 
 ### Move users onto the Customer and AdminUser models
 
