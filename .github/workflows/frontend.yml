@@ -255,25 +255,48 @@ jobs:
       - name: Build SDK dependencies
         run: pnpm turbo build --filter=@spree/sdk-core
 
+      # Same cached test app as the dashboard E2E job; see there.
+      - name: Restore dummy Rails app
+        id: dummy-app
+        uses: actions/cache/restore@v6
+        with:
+          path: spree/api/spec/dummy
+          key: dummy-app-v1-${{ runner.os }}-sqlite3-${{ hashFiles('spree/api/Gemfile.lock', 'spree/**/db/migrate/**', 'spree/**/lib/generators/**', 'spree/core/lib/spree/testing_support/*_rake.rb', 'spree/api/Rakefile', '!spree/**/spec/dummy/**') }}
+
       - name: Setup test app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
         working-directory: spree/api
         run: bundle exec rake test_app
+
+      # A second check before the app is saved for every later run: it boots
+      # and holds every migration, applied.
+      - name: Check dummy Rails app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
+        working-directory: spree/api
+        run: bundle exec spec/dummy/bin/rails runner 'ActiveRecord::Migration.check_all_pending!; abort("The dummy app has no Spree tables") unless Spree::Store.table_exists?'
+
+      - name: Save dummy Rails app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: spree/api/spec/dummy
+          key: ${{ steps.dummy-app.outputs.cache-primary-key }}
 
       - name: Run SDK integration tests
         working-directory: packages/sdk
         run: pnpm test:integration
 
   dashboard-e2e:
-    name: 'Dashboard E2E (${{ matrix.shard }}/4)'
+    name: 'Dashboard E2E (${{ matrix.shard }}/5)'
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
-    # workers against one backend would. Playwright distributes spec files
-    # across shards; within a shard the suite stays serial (workers: 1).
+    # workers against one backend would. e2e/shard.mjs distributes spec files
+    # across shards by size; within a shard the suite stays serial (workers: 1).
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5]
     env:
       RAILS_ENV: test
       DB: sqlite3
@@ -293,15 +316,17 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      # Same Turbo cache as the check job — unchanged packages restore their
-      # build outputs instead of rebuilding per shard.
+      # A Turbo cache of its own. The build below sets VITE_E2E_SLOT_PROBES, so
+      # its outputs differ from the check job's, and the check job finishes
+      # first and takes the shared key: on that key the shards rebuilt four of
+      # eight packages on every run.
       - name: Cache Turbo
         uses: actions/cache@v6
         with:
           path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
+          key: turbo-e2e-${{ runner.os }}-${{ github.sha }}
           restore-keys: |
-            turbo-${{ runner.os }}-
+            turbo-e2e-${{ runner.os }}-
 
       - run: pnpm install --frozen-lockfile
 
@@ -323,9 +348,35 @@ jobs:
           VITE_E2E_SLOT_PROBES: '1'
         run: pnpm turbo build --filter=@spree/dashboard --filter=@spree/seller-dashboard-starter --cache-dir=.turbo
 
+      # The test app is generated: it changes only with the migrations, the
+      # generators and the gem versions that build it, so later runs restore
+      # it. It is saved straight after it is built, before a test run writes
+      # its own database and initializers into it.
+      - name: Restore dummy Rails app
+        id: dummy-app
+        uses: actions/cache/restore@v6
+        with:
+          path: spree/api/spec/dummy
+          key: dummy-app-v1-${{ runner.os }}-sqlite3-${{ hashFiles('spree/api/Gemfile.lock', 'spree/**/db/migrate/**', 'spree/**/lib/generators/**', 'spree/core/lib/spree/testing_support/*_rake.rb', 'spree/api/Rakefile', '!spree/**/spec/dummy/**') }}
+
       - name: Setup dummy Rails app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
         working-directory: spree/api
         run: bundle exec rake test_app
+
+      # A second check before the app is saved for every later run: it boots
+      # and holds every migration, applied.
+      - name: Check dummy Rails app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
+        working-directory: spree/api
+        run: bundle exec spec/dummy/bin/rails runner 'ActiveRecord::Migration.check_all_pending!; abort("The dummy app has no Spree tables") unless Spree::Store.table_exists?'
+
+      - name: Save dummy Rails app
+        if: steps.dummy-app.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: spree/api/spec/dummy
+          key: ${{ steps.dummy-app.outputs.cache-primary-key }}
 
       # Cache the chromium download (~85MB). The cache key tracks the
       # Playwright version pinned in lockfile, so a bump auto-invalidates.
@@ -354,11 +405,22 @@ jobs:
         working-directory: packages/dashboard
         run: pnpm exec playwright install-deps chromium
 
+      # The assignment stops the step when shard.mjs fails; with no file
+      # arguments the whole suite would run on every shard. The array keeps
+      # each line as one argument.
       - name: Run dashboard E2E tests
         working-directory: packages/dashboard
         env:
           E2E_PREVIEW: '1'
-        run: pnpm test:e2e --shard=${{ matrix.shard }}/4
+        run: |
+          list=$(node e2e/shard.mjs ${{ matrix.shard }} ${{ strategy.job-total }})
+          mapfile -t specs <<< "$list"
+          pnpm test:e2e "${specs[@]}"
+
+      - name: Print spec timings
+        if: ${{ !cancelled() }}
+        working-directory: packages/dashboard
+        run: node e2e/spec-timings.mjs test-results/report.json
 
       # First-run setup needs a stack with no admin, which the main suite's
       # never has — it brings up its own Rails and database. One shard is

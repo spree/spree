@@ -11,11 +11,15 @@ module Spree
   class BaseJob < ApplicationJob
     queue_as Spree.queues.default
 
-    retry_on ActiveRecord::Deadlocked,
-             ActiveRecord::LockWaitTimeout,
-             ActiveRecord::ConnectionNotEstablished,
-             ActiveRecord::ConnectionFailed,
-             wait: :polynomially_longer, attempts: 5
+    # Infrastructure errors that clear up on their own, so every job retries them.
+    TRANSIENT_ERRORS = [
+      ActiveRecord::Deadlocked,
+      ActiveRecord::LockWaitTimeout,
+      ActiveRecord::ConnectionNotEstablished,
+      ActiveRecord::ConnectionFailed
+    ].freeze
+
+    retry_on(*TRANSIENT_ERRORS, wait: :polynomially_longer, attempts: 5)
     retry_on ActiveRecord::RecordNotFound, wait: 2.seconds, attempts: 3
 
     discard_on ActiveJob::DeserializationError

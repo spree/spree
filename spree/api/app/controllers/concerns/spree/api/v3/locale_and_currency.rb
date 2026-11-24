@@ -163,7 +163,7 @@ module Spree
         #
         # @return [String, nil]
         def currency_from_params
-          params[:currency].presence
+          string_param(:currency).presence
         end
 
         # Resolves the market from the +x-spree-country+ header or +params[:country]+.
