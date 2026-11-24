@@ -22,6 +22,8 @@ module Spree
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
+    # A deleted market reads as none, so ensure_market_presence resolves a live one.
+    belongs_to :market, class_name: 'Spree::Market'
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
     include Spree::Purchase::CheckoutSteps
