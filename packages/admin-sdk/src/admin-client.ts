@@ -267,13 +267,14 @@ export type ReportingQuery = {
 }
 
 export interface ReportingMetricValue {
-  value: number
+  /** A decimal string for money, decimal and percent metrics (`"110.00"`); a number for integer metrics. */
+  value: string | number
   /** Formatted money string — present on money metrics only. */
   display?: string
-  /** Present when the query requested a comparison. */
-  previous?: number
-  /** Percentage change vs the previous period; null when there is no baseline. */
-  growth?: number | null
+  /** Present when the query requested a comparison; the same shape as `value`. */
+  previous?: string | number
+  /** Percentage change vs the previous period, as a decimal string (`"12.5"`); null when there is no baseline. */
+  growth?: string | null
 }
 
 /** Hydrated display payload for lookup-backed dimensions. */
