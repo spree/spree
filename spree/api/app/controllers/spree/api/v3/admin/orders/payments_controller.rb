@@ -31,7 +31,9 @@ module Spree
             # The source must belong to the customer assigned to the order.
             def create
               with_order_lock do
-                payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
+                # Holding the payments key is what lets a staffer pick any of the
+                # store's payment methods; reading their settings is not needed.
+                payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
                 # The default is what the order still owes beside the payments
                 # already recorded, which is nothing once they cover it — a zero
                 # payment is refused the same way a zero amount is.
