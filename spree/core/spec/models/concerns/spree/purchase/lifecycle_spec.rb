@@ -30,20 +30,16 @@ RSpec.shared_examples 'a purchase lifecycle host' do
   end
 
   describe '#backordered?' do
-    it 'reflects backordered fulfillments' do
-      record = new_record
-      allow(record).to receive(:fulfillments).and_return(
-        [double(canceled?: false, backordered?: false), double(canceled?: false, backordered?: true)]
-      )
-
-      expect(record).to be_backordered
-    end
-
-    it 'ignores a canceled fulfillment' do
-      record = new_record
-      allow(record).to receive(:fulfillments).and_return([double(canceled?: true, backordered?: true)])
+    it 'reflects backordered items on fulfillments that are still going out' do
+      record = new_record_with_line_items
+      live = create_fulfillment(record)
+      canceled = create_fulfillment(record, status: 'canceled')
+      item = create(:fulfillment_item, fulfillment: canceled, line_item: record.line_items.first, status: 'backordered')
 
       expect(record).not_to be_backordered
+
+      item.update_columns(fulfillment_id: live.id)
+      expect(record).to be_backordered
     end
   end
 
@@ -91,6 +87,10 @@ RSpec.describe Spree::Purchase::Lifecycle do
       create(:payment, cart: record, order: nil, **attributes)
     end
 
+    def create_fulfillment(record, **attributes)
+      create(:fulfillment, cart: record, order: nil, **attributes)
+    end
+
     it_behaves_like 'a purchase lifecycle host'
   end
 
@@ -105,6 +105,10 @@ RSpec.describe Spree::Purchase::Lifecycle do
 
     def create_payment(record, **attributes)
       create(:payment, order: record, **attributes)
+    end
+
+    def create_fulfillment(record, **attributes)
+      create(:fulfillment, order: record, **attributes)
     end
 
     it_behaves_like 'a purchase lifecycle host'

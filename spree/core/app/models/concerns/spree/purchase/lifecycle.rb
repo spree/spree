@@ -36,7 +36,7 @@ module Spree
       #
       # @return [Boolean]
       def backordered?
-        fulfillments.any? { |fulfillment| !fulfillment.canceled? && fulfillment.backordered? }
+        fulfillments.not_canceled.includes(:fulfillment_items).any?(&:backordered?)
       end
 
       # A +prices_hidden+ channel also disallows guest completion regardless

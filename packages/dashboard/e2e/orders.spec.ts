@@ -591,7 +591,15 @@ test.describe('cancelling a backordered order', () => {
     })
 
     await page.goto(`/${session.store_id}/orders/${order.id}`)
-    await expect(page.getByText(/^backorder$/i).first()).toBeVisible({ timeout: 15_000 })
+    // The header's status badges: payment status, then fulfillment status.
+    const headerStatuses = page
+      .getByRole('heading', { level: 1 })
+      .first()
+      .locator('xpath=..')
+      .locator('[data-slot="status-badge"]')
+    await expect(headerStatuses.filter({ hasText: /^backorder$/i })).toBeVisible({
+      timeout: 15_000,
+    })
 
     await page.getByRole('button', { name: /more actions/i }).click()
     await page.getByRole('menuitem', { name: /cancel order/i }).click()
@@ -601,6 +609,9 @@ test.describe('cancelling a backordered order', () => {
       .click()
 
     await expect(page.getByText(/^order canceled$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(headerStatuses.filter({ hasText: /^canceled$/i })).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(page.getByText(/^backorder$/i)).toHaveCount(0)
   })
 })
