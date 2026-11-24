@@ -62,6 +62,14 @@ module Spree
         payments.select(&:checkout?)
       end
 
+      # What is still owed once every live payment is counted, settled or not —
+      # the amount a new payment should be for. Never negative.
+      #
+      # @return [BigDecimal]
+      def amount_left_to_pay
+        [outstanding_balance - valid_payments.reject { |payment| payment.status == 'completed' }.sum(BigDecimal('0'), &:amount), BigDecimal('0')].max
+      end
+
       private
 
       # On a list the association batches across the page, so the loaded rows
@@ -85,6 +93,9 @@ module Spree
 
         unprocessed_payments.each do |payment|
           break if settled_payment_total >= total
+          # An order can carry several live payments; once those processed
+          # so far cover it, net of refunds, the rest are left uncharged.
+          break if is_a?(Spree::Order) && payment.amount_owed_by_order(including_in_flight: true)&.zero?
 
           result = Spree.payment_process_workflow.call(payment: payment, action: action)
           raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?

@@ -144,10 +144,24 @@ module Spree
       active?
     end
 
-    # Checks if the gift card can be deleted
+    # Checks if the gift card can be deleted. Besides a redeemed card, this
+    # refuses one an open cart or draft order still holds: Apply draws the
+    # card down and pays with a store credit made from it while the card keeps
+    # the active status, so deleting it would leave that store credit and its
+    # payment funding the order with no card behind them.
     # @return [Boolean]
     def can_be_deleted?
-      !redeemed? && !partially_redeemed?
+      return false if redeemed? || partially_redeemed?
+      return false if amount_used.to_d.positive? || amount_authorized.to_d.positive?
+
+      !held?
+    end
+
+    # Whether an open cart or draft order has this card applied, including one
+    # in the middle of being completed.
+    # @return [Boolean]
+    def held?
+      carts.incomplete.exists? || orders.incomplete.where.not(status: 'canceled').exists?
     end
 
     # Displays the code in uppercase, eg. ABC1234
@@ -281,8 +295,18 @@ module Spree
       self.code = code.downcase if code.present?
     end
 
+    # Runs inside the destroy's transaction, so the row lock taken here holds
+    # until the delete commits. Spree::GiftCards::Apply locks the card before
+    # drawing it down and attaching it, so an apply either commits first (and
+    # the reloaded card shows the hold) or waits and then finds the card gone.
+    # Every destroy path gets this — the admin endpoint, and the
+    # dependent: :destroy cascades from a batch, a customer or a store.
+    #
+    # The check reads a locked fresh copy rather than reloading this record,
+    # so in-memory changes are left alone.
     def ensure_can_be_deleted
-      return if can_be_deleted?
+      current = self.class.lock.find(id)
+      return if current.can_be_deleted?
 
       errors.add(:base, :cannot_destroy_used_gift_card)
       throw(:abort)

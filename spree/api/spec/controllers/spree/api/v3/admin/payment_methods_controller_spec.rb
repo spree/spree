@@ -45,6 +45,59 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
     end
 
+    # The add-payment dialog on an order picks from this list.
+    context 'as a staffer with the Order manager permissions' do
+      let(:staffer) do
+        permissions = %w[write_orders write_payments write_fulfillments write_refunds write_gift_cards
+                         write_store_credits read_customers read_products]
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user, role: create(:role, name: 'order manager', permissions: permissions, resource: store))
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+      let!(:other_store_method) { create(:check_payment_method, store: create(:store)) }
+
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it "reads the store's payment methods and each one" do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].pluck('id')
+        expect(ids).to include(payment_method.prefixed_id)
+        expect(ids).not_to include(other_store_method.prefixed_id)
+
+        get :show, params: { id: payment_method.prefixed_id }, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'cannot change them or list provider types' do
+        patch :update, params: { id: payment_method.prefixed_id, name: 'Renamed' }, as: :json
+        # The record lookup runs before the permission gate, so it is not found.
+        expect(response).to have_http_status(:not_found)
+        expect(payment_method.reload.name).not_to eq('Renamed')
+
+        get :types, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with a key that manages payments but not settings' do
+      let(:payments_key) { create(:api_key, :secret, store: store, scopes: %w[write_payments]) }
+      let(:headers) { { 'x-spree-api-key' => payments_key.plaintext_token } }
+
+      it 'reads the payment methods but cannot create one' do
+        get :index, as: :json
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].pluck('id')).to include(payment_method.prefixed_id)
+
+        post :create, params: { type: 'check', name: 'Cash' }, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
     context 'when payment method belongs to a different store' do
       let!(:other_store) { create(:store) }
       let!(:other_payment_method) { create(:check_payment_method, store: other_store) }

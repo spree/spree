@@ -42,7 +42,7 @@ vi.mock('../src/commands/eject.js', () => ({ ejectProject: vi.fn(async () => und
 const GEMFILE = `source 'https://rubygems.org'
 gem 'spree', '>= 6.0.0.beta1'
 gem 'spree_stripe', spree_version
-# gem 'spree_adyen'
+# gem 'spree_klaviyo'
 `
 
 const LOCKFILE = `GEM
@@ -92,7 +92,7 @@ describe('extension catalog', () => {
 
   it('reads declared gems and the locked Spree version', () => {
     expect(gemfileDeclares(GEMFILE, 'spree_stripe')).toBe(true)
-    expect(gemfileDeclares(GEMFILE, 'spree_adyen')).toBe(false)
+    expect(gemfileDeclares(GEMFILE, 'spree_klaviyo')).toBe(false)
     expect(gemfileDeclares(GEMFILE, 'spree')).toBe(true)
     expect(gemfileDeclares(GEMFILE, 'spree_s')).toBe(false)
     expect(lockedSpreeVersion(LOCKFILE)).toBe('6.0.0.rc3')
@@ -165,14 +165,24 @@ describe('addExtension', () => {
     ])
   })
 
-  it('adds a gem released on its own unpinned, and runs its install generator when it has one', async () => {
-    vi.mocked(dockerComposeCapture).mockResolvedValue('SpreeAdyen:\n  spree_adyen:install\n')
-
+  // Adyen ships with Spree since 6.0.6; unpinned it would resolve to the 0.x gem.
+  it('pins Adyen to the project version', async () => {
     await addExtension(ctx(), EXTENSIONS.adyen, { yes: false })
 
     expect(commands()).toEqual([
-      ['bundle', 'add', 'spree_adyen'],
-      ['bin/rails', 'generate', 'spree_adyen:install'],
+      ['bundle', 'add', 'spree_adyen', '--version', '>= 6.0.0.rc3'],
+      ['bin/rails', 'spree:install:migrations', 'db:migrate'],
+    ])
+  })
+
+  it('adds a gem released on its own unpinned, and runs its install generator when it has one', async () => {
+    vi.mocked(dockerComposeCapture).mockResolvedValue('SpreeKlaviyo:\n  spree_klaviyo:install\n')
+
+    await addExtension(ctx(), EXTENSIONS.klaviyo, { yes: false })
+
+    expect(commands()).toEqual([
+      ['bundle', 'add', 'spree_klaviyo'],
+      ['bin/rails', 'generate', 'spree_klaviyo:install'],
       ['bin/rails', 'spree:install:migrations', 'db:migrate'],
     ])
   })
@@ -213,17 +223,17 @@ describe('addExtension', () => {
   it('ejects a project on the prebuilt image once the developer agrees', async () => {
     write('docker-compose.yml', PREBUILT_COMPOSE)
 
-    await addExtension(ctx(), EXTENSIONS.adyen, { yes: true })
+    await addExtension(ctx(), EXTENSIONS.klaviyo, { yes: true })
 
     expect(ejectProject).toHaveBeenCalledWith(projectDir)
-    expect(commands()[0]).toEqual(['bundle', 'add', 'spree_adyen'])
+    expect(commands()[0]).toEqual(['bundle', 'add', 'spree_klaviyo'])
   })
 
   it('stops without ejecting when there is no terminal to ask in and no --yes', async () => {
     write('docker-compose.yml', PREBUILT_COMPOSE)
     Object.defineProperty(process.stdin, 'isTTY', { value: false, configurable: true })
 
-    await expect(addExtension(ctx(), EXTENSIONS.adyen, { yes: false })).rejects.toThrow(
+    await expect(addExtension(ctx(), EXTENSIONS.klaviyo, { yes: false })).rejects.toThrow(
       'process.exit(1)',
     )
     expect(ejectProject).not.toHaveBeenCalled()
@@ -235,7 +245,7 @@ describe('addExtension', () => {
     Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true })
     vi.mocked(p.confirm).mockResolvedValue(false)
 
-    await expect(addExtension(ctx(), EXTENSIONS.adyen, { yes: false })).rejects.toThrow(
+    await expect(addExtension(ctx(), EXTENSIONS.klaviyo, { yes: false })).rejects.toThrow(
       'process.exit(0)',
     )
     expect(ejectProject).not.toHaveBeenCalled()

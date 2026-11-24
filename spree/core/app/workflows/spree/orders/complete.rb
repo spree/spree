@@ -305,9 +305,15 @@ module Spree
         failure(order, result.error) if result.failure?
       end
 
+      # Net of refunds on captured payments, as Payment#amount_owed_by_order
+      # counts them: money given back is owed again, except what a return
+      # refunded, since those goods came back too.
       def payment_covered?
         order.payments.reset
-        order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
+        live = order.payments.valid.where(status: %w[pending processing completed])
+        refunded = Spree::Refund.where(payment_id: order.payments.where(status: 'completed').select(:id)).sum(:amount) -
+                   order.returned_items_refund_total
+        live.sum(:amount) - refunded >= order.amount_due_at_checkout
       end
     end
   end

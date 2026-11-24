@@ -219,6 +219,14 @@ curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx'
 
 </CodeGroup>
 
+### What an option count means
+
+An option value's count is the number of products with a variant that carries the value and is on offer: not discontinued, with a regular price (not only a price list's) in the shopper's currency, unless the store has **Show products without a price** turned on. A sold-out variant still counts until the shopper turns on the `in_stock` filter; then the variant must also be in stock or backorderable. A value that no such variant carries is left out of the filters, and filtering the list by a value matches products through the same variants.
+
+Each option's counts apply the shopper's other filters but not the values already picked in that same option, so a count tells how many products the value matches on its own, not how long the list becomes once it is added.
+
+For example, a card sold in the grades Near Mint and Good, with only Near Mint priced, shows under Near Mint and not under Good, even though the card itself is listed.
+
 ## Filtering Other Resources
 
 The Store API uses query parameters prefixed with `q[]` for filtering any resource collection. Common filter predicates:

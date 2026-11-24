@@ -67,6 +67,17 @@ module Spree
               comment: 'What has been refunded to payments, from returns or from the order. Store credit refunds are not included.' }
           ]
 
+          # What a new payment should be for: the amount due less the payments
+          # recorded and not yet captured. The server owns the rule, so a client
+          # does not repeat which payment statuses count.
+          money_attributes :amount_left_to_pay
+          typelize amount_left_to_pay: [
+            :string,
+            { nullable: false,
+              comment: 'What a new payment should be for, the amount due less the payments recorded and not yet ' \
+                       "captured. Failed, invalid and void payments don't count. Never negative." }
+          ]
+
           # Back-office only: what the marketplace earned on this sale — the fee,
           # the tax charged on it, and the two together. Never on the store
           # serializer: a commission settles between the platform and the

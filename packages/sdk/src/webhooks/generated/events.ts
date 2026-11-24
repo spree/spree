@@ -45,6 +45,7 @@ import type {
   StockReceiptEvent,
   StockReservation,
   StockTransfer,
+  Store,
   StoreCredit,
   SupplierEvent,
   TaxIdentifier,
@@ -325,6 +326,7 @@ export interface WebhookEventMap {
   'stock_transfer.received': StockTransfer
   'stock_transfer.shipped': StockTransfer
   'stock_transfer.updated': StockTransfer
+  'store.updated': Store
   'store_credit.created': StoreCredit
   'store_credit.deleted': StoreCredit
   'store_credit.updated': StoreCredit
