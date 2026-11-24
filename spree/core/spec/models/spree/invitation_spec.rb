@@ -97,9 +97,14 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation.expired?).to be false
     end
 
-    it 'returns false when the invitation has no expiry' do
+    it 'returns false for a recent invitation with no expiry' do
       invitation.expires_at = nil
       expect(invitation.expired?).to be false
+    end
+
+    it 'returns true for an invitation with no expiry created more than VALID_FOR ago' do
+      invitation.update_columns(expires_at: nil, created_at: 15.days.ago)
+      expect(invitation.reload.expired?).to be true
     end
   end
 

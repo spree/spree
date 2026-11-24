@@ -76,10 +76,13 @@ module Spree
       end
     end
 
-    # returns true if the invitation has expired
+    # returns true if the invitation has expired. An invitation saved without
+    # an expiry (older rows) expires VALID_FOR after it was created, so it can
+    # never be accepted forever.
     # @return [Boolean]
     def expired?
-      expires_at.present? && expires_at < Time.current
+      deadline = expires_at || created_at&.+(VALID_FOR)
+      deadline.present? && deadline < Time.current
     end
 
     # @deprecated Call Spree.invitation_accept_workflow — removed in 6.3.
