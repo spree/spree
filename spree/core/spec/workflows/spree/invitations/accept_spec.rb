@@ -54,6 +54,17 @@ RSpec.describe Spree::Invitations::Accept do
     end
   end
 
+  # A resend rotated the token after the caller loaded the invitation.
+  context 'when resent while loaded' do
+    before { Spree::Invitation.find(invitation.id).regenerate_token }
+
+    it 'refuses the superseded token and grants no role' do
+      expect(subject).not_to be_success
+      expect(subject.error.value).to eq(:invitation_not_acceptable)
+      expect(invitation.reload.status).to eq('pending')
+    end
+  end
+
   # A removal from staff revoked it after the caller loaded it.
   context 'when revoked while loaded' do
     before { Spree::Invitation.find(invitation.id).destroy }
