@@ -56,7 +56,7 @@ module Spree
           # leaking whether an ID exists.
           def load_invitation
             decoded_id = Spree::Invitation.decode_prefixed_id(params[:id])
-            @invitation = Spree::Invitation.pending.not_expired.find_by(id: decoded_id, token: params[:token])
+            @invitation = Spree::Invitation.pending.not_expired.find_by(id: decoded_id, token: string_param(:token).to_s)
 
             unless @invitation
               render_error(
@@ -99,7 +99,7 @@ module Spree
           end
 
           def create_new_invitee(invitation)
-            if params[:password].blank?
+            if string_param(:password).blank?
               render_error(
                 code: ERROR_CODES[:parameter_missing],
                 message: 'Password is required to create your account',
