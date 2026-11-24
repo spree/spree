@@ -982,10 +982,10 @@ en:
     gift_card_held_by_another_order: The Gift Card is being used by another order that is still being placed. Please try again in a few minutes.
     gift_card_mismatched_currency: Gift Card cannot be applied with current currency.
     gift_card_mismatched_customer: This gift card is associated with another user.
-    gift_card_paid_by_previous_customer: The previous customer's gift card has already been taken on this order. Refund or void that payment before changing the customer.
     gift_card_no_amount_remaining: The Gift Card has no amount remaining.
     gift_card_not_applied: The Gift Card could not be applied.
     gift_card_not_found: The Gift Card was not found.
+    gift_card_paid_by_previous_customer: The previous customer's gift card has already been taken on this order. Refund or void that payment before changing the customer.
     gift_card_removed: The Gift Card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     guest_checkout_not_allowed: You must be signed in to complete checkout.
