@@ -52,6 +52,8 @@ const ROLE_TEMPLATES: Array<{ key: string; permissions: string[] }> = [
       'write_gift_cards',
       'write_store_credits',
       'read_customers',
+      // Adding an item to an order searches the catalog.
+      'read_products',
     ],
   },
   {

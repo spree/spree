@@ -117,32 +117,40 @@ match_segment() {
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
 
-# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading it
+# Sets HEAD_FLAG and REPO_FLAG to the last `--head`/`-H` and `--repo`/`-R`
+# values in a command line, reading them
 # the way gh's option parser does: quoted arguments are one word, a flag's
 # value is never read as a flag, and short flags may be clustered (`-fH x`) or
 # attached (`-Hx`, `-H=x`). Returns 1 when a quote is left open (the argument
 # continues on a later line the gate cannot see) and 2 for a flag it does not
-# know, since an unknown flag may take a value that hides a `--head`.
+# know, since an unknown flag may take a value that hides a `--head`. Returns 3
+# for a `#` comment: the shell drops it, but a `--head` in it would be read.
 HEAD_FLAG=""
+REPO_FLAG=""
 read_head_flag() {
   local s="$1" tok next="" rest char
   local word="^(\"[^\"]*\"|'[^']*'|[^[:space:]\"']+)+"
   local value_longs=" --assignee --base --body --body-file --label --milestone --project --reviewer --repo --title --template --recover "
   local switch_longs=" --draft --fill --fill-first --fill-verbose --web --editor --dry-run --no-maintainer-edit --help "
   HEAD_FLAG=""
+  REPO_FLAG=""
   while s="${s#"${s%%[![:space:]]*}"}"; [ -n "$s" ]; do
     [[ "$s" =~ $word ]] || return 1
     tok="${BASH_REMATCH[0]}"
     s="${s:${#tok}}"
+    [[ "$tok" == \#* ]] && return 3
     tok="${tok//[\"\']/}"
     case "$next" in
       head) HEAD_FLAG="$tok"; next=""; continue ;;
+      repo) REPO_FLAG="$tok"; next=""; continue ;;
       skip) next=""; continue ;;
     esac
     case "$tok" in
       --) return 0 ;;
       --head) next=head ;;
       --head=*) HEAD_FLAG="${tok#--head=}" ;;
+      --repo) next=repo ;;
+      --repo=*) REPO_FLAG="${tok#--repo=}" ;;
       --*=*) [[ "$value_longs" == *" ${tok%%=*} "* ]] || return 2 ;;
       --*)
         if [[ "$value_longs" == *" $tok "* ]]; then next=skip
@@ -154,8 +162,12 @@ read_head_flag() {
           char="${rest:0:1}"; rest="${rest:1}"
           case "$char" in
             [dfweh]) continue ;;
-            H) rest="${rest#=}"; if [ -n "$rest" ]; then HEAD_FLAG="$rest"; else next=head; fi; break ;;
-            [aBbFlmprRtT]) [ -n "$rest" ] || next=skip; break ;;
+            # Like gh's flag parser (pflag): an attached value loses a leading
+            # `=` only when more follows it (`-H=x` is x), so `-H=` is the
+            # value `=`, never "the next word".
+            H) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; HEAD_FLAG="$rest"; else next=head; fi; break ;;
+            R) if [ -n "$rest" ]; then [ ${#rest} -gt 1 ] && rest="${rest#=}"; REPO_FLAG="$rest"; else next=repo; fi; break ;;
+            [aBbFlmprtT]) [ -n "$rest" ] || next=skip; break ;;
             *) return 2 ;;
           esac
         done ;;
@@ -185,7 +197,12 @@ while IFS= read -r segment; do
   # A multi-line argument hides whatever follows it, so a `--head` placed after
   # one cannot be read and the gate would check the wrong branch.
   read_head_flag "${LAUNCHED#*create}"
-  case $? in
+  flags_read=$?
+  case $flags_read in
+    3)
+      echo "Blocked: $seg" >&2
+      echo "Remove the # comment from gh pr create: the shell drops it, so a flag inside it would mislead the gate." >&2
+      exit 2 ;;
     2)
       echo "Blocked: $seg" >&2
       echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
@@ -202,6 +219,52 @@ while IFS= read -r segment; do
   if [[ "$LAUNCHED" == *\\* ]]; then
     echo "Blocked: $seg" >&2
     echo "Keep gh pr create on one line without backslashes: quote arguments, or pass the body with --body-file." >&2
+    exit 2
+  fi
+  # The reviews cover this repository's code, so a pull request opened on
+  # another repository (the release's spree-starter, storefront and
+  # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
+  # or a URL, so every spelling of this repository is gated. Expansions,
+  # comments and redirections change which arguments gh gets without the gate
+  # seeing it, so only a command made of plain words and quotes, read to its
+  # end, can skip the gate. The shell expands nothing in single quotes, nor in
+  # double quotes without `$` or a backtick (a backslash is refused above), so
+  # those are dropped before the check and may hold any text, such as a title
+  # with `^6.0.6` or `(#123)`.
+  repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
+  repo_name="${repo_name#*://}"
+  repo_name="${repo_name#git@}"
+  repo_name="${repo_name#www.}"
+  repo_name="${repo_name#github.com[:/]}"
+  repo_name="${repo_name%/}"
+  repo_name="${repo_name%.git}"
+  unquoted=""
+  rest="$LAUNCHED"
+  inert_quote="^('[^']*'|\"[^\"\$\`]*\")"
+  while [ -n "$rest" ]; do
+    if [[ "$rest" =~ $inert_quote ]]; then
+      rest="${rest:${#BASH_REMATCH[0]}}"
+    else
+      unquoted+="${rest:0:1}"
+      rest="${rest:1}"
+    fi
+  done
+  # The flags are read from the first `create` in the line, which a quoted
+  # value given to a flag before `pr` can hold, so a skip needs `pr create`
+  # right after `gh`. A `--` ends the flags the gate reads but not the ones gh
+  # does, so a command with one is never skipped either. And so that no other
+  # difference between the gate's reading and gh's can change the repository,
+  # a skip needs exactly one `--repo` and no `-R`.
+  repo_flags=$(grep -oE '(^|[[:space:]])--repo([=[:space:]]|$)' <<<"$unquoted" | wc -l | tr -d ' ')
+  if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
+    if [ $flags_read -eq 0 ] && [[ "$unquoted" =~ ^[[:alnum:]\ $'\t'_./:=@,+%-]*$ ]] \
+      && [[ "$LAUNCHED" =~ ^gh[[:space:]]+pr[[:space:]]+create[[:space:]] ]] \
+      && ! [[ " $unquoted " =~ [[:space:]]--[[:space:]] ]] \
+      && [ "$repo_flags" = 1 ] && ! [[ " $unquoted" =~ [[:space:]]-[[:alnum:]]*R ]]; then
+      continue
+    fi
+    echo "Blocked: $seg" >&2
+    echo "A pull request on $REPO_FLAG is not gated, but the gate must read the whole command to know that: write it as 'gh pr create --repo OWNER/NAME ...' on one line, with no flags before pr, one --repo, no -R and no standalone --, pass the body with --body-file, and quote any text with \$ or a backtick in single quotes." >&2
     exit 2
   fi
   review_dir="$pr_dir"

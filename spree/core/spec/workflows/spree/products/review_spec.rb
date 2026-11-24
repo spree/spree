@@ -82,6 +82,52 @@ RSpec.describe 'Spree::Products review workflows' do
       expect(product.reload).to be_active
     end
 
+    # A seller's product is created on no channel; approving it must put it
+    # where shoppers can buy it, by hand or automatically.
+    context 'with a product on no sales channel' do
+      before do
+        product.product_publications.destroy_all
+        product.update!(status: 'proposed')
+      end
+
+      it 'lists it on the store\'s default channel' do
+        Spree.product_approve_workflow.call(product: product)
+
+        expect(product.reload.channels).to contain_exactly(store.default_channel)
+      end
+
+      it 'lists it there when the store approves automatically' do
+        stub_store_preferences(store, auto_approve_seller_products: true)
+        product.update!(status: 'draft')
+
+        Spree.product_propose_workflow.call(product: product)
+
+        expect(product.reload).to be_active
+        expect(product.channels).to contain_exactly(store.default_channel)
+      end
+
+      # An operator who took a listing off every channel meant it; reviewing
+      # it again must not put it back on sale.
+      it 'leaves a product approved before on no channel' do
+        product.submissions.create!(status: 'approved')
+
+        Spree.product_approve_workflow.call(product: product)
+
+        expect(product.reload.channels).to be_empty
+      end
+    end
+
+    it 'leaves the channels the product is already listed on alone' do
+      other_channel = create(:channel, store: store)
+      product.product_publications.destroy_all
+      product.product_publications.create!(channel: other_channel)
+      product.update!(status: 'proposed')
+
+      Spree.product_approve_workflow.call(product: product)
+
+      expect(product.reload.channels).to contain_exactly(other_channel)
+    end
+
     # Approving is closing a review somebody opened, not a way to publish
     # anything at all — that is what Activate is for.
     it 'refuses a product nobody submitted' do

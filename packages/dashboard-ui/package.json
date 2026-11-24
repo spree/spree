@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-ui",
   "license": "MIT",
-  "version": "6.0.5",
+  "version": "6.0.6",
   "description": "Spree Dashboard design system — shadcn primitives, headless composed components, and design tokens. Source-only package; consumers compile via their own Vite/Tailwind setup.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
@@ -34,6 +34,7 @@
   "files": [
     "src",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -58,7 +59,7 @@
     "@codemirror/lang-html": "6.4.12",
     "@codemirror/lang-liquid": "6.3.3",
     "@codemirror/language": "6.13.1",
-    "@codemirror/lint": "6.9.7",
+    "@codemirror/lint": "6.9.8",
     "@codemirror/search": "6.7.2",
     "@codemirror/state": "6.7.6",
     "@codemirror/view": "6.43.15",

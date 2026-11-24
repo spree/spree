@@ -3290,7 +3290,10 @@
           "load_error": "この注文の支払いを読み込めませんでした。",
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
-          "failed_card_checks": "カードの確認に失敗"
+          "failed_card_checks": "カードの確認に失敗",
+          "card_checks_unavailable": "カード確認は利用不可",
+          "capture_requested": "キャプチャ依頼中",
+          "void_requested": "取消依頼中"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
@@ -3326,6 +3329,7 @@
         "variant_search": {
           "description": "この注文に追加する商品バリアントを検索してください。",
           "empty": "バリアントが見つかりません",
+          "no_permission": "このロールには商品の閲覧権限がないため、カタログを検索できません。管理者にロールへ「商品の閲覧」を追加するよう依頼してください。",
           "label": "バリアントを検索",
           "placeholder": "商品名か SKU を入力（3 文字以上）…",
           "sku_prefix": "SKU"
@@ -3351,11 +3355,20 @@
           "check": {
             "passed": "合格",
             "failed": "不合格",
+            "unavailable": "利用不可",
             "not_checked": "未確認"
           },
+          "date": "日付",
           "captures": "確定",
           "captures_empty": "まだ確定したものはありません。",
-          "captured_at": "確定済み"
+          "refunds": "返金",
+          "refunds_empty": "まだ返金はありません。",
+          "settlement_statuses": {
+            "requested": "依頼中",
+            "completed": "完了",
+            "failed": "失敗"
+          },
+          "failure_reason": "理由: {{reason}}"
         },
         "customer_edit": {
           "title": "顧客を編集",
@@ -4413,6 +4426,7 @@
             "stock_receipt": "入荷",
             "stock_reservation": "在庫の引き当て",
             "stock_transfer": "在庫の移動",
+            "store": "ストア",
             "store_credit": "ストアクレジット",
             "supplier": "仕入れ先",
             "tax_exemption_certificate": "免税証明書",
@@ -4795,6 +4809,9 @@
       "amount": "金額",
       "api_key": "API キー",
       "api_key_description": "EasyPost のダッシュボードにあります。テスト用と本番用のキーは動作が違い、キーによってモードが決まります。",
+      "merchant_account": "マーチャントアカウント",
+      "test_mode": "テストモード",
+      "live_url_prefix": "本番 URL プレフィックス",
       "base_amount": "基本額",
       "base_percent": "基本の割合",
       "company_orders_only": "会社の注文のみ",
@@ -5008,6 +5025,7 @@
         "reason_placeholder": "販売者に何を直してほしいですか？",
         "reject": "差し戻す",
         "rejected": "販売者に差し戻しました",
+        "save_first": "先に変更を保存してください。承認や差し戻しでは変更は保存されません。",
         "send_back": "差し戻す"
       },
       "save_label": "商品を保存",

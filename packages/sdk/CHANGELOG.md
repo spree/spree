@@ -1,5 +1,17 @@
 # @spree/sdk
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/sdk` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/sdk/`.
+
+- [#15258](https://github.com/spree/spree/pull/15258) [`8713dcc`](https://github.com/spree/spree/commit/8713dcc64465193e16beb9cf5ee7a99b63b37237) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `CheckoutRequirement` now includes `code`, the machine-readable requirement code the API returns (for example `order_minimum_not_met`). The type is now derived from the generated `Cart` type, so it can no longer drift from the API.
+
+- [#15271](https://github.com/spree/spree/pull/15271) [`d6f8de8`](https://github.com/spree/spree/commit/d6f8de8207db74e72c0ea23d247f51745946a36a) Thanks [@mad-eel](https://github.com/mad-eel)! - Types the new `payment.capture_requested`, `payment.capture_failed`, `payment.void_requested`, `payment.void_failed`, `refund.requested` and `refund.failed` webhook events. A saved card (`CreditCard`) names the payment method it was saved with as `payment_method_id`, so a storefront offers it only for that method.
+
+- [#15283](https://github.com/spree/spree/pull/15283) [`6f7cf35`](https://github.com/spree/spree/commit/6f7cf3571ca571cd2896580698794065ddd8c723) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Webhook types include `store.updated`, which Spree sends each time the store's settings are saved in Spree Admin, including a translation or the logo. Its `data` is typed as `Store`, the shape `store.get()` returns, so a storefront can expire its cached store data when it arrives.
+
 ## 6.0.5
 
 ### Patch Changes

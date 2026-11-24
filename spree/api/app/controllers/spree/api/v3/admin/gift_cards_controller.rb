@@ -33,6 +33,21 @@ module Spree
 
           before_action :resolve_customer, only: [:create, :update]
 
+          # Locked so a checkout drawing the card down cannot commit between
+          # the model's used-card check and this write.
+          def update
+            @resource.with_lock { super }
+          end
+
+          # Spree::GiftCards::Destroy takes the card off any open cart or draft
+          # order holding it, then deletes it; a refusal answers 422.
+          def destroy
+            result = Spree.gift_card_destroy_workflow.call(gift_card: @resource)
+            return head(:no_content) if result.success?
+
+            render_service_error(result.error, code: ERROR_CODES[:validation_error])
+          end
+
           protected
 
           def model_class

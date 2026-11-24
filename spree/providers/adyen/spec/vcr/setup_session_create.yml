@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/account/cards","channel":"Web","expiresAt":"2026-11-18T18:47:30Z","applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":0,"currency":"USD"},"reference":"cust_UkLWZg9DAJ-setup-c4e23d27","shopperEmail":"caryn.bayer@wolffvon.ca","countryCode":"US","shopperReference":"customer_1","storePaymentMethodMode":"enabled","recurringProcessingModel":"CardOnFile","shopperInteraction":"Ecommerce"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Traceparent:
+      - 00-12b4129c8c9f57f82c44e64215e78ce0-1b788e283588beaa-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=EBF702167E0829F131A0113C44A17E0D; Path=/checkout; Secure; HttpOnly
+      Pspreference:
+      - D4BP3XVLXB9V3575
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Wed, 18 Nov 2026 17:47:30 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency":"USD","value":0},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"channel":"Web","countryCode":"US","expiresAt":"2026-11-18T19:47:30+01:00","id":"CSAFD56AAA81D9F1C5D5A62CD","merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","recurringProcessingModel":"CardOnFile","reference":"cust_UkLWZg9DAJ-setup-c4e23d27","returnUrl":"https:\/\/shop.example.com\/account\/cards","shopperEmail":"caryn.bayer@wolffvon.ca","shopperInteraction":"Ecommerce","shopperLocale":"en-US","shopperReference":"customer_1","storePaymentMethodMode":"enabled","mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:47:30 GMT
+recorded_with: VCR 6.4.1

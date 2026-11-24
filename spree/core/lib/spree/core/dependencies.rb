@@ -59,6 +59,7 @@ module Spree
         gift_card_remove_workflow: 'Spree::GiftCards::Remove',
         gift_card_redeem_workflow: 'Spree::GiftCards::Redeem',
         gift_card_cancel_workflow: 'Spree::GiftCards::Cancel',
+        gift_card_destroy_workflow: 'Spree::GiftCards::Destroy',
 
         # order
         order_approve_service: 'Spree::Orders::Approve',
@@ -262,6 +263,7 @@ module Spree
         seller_payout_sweep_workflow: 'Spree::SellerPayouts::Sweep',
         seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
+        payments_handle_modification_webhook_workflow: 'Spree::Payments::HandleModificationWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
         email_template_save_draft_workflow: 'Spree::EmailTemplates::SaveDraft',
         email_template_publish_workflow: 'Spree::EmailTemplates::Publish',

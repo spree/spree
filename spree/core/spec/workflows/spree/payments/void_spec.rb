@@ -85,6 +85,38 @@ RSpec.describe Spree::Payments::Void do
     end
   end
 
+  describe 'a provider that answers later' do
+    before { gateway.update!(preferred_requested_mode: true) }
+
+    it 'leaves the payment requested without voiding it' do
+      expect(payment).to receive(:publish_event).with('payment.void_requested')
+      expect(payment).not_to receive(:void!)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload).to be_requested
+      expect(payment.requested_action).to eq('void')
+      expect(payment.capture_events).to be_empty
+    end
+
+    it 'refuses a payment already waiting on its provider' do
+      payment.update!(status: 'requested')
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.payment_requested_awaiting_provider'))
+    end
+  end
+
+  describe 'a provider that answers at once' do
+    it 'voids the payment' do
+      expect(described_class.call(payment: payment)).to be_success
+      expect(payment.reload).to be_void
+    end
+  end
+
   describe 'hooks' do
     it 'lets a validate handler veto the void before the gateway is called' do
       expect(gateway).not_to receive(:void)

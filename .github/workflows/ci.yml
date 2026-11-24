@@ -3,14 +3,19 @@ name: CI
 # Starts on every pull request, merge queue entry and push, so the two
 # required checks (backend, frontend) always report. Each suite runs only when
 # files it covers changed; a suite that was not needed counts as passing.
+#
+# The backend suite runs on PostgreSQL. MySQL runs nightly (backend-mysql.yml),
+# and here only for a change that adds a migration or cuts a release.
 on:
   push:
     branches: [main, '*-stable']
   pull_request:
   merge_group:
 
+# A release commit's run gets a group of its own, so a later push to main
+# cannot cancel the run release-on-merge.yml waits for.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}${{ startsWith(github.event.head_commit.message, 'Released Spree ') && format('-{0}', github.sha) || '' }}
   cancel-in-progress: true
 
 permissions:
@@ -18,7 +23,7 @@ permissions:
 
 jobs:
   changes:
-    name: "Detect changes"
+    name: 'Detect changes'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,6 +31,9 @@ jobs:
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      # A release is a pull request from chore/release-<version>, then its
+      # squash merge on main, which release-on-merge.yml publishes from.
+      mysql: ${{ steps.filter.outputs.mysql == 'true' || startsWith(github.head_ref, 'chore/release-') || startsWith(github.event.head_commit.message, 'Released Spree ') }}
     steps:
       - uses: actions/checkout@v7
         if: github.event_name != 'pull_request'
@@ -40,14 +48,19 @@ jobs:
               - "spree/**"
               - ".github/workflows/ci.yml"
               - ".github/workflows/backend.yml"
+            mysql:
+              - "spree/**/db/migrate/**"
+              - ".github/workflows/backend-mysql.yml"
             frontend:
               - "packages/**"
+              - ".changeset/**"
               - "spree/api/app/**"
               - "spree/api/lib/typelizer/**"
               - "spree/core/app/**"
               - "docs/developer/**"
               - "docs/api-reference/**"
               - "docs/integrations/**"
+              - "docs/snippets/**"
               - "pnpm-lock.yaml"
               - "turbo.json"
               - "biome.json"
@@ -55,19 +68,26 @@ jobs:
               - "pnpm-workspace.yaml"
               - "scripts/sync-starter.mjs"
               - "scripts/check-dependency-ranges.mjs"
+              - "scripts/version-packages.mjs"
               - ".github/workflows/ci.yml"
               - ".github/workflows/frontend.yml"
 
   backend-suite:
-    name: "Backend"
+    name: 'Backend'
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     uses: ./.github/workflows/backend.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  backend-mysql-suite:
+    name: 'Backend (MySQL)'
+    needs: changes
+    if: needs.changes.outputs.mysql == 'true'
+    uses: ./.github/workflows/backend-mysql.yml
+
   frontend-suite:
-    name: "Frontend"
+    name: 'Frontend'
     needs: changes
     if: needs.changes.outputs.frontend == 'true'
     uses: ./.github/workflows/frontend.yml
@@ -75,8 +95,8 @@ jobs:
   # The two checks branch protection requires. Each fails on any failed or
   # cancelled job in its suite, and passes when the suite passed or was skipped.
   backend:
-    name: "backend"
-    needs: [changes, backend-suite]
+    name: 'backend'
+    needs: [changes, backend-suite, backend-mysql-suite]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -92,7 +112,7 @@ jobs:
           done
 
   frontend:
-    name: "frontend"
+    name: 'frontend'
     needs: [changes, frontend-suite]
     if: always()
     runs-on: ubuntu-latest

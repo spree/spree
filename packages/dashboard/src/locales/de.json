@@ -3291,7 +3291,10 @@
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
-          "failed_card_checks": "Kartenprüfung fehlgeschlagen"
+          "failed_card_checks": "Kartenprüfung fehlgeschlagen",
+          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar",
+          "capture_requested": "Erfassung angefordert",
+          "void_requested": "Stornierung angefordert"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3327,6 +3330,7 @@
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
           "empty": "Keine Varianten gefunden",
+          "no_permission": "Ihre Rolle darf keine Produkte ansehen und kann daher den Katalog nicht durchsuchen. Bitten Sie einen Administrator, Ihrer Rolle „Produkte ansehen“ hinzuzufügen.",
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"
@@ -3352,11 +3356,20 @@
           "check": {
             "passed": "Bestanden",
             "failed": "Nicht bestanden",
+            "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
+          "date": "Datum",
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
-          "captured_at": "Erfasst"
+          "refunds": "Erstattungen",
+          "refunds_empty": "Es wurde noch nichts erstattet.",
+          "settlement_statuses": {
+            "requested": "Angefordert",
+            "completed": "Abgeschlossen",
+            "failed": "Fehlgeschlagen"
+          },
+          "failure_reason": "Grund: {{reason}}"
         },
         "customer_edit": {
           "title": "Kunde bearbeiten",
@@ -4414,6 +4427,7 @@
             "stock_receipt": "Wareneingang",
             "stock_reservation": "Bestandsreservierung",
             "stock_transfer": "Bestandsübertragung",
+            "store": "Shop",
             "store_credit": "Guthaben",
             "supplier": "Lieferant",
             "tax_exemption_certificate": "Steuerbefreiungsbescheinigung",
@@ -4796,6 +4810,9 @@
       "amount": "Betrag",
       "api_key": "API-Schlüssel",
       "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
+      "merchant_account": "Händlerkonto",
+      "test_mode": "Testmodus",
+      "live_url_prefix": "Live-URL-Präfix",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "company_orders_only": "Nur für Firmenbestellungen",
@@ -5009,6 +5026,7 @@
         "reason_placeholder": "Was soll der Verkäufer ändern?",
         "reject": "Zurücksenden",
         "rejected": "An den Verkäufer zurückgesendet",
+        "save_first": "Speichern Sie zuerst Ihre Änderungen. Freigeben oder Zurücksenden speichert sie nicht.",
         "send_back": "Zurücksenden"
       },
       "save_label": "Produkt speichern",

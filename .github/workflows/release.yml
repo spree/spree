@@ -10,9 +10,14 @@ name: Release
 #
 # Each job skips versions already on its registry, so a release that failed
 # part-way can be re-run.
+#
+# release-on-merge.yml starts it on a tag with workflow_dispatch: a tag made
+# with the workflow token starts nothing, and npm Trusted Publishing checks the
+# top-level workflow, which must stay this one.
 on:
   push:
     tags: ['v*', '@spree/cli@*', 'create-spree-app@*']
+  workflow_dispatch:
 
 concurrency:
   group: release-${{ github.ref }}
@@ -34,15 +39,38 @@ jobs:
         with:
           node-version: 22
 
-      - name: The tagged commit is on main
-        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - name: The run is on a tag of a commit on main
+        run: |
+          test "$GITHUB_REF_TYPE" = tag
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
 
       - name: The tag matches the versions in the repository
         run: node scripts/publish-packages.mjs verify "$GITHUB_REF_NAME"
 
+  # Nothing publishes until npm accepts this workflow for every package the
+  # tag publishes, so a lapsed trusted publisher stops the release up front.
+  preflight:
+    name: Check npm Trusted Publishing
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+
+      - name: npm accepts this workflow for every package to publish
+        run: node scripts/publish-packages.mjs preflight "$GITHUB_REF_NAME"
+
   release-gems:
     name: Release gems to RubyGems
-    needs: verify
+    needs: preflight
     if: startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
     environment: release
@@ -75,7 +103,13 @@ jobs:
 
   release-npm:
     name: Release npm packages
-    needs: verify
+    needs: preflight
+    # One npm release at a time across every tag, so each version reads npm's
+    # latest dist-tag only after the one before it has published.
+    concurrency:
+      group: release-npm
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     # Must match the environment in each package's npm Trusted Publishing setting.
     environment: release

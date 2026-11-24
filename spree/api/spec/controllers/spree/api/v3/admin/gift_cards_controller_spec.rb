@@ -243,6 +243,44 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       patch :update, params: { id: other_card.prefixed_id, amount: '5.00' }, as: :json
       expect(response).to have_http_status(:not_found)
     end
+
+    context 'when the card has been used' do
+      let!(:redeemed_card) { create(:gift_card, store: store, amount: 44, currency: 'USD') }
+      let!(:partly_used_card) { create(:gift_card, store: store, amount: 100, currency: 'USD') }
+
+      before do
+        redeemed_card.update_columns(amount_used: 44, status: 'redeemed')
+        partly_used_card.update_columns(amount_used: 44, status: 'partially_redeemed')
+      end
+
+      it 'refuses to change the amount and leaves the balance alone' do
+        patch :update, params: { id: redeemed_card.prefixed_id, amount: '100.00' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to have_key('amount')
+        redeemed_card.reload
+        expect(redeemed_card.amount).to eq(44)
+        expect(redeemed_card.amount_remaining).to eq(0)
+      end
+
+      it 'refuses to change the currency and amount and leaves the balance alone' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '40.00', currency: 'EUR' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details'].keys).to include('amount', 'currency')
+        partly_used_card.reload
+        expect(partly_used_card.amount).to eq(100)
+        expect(partly_used_card.currency).to eq('USD')
+        expect(partly_used_card.amount_remaining).to eq(56)
+      end
+
+      it 'still updates other attributes when the amount is sent unchanged' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '100.00', expires_at: '2030-12-31' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['expires_at']).to eq('2030-12-31')
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
@@ -257,6 +295,63 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       delete :destroy, params: { id: redeemed.prefixed_id }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
       expect(Spree::GiftCard.exists?(redeemed.id)).to be(true)
+    end
+
+    # V-3836: deleting a card that an open cart or draft order holds takes it
+    # off that record first, so no store credit or payment from it survives.
+    context 'when a draft order holds the card' do
+      let(:customer) { create(:user) }
+      let!(:held_card) { create(:gift_card, store: store, amount: 30, currency: 'USD') }
+      let!(:draft) { create(:order_with_totals, store: store, customer: customer, line_items_price: 20) }
+
+      before do
+        draft.update_columns(total: 20, currency: 'USD')
+        expect(Spree.gift_card_apply_workflow.call(gift_card: held_card, order: draft)).to be_success
+        expect(draft.reload.payments.store_credits.checkout.sum(:amount)).to eq(20)
+      end
+
+      it 'takes the card off the draft and deletes it' do
+        expect { delete :destroy, params: { id: held_card.prefixed_id }, as: :json }.
+          to change(Spree::GiftCard, :count).by(-1)
+
+        expect(response).to have_http_status(:no_content)
+        draft.reload
+        expect(draft.gift_card_id).to be_nil
+        expect(draft.payments.store_credits.checkout).to be_empty
+        expect(Spree::StoreCredit.where(originator_type: 'Spree::GiftCard', originator_id: held_card.id)).to be_empty
+      end
+    end
+
+    context 'when an abandoned guest cart holds the card' do
+      let!(:held_card) { create(:gift_card, store: store, amount: 60, currency: 'USD') }
+      let!(:cart) { create(:cart_with_line_items, store: store, line_items_price: 60) }
+
+      before do
+        cart.update_columns(total: 60, currency: 'USD')
+        expect(Spree.gift_card_apply_workflow.call(gift_card: held_card, order: cart)).to be_success
+      end
+
+      it 'releases the cart and deletes the card' do
+        delete :destroy, params: { id: held_card.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(Spree::GiftCard.exists?(held_card.id)).to be(false)
+        expect(cart.reload.gift_card_id).to be_nil
+        expect(cart.payments.store_credits.checkout).to be_empty
+      end
+
+      context 'while the cart is being completed' do
+        before { cart.update_column(:completing_at, Time.current) }
+
+        it 'refuses the delete and leaves the cart holding the card' do
+          delete :destroy, params: { id: held_card.prefixed_id }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(Spree::GiftCard.exists?(held_card.id)).to be(true)
+          expect(cart.reload.gift_card_id).to eq(held_card.id)
+          expect(cart.payments.store_credits.checkout.sum(:amount)).to eq(60)
+        end
+      end
     end
   end
 end

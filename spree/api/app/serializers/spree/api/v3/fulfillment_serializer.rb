@@ -39,7 +39,10 @@ module Spree
 
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.
-        typelize({ item_id: :string, variant_id: :string, quantity: :number }, multi: true)
+        typelize({ item_id: [:string, comment: 'Line item ID'],
+                   variant_id: [:string, comment: 'Variant ID'],
+                   quantity: [:number, comment: 'Quantity in this fulfillment'] },
+                 multi: true, comment: 'Which line items, and how many units of each, are in this fulfillment')
         attribute :items do |fulfillment|
           fulfillment.manifest.filter_map do |item|
             next unless item.line_item

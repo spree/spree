@@ -396,7 +396,7 @@ module Spree
       'in_taxon' => 'id', 'in_category' => 'id', 'in_collection' => 'id',
       'in_categories' => { list: 'id' }, 'with_option_value_ids' => { list: 'id' },
       'price_between' => %w[decimal decimal], 'price_lte' => 'decimal', 'price_gte' => 'decimal',
-      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean'
+      'ascend_by_price' => 'boolean', 'descend_by_price' => 'boolean', 'search' => 'text'
     }
 
     # All product-level convenience attributes delegate to the default variant —
@@ -649,9 +649,9 @@ module Spree
     # seller check: a variant from a seller who is suspended, still onboarding
     # or away is not for sale, so it cannot be what the product displays.
     def first_available_variant(currency)
-      sellable_variants.find do |variant|
-        variant.purchasable? && variant.price_in(currency).amount.present?
-      end
+      variants_to_check = sellable_variants
+      Spree::Stock::Quantifier.preload(variants_to_check)
+      variants_to_check.find { |variant| variant.purchasable_in?(currency) }
     end
 
     # Whether the shop price differs between this product's variants. Reads

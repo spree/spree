@@ -24,6 +24,7 @@ module Spree
         ApplicationRecord.transaction do
           order = build_order(cart, customer: customer, created_by: created_by)
           order.save!
+          order.copy_po_document_from!(cart)
 
           line_item_map = copy_line_items(cart, order)
           Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
@@ -53,6 +54,7 @@ module Spree
           channel: cart.channel,
           company: cart.resolved_company,
           customer_note: cart.customer_note,
+          po_number: cart.po_number,
           metadata: cart.metadata.to_h,
           preferred_stock_location_id: cart.preferred_stock_location_id,
           token: Spree::GenerateToken.new.call(Spree::Order),

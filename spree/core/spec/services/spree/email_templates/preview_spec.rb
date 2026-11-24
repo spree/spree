@@ -49,6 +49,14 @@ describe Spree::EmailTemplates::Preview do
       expect(store.reload.mailer_logo).not_to be_attached
     end
 
+    it 'serves the logo as PNG so mail clients can display it' do
+      preview = described_class.new(store: store, key: editable_key, mailer_logo_signed_id: blob.signed_id)
+      preview.call
+      variation_key = CGI.unescape(URI.parse(preview.variables['store']['logo_url']).path.split('/')[-2])
+
+      expect(ActiveStorage::Variation.decode(variation_key).transformations[:format]).to eq('png')
+    end
+
     it 'shows the email without the logo once it is removed' do
       store = create(:store)
       store.mailer_logo.attach(blob)

@@ -1,5 +1,19 @@
 # @spree/dashboard-core
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/dashboard-core` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/dashboard-core/`.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - Added `toastMutationError`, which toasts a failed write in the words a form would show.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - `useServerErrors` gives a form kept in plain state the same server messages `mapSpreeErrorsToForm` gives a React Hook Form.
+
+- [#15282](https://github.com/spree/spree/pull/15282) [`49121e1`](https://github.com/spree/spree/commit/49121e15450e0663bd29cd4005e7ab29dbfb7257) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The product editor's Tax card no longer lists a variant under "Variants with their own tax category" when that category is the same as the product's. The variant is listed again as soon as the product's category changes to a different one.
+
+- [#14955](https://github.com/spree/spree/pull/14955) [`0e3f1b8`](https://github.com/spree/spree/commit/0e3f1b82817447b199f2df9bd57b5b813b7d3a69) Thanks [@mad-eel](https://github.com/mad-eel)! - `ResourceCombobox` and `ResourcePickerSheet` take a `minSearchLength` for a search that finds nothing below a minimum number of characters.
+
 ## 6.0.5
 
 ### Patch Changes

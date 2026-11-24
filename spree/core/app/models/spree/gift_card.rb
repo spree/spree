@@ -35,6 +35,7 @@ module Spree
     validates :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
+    validate :amount_and_currency_unchanged_once_used, on: :update
 
     #
     # Associations
@@ -94,8 +95,7 @@ module Spree
     end
 
     # What the card can still give towards an order: nothing once it has
-    # expired, been redeemed or been cancelled, and never less than zero,
-    # since an admin can lower the amount below what is already in use.
+    # expired, been redeemed or been cancelled, and never less than zero.
     #
     # @return [BigDecimal]
     def spendable_amount
@@ -144,10 +144,24 @@ module Spree
       active?
     end
 
-    # Checks if the gift card can be deleted
+    # Checks if the gift card can be deleted. Besides a redeemed card, this
+    # refuses one an open cart or draft order still holds: Apply draws the
+    # card down and pays with a store credit made from it while the card keeps
+    # the active status, so deleting it would leave that store credit and its
+    # payment funding the order with no card behind them.
     # @return [Boolean]
     def can_be_deleted?
-      !redeemed? && !partially_redeemed?
+      return false if redeemed? || partially_redeemed?
+      return false if amount_used.to_d.positive? || amount_authorized.to_d.positive?
+
+      !held?
+    end
+
+    # Whether an open cart or draft order has this card applied, including one
+    # in the middle of being completed.
+    # @return [Boolean]
+    def held?
+      carts.incomplete.exists? || orders.incomplete.where.not(status: 'canceled').exists?
     end
 
     # Displays the code in uppercase, eg. ABC1234
@@ -281,8 +295,18 @@ module Spree
       self.code = code.downcase if code.present?
     end
 
+    # Runs inside the destroy's transaction, so the row lock taken here holds
+    # until the delete commits. Spree::GiftCards::Apply locks the card before
+    # drawing it down and attaching it, so an apply either commits first (and
+    # the reloaded card shows the hold) or waits and then finds the card gone.
+    # Every destroy path gets this — the admin endpoint, and the
+    # dependent: :destroy cascades from a batch, a customer or a store.
+    #
+    # The check reads a locked fresh copy rather than reloading this record,
+    # so in-memory changes are left alone.
     def ensure_can_be_deleted
-      return if can_be_deleted?
+      current = self.class.lock.find(id)
+      return if current.can_be_deleted?
 
       errors.add(:base, :cannot_destroy_used_gift_card)
       throw(:abort)
@@ -290,6 +314,18 @@ module Spree
 
     def set_currency
       self.currency ||= store&.default_currency
+    end
+
+    # Once part of the card has been spent, its amount and currency are what
+    # that spending was measured against: changing either would invent a
+    # balance or leave a negative one. Keyed on the stored +amount_used+ and
+    # +amount_authorized+, so a workflow drawing the card down in the same
+    # save is unaffected.
+    def amount_and_currency_unchanged_once_used
+      return unless (amount_used_in_database.to_d + amount_authorized_in_database.to_d).positive?
+
+      errors.add(:amount, :cannot_change_once_used) if will_save_change_to_amount?
+      errors.add(:currency, :cannot_change_once_used) if will_save_change_to_currency?
     end
   end
 end

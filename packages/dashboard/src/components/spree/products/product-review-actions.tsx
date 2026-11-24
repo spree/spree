@@ -13,8 +13,19 @@ import { useApproveProduct, useRejectProduct } from '../../../hooks/use-product'
  * Approving is offered only for a product actually awaiting review.
  * Rejecting is offered for that and for one already rejected, so an operator
  * can correct the reason they gave.
+ *
+ * Neither decision saves the product form, so both wait until unsaved edits
+ * (a category picked during review) are saved rather than dropping them.
  */
-export function ProductReviewActions({ productId, status }: { productId: string; status: string }) {
+export function ProductReviewActions({
+  productId,
+  status,
+  hasUnsavedChanges = false,
+}: {
+  productId: string
+  status: string
+  hasUnsavedChanges?: boolean
+}) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const approve = useApproveProduct()
@@ -24,7 +35,15 @@ export function ProductReviewActions({ productId, status }: { productId: string;
 
   const awaitingReview = status === 'proposed'
 
+  function blockedByUnsavedChanges() {
+    if (!hasUnsavedChanges) return false
+    toastManager.add({ type: 'warning', title: t('admin.products.review.save_first') })
+    return true
+  }
+
   async function handleApprove() {
+    if (blockedByUnsavedChanges()) return
+
     const confirmed = await confirm({
       title: t('admin.products.review.approve_confirm_title'),
       message: t('admin.products.review.approve_confirm_message'),
@@ -44,6 +63,8 @@ export function ProductReviewActions({ productId, status }: { productId: string;
   }
 
   async function handleReject() {
+    if (blockedByUnsavedChanges()) return
+
     try {
       await reject.mutateAsync({ id: productId, reason: reason.trim() || undefined })
       toastManager.add({ type: 'success', title: t('admin.products.review.rejected') })

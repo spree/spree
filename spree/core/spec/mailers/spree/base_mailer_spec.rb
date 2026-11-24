@@ -132,7 +132,7 @@ describe Spree::BaseMailer, type: :mailer do
     end
 
     it 'defaults to the store default locale when none is given' do
-      store.update!(default_locale: 'fr')
+      store.default_market.update!(default_locale: 'fr', supported_locales: 'en,fr')
       captured = nil
       mailer.with_store_locale(store) { captured = I18n.locale }
       expect(captured).to eq(:fr)
@@ -180,13 +180,10 @@ describe Spree::BaseMailer, type: :mailer do
 
     before do
       I18n.enforce_available_locales = false
-      store.update!(default_locale: 'de')
+      store.default_market.update!(default_locale: 'de', supported_locales: 'en,de')
     end
 
-    after do
-      I18n.enforce_available_locales = true
-      store.update!(default_locale: 'en')
-    end
+    after { I18n.enforce_available_locales = true }
 
     it 'renders unwrapped mailers in the store default locale' do
       probe_mailer.plain_email.message

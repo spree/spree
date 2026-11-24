@@ -23425,6 +23425,7 @@ paths:
                   state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+                  admin_name:
                   address2:
                   state_name:
                   phone: "(202) 456-1111"
@@ -23432,6 +23433,10 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
+                  backorderable_default: true
+                  propagate_all_variants: false
+                  pickup_enabled: false
+                  pickup_stock_policy: local
                   returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -23511,6 +23516,7 @@ paths:
                 state_text:
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone:
@@ -23518,6 +23524,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: false
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -23595,6 +23605,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone: "(202) 456-1111"
@@ -23602,6 +23613,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: true
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -23668,6 +23683,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone: "(202) 456-1111"
@@ -23675,6 +23691,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: true
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -24565,132 +24585,6 @@ components:
       - actions
       - subjects
       - has_conditions
-    ImportSchemaField:
-      type: object
-      description: A canonical column of an import type, including per-store custom
-        field columns
-      properties:
-        name:
-          type: string
-          description: Canonical field name used in mappings
-          example: slug
-        label:
-          type: string
-          description: Human-readable label
-          example: Slug
-        required:
-          type: boolean
-          description: Whether the field must be mapped before processing
-      required:
-      - name
-      - label
-      - required
-    CheckoutRequirement:
-      type: object
-      properties:
-        step:
-          type: string
-          description: Checkout step this requirement belongs to
-          example: payment
-        field:
-          type: string
-          description: Field that needs to be satisfied
-          example: payment
-        message:
-          type: string
-          description: Human-readable requirement message
-          example: Add a payment method
-      required:
-      - step
-      - field
-      - message
-    CartWarning:
-      type: object
-      description: A warning about a cart issue (e.g., item removed due to stock change)
-      properties:
-        code:
-          type: string
-          description: Machine-readable warning code
-          example: line_item_removed
-        message:
-          type: string
-          description: Human-readable warning message
-          example: Blue T-Shirt was removed because it was sold out
-        line_item_id:
-          type: string
-          nullable: true
-          description: Prefixed line item ID (when applicable)
-          example: li_abc123
-        variant_id:
-          type: string
-          nullable: true
-          description: Prefixed variant ID (when applicable)
-          example: variant_abc123
-        item_index:
-          type: integer
-          nullable: true
-          description: Position in the submitted items array, for warnings raised
-            while applying a batch of item changes
-          example: 1
-      required:
-      - code
-      - message
-    FulfillmentManifestItem:
-      type: object
-      description: An item within a fulfillment — which line item and how many units
-        are in this fulfillment
-      properties:
-        item_id:
-          type: string
-          description: Line item ID
-          example: li_abc123
-        variant_id:
-          type: string
-          description: Variant ID
-          example: variant_abc123
-        quantity:
-          type: integer
-          description: Quantity in this fulfillment
-          example: 2
-      required:
-      - item_id
-      - variant_id
-      - quantity
-    AdminUserRoleAssignment:
-      type: object
-      description: A role assignment for the current store on a staff member
-      properties:
-        id:
-          type: string
-          description: Prefixed role ID
-          example: role_abc123
-        name:
-          type: string
-          description: Role name
-          example: admin
-      required:
-      - id
-      - name
-    AdminUserStore:
-      type: object
-      description: A store the staff member can access through a role assignment
-      properties:
-        id:
-          type: string
-          description: Prefixed store ID
-          example: store_abc123
-        name:
-          type: string
-          description: Store name
-          example: My Store
-        code:
-          type: string
-          description: Store code
-          example: my-store
-      required:
-      - id
-      - name
-      - code
     PreferenceSchema:
       type: object
       description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
@@ -24706,20 +24600,6 @@ components:
             format: money
             default: '0.0'
         additionalProperties: false
-    PromotionActionLineItem:
-      type: object
-      description: One row in a `create_line_items` action — the variant added to
-        the order and how many
-      properties:
-        variant_id:
-          type: string
-          example: variant_abc123
-        quantity:
-          type: integer
-          example: 1
-      required:
-      - variant_id
-      - quantity
     SellerSummary:
       type: object
       description: A seller the signed-in user may act for
@@ -26850,7 +26730,23 @@ components:
         schema_fields:
           type: array
           items:
-            "$ref": "#/components/schemas/ImportSchemaField"
+            type: object
+            properties:
+              name:
+                type: string
+                description: Canonical field name used in mappings, e.g. slug
+              label:
+                type: string
+                description: Human-readable label
+              required:
+                type: boolean
+                description: Whether the field must be mapped before processing
+            required:
+            - name
+            - label
+            - required
+          description: Canonical columns of this import type, including per-store
+            custom field columns
         csv_headers:
           type: array
           items:
@@ -30312,6 +30208,9 @@ components:
         pickup_instructions:
           type: string
           nullable: true
+        admin_name:
+          type: string
+          nullable: true
         address2:
           type: string
           nullable: true
@@ -30338,6 +30237,17 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        backorderable_default:
+          type: boolean
+        propagate_all_variants:
+          type: boolean
+        pickup_enabled:
+          type: boolean
+        pickup_stock_policy:
+          type: string
+          enum:
+          - local
+          - any
         returns_enabled:
           type: boolean
         created_at:
@@ -30356,6 +30266,7 @@ components:
       - state_text
       - pickup_ready_in_minutes
       - pickup_instructions
+      - admin_name
       - address2
       - state_name
       - phone
@@ -30363,6 +30274,10 @@ components:
       - active
       - default
       - kind
+      - backorderable_default
+      - propagate_all_variants
+      - pickup_enabled
+      - pickup_stock_policy
       - returns_enabled
       - created_at
       - updated_at

@@ -1,5 +1,13 @@
 # @spree/core
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/core` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/core/`.
+
+- [#15271](https://github.com/spree/spree/pull/15271) [`d6f8de8`](https://github.com/spree/spree/commit/d6f8de8207db74e72c0ea23d247f51745946a36a) Thanks [@mad-eel](https://github.com/mad-eel)! - Adds the `PAYMENT_CAPTURE_EVENT_STATUSES` and `REFUND_STATUSES` enums (`requested`, `completed`, `failed`) with their types, and `requested` to the payment statuses, for payments whose provider answers a capture, void or refund later.
+
 ## 6.0.5
 
 Released with Spree 6.0.5, with no changes of its own.

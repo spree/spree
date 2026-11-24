@@ -1,0 +1,186 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://management-test.adyen.com/v3/me
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:44:55 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-8aaa90d9bd1f9dc08b6f55db803d5dfc-e2a2aca9ca81c84b-01
+      Set-Cookie:
+      - JSESSIONID=692d79a98ca570c9~F72A13042EF895AD10B014420A7BFBAF; Path=/configurationapi;
+        Secure; HttpOnly
+      - __cf_bm=zrzP2sDbbCIVLVNaMGsxq69jV8o.7aeVAJx0KLQOXwg-1795023895.255453-1.0.1.1-2OkGMSl_9CrRYSiOk03XmpUDZPGOgqdwENKBkh75mqUI4x.a6U69iPZ_EGhQ6n12h15csr2JW0_K5vj2XFWo.cnnHFteTVhMs2ow9yJpRGsfnidlsSuPopww_p7rAVv0;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:14:55 GMT
+      - _cfuvid=IHLjuLlGxn68Q7iPya4azrsmnQ5zXc.W3Utsz4j396k-1795023895.255453-1.0.1.1-cJza9zvpcDSgfCmyn.jIXTBfBE6KCD3PdcBhk5q.27I;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Pspreference:
+      - e38284fb-48d1-1223-2f11-898fadcd30be_1-W56WVGDZLFZ28222
+      Requestid:
+      - e38284fb-48d1-1223-2f11-898fadcd30be_1-W56WVGDZLFZ28222
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c9314b56a4a6-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6IkNSRUQ0MjlDQzIyMzIyQ0w1UUJDUDc3NFdNMzVTMiIsInVzZXJuYW1lIjoid3NfOTIxODMwQENvbXBhbnkuU3ByZWVDb21tZXJjZSIsImRlc2NyaXB0aW9uIjoiU3ByZWUgNiBRQSAxIiwiY2xpZW50S2V5IjoiPEZJTFRFUkVEPiIsImFsbG93ZWRJcEFkZHJlc3NlcyI6W10sInJvbGVzIjpbIk1hbmFnZW1lbnQgQVBJIC0gQWNjb3VudHMgcmVhZCIsIk1hbmFnZW1lbnQgQVBJIC0gV2ViaG9va3MgcmVhZCIsIk1hbmFnZW1lbnQgQVBJIC0gQVBJIGNyZWRlbnRpYWxzIHJlYWQgYW5kIHdyaXRlIiwiTWFuYWdlbWVudCBBUEkgLSBTdG9yZXMgcmVhZCIsIk1hbmFnZW1lbnQgQVBJIOKAlCBQYXltZW50IG1ldGhvZHMgcmVhZCIsIk1hbmFnZW1lbnQgQVBJIC0gU3RvcmVzIHJlYWQgYW5kIHdyaXRlIiwiTWFuYWdlbWVudCBBUEkgLSBXZWJob29rcyByZWFkIGFuZCB3cml0ZSIsIkNoZWNrb3V0IGVuY3J5cHRlZCBjYXJkaG9sZGVyIGRhdGEiLCJNZXJjaGFudCBSZWN1cnJpbmcgcm9sZSIsIkRhdGEgUHJvdGVjdGlvbiBBUEkiLCJNYW5hZ2VtZW50IEFQSSAtIFBheW91dCBBY2NvdW50IFNldHRpbmdzIFJlYWQiLCJDaGVja291dCB3ZWJzZXJ2aWNlIHJvbGUiLCJNYW5hZ2VtZW50IEFQSSAtIEFjY291bnRzIHJlYWQgYW5kIHdyaXRlIiwiTWVyY2hhbnQgUEFMIFdlYnNlcnZpY2Ugcm9sZSJdLCJhY3RpdmUiOnRydWUsImFsbG93ZWRPcmlnaW5zIjpbeyJpZCI6IlMyLTU2NUQyNTZBNEY3NDQ3NTI0QTQ1MzY0QjY4NDQ0QzQ2NTg2MjYzMjY1QjU4NkEzRTVFNEMzODY2Njc1RjYwMjY0QTcxNDE2QTI5NDYyQTU1NTcyQzNBN0YzMDQ5N0M1NiIsImRvbWFpbiI6Imh0dHBzOlwvXC9zcHJlZS1hZHllbi1zdG9yZWZyb250Lm5ncm9rLmFwcCIsIl9saW5rcyI6eyJzZWxmIjp7ImhyZWYiOiJodHRwczpcL1wvbWFuYWdlbWVudC10ZXN0LmFkeWVuLmNvbVwvdjNcL21lXC9hbGxvd2VkT3JpZ2luc1wvUzItNTY1RDI1NkE0Rjc0NDc1MjRBNDUzNjRCNjg0NDRDNDY1ODYyNjMyNjVCNTg2QTNFNUU0QzM4NjY2NzVGNjAyNjRBNzE0MTZBMjk0NjJBNTU1NzJDM0E3RjMwNDk3QzU2In19fV0sIl9saW5rcyI6eyJzZWxmIjp7ImhyZWYiOiJodHRwczpcL1wvbWFuYWdlbWVudC10ZXN0LmFkeWVuLmNvbVwvdjNcL21lIn0sImFsbG93ZWRPcmlnaW5zIjp7ImhyZWYiOiJodHRwczpcL1wvbWFuYWdlbWVudC10ZXN0LmFkeWVuLmNvbVwvdjNcL21lXC9hbGxvd2VkT3JpZ2lucyJ9fSwiYXNzb2NpYXRlZE1lcmNoYW50QWNjb3VudHMiOlsiPEFEWUVOX01FUkNIQU5UX0FDQ09VTlQ+Il0sImNvbXBhbnlOYW1lIjoiU3ByZWVDb21tZXJjZSJ9
+  recorded_at: Wed, 18 Nov 2026 17:44:55 GMT
+- request:
+    method: get
+    uri: https://management-test.adyen.com/v3/merchants/<ADYEN_MERCHANT_ACCOUNT>/webhooks?pageSize=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:44:55 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-4fb6c7e8cf8ac8578487d36299e452df-c868228c2f500ff5-01
+      Set-Cookie:
+      - JSESSIONID=4e99096a544b16b9~812B0CF42B7D1947492A84832303163B; Path=/configurationapi;
+        Secure; HttpOnly
+      - __cf_bm=0skS7e_skSm6txsKMsQtuttZPO69RXjYaozGzfouWqs-1795023895.4187124-1.0.1.1-O09CKAAkeepuPKi0m09FwBUWoZoAGWV8spmOqQsadmUURsb15XIyCExMUgEPVkKxUEsp7kZzys9rHrVG1GycdoXtEm7qdNrXpmoUPnotaSNVNktfTVru8byvw27JRpxY;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:14:55 GMT
+      - _cfuvid=fzwZhQzZm4Z4wWQ20fFaW6j8Bz3sOQLdFy0LyAuswM0-1795023895.4187124-1.0.1.1-hkD.0gz3EUuclzBRmUQItNFa6DStWpMKLSBYjBx5tcI;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Pspreference:
+      - 7297fafd-69af-1c39-690c-5c34fed4ac73_2-RVZVVGDZLFZ28222
+      Requestid:
+      - 7297fafd-69af-1c39-690c-5c34fed4ac73_2-RVZVVGDZLFZ28222
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c9325b3ad2c5-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_links":{"first":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks?pageNumber=1&pageSize=100"},"last":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks?pageNumber=1&pageSize=100"},"self":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks?pageNumber=1&pageSize=100"}},"itemsTotal":2,"pagesTotal":1,"accountReference":"<ADYEN_MERCHANT_ACCOUNT>","data":[{"id":"WBHK42CPS22322CM5QBDFB4DCQ29J3","type":"standard","url":"http:\/\/www.example.com:3000\/api\/v3\/webhooks\/payments\/pm_UkLWZg9DAJ","description":"Webhook
+        for <ADYEN_MERCHANT_ACCOUNT> - 1795023890176","username":"","hasPassword":false,"active":true,"hasError":false,"encryptionProtocol":"TLSv1.3","communicationFormat":"json","acceptsExpiredCertificate":false,"acceptsSelfSignedCertificate":false,"acceptsUntrustedRootCertificate":false,"certificateAlias":"signed-test.adyen.com_2026","populateSoapActionHeader":false,"hmacKeyCheckValue":"4388FC","additionalSettings":{"includeEventCodes":["CAPTURE_FAILED","SCHEME_ARBITRATION","CHARGEBACK_REVERSED","REQUEST_FOR_INFORMATION","MANUAL_REVIEW_REJECT","PAIDOUT_REVERSED","PAYOUT_THIRDPARTY","NOTIFICATION_OF_CHARGEBACK","CANCELLATION","REFUNDED_REVERSED","MANUAL_REVIEW_ACCEPT","TECHNICAL_CANCEL","SCHEME_ARBITRATION_LOST","NOTIFICATION_OF_FRAUD","PREARBITRATION_OPEN","RECURRING_CONTRACT","PAYOUT_EXPIRE","CANCEL_AUTORESCUE","POSTPONED_REFUND","CANCEL_OR_REFUND","CAPTURE","ORDER_CLOSED","PREARBITRATION_ISSUER_WITHDRAWN","REFUND","REFUND_WITH_DATA","PREARBITRATION_ACCEPTED","AUTHORISATION_ADJUSTMENT","HANDLED_EXTERNALLY","PENDING","AUTORESCUE","REFUND_FAILED","CHARGEBACK","SCHEME_ARBITRATION_WON","VOID_PENDING_REFUND","PREARBITRATION_DECLINED","PREARBITRATION_WON","ORDER_OPENED","PAYOUT_DECLINE","SECOND_CHARGEBACK","AUTHORISATION","REPORT_AVAILABLE","PREARBITRATION_LOST"],"excludeEventCodes":["DISPUTE_OPENED_WITH_CHARGEBACK","EXPIRE","ISSUER_COMMENTS","ADVICE_OF_DEBIT","DISABLE_RECURRING","REVERSAL","AUTHENTICATION","OFFER_CLOSED","SETTLED_REVERSED","DISPUTE_DEFENSE_PERIOD_ENDED","INFORMATION_SUPPLIED","ISSUER_RESPONSE_TIMEFRAME_EXPIRED","REFUND_NOT_CLEARED"]},"_links":{"self":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBDFB4DCQ29J3"},"generateHmac":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBDFB4DCQ29J3\/generateHmac"},"merchant":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>"},"testWebhook":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBDFB4DCQ29J3\/test"}}},{"id":"WBHK42CPS22322CM5QBCTJGDC732W7","type":"standard","url":"https:\/\/shop.example.com\/api\/v3\/webhooks\/payments\/pm_OIJLhNcSbf","description":"Webhook
+        for <ADYEN_MERCHANT_ACCOUNT> - 1795011524411","username":"","hasPassword":false,"active":true,"hasError":false,"encryptionProtocol":"TLSv1.3","communicationFormat":"json","acceptsExpiredCertificate":false,"acceptsSelfSignedCertificate":false,"acceptsUntrustedRootCertificate":false,"certificateAlias":"signed-test.adyen.com_2026","populateSoapActionHeader":false,"hmacKeyCheckValue":"DD45F8","additionalSettings":{"properties":{"includeCardInfoForRecurringContractNotification":true},"includeEventCodes":["CAPTURE_FAILED","SCHEME_ARBITRATION","CHARGEBACK_REVERSED","REQUEST_FOR_INFORMATION","MANUAL_REVIEW_REJECT","PAIDOUT_REVERSED","PAYOUT_THIRDPARTY","NOTIFICATION_OF_CHARGEBACK","CANCELLATION","REFUNDED_REVERSED","MANUAL_REVIEW_ACCEPT","TECHNICAL_CANCEL","SCHEME_ARBITRATION_LOST","NOTIFICATION_OF_FRAUD","PREARBITRATION_OPEN","RECURRING_CONTRACT","PAYOUT_EXPIRE","CANCEL_AUTORESCUE","POSTPONED_REFUND","CANCEL_OR_REFUND","CAPTURE","ORDER_CLOSED","PREARBITRATION_ISSUER_WITHDRAWN","REFUND","REFUND_WITH_DATA","PREARBITRATION_ACCEPTED","AUTHORISATION_ADJUSTMENT","HANDLED_EXTERNALLY","PENDING","AUTORESCUE","REFUND_FAILED","CHARGEBACK","SCHEME_ARBITRATION_WON","VOID_PENDING_REFUND","PREARBITRATION_DECLINED","PREARBITRATION_WON","ORDER_OPENED","PAYOUT_DECLINE","SECOND_CHARGEBACK","AUTHORISATION","REPORT_AVAILABLE","PREARBITRATION_LOST"],"excludeEventCodes":["DISPUTE_OPENED_WITH_CHARGEBACK","EXPIRE","ISSUER_COMMENTS","ADVICE_OF_DEBIT","DISABLE_RECURRING","REVERSAL","AUTHENTICATION","OFFER_CLOSED","SETTLED_REVERSED","DISPUTE_DEFENSE_PERIOD_ENDED","INFORMATION_SUPPLIED","ISSUER_RESPONSE_TIMEFRAME_EXPIRED","REFUND_NOT_CLEARED"]},"_links":{"self":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBCTJGDC732W7"},"generateHmac":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBCTJGDC732W7\/generateHmac"},"merchant":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>"},"testWebhook":{"href":"https:\/\/management-test.adyen.com\/v3\/merchants\/<ADYEN_MERCHANT_ACCOUNT>\/webhooks\/WBHK42CPS22322CM5QBCTJGDC732W7\/test"}}}]}'
+  recorded_at: Wed, 18 Nov 2026 17:44:55 GMT
+- request:
+    method: post
+    uri: https://management-test.adyen.com/v3/merchants/<ADYEN_MERCHANT_ACCOUNT>/webhooks/WBHK42CPS22322CM5QBDFB4DCQ29J3/generateHmac
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:44:55 GMT
+      Content-Type:
+      - application/json;charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-1c9a714b2fc6a5fbb44e6223de0b649e-2ca3e546aa5312b5-01
+      Set-Cookie:
+      - JSESSIONID=4e99096a544b16b9~4C02E674821C9264E87A458C3ADD7D02; Path=/configurationapi;
+        Secure; HttpOnly
+      - __cf_bm=eVLNe1CIzxLS_RZk_qkQBfhiUiI3DBBky2MUy6isuyM-1795023895.5916064-1.0.1.1-aYw2b3HBreNrWpieCXSsY0RPFyrZcDlbCLYIpROkL0Rlg_B6WXd92aWsLwuvZccoHhoqf6re1AyD14JYsS6CIg575osngHVCuOU1kZSSZWa_9yGlXdJYNdubI2S0hLjz;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:14:55 GMT
+      - _cfuvid=0nwH_kJtCHejT_sOR48UqfluAcLuirhdBoYcYuigXCA-1795023895.5916064-1.0.1.1-QjeX4Lj6AvElId34qoO3mfDMU1rU_hHO1b.ToMzb0sk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Pspreference:
+      - 7297fafd-69af-1c39-690c-5c34fed4ac73_2-CWZVVGDZLFZ28222
+      Requestid:
+      - 7297fafd-69af-1c39-690c-5c34fed4ac73_2-CWZVVGDZLFZ28222
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c933687041d0-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"hmacKey":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:44:55 GMT
+recorded_with: VCR 6.4.1

@@ -4,7 +4,7 @@ module Spree
       class ProductFiltersSerializer < BaseSerializer
         typelize default_sort: :string,
                  total_count: :number,
-                 filters: 'Array<ProductFilterPriceRange | ProductFilterAvailability | ProductFilterOption | ProductFilterCategory>',
+                 filters: [%i[ProductFilterPriceRange ProductFilterAvailability ProductFilterOption ProductFilterCategory], { multi: true }],
                  sort_options: [:ProductFilterSortOption, { multi: true }]
 
         attributes :default_sort, :total_count
