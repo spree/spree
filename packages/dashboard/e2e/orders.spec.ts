@@ -564,13 +564,15 @@ test.describe('cancelling a backordered order', () => {
       'get',
       '/channels',
     )
+    const defaultChannel = channels.data.find((channel) => channel.default)
+    expect(defaultChannel, 'the store has a default channel').toBeDefined()
     const stamp = Date.now()
     const sku = `E2E-BACKORDER-${stamp}`
     await seedRecord(page, session, '/products', {
       name: `Backordered ${stamp}`,
       status: 'active',
       prices: [{ amount: '10.00', currency: 'USD' }],
-      product_publications: [{ channel_id: channels.data.find((channel) => channel.default)?.id }],
+      product_publications: [{ channel_id: defaultChannel?.id }],
       variants: [
         {
           options: [],

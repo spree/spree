@@ -96,9 +96,12 @@ module Spree
       # A mix that includes anything handed over reads as `partial`; otherwise
       # the shared status stands. `delivered` only when every parcel arrived.
       def fulfillment_status_for(order)
+        # Reloaded first: backordered? reads each fulfillment's status in
+        # memory, and a copy loaded before a cancel would still read live.
+        order.fulfillments.reload
         return 'backorder' if order.backordered?
 
-        statuses = order.fulfillments.reload.pluck(:status).uniq
+        statuses = order.fulfillments.map(&:status).uniq
         return if statuses.empty?
 
         live = statuses - ['canceled']
