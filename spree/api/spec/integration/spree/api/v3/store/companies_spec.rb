@@ -395,6 +395,18 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:token) { invitation.token }
         let(:'x-spree-api-key') { api_key.token }
 
+        schema allOf: [
+          { '$ref' => '#/components/schemas/CompanyInvitation' },
+          {
+            type: :object,
+            properties: {
+              company_name: { type: :string, example: 'Acme Industrial', description: 'The company the invitation is to' },
+              store_name: { type: :string, description: 'The store the company buys from' }
+            },
+            required: %w[company_name store_name]
+          }
+        ]
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['company_name']).to eq('Acme Industrial')

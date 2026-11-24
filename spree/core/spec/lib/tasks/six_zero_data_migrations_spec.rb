@@ -539,6 +539,7 @@ describe '6.0 data migration tasks' do
       fee = Spree::Fee.find_by(order_id: order.id)
       expect(fee.amount).to eq(3)
       expect(fee.kind).to eq('surcharge')
+      expect(order.reload.fee_total).to eq(3)
 
       expect(order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')).to eq(totals_before)
       expect(order.metadata['typed_adjustments_frozen']).to be_nil

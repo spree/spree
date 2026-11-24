@@ -6170,7 +6170,20 @@ paths:
                 company_name: Acme Industrial
                 store_name: Spree Test Store
               schema:
-                "$ref": "#/components/schemas/CompanyInvitation"
+                allOf:
+                - "$ref": "#/components/schemas/CompanyInvitation"
+                - type: object
+                  properties:
+                    company_name:
+                      type: string
+                      example: Acme Industrial
+                      description: The company the invitation is to
+                    store_name:
+                      type: string
+                      description: The store the company buys from
+                  required:
+                  - company_name
+                  - store_name
         '404':
           description: token spent, revoked or expired
           content:

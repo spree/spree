@@ -77,12 +77,6 @@ module Spree
                   :payment_total,       :amount_due,           :fee_total,
                   :commission_amount_total, :commission_tax_total, :commission_total
 
-    # An order no fee was ever worked out for holds no figure, and owes none.
-    #
-    # @return [BigDecimal]
-    def fee_total
-      super || BigDecimal(0)
-    end
 
     # Transient warnings populated by remove_out_of_stock_items! and ensure_available_delivery_rates
     attribute :warnings, default: -> { [] }
