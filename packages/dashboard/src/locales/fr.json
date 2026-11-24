@@ -3293,6 +3293,7 @@
           "view_at_gateway": "Voir sur {{gateway}}",
           "view_details": "Voir les détails",
           "failed_card_checks": "Vérifications de carte échouées",
+          "refund": "Remboursement",
           "card_checks_unavailable": "Vérifications de carte non disponibles",
           "capture_requested": "Capture demandée",
           "void_requested": "Annulation demandée"
@@ -3322,7 +3323,8 @@
           "payment_total": "Total des paiements",
           "promotions": "Promotions",
           "tax_additional": "Taxe (supplémentaire)",
-          "tax_included": "Taxe (incluse)"
+          "tax_included": "Taxe (incluse)",
+          "refunded": "Remboursé"
         },
         "tracking": {
           "fulfilled_prefix": "Traité",

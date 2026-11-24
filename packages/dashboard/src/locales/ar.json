@@ -3316,6 +3316,7 @@
           "view_at_gateway": "عرض في {{gateway}}",
           "view_details": "عرض التفاصيل",
           "failed_card_checks": "فشل التحقق من البطاقة",
+          "refund": "استرداد",
           "card_checks_unavailable": "فحوصات البطاقة غير متاحة",
           "capture_requested": "تم طلب التحصيل",
           "void_requested": "تم طلب الإلغاء"
@@ -3345,7 +3346,8 @@
           "payment_total": "إجمالي الدفع",
           "promotions": "الترقيات",
           "tax_additional": "الضريبة (الإضافية)",
-          "tax_included": "الضريبة (متضمنة)"
+          "tax_included": "الضريبة (متضمنة)",
+          "refunded": "المبلغ المسترد"
         },
         "tracking": {
           "fulfilled_prefix": "تم التنفيذ",

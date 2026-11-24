@@ -10,6 +10,7 @@ module Spree
                    refund_reason_id: [:string, nullable: true],
                    refunder_id: [:string, nullable: true],
                    refunder_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
+                   refund_reason_name: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    status: [:string, enum: Spree::Refund.statuses, enum_type_name: 'RefundStatus',
                                      comment: '`requested` until the payment provider answers a refund it accepted.'],
@@ -17,6 +18,10 @@ module Spree
 
           attributes :metadata, :status, :failure_reason,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :refund_reason_name do |refund|
+            refund.reason&.name
+          end
 
           # The tax inside the amount, when what was refunded carried tax.
           money_attributes :tax_amount

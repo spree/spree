@@ -3291,6 +3291,7 @@
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
           "failed_card_checks": "カードの確認に失敗",
+          "refund": "返金",
           "card_checks_unavailable": "カード確認は利用不可",
           "capture_requested": "キャプチャ依頼中",
           "void_requested": "取消依頼中"
@@ -3320,7 +3321,8 @@
           "payment_total": "支払い合計",
           "promotions": "プロモーション",
           "tax_additional": "税（外税）",
-          "tax_included": "税（内税）"
+          "tax_included": "税（内税）",
+          "refunded": "返金済み"
         },
         "tracking": {
           "fulfilled_prefix": "処理済み",

@@ -60,6 +60,13 @@ module Spree
           money_attributes :payment_total
           typelize payment_total: [:string, nullable: false]
 
+          money_attributes :refunds_total
+          typelize refunds_total: [
+            :string,
+            { nullable: false,
+              comment: 'What has been refunded to payments, from returns or from the order. Store credit refunds are not included.' }
+          ]
+
           # What a new payment should be for: the amount due less the payments
           # recorded and not yet captured. The server owns the rule, so a client
           # does not repeat which payment statuses count.
@@ -169,6 +176,7 @@ module Spree
           # An order from a split checkout has no payments of its own; what it
           # has is a share of each payment made against its group.
           many :payment_splits, resource: proc { Spree.api.admin_payment_split_serializer }, if: proc { expand?('payment_splits') }
+          many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
 
           one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
           one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
