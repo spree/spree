@@ -164,7 +164,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
         expect(json_response['error']['code']).to eq('invalid_provider')
       end
 
-      # `provider[]=email` and `refresh_token[k]=x` arrive as an Array and a Hash, not a string.
+      # A parameter sent as `name[]=x` or `name[k]=x` arrives as an Array or a Hash, not a string.
       it 'returns bad_request for a provider sent as an array' do
         post :create, params: { provider: ['email'], email: existing_user.email, password: 'password123' }
 

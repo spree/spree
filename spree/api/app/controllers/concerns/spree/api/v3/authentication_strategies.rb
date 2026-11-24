@@ -30,7 +30,7 @@ module Spree
 
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_provider],
-            message: "Unsupported authentication provider: #{provider}",
+            message: "Unsupported authentication provider: #{provider if provider.is_a?(String)}".strip,
             status: :bad_request
           )
           nil

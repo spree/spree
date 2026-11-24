@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::InvitationAcceptancesController, type: :co
         expect(response).to have_http_status(:not_found)
       end
 
-      # `token[k]=x` and `password[]=x` arrive as a Hash and an Array, not a string.
+      # A parameter sent as `name[]=x` or `name[k]=x` arrives as an Array or a Hash, not a string.
       it 'returns 404 for a token sent as a hash' do
         get :lookup, params: { id: invitation.prefixed_id, token: { a: 'x' } }
         expect(response).to have_http_status(:not_found)
