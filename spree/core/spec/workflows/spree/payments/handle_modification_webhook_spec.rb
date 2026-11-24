@@ -38,7 +38,7 @@ RSpec.describe Spree::Payments::HandleModificationWebhook do
       expect(Spree::Events).to published?('payment.captured')
     end
 
-    # Refunds::Create locks the order and then the payment, and settling a
+    # A return's refund locks the order and then the payment, and settling a
     # capture writes the order; the other way round the two deadlock.
     it 'locks the order before the payment' do
       locked = []

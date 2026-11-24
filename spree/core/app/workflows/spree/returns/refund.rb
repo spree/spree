@@ -126,7 +126,8 @@ module Spree
           amount: @amount_to_refund,
           record: return_record,
           memo: "Return #{return_record.number}",
-          refunder: refunder
+          refunder: refunder,
+          tax_amount: @tax_amount
         )
       end
 

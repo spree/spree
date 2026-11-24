@@ -23,6 +23,14 @@ module Spree
           Spree::Base.polymorphic_api_type(refund.originator_type)
         end
 
+        # Read from the column, so a list of refunds loads no credits.
+        typelize store_credit_id: [
+          :string, { nullable: true, comment: 'The store credit the money went back as; null when it went back to the payment.' }
+        ]
+        attribute :store_credit_id do |refund|
+          Spree::StoreCredit.prefixed_id_for(refund.store_credit_id)
+        end
+
         # @deprecated Reimbursements were folded into returns, which a refund
         #   names as its +originator+. Removed in 6.5.
         attribute(:reimbursement_id) { nil }

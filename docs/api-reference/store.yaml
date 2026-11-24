@@ -22126,6 +22126,11 @@ components:
         originator_type:
           type: string
           nullable: true
+        store_credit_id:
+          type: string
+          nullable: true
+          description: The store credit the money went back as; null when it went
+            back to the payment.
         reimbursement_id:
           type: string
           nullable: true

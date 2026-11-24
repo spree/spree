@@ -264,9 +264,24 @@ RSpec.describe 'Spree::Returns workflows' do
         credit = Spree::StoreCredit.find_by(originator: return_record)
         expect(credit).to be_present
         expect(credit.amount).to eq(return_record.refund_total)
-        # Credit writes no refund row, so naming the order is the only way the
-        # order can tell it gave anything back.
         expect(credit.refunded_order).to eq(return_record.order)
+      end
+
+      # The credit is money the order gave back, so it is recorded as a refund
+      # against the payment — paid as the credit, never at the gateway.
+      it 'records the credit as a refund against the payment without calling the gateway' do
+        expect_any_instance_of(Spree::Refund).not_to receive(:perform!)
+        payment = return_record.order.payments.completed.first
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        credit = Spree::StoreCredit.find_by(originator: return_record)
+        refund = payment.refunds.sole
+        expect(refund).to have_attributes(store_credit: credit, originator: return_record, status: 'completed',
+                                          amount: credit.amount, order: return_record.order)
+        expect(refund.tax_amount).to eq(return_record.reload.credited_tax_total)
+        # Counted once, from the credit.
+        expect(return_record.refunded_total).to eq(credit.amount)
       end
 
       it 'credits only the lines that actually arrived' do
@@ -382,8 +397,8 @@ RSpec.describe 'Spree::Returns workflows' do
         end
       end
 
-      # Credit writes no refund row, so the card's own balance cannot tell the
-      # order already gave this money back (V-3832).
+      # The credit is a refund against the card's payment, so the card's own
+      # balance leaves out what the order already gave back (V-3832).
       it 'leaves the card only what the credit did not give back' do
         allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
         payment = return_record.order.payments.completed.first
@@ -392,8 +407,8 @@ RSpec.describe 'Spree::Returns workflows' do
         Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
 
         refused = Spree.refund_create_workflow.call(payment: payment, amount: payment.amount)
-        expect(refused.error.value).to eq(:refund_exceeds_order_balance)
-        expect(payment.refunds).to be_empty
+        expect(refused.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds.to_original_payment).to be_empty
 
         expect(Spree.refund_create_workflow.call(payment: payment, amount: payment.amount - credited)).to be_success
       end

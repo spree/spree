@@ -161,6 +161,18 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
         expect(response).to have_http_status(:ok)
       end
     end
+
+    # Its refund rows record the amount as what an order gave back.
+    context 'when the credit was issued as a refund' do
+      before { create(:refund, store_credit: store_credit, amount: 10) }
+
+      it 'rejects amount changes with 422' do
+        patch :update, params: { customer_id: customer.prefixed_id, id: store_credit.prefixed_id, amount: 100.00 }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(store_credit.reload.amount).to eq(50)
+      end
+    end
   end
 
   describe 'DELETE #destroy' do

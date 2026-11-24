@@ -8,17 +8,20 @@ module Spree
     # is not. On a clean gateway failure the uncredited row is destroyed
     # (credit_allowed sums every refund row, so a dangling one would block the
     # retry); a crash between the two leaves the row for reconciliation.
+    #
+    # A refund paid as store credit takes the same path without the gateway:
+    # the credit already holds the money, so the row is written completed and
+    # the payment is never credited. It runs inside the caller's transaction,
+    # beside the credit it records.
     class Create < Spree::Workflow
-      include Spree::Refunds::OrderPayments
-
       hooks :validate, :before_refund, :after_refund
 
       # The created refund — hook handlers read it (nil during :validate).
       attr_reader :refund
 
       # @param payment [Spree::Payment] the captured payment to reverse
-      # @param amount [BigDecimal, Numeric, nil] defaults to everything the
-      #   payment can still give back to the order
+      # @param amount [BigDecimal, Numeric, nil] defaults to the full
+      #   creditable balance
       # @param reason [Spree::RefundReason, nil] defaults to the store's
       #   return-processing reason
       # @param refunder [Object, nil] who is issuing it (see Spree.actor_classes)
@@ -30,11 +33,14 @@ module Spree
       #   refund is for; otherwise the payment's own order is taken.
       # @param tax_amount [BigDecimal, Numeric] the tax inside +amount+, when
       #   what is being refunded carried tax (see Spree::Refund#tax_amount)
-      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil, order: nil, tax_amount: 0)
+      # @param store_credit [Spree::StoreCredit, nil] the credit the money went
+      #   back as, instead of to the payment
+      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil, order: nil, tax_amount: 0,
+                  store_credit: nil)
         super
 
         step :ensure_refundable
-        @amount_to_refund = amount || [payment.credit_allowed.to_d, refundable_share, order_refundable_balance(lock: false)].min
+        @amount_to_refund = amount || payment.credit_allowed
         step :ensure_amount_within_balance
 
         # Veto point — before the refund record exists and before any money
@@ -43,7 +49,11 @@ module Spree
         run_hooks :before_refund
 
         step :create_refund, on_flow_failure: :destroy_uncredited_refund
-        external_step :credit_at_gateway
+        if store_credit
+          step :refresh_order_payment_total
+        else
+          external_step :credit_at_gateway
+        end
 
         run_hooks :after_refund
         # A requested refund is confirmed by the provider's webhook, which
@@ -64,27 +74,9 @@ module Spree
 
       def ensure_amount_within_balance
         amount = @amount_to_refund.to_d
-        unless amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share
-          failure(payment, :refund_amount_exceeds_balance)
-        end
-        failure(payment, :refund_exceeds_order_balance) if amount > order_refundable_balance(lock: false)
-      end
+        return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share
 
-      # What the order has not yet given back on any channel: what its payments
-      # can still refund, less store credit already issued against it. Credit
-      # is its own ledger and writes no refund row, so the payment's balance
-      # alone would let a card refund hand back money a return had already
-      # given as credit.
-      #
-      # @param lock [Boolean] whether to lock the order row (see #refundable_balance)
-      # @return [BigDecimal]
-      def order_refundable_balance(lock: true)
-        refunded_order = order || payment.order
-        return payment.credit_allowed.to_d if refunded_order.nil?
-
-        # A share mid-capture counts what it has already captured: that money
-        # was paid, whatever the parcel still in flight draws.
-        refundable_balance(refunded_order, lock: lock, count_in_flight: true)
+        failure(payment, :refund_amount_exceeds_balance)
       end
 
       # What the named order may take back from this payment.
@@ -110,33 +102,31 @@ module Spree
       # balance validation is check-then-act, and two concurrent refunds would
       # both validate against the pre-refund balance and both credit.
       #
-      # The order's row is locked first, as store credit and captures lock it,
-      # so credit issued since the pre-flight check is counted too.
-      #
       # The per-order share is re-read inside the lock for the same reason.
       # `Spree::Refund` validates against `credit_allowed`, which is the whole
       # payment's balance and says nothing about whose money it is — so on a
       # shared payment the model cannot catch two refunds that each fit the
       # payment but together overdraw one child's share.
       def create_refund
-        ApplicationRecord.transaction do
-          failure(payment, :refund_exceeds_order_balance) if @amount_to_refund.to_d > order_refundable_balance
+        payment.with_lock do
+          ensure_share_still_available
 
-          payment.with_lock do
-            ensure_share_still_available
-
-            # Requested until the gateway answers, so a crash before then leaves
-            # a visible requested row, not one that reads as completed.
-            @refund = payment.refunds.create!(
-              status: 'requested',
-              amount: @amount_to_refund,
-              order: order || payment.order,
-              reason: reason || Spree::RefundReason.return_processing_reason(refund_store),
-              refunder: refunder,
-              originator: originator,
-              tax_amount: tax_amount
-            )
-          end
+          # Requested until the gateway answers, so a crash before then leaves
+          # a visible requested row, not one that reads as completed. Store
+          # credit has already been issued, so its row is completed at once;
+          # the credit's id stands in for a gateway reference, which also
+          # makes Refund#perform! a no-op on it.
+          @refund = payment.refunds.create!(
+            status: store_credit ? 'completed' : 'requested',
+            transaction_id: store_credit&.prefixed_id,
+            store_credit: store_credit,
+            amount: @amount_to_refund,
+            order: order || payment.order,
+            reason: reason || Spree::RefundReason.return_processing_reason(refund_store),
+            refunder: refunder,
+            originator: originator,
+            tax_amount: tax_amount
+          )
         end
       end
 
@@ -156,6 +146,12 @@ module Spree
       # store-less reason would be created global and reused everywhere.
       def refund_store
         (order || payment.order)&.store || payment.owner&.store || Spree::Current.store
+      end
+
+      # Re-sums what the order has been paid, as Refund#perform! does once a
+      # gateway refund is credited.
+      def refresh_order_payment_total
+        refund.order&.refresh_payment_total!
       end
 
       def credit_at_gateway

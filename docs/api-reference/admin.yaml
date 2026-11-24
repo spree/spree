@@ -44084,6 +44084,7 @@ paths:
                 refund_reason_id: rr_UkLWZg9DAJ
                 originator_id:
                 originator_type:
+                store_credit_id:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -71708,6 +71709,11 @@ components:
         originator_type:
           type: string
           nullable: true
+        store_credit_id:
+          type: string
+          nullable: true
+          description: The store credit the money went back as; null when it went
+            back to the payment.
         metadata:
           type: object
         created_at:

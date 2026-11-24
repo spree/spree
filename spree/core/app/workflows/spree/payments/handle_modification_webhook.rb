@@ -68,9 +68,10 @@ module Spree
       # the capture request that wrote the record may still be finishing.
       #
       # The payment's orders are locked before the payment itself, in the
-      # order Spree::Refunds::Create and the returns flow take them: settling
-      # a share writes its order's payment total, so a payment-first lock here
-      # would deadlock against a refund holding the order.
+      # order returns, claims and exchanges take them (the order, then
+      # Spree::Refunds::Create the payment): settling a share writes its
+      # order's payment total, so a payment-first lock here would deadlock
+      # against a refund holding the order.
       def apply_outcome
         ApplicationRecord.transaction do
           Spree::Order.where(id: payment_order_ids).order(:id).lock.pluck(:id)

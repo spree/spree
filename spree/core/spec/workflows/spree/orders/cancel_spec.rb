@@ -236,30 +236,30 @@ module Spree
           expect(order.reload.payment_total).to eq(0)
         end
 
-        # Store credit writes no refund row, so the payment's own balance
-        # cannot tell the order already gave its money back (V-3832).
-        it 'refunds nothing when store credit already gave everything back' do
-          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: payment.amount)
+        # Store credit given back is a refund against the payment, so the
+        # payment's own balance already leaves it out (V-3832).
+        it 'refunds nothing to the card when store credit already gave everything back' do
+          give_back_as_store_credit(order, payment.amount)
 
           result = subject.call(order: order, canceler: user, refund_payments: true)
 
           expect(result).to be_success
           expect(order.reload).to be_canceled
-          expect(payment.refunds).to be_empty
+          expect(payment.refunds.to_original_payment).to be_empty
         end
 
-        it 'refunds only what store credit left' do
-          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+        it 'refunds to the card only what store credit left' do
+          give_back_as_store_credit(order, 10)
 
           subject.call(order: order, canceler: user, refund_payments: true)
 
-          expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
+          expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 10)
         end
       end
 
       # Releasing a store-credit payment hands back all of it whatever the
-      # caller asked, so it is held to what the order has left to give once
-      # the card is settled.
+      # caller asked; what a return already gave back as credit is recorded
+      # against the card, so the card gives back only the rest.
       context 'with part of the order paid in store credit' do
         let!(:payment) { create(:payment, order: order, amount: order.total - 20, status: 'completed') }
         let(:credit) { create(:store_credit, store: order.store, customer: order.customer, amount: 20) }
@@ -282,14 +282,15 @@ module Spree
           expect(credit_released).to eq(20)
         end
 
-        it 'releases none of it once a return gave the same back as store credit' do
-          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+        it 'refunds the card only the rest once a return gave part of it back as store credit' do
+          give_back_as_store_credit(order, 20)
 
-          subject.call(order: order, canceler: user)
+          subject.call(order: order, canceler: user, refund_payments: true)
 
-          expect(payment.reload).to be_void
-          expect(credit_payment.reload).to be_completed
-          expect(credit_released).to eq(0)
+          expect(payment.reload).not_to be_void
+          expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 20)
+          expect(credit_payment.reload).to be_void
+          expect(credit_released).to eq(20)
         end
 
         context 'on a gateway that cannot void a captured charge' do
@@ -305,23 +306,25 @@ module Spree
             end
           end
 
-          it 'refunds the card and releases no credit once a return gave the credit back' do
-            create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+          it 'refunds the card only what a return did not already give back as store credit' do
+            give_back_as_store_credit(order, 20)
 
             subject.call(order: order, canceler: user, refund_payments: true)
 
-            expect(payment.refunds.sum(:amount)).to eq(payment.amount)
-            expect(credit_payment.reload).to be_completed
-            expect(credit_released).to eq(0)
+            expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 20)
+            expect(credit_released).to eq(20)
           end
 
-          it 'releases only the credit the return left' do
-            create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 5)
+          # Once the card is used up, the rest of the credit was given back
+          # from the store-credit payment, which then releases only what is left.
+          it 'releases only the part of a store-credit payment a return left' do
+            give_back_as_store_credit(order, payment.amount + 5)
 
             subject.call(order: order, canceler: user, refund_payments: true)
 
-            expect(payment.refunds.sum(:amount)).to eq(payment.amount)
-            expect(credit_payment.refunds.sum(:amount)).to eq(15)
+            expect(payment.refunds.to_original_payment).to be_empty
+            expect(credit_payment.reload).to be_completed
+            expect(credit_payment.refunds.to_original_payment.sum(:amount)).to eq(15)
             expect(credit_released).to eq(15)
           end
         end
@@ -343,8 +346,8 @@ module Spree
         expect(credit_payment.reload).to be_void
       end
 
-      it 'keeps the payment once a return gave its money back as store credit' do
-        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 20)
+      it 'keeps the payment once a return gave part of it back as store credit' do
+        give_back_as_store_credit(order, 20)
 
         subject.call(order: order, canceler: user)
 

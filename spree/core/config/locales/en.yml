@@ -424,6 +424,8 @@ en:
               cannot_destroy_only_store: Cannot destroy the only Store.
         spree/store_credit:
           attributes:
+            amount:
+              refunded: cannot change on credit issued as a refund. Withdraw it and issue a new one instead.
             amount_authorized:
               exceeds_total_credits: Exceeds total credits.
             amount_used:
@@ -1812,6 +1814,7 @@ en:
       unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
       unable_to_void: 'Unable to void code: %{auth_code}'
     store_credit_using_gift_card_error: You can't apply store credit after you applied a gift card.
+    store_credit_withdrawn: The store credit this refund was paid as was withdrawn.
     success: Success
     tags: Tags
     tax: Tax

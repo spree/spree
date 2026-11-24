@@ -125,12 +125,16 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::StoreCredit.find_by(originator: claim)).to be_present
     end
 
-    # Credit writes no refund row, so unless it names the order it settles the
-    # order goes on reading `paid` on money the customer already has back.
-    it 'leaves the order showing what the credit gave back' do
+    # The credit is recorded as a refund against the order's payment, so the
+    # order reads as partly refunded rather than `paid` on money the customer
+    # already has back.
+    it 'records the credit as a refund and leaves the order showing it' do
       Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
 
-      expect(Spree::StoreCredit.find_by(originator: claim).refunded_order).to eq(order)
+      credit = Spree::StoreCredit.find_by(originator: claim)
+      expect(credit.refunded_order).to eq(order)
+      expect(credit.refunds.sum(:amount)).to eq(credit.amount)
+      expect(credit.refunds.map(&:originator).uniq).to eq([claim])
       expect { order.update_statuses! }.to change { order.reload.payment_status }.
         from('paid').to('partially_refunded')
     end
@@ -142,10 +146,10 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result.error.value).to eq(:refund_exceeds_paid)
     end
 
-    # Store credit writes no refund row, so without a ceiling on the order
-    # every settlement could each give back the full amount paid.
+    # Without a ceiling on the order every settlement could each give back the
+    # full amount paid.
     it 'refuses store credit beyond what the order can still give back' do
-      create(:store_credit, store: store, customer: order.customer, refunded_order: order, amount: order.total)
+      give_back_as_store_credit(order, order.total)
 
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
 
@@ -157,7 +161,7 @@ RSpec.describe 'Spree::Claims workflows' do
     # A refund to the card must not follow credit that already gave the
     # order's money back.
     it 'refuses a card refund beyond what store credit left on the order' do
-      create(:store_credit, store: store, customer: order.customer, refunded_order: order, amount: order.total)
+      give_back_as_store_credit(order, order.total)
 
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'original_payment')
 

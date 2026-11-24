@@ -32,6 +32,10 @@ module Spree
                                 inverse_of: :store_credit_refunds
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
+    # The refund rows that record this credit as money an order gave back —
+    # one per payment it was drawn against. Kept when the credit is withdrawn:
+    # Spree::StoreCreditRefundSubscriber marks them failed instead.
+    has_many :refunds, class_name: 'Spree::Refund', inverse_of: :store_credit, dependent: nil
     has_many :payments, as: :source, class_name: 'Spree::Payment'
     has_many :orders, through: :payments, class_name: 'Spree::Order'
 
@@ -40,6 +44,9 @@ module Spree
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
+    # Its refund rows record the amount as given back, so changing it would
+    # leave the order's refunds saying something the credit no longer does.
+    validate :amount_unchanged_once_refunded, on: :update
 
     # Redemption order: the oldest credit is spent first.
     scope :oldest_first, -> { order(:created_at, :id) }
@@ -327,6 +334,10 @@ module Spree
         errors.add(:amount_authorized, :exceeds_total_credits)
         false
       end
+    end
+
+    def amount_unchanged_once_refunded
+      errors.add(:amount, :refunded) if amount_changed? && refunds.exists?
     end
 
     def validate_no_amount_used

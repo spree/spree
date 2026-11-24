@@ -700,6 +700,14 @@ when the provider confirms it. Rows written before the 6.0 patch release that
 added the status read as completed until the `backfill_settlement_statuses`
 upgrade step fills their status in.
 
+Store credit given back for an order — by a [return, claim or
+exchange](/developer/core-concepts/returns-exchanges-claims) — is a refund too.
+It is recorded against the order's payments, oldest first, and names the credit
+in `store_credit_id`; no money goes back through the payment's provider. It
+counts like any other refund: what the payment can still refund, the order's
+`payment_status`, and a marketplace seller's earnings. A credit's amount cannot
+change once it is issued; deleting an unspent one marks its refunds `failed`.
+
 ## Payment Sources
 
 Payment sources represent the actual instrument used for a payment. They are created automatically when a Payment Session completes.

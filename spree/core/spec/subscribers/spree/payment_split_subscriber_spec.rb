@@ -56,23 +56,37 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
   end
 
   # A child order owns no payments, so its share is the only thing that can
-  # say what it gave back — and credit never touches the share.
+  # say what it gave back — store credit included, which is recorded as a
+  # refund against the share.
   it 'reports a credit refund against one child and leaves the sibling alone' do
     Spree::Orders::UpdateStatuses.call(order: first_party_order)
 
-    create(:store_credit, refunded_order: seller_order, store: store,
-                          customer: seller_order.customer, amount: 40)
+    give_back_as_store_credit(seller_order, 40)
 
+    expect(seller_split.reload.refunded_amount).to eq(40)
     expect(seller_order.reload.payment_status).to eq('refunded')
     expect(first_party_order.reload.payment_status).to eq('paid')
+    expect(first_party_split.reload.refunded_amount).to eq(0)
   end
 
   it 'counts a credit refund alongside a gateway refund on the same child' do
     refund!(seller_order, 10)
-    create(:store_credit, refunded_order: seller_order, store: store,
-                          customer: seller_order.customer, amount: 30)
+    give_back_as_store_credit(seller_order, 30)
 
+    expect(seller_split.reload.refunded_amount).to eq(40)
     expect(seller_order.reload.payment_status).to eq('refunded')
+  end
+
+  # Withdrawing an unspent credit means the order gave nothing back after
+  # all, so its refund fails and comes off the share.
+  it 'takes a withdrawn credit back off the share' do
+    credit = give_back_as_store_credit(seller_order, 30)
+
+    credit.destroy!
+
+    expect(credit.refunds.reload.map(&:status)).to eq(['failed'])
+    expect(seller_split.reload.refunded_amount).to eq(0)
+    expect(seller_order.reload.payment_status).to eq('paid')
   end
 
   it 'leaves the share alone while the provider has not answered a refund' do

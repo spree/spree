@@ -25,57 +25,55 @@ module Spree
 
       # Puts `amount` back as store credit.
       #
-      # Credit is its own ledger and writes no {Spree::Refund} row, so the
-      # credit names the order it settles — without that the order could not
-      # tell it had given anything back, and its payment status stayed `paid`
-      # on money the customer had already been made whole for.
+      # The money is still given back from the order's payments, so the
+      # credit is recorded as refunds against them, oldest first, exactly as
+      # {#refund_order_payments} drains them — only paid as the credit rather
+      # than at the gateway. Every reader of refunds then counts it: what a
+      # payment can still give back, the order's payment total and status, a
+      # split checkout's shares and the seller's earnings. Runs inside the
+      # caller's transaction, so the credit and its refunds land together.
       #
       # @param order [Spree::Order] the order being put right
       # @param amount [BigDecimal] how much to give back
       # @param record [Spree::Return, Spree::Claim, Spree::Exchange] what asked
-      #   for it; it originates the credit
+      #   for it; it originates the credit and its refunds
       # @param memo [String] what the customer reads on the credit
       # @param refunder [Object, nil] whoever is issuing it
-      # @return [Array<Spree::StoreCredit>] the one credit written, shaped like
-      #   {#refund_order_payments} so both branches answer the same way
-      def issue_refund_store_credit(order:, amount:, record:, memo:, refunder: nil)
+      # @param tax_amount [BigDecimal] the tax inside +amount+
+      # @return [Array<Spree::StoreCredit>] the one credit written
+      def issue_refund_store_credit(order:, amount:, record:, memo:, refunder: nil, tax_amount: 0)
         failure(record, :refund_exceeds_paid) if amount.to_d > refundable_balance(order)
 
-        [
-          Spree::StoreCredit.create!(
-            store: record.store,
-            customer: order.customer,
-            refunded_order: order,
-            amount: amount,
-            currency: record.currency,
-            created_by: refunder,
-            originator: record,
-            memo: memo
-          )
-        ]
+        credit = Spree::StoreCredit.create!(
+          store: record.store,
+          customer: order.customer,
+          refunded_order: order,
+          amount: amount,
+          currency: record.currency,
+          created_by: refunder,
+          originator: record,
+          memo: memo
+        )
+        refund_order_payments(order: order, amount: amount, record: record, refunder: refunder,
+                              tax_amount: tax_amount, store_credit: credit)
+
+        [credit]
       end
 
       # What the order can still give back, as store credit or to its
-      # payments: what its payments can still refund, less credit already
-      # issued against it. Credit writes no refund row, so without the second
-      # half every return, claim and exchange on one order could each hand back
-      # the full amount paid, and a refund to the card could follow a credit.
+      # payments. Store credit is recorded as refunds too, so this is simply
+      # what its payments can still refund.
       #
       # The order row is locked first, so two settlements racing on one order
-      # cannot both read the same headroom. A pre-flight check passes
-      # `lock: false`, so it holds no row lock should a caller's transaction
-      # still be open across the gateway call that follows.
+      # cannot both read the same headroom.
       #
       # @param order [Spree::Order]
       # @param shares [Hash{Spree::Payment => BigDecimal}, nil] already read
-      # @param lock [Boolean] whether to lock the order row first
-      # @param count_in_flight [Boolean] see #refundable_shares
       # @return [BigDecimal]
-      def refundable_balance(order, shares = nil, lock: true, count_in_flight: false)
-        Spree::Order.lock.find(order.id) if lock
+      def refundable_balance(order, shares = nil)
+        Spree::Order.lock.find(order.id)
 
-        (shares || refundable_shares(order, count_in_flight: count_in_flight)).values.sum(0.to_d) -
-          Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
+        (shares || refundable_shares(order)).values.sum(0.to_d)
       end
 
       # Puts `amount` back on `order`, oldest payment first, until it is
@@ -97,8 +95,10 @@ module Spree
       # @param refunder [Object, nil] whoever is issuing it
       # @param tax_amount [BigDecimal] the tax inside +amount+, divided across
       #   the rows in proportion to what each refunds
+      # @param store_credit [Spree::StoreCredit, nil] the credit the money went
+      #   back as; the rows then skip the gateway
       # @return [Array<Spree::Refund>] the refunds written, in drain order
-      def refund_order_payments(order:, amount:, record:, refunder: nil, tax_amount: 0)
+      def refund_order_payments(order:, amount:, record:, refunder: nil, tax_amount: 0, store_credit: nil)
         remaining = amount.to_d
         tax_remaining = tax_amount.to_d
         refunds = []
@@ -130,7 +130,8 @@ module Spree
             reason: reason,
             refunder: refunder,
             originator: record,
-            tax_amount: row_tax
+            tax_amount: row_tax,
+            store_credit: store_credit
           )
           # `failure` raises, so this ends the drain — the caller's own error
           # vocabulary decorates the 422.
@@ -154,12 +155,8 @@ module Spree
       # sale is holding.
       #
       # @param order [Spree::Order]
-      # @param count_in_flight [Boolean] whether a share mid-capture counts
-      #   what it has already captured, rather than being reported and left
-      #   out. A bound on the whole order counts it: that money was paid, and
-      #   leaving the share out would refuse a refund the order can afford.
       # @return [Hash{Spree::Payment => BigDecimal}]
-      def refundable_shares(order, count_in_flight: false)
+      def refundable_shares(order)
         unless order.grouped?
           return order.payments.completed.order(:created_at).
                  to_h { |payment| [payment, payment.credit_allowed.to_d] }
@@ -174,7 +171,7 @@ module Spree
 
         order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, found|
           next unless split.payment&.completed?
-          next if !count_in_flight && capture_in_flight?(order, split)
+          next if capture_in_flight?(order, split)
 
           found[split.payment] = split.captured_amount - refunded.fetch(split.payment_id, 0)
         end

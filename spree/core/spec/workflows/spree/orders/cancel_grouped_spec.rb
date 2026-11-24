@@ -174,18 +174,19 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       end
     end
 
-    # Store credit writes no refund row, so only the order's own ledger says
-    # part of what it was paid already went back (V-3832).
+    # Store credit given back is a refund against the order's share, so the
+    # share already leaves it out (V-3832).
     context 'after part of the order was given back as store credit' do
       before do
-        create(:store_credit, refunded_order: seller_order, store: store, amount: 30)
+        give_back_as_store_credit(seller_order, 30)
       end
 
       it 'gives back only what the credit left' do
         result = described_class.call(order: seller_order, refund_payments: true)
 
         expect(result).to be_success
-        expect(Spree::Refund.where(order_id: seller_order.id).sum(:amount)).to eq(10)
+        expect(Spree::Refund.to_original_payment.where(order_id: seller_order.id).sum(:amount)).to eq(10)
+        expect(first_party_split.reload.refunded_amount).to eq(0)
       end
 
       it 'refuses an explicit amount above that before canceling anything' do
@@ -194,7 +195,7 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
         expect(result).to be_failure
         expect(result.error.value).to eq(:refund_exceeds_order_balance)
         expect(seller_order.reload).not_to be_canceled
-        expect(Spree::Refund.where(order_id: seller_order.id)).to be_empty
+        expect(Spree::Refund.to_original_payment.where(order_id: seller_order.id)).to be_empty
       end
     end
   end

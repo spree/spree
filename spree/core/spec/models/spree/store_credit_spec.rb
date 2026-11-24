@@ -65,6 +65,24 @@ describe Spree::StoreCredit, type: :model do
         expect(subject.errors[:amount_authorized]).to include(text)
       end
     end
+
+    # Its refunds record the amount as what the order gave back.
+    describe 'amount of a credit issued as a refund' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+      let(:credit) { give_back_as_store_credit(order, 10) }
+
+      it 'cannot change' do
+        credit.amount = 5
+
+        expect(credit).not_to be_valid
+        expect(credit.errors[:amount]).to include(I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount.refunded'))
+      end
+
+      it 'leaves the memo editable' do
+        expect(credit.update(memo: 'Return R1')).to be(true)
+      end
+    end
   end
 
   describe '.oldest_first' do

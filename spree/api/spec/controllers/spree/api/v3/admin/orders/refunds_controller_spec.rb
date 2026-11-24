@@ -40,9 +40,9 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
       expect(json_response['amount']).to eq('5.00')
     end
 
-    # Store credit is its own ledger and writes no refund row, so a card refund
-    # bounded by the payment alone gave back money the credit already had
-    # (V-3832).
+    # The credit is recorded as a refund against the payment, so the payment's
+    # balance already leaves it out and a card refund cannot give the same
+    # money back again (V-3832).
     context 'after a return was refunded as store credit' do
       let(:return_record) { create(:received_return, store: store) }
       let(:order) { return_record.order }
@@ -67,13 +67,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
         expect { refund(payment.amount) }.not_to change(Spree::Refund, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['message']).to eq(I18n.t('spree.refund_exceeds_order_balance'))
       end
 
       it 'refunds what the store credit left' do
         expect { refund(payment.amount - credited) }.to change(Spree::Refund, :count).by(1)
 
         expect(response).to have_http_status(:created)
+      end
+
+      it 'lists the credit as a refund naming the store credit it was paid as' do
+        get :index, params: { order_id: order.prefixed_id }, as: :json
+
+        credit = Spree::StoreCredit.find_by!(originator: return_record)
+        expect(json_response['data'].pluck('store_credit_id')).to eq([credit.prefixed_id])
+        expect(json_response['data'].first['amount']).to eq(Spree::Money::Rounding.format(credited, 'USD'))
       end
     end
   end

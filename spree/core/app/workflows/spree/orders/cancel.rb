@@ -22,8 +22,7 @@ module Spree
       #   money already taken is its own decision — the shape Shopify, Vendure,
       #   Saleor and WooCommerce all settled on.
       # @param refund_amount [BigDecimal, Numeric, nil] defaults to
-      #   what the order was paid and has not already given back as store
-      #   credit, when refund_payments is true
+      #   order.payment_total when refund_payments is true
       # @param notify_customer [Boolean] hint for subscribers
       # @param restock_items [Boolean, nil] deprecated and ignored — items
       #   always return to stock when their fulfillment is canceled
@@ -47,7 +46,7 @@ module Spree
         # compared against money further down — `[amount, remaining].min`
         # raises on a String.
         @amount_to_refund = refund_amount&.to_d
-        @amount_to_refund ||= amount_refundable if refund_payments
+        @amount_to_refund ||= amount_paid if refund_payments
         step :ensure_refund_within_order_balance
 
         # Veto point — seller policy, already-dispatched guards. Before the
@@ -103,12 +102,11 @@ module Spree
         failure(order)
       end
 
-      # An amount settlement could not refund — given back already, as
-      # refunds or store credit, or held by a share mid-capture — is refused
-      # before anything is canceled, rather than leaving the order canceled
-      # with less refunded than was asked. An amount that will not be refunded
-      # at all is not checked. Only a shared payment takes an amount (see
-      # #ensure_refund_amount_is_settleable).
+      # An amount settlement could not refund — given back already, or held by
+      # a share mid-capture — is refused before anything is canceled, rather
+      # than leaving the order canceled with less refunded than was asked. An
+      # amount that will not be refunded at all is not checked. Only a shared
+      # payment takes an amount (see #ensure_refund_amount_is_settleable).
       def ensure_refund_within_order_balance
         return if !refund_payments || refund_amount.blank? || @amount_to_refund <= grouped_amount_refundable
 
@@ -184,10 +182,10 @@ module Spree
         return settle_grouped_payments if order.grouped?
 
         if order.gift_card.present? && order.covered_by_store_credit?
-          # A void writes the whole payment off as given back, so it is held
-          # to what the order has left to give, as below.
+          # A void writes the whole payment off as given back, so a payment
+          # part of which was already refunded is not voided.
           order.payments.completed.store_credits.each do |payment|
-            payment.void! if payment.credit_allowed <= amount_left_to_give_back
+            payment.void! if nothing_refunded?(payment)
           end
         else
           settle_completed_payments
@@ -208,32 +206,25 @@ module Spree
       # does so regardless, and one that cannot — Stripe, on a captured
       # PaymentIntent — refunds only when `refund_payments` allows it.
       #
-      # Nothing settled may hand back more than the order has left to give:
-      # once refunds and store credit have given back all it was paid, a
-      # payment's own balance is no longer the customer's to take. Store
-      # credit settles last, so what is left goes back to the card first.
+      # What a payment can still give back counts every refund against it,
+      # store credit issued for the order included, so nothing settled hands
+      # back money already returned.
       def settle_completed_payments
-        completed = order.payments.completed
-        (completed.not_store_credits.to_a + completed.store_credits.to_a).each do |payment|
-          settle_completed_payment(payment)
-        end
+        order.payments.completed.each { |payment| settle_completed_payment(payment) }
       end
 
       def settle_completed_payment(payment)
-        left = amount_left_to_give_back
-        return payment.cancel!(refund: refund_payments && left.positive?) unless payment.payment_method.cancel_voids?(payment)
+        return payment.cancel!(refund: refund_payments && payment.credit_allowed.positive?) unless payment.payment_method.cancel_voids?(payment)
 
         # A void releases the whole payment whatever `refund:` says — a card
         # charge or store credit its full original amount, part-refunded or
-        # not — so it runs only when nothing was refunded yet and the order
-        # has all of it left to give.
-        released = payment.amount.to_d
-        return payment.cancel!(refund: refund_payments) if released <= left && payment.credit_allowed.to_d == released
+        # not — so it runs only when nothing was refunded yet.
+        return payment.cancel!(refund: refund_payments) if nothing_refunded?(payment)
 
         # Otherwise only what is left goes back, as a refund: when the caller
         # asked for money back, and always for store credit, which a cancel
         # releases whatever the caller asked.
-        amount = [payment.credit_allowed.to_d, left].min
+        amount = payment.credit_allowed.to_d
         return unless amount.positive? && (refund_payments || payment.store_credit?)
 
         result = Spree.refund_create_workflow.call(
@@ -243,23 +234,8 @@ module Spree
         raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
       end
 
-      # What the order's payments can still refund, less store credit already
-      # issued for it — which writes no refund row (V-3832).
-      #
-      # @return [BigDecimal]
-      def amount_left_to_give_back
-        order.payments.completed.to_a.sum(0.to_d) { |payment| payment.credit_allowed.to_d } - store_credit_given_back
-      end
-
-      # What the order was paid and has not already given back as store credit.
-      #
-      # @return [BigDecimal]
-      def amount_refundable
-        amount_paid - store_credit_given_back
-      end
-
-      def store_credit_given_back
-        order.store_credit_refunds.sum(:amount).to_d
+      def nothing_refunded?(payment)
+        payment.credit_allowed.to_d == payment.amount.to_d
       end
 
       # What this order has actually been paid. An order placed in a split
@@ -314,7 +290,7 @@ module Spree
 
           # Bounded by the share's refund rows too, as Refunds::Create is: a
           # refund still requested is not in the refunded column yet.
-          refundable = [split.net_captured_amount, split.refundable_amount, remaining, grouped_balance_left].compact.min
+          refundable = [split.net_captured_amount, split.refundable_amount, remaining].compact.min
           next if refundable <= 0
 
           result = Spree.refund_create_workflow.call(
@@ -326,29 +302,14 @@ module Spree
         end
       end
 
-      # What Refunds::Create will still let this order take back: what its
-      # shares have captured, counted from refund rows, less store credit
-      # already issued for it. Bounding each refund by it keeps one the
-      # workflow would refuse from failing after the order already reads
-      # canceled.
-      #
-      # @return [BigDecimal]
-      def grouped_balance_left
-        completed_splits.sum(0.to_d, &:refundable_amount) - store_credit_given_back
-      end
-
-      # What #settle_grouped_payments can refund: each share not mid-capture
-      # up to what it holds, and no more than the order has left to give.
+      # What #settle_grouped_payments can refund: each completed share not
+      # mid-capture, up to what it holds.
       #
       # @return [BigDecimal]
       def grouped_amount_refundable
-        settleable = completed_splits.reject(&:capture_in_flight?).
-                     sum(0.to_d) { |split| [split.net_captured_amount, split.refundable_amount].min }
-        [settleable, grouped_balance_left].min
-      end
-
-      def completed_splits
-        order.payment_splits.includes(:payment).select { |split| split.payment&.completed? }
+        order.payment_splits.includes(:payment).
+          select { |split| split.payment&.completed? && !split.capture_in_flight? }.
+          sum(0.to_d) { |split| [split.net_captured_amount, split.refundable_amount].min }
       end
 
       # Whether a charge against this share is still in flight.
