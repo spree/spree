@@ -34,15 +34,15 @@ RSpec.describe SpreeAvalara::Client do
         with(basic_auth: ['2000000000', 'test_license_key'])
     end
 
-    # Avalara attributes calls to the certified extension through this header.
-    it 'identifies the extension to Avalara' do
+    # Avalara attributes calls to the certified integration through this header:
+    # name; Avalara-issued id; integration version, then the SDK's own fields.
+    it 'identifies the integration to Avalara' do
       stub_ping(status: 200, body: { authenticated: true }.to_json)
 
       client.ping
 
       expect(WebMock).to have_requested(:get, /utilities\/ping/).with { |request|
-        request.headers['X-Avalara-Client'].include?(SpreeAvalara::APP_NAME) &&
-          request.headers['X-Avalara-Client'].include?(SpreeAvalara::APP_VERSION)
+        request.headers['X-Avalara-Client'].start_with?("SpreebySpark;a0n0b00000PqwGxAAJ;#{Spree.version};")
       }
     end
   end

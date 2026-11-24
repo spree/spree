@@ -8,13 +8,11 @@ module SpreeAvalara
   # derives to, so the two can never drift apart.
   PROVIDER_ID = 'avalara'.freeze
 
-  # Avalara's identifier for the certified Spree extension. Issued by Avalara to
-  # the integration rather than chosen by it: it travels in the X-Avalara-Client
-  # header and is how Avalara attributes calls to this extension. Despite the
-  # name it is not a display string — renaming it detaches the gem from that
-  # certification.
-  APP_NAME = 'a0o0b000005HsXPAA0'.freeze
-  APP_VERSION = 'Spree by Spark'.freeze
+  # The name and the identifier Avalara issued for the certified Spree
+  # integration, sent as the first two fields of the X-Avalara-Client header —
+  # renaming either detaches the gem from that certification.
+  APP_NAME = 'SpreebySpark;a0n0b00000PqwGxAAJ'.freeze
+  APP_VERSION = Spree.version
 
   # Deployment configuration rather than merchant preferences: how long a
   # checkout waits on Avalara is an infrastructure decision, and an estimate runs
