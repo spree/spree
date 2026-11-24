@@ -29,9 +29,15 @@ host; switch `endpoint` to `https://rest.avatax.com` when you go live.
 | `document_recording` | What happens to a placed sale at Avalara. **Record and commit** (default) files it as Committed. **Record without committing** files it as Saved, so it stays out of Avalara's filings until something commits it — the legacy extension's behaviour with commit switched off. **Don't record** files nothing: only quotes are sent, and no sale, void or credit reaches Avalara, for a store whose ERP records the sales instead. The tax charged is the same in all three. Switching to Don't record also stops voids and credits for documents recorded before the switch |
 | `address_validation_enabled` | Refuse a checkout whose US or Canadian address Avalara cannot resolve (default off) |
 | `show_rate_in_label` | Reserved; carried over so upgraded settings survive |
+| `logging_enabled` | Write every AvaTax call to the Rails log (default off) — see below |
 
 Activating the integration verifies the credentials with a ping. A rejected key blocks activation and
 shows Avalara's own message.
+
+**Logging.** With `logging_enabled` on, every call to Avalara writes one line to your Rails log, tagged
+`[AVATAX]`: the operation, the HTTP status (or the network error), how long it took, and the request and
+response bodies. Credentials are never logged. The bodies carry customer addresses, and a guest's email
+is their customer code, so switch it on while you need it and keep the log under your usual retention.
 
 **Your stock locations need real addresses.** Avalara computes tax from an origin as well as a
 destination, so a warehouse carrying only a country makes every estimate fail. Fill in street, city,

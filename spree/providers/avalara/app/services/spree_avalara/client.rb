@@ -17,30 +17,32 @@ module SpreeAvalara
     # 503, and the SDK retries that with backoff of its own.
     TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError].freeze
 
-    attr_reader :account_number, :license_key, :endpoint, :company_code
+    attr_reader :account_number, :license_key, :endpoint, :company_code, :logging
 
     # @param account_number [String] AvaTax account number, sent as the username
     # @param license_key [String] AvaTax license key, sent as the password
     # @param endpoint [String] AvaTax host, sandbox or production
     # @param company_code [String, nil] the company documents are filed against
-    def initialize(account_number:, license_key:, endpoint:, company_code: nil)
+    # @param logging [Boolean] write every call to the Rails log
+    def initialize(account_number:, license_key:, endpoint:, company_code: nil, logging: false)
       @account_number = account_number
       @license_key = license_key
       @endpoint = endpoint
       @company_code = company_code
+      @logging = logging
     end
 
     # Whether these credentials authenticate, plus the account they belong to.
     #
     # @return [Hash]
     def ping
-      request { avatax_client.ping }
+      request(:ping) { avatax_client.ping }
     end
 
     # @param model [Hash] a CreateTransactionModel
     # @return [Hash] the created transaction
     def create_transaction(model)
-      request { avatax_client.create_transaction(model) }
+      request(:create_transaction, model) { avatax_client.create_transaction(model) }
     end
 
     # Files a transaction, adjusting it in place when the document code has been
@@ -49,20 +51,23 @@ module SpreeAvalara
     # @param model [Hash] a CreateOrAdjustTransactionModel
     # @return [Hash] the filed transaction
     def create_or_adjust_transaction(model)
-      request { avatax_client.create_or_adjust_transaction(model) }
+      request(:create_or_adjust_transaction, model) { avatax_client.create_or_adjust_transaction(model) }
     end
 
     # @param transaction_code [String] the document code to void
     # @param code [String] AvaTax's void reason
     # @return [Hash] the voided transaction
     def void_transaction(transaction_code, code: 'DocVoided')
-      request { avatax_client.void_transaction(company_code, transaction_code, { code: code }) }
+      model = { code: code }
+      request(:void_transaction, model.merge(transaction_code: transaction_code)) do
+        avatax_client.void_transaction(company_code, transaction_code, model)
+      end
     end
 
     # @param params [Hash] address parts (line1, city, region, postalCode, country)
     # @return [Hash] the resolved address with Avalara's messages
     def resolve_address(params)
-      request { avatax_client.resolve_address(params) }
+      request(:resolve_address, params) { avatax_client.resolve_address(params) }
     end
 
     # Whether a refusal means the document is already filed. Commit is
@@ -142,12 +147,31 @@ module SpreeAvalara
       )
     end
 
-    def request
-      interpret(yield)
-    rescue *TRANSPORT_ERRORS => error
-      # No status: nothing was answered, so the failure is the network rather
-      # than a decision by Avalara.
-      raise RequestError.new(error.message, status: nil, details: nil)
+    def request(operation, payload = nil)
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+      begin
+        response = yield
+      rescue *TRANSPORT_ERRORS => error
+        log_call(operation, payload, started, outcome: error.class.name)
+        # No status: nothing was answered, so the failure is the network rather
+        # than a decision by Avalara.
+        raise RequestError.new(error.message, status: nil, details: nil)
+      end
+
+      log_call(operation, payload, started, outcome: response.status, response: response.body)
+      interpret(response)
+    end
+
+    # One line per call, for a merchant tracing what was sent and what came back.
+    # Bodies only: the credentials travel in the Authorization header.
+    def log_call(operation, payload, started, outcome:, response: nil)
+      return unless logging
+
+      duration = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - started) * 1000).round
+      Rails.logger.info(
+        "[AVATAX] #{operation} #{outcome} #{duration}ms request=#{payload.to_json} response=#{response.to_json}"
+      )
     end
 
     # AvaTax reports refusals two ways — an HTTP status and an `error` object in

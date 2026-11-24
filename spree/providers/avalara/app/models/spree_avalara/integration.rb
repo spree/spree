@@ -30,6 +30,9 @@ module SpreeAvalara
     preference :address_validation_enabled, :boolean, default: false
     preference :document_recording, :string, default: 'commit', choices: DOCUMENT_RECORDING_CHOICES
     preference :show_rate_in_label, :boolean, default: false
+    # Off by default: requests carry customer addresses, and a guest's customer
+    # code is their email.
+    preference :logging_enabled, :boolean, default: false
 
     # Without these a half-filled credential set saves and then fails at
     # activation with a vendor error, which reads as an Avalara outage rather
@@ -88,7 +91,8 @@ module SpreeAvalara
         account_number: preferred_account_number,
         license_key: preferred_license_key,
         endpoint: preferred_endpoint,
-        company_code: preferred_company_code
+        company_code: preferred_company_code,
+        logging: preferred_logging_enabled
       )
     end
 

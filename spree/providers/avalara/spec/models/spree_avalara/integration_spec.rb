@@ -24,7 +24,7 @@ RSpec.describe SpreeAvalara::Integration do
     it 'keeps the legacy names apart from the commit switch' do
       expect(described_class.preference_schema.map { |field| field[:key] }).to contain_exactly(
         :account_number, :license_key, :endpoint, :company_code,
-        :address_validation_enabled, :document_recording, :show_rate_in_label
+        :address_validation_enabled, :document_recording, :show_rate_in_label, :logging_enabled
       )
     end
 
@@ -35,6 +35,7 @@ RSpec.describe SpreeAvalara::Integration do
       expect(fresh.preferred_document_recording).to eq('commit')
       expect(fresh.preferred_address_validation_enabled).to be(false)
       expect(fresh.preferred_show_rate_in_label).to be(false)
+      expect(fresh.preferred_logging_enabled).to be(false)
     end
 
     it 'offers the three ways of recording documents and accepts no other' do
@@ -58,6 +59,14 @@ RSpec.describe SpreeAvalara::Integration do
       end
 
       expect(answers).to eq('commit' => [true, true], 'save' => [true, false], 'none' => [false, false])
+    end
+
+    it 'hands its logging choice to the client' do
+      integration = build(:avalara_integration, store: @default_store)
+      expect(integration.client.logging).to be(false)
+
+      integration = build(:avalara_integration, store: @default_store, preferred_logging_enabled: true)
+      expect(integration.client.logging).to be(true)
     end
 
     it 'masks the license key' do
@@ -237,7 +246,7 @@ RSpec.describe SpreeAvalara::Integration do
     it 'describes the credential form without leaking the secret default' do
       properties = entry[:schema]['properties']
 
-      expect(properties.size).to eq(7)
+      expect(properties.size).to eq(8)
       expect(properties['license_key']).to include('x-spree-secret' => true)
       expect(properties['license_key']).not_to have_key('default')
     end

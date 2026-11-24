@@ -143,6 +143,59 @@ RSpec.describe SpreeAvalara::Client do
     end
   end
 
+  describe 'logging' do
+    subject(:logging_client) do
+      described_class.new(account_number: '2000000000', license_key: 'test_license_key',
+                          endpoint: 'https://sandbox-rest.avatax.com', company_code: 'DEFAULT', logging: true)
+    end
+
+    let(:lines) { [] }
+
+    before { allow(Rails.logger).to receive(:info) { |message| lines << message } }
+
+    def avatax_lines
+      lines.grep(/\A\[AVATAX\]/)
+    end
+
+    it 'writes the operation, status, duration and both bodies, and no credentials' do
+      stub_request(:post, %r{/api/v2/companies/DEFAULT/transactions/R1001/void}).
+        to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: { status: 'Cancelled' }.to_json)
+
+      logging_client.void_transaction('R1001')
+
+      line = avatax_lines.sole
+      expect(line).to match(/\A\[AVATAX\] void_transaction 200 \d+ms /)
+      expect(line).to include('request={"code":"DocVoided","transaction_code":"R1001"}')
+      expect(line).to include('response={"status":"Cancelled"}')
+      expect(line).not_to include('2000000000')
+      expect(line).not_to include('test_license_key')
+    end
+
+    it 'logs a refusal with the status Avalara answered' do
+      stub_ping(status: 401, body: { error: { message: 'Authentication Incomplete.' } }.to_json)
+
+      expect { logging_client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(avatax_lines.sole).to match(/\A\[AVATAX\] ping 401 \d+ms request=null response=.*Authentication Incomplete/)
+    end
+
+    it 'logs a network failure with no status' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+
+      expect { logging_client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(avatax_lines.sole).to match(/\A\[AVATAX\] ping Faraday::ConnectionFailed \d+ms /)
+    end
+
+    it 'writes nothing when logging is off' do
+      stub_ping(status: 200, body: { authenticated: true }.to_json)
+
+      client.ping
+
+      expect(avatax_lines).to be_empty
+    end
+  end
+
   # The SDK subscribes to Faraday notifications every time it is constructed, so
   # a client per call leaks a subscriber per call.
   it 'builds the underlying SDK client once' do
