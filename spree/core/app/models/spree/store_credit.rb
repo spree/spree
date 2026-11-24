@@ -109,8 +109,8 @@ module Spree
     before_destroy :lock_for_destroy
     before_destroy :validate_no_amount_used
     before_destroy :withdraw_refunds
-    after_save :store_event
     after_destroy :refresh_withdrawn_orders
+    after_save :store_event
     after_commit :announce_withdrawn_refunds, on: :destroy
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
