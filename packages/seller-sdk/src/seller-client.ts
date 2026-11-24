@@ -35,6 +35,7 @@ import type {
   Order,
   PackageType,
   Payout,
+  PayoutAccountLink,
   Policy,
   Product,
   ProductType,
@@ -1524,12 +1525,6 @@ export type SellerExportType = 'orders' | 'products'
 
 /** A country as the address form needs it. Name it from `iso` with `Intl.DisplayNames`. */
 export type SellerCountry = Country
-
-/** Where to send a seller to set up how they get paid. */
-export interface PayoutAccountLink {
-  /** Null when the provider hosts no onboarding of its own. */
-  url: string | null
-}
 
 /** What `/seller/onboarding` answers. */
 export interface OnboardingResponse {

@@ -2,13 +2,7 @@
 // Based on the Admin API OpenAPI specification
 
 import type { PaginationMeta, PreferenceSchema } from '@spree/sdk-core'
-import type {
-  CountryCode,
-  CurrencyCode,
-  LocaleCode,
-  SellerRequirementStatus,
-  StoreCredit,
-} from './types'
+import type { Country, SellerRequirementStatus, StoreCredit } from './types'
 import type {
   CollectionRuleParams,
   CommissionRuleDraftParams,
@@ -166,19 +160,9 @@ export interface SetupStatus {
   setup_required: boolean
 }
 
-/** A country the store can be set up in, with everything derived from it. */
-export interface SetupCountry {
-  /** ISO 3166-1 alpha-2 code, e.g. `CH`. */
-  code: CountryCode
-  /** ISO 4217 currency the store gets when this country is chosen, e.g. `CHF`. */
-  currency: CurrencyCode | null
-  /** Official languages, e.g. `['de', 'fr', 'it', 'rm']`. */
-  locales: LocaleCode[]
-}
-
 /** Response of the public first-run setup country list. */
 export interface SetupCountries {
-  countries: SetupCountry[]
+  countries: Country[]
 }
 
 /** @deprecated Renamed to `StockLevelBulkUpsertRowParams`. */

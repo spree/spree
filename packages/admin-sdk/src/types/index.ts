@@ -202,6 +202,8 @@ export type { default as TaxExemptionReason } from './generated/TaxExemptionReas
 export type { default as TaxIdentifier } from './generated/TaxIdentifier'
 export type { default as TaxLine } from './generated/TaxLine'
 export type { default as TaxRate } from './generated/TaxRate'
+export type { default as TranslatableResource } from './generated/TranslatableResource'
+export type { default as TranslationCoverage } from './generated/TranslationCoverage'
 export type { default as UpdateStatus } from './generated/UpdateStatus'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
@@ -216,9 +218,7 @@ export type {
   ResourceTranslationsNode,
   TranslatableField,
   TranslatableFieldType,
-  TranslatableResource,
   TranslationBatchEntry,
-  TranslationCoverage,
   TranslationCoverageRecord,
   TranslationCoverageRow,
   TranslationsUpsertParams,

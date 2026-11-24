@@ -95,25 +95,12 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
 
       response '200', 'countries' do
         schema type: :object,
-               properties: {
-                 countries: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       code: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 code' },
-                       currency: { type: :string, example: 'USD', description: 'The currency a store in this country starts with' },
-                       locales: { type: :array, items: { type: :string }, example: %w[en es] }
-                     },
-                     required: %w[code currency locales]
-                   }
-                 }
-               },
+               properties: { countries: { type: :array, items: { '$ref' => '#/components/schemas/Country' } } },
                required: %w[countries]
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          switzerland = data['countries'].find { |country| country['code'] == 'CH' }
+          switzerland = data['countries'].find { |country| country['iso'] == 'CH' }
 
           expect(switzerland['currency']).to eq('CHF')
           expect(switzerland['locales']).to include('de')

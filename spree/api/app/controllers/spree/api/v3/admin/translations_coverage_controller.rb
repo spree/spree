@@ -16,15 +16,17 @@ module Spree
             locales = translatable_locales
 
             render json: {
-              data: {
-                'resource_type' => Spree::Translations.public_resource_type(model_class),
-                'default_locale' => current_store.default_locale,
-                'locales' => locales,
-                'field_count' => model_class.public_translatable_fields.size,
-                'search_field' => search_field,
-                'coverage' => Spree::Translations.coverage_for(scope, model_class, locales),
-                'records' => serialize_records(records, locales)
-              },
+              data: Spree.api.admin_translation_coverage_serializer.new(
+                {
+                  resource_type: Spree::Translations.public_resource_type(model_class),
+                  default_locale: current_store.default_locale,
+                  locales: locales,
+                  field_count: model_class.public_translatable_fields.size,
+                  search_field: search_field,
+                  coverage: Spree::Translations.coverage_for(scope, model_class, locales),
+                  records: serialize_records(records, locales)
+                }
+              ).to_h,
               meta: collection_meta(records)
             }
           end

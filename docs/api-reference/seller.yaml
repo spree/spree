@@ -18484,15 +18484,7 @@ paths:
               example:
                 url:
               schema:
-                type: object
-                properties:
-                  url:
-                    type: string
-                    nullable: true
-                    description: Where the seller sets up their payout account; null
-                      when the provider has none to offer
-                required:
-                - url
+                "$ref": "#/components/schemas/PayoutAccountLink"
       requestBody:
         content:
           application/json:
@@ -27913,6 +27905,17 @@ components:
       - claimed_amount
       - net_captured_amount
       - refundable_amount
+      x-typelizer: true
+    PayoutAccountLink:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+          description: Null when the provider hosts no page to set the account up
+            on
+      required:
+      - url
       x-typelizer: true
     Payout:
       type: object

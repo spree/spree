@@ -43,7 +43,8 @@ module Spree
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
            maintenance_task_run
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
-           resource_translations email_template email_template_draft email_template_revision email_template_preview
+           resource_translations translatable_resource translation_coverage
+           email_template email_template_draft email_template_revision email_template_preview
            email_template_sample_record file_upload file_upload_target].freeze
 
       SELLER_SERIALIZERS =
@@ -52,7 +53,7 @@ module Spree
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
-           requirement_submission export transfer payout balance payment_split price price_history file_upload digital_asset
+           requirement_submission export transfer payout payout_account_link balance payment_split price price_history file_upload digital_asset
            file_upload_target store].freeze
 
       INJECTION_POINTS_WITH_DEFAULTS = {

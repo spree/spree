@@ -153,6 +153,8 @@ export { TaxExemptionReasonSchema, type TaxExemptionReason } from './TaxExemptio
 export { TaxIdentifierSchema, type TaxIdentifier } from './TaxIdentifier';
 export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { TaxRateSchema, type TaxRate } from './TaxRate';
+export { TranslatableResourceSchema, type TranslatableResource } from './TranslatableResource';
+export { TranslationCoverageSchema, type TranslationCoverage } from './TranslationCoverage';
 export { UpdateStatusSchema, type UpdateStatus } from './UpdateStatus';
 export { VariantSchema, type Variant } from './Variant';
 export { WebhookDeliverySchema, type WebhookDelivery } from './WebhookDelivery';

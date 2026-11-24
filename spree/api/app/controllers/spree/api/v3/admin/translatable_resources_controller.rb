@@ -14,7 +14,9 @@ module Spree
             readable = readable_resource_types
 
             data = Spree::Translations.registry.map do |entry|
-              entry.merge('readable' => readable.include?(entry['resource_type']))
+              Spree.api.admin_translatable_resource_serializer.new(
+                entry.symbolize_keys.merge(readable: readable.include?(entry['resource_type']))
+              ).to_h
             end
 
             render json: { data: data }

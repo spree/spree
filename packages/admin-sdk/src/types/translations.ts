@@ -1,8 +1,9 @@
 /**
- * Hand-written types for the translation management endpoints. These are
- * controller-shaped responses (not Alba serializer output), so they are not
- * part of the generated type set.
+ * Hand-written types for the translation matrix endpoints. Their payload is
+ * computed per record, so it is not part of the generated type set.
  */
+
+import type TranslationCoverage from './generated/TranslationCoverage'
 
 /** Content kind of a translatable field, driving generic editor rendering. */
 export type TranslatableFieldType = 'string' | 'html'
@@ -58,52 +59,8 @@ export interface TranslationBatchEntry {
   values: TranslationsUpsertParams
 }
 
-/** A translatable resource entry from `GET /admin/translatable_resources`. */
-export interface TranslatableResource {
-  resource_type: string
-  fields: Array<{ key: string; type: TranslatableFieldType }>
-  /**
-   * Whether this resource has a dedicated `…/:id/translations` read route.
-   * When `false` it is still writable via the batch endpoint and readable
-   * inline (e.g. option values are returned as children of an option type) —
-   * don't request a standalone matrix for it.
-   */
-  readable: boolean
-}
-
 /** How much of one locale is translated across a whole resource type. */
-export interface TranslationCoverageRow {
-  locale: string
-  translated: number
-  total: number
-  /** Fraction between 0 and 1. */
-  coverage: number
-}
+export type TranslationCoverageRow = TranslationCoverage['coverage'][number]
 
-/**
- * One record in the coverage grid. `locales` maps each locale to how many of
- * the record's translatable fields are filled in — compare against
- * `field_count` to tell complete from partial.
- */
-export interface TranslationCoverageRecord {
-  id: string
-  label: string | null
-  locales: Record<string, number>
-}
-
-/** Response of `GET /admin/translations?resource_type=…`. */
-export interface TranslationCoverage {
-  resource_type: string
-  default_locale: string
-  locales: string[]
-  /** How many translatable fields a record of this type has. */
-  field_count: number
-  /**
-   * Ransack predicate this grid can be filtered by (e.g. `name_cont`), or null
-   * when the model whitelists nothing searchable — `name` is ransackable on
-   * products and categories but not on collections.
-   */
-  search_field: string | null
-  coverage: TranslationCoverageRow[]
-  records: TranslationCoverageRecord[]
-}
+/** One record in the coverage grid, with how many of its fields are translated per locale. */
+export type TranslationCoverageRecord = TranslationCoverage['records'][number]

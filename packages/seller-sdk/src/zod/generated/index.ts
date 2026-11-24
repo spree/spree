@@ -34,6 +34,7 @@ export { OrderLineItemSchema, type OrderLineItem } from './OrderLineItem';
 export { PackageTypeSchema, type PackageType } from './PackageType';
 export { PaymentSplitSchema, type PaymentSplit } from './PaymentSplit';
 export { PayoutSchema, type Payout } from './Payout';
+export { PayoutAccountLinkSchema, type PayoutAccountLink } from './PayoutAccountLink';
 export { PolicySchema, type Policy } from './Policy';
 export { PriceSchema, type Price } from './Price';
 export { PriceHistorySchema, type PriceHistory } from './PriceHistory';

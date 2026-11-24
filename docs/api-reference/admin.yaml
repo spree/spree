@@ -967,169 +967,280 @@ paths:
             application/json:
               example:
                 countries:
-                - code: AD
+                - iso: AD
+                  iso3: AND
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - ca
-                - code: AE
+                - iso: AE
+                  iso3: ARE
+                  states_required: true
+                  zipcode_required: false
                   currency: AED
                   locales:
                   - ar
-                - code: AF
+                - iso: AF
+                  iso3: AFG
+                  states_required: false
+                  zipcode_required: true
                   currency: AFN
                   locales:
                   - ps
                   - uz
                   - tk
-                - code: AG
+                - iso: AG
+                  iso3: ATG
+                  states_required: false
+                  zipcode_required: false
                   currency: XCD
                   locales:
                   - en
-                - code: AI
+                - iso: AI
+                  iso3: AIA
+                  states_required: false
+                  zipcode_required: true
                   currency: XCD
                   locales:
                   - en
-                - code: AL
+                - iso: AL
+                  iso3: ALB
+                  states_required: false
+                  zipcode_required: true
                   currency: ALL
                   locales:
                   - sq
-                - code: AM
+                - iso: AM
+                  iso3: ARM
+                  states_required: false
+                  zipcode_required: true
                   currency: AMD
                   locales:
                   - hy
-                - code: AO
+                - iso: AO
+                  iso3: AGO
+                  states_required: false
+                  zipcode_required: false
                   currency: AOA
                   locales:
                   - pt
-                - code: AR
+                - iso: AR
+                  iso3: ARG
+                  states_required: false
+                  zipcode_required: true
                   currency: ARS
                   locales:
                   - es
                   - gn
-                - code: AS
+                - iso: AS
+                  iso3: ASM
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
                   - sm
-                - code: AT
+                - iso: AT
+                  iso3: AUT
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - de
-                - code: AU
+                - iso: AU
+                  iso3: AUS
+                  states_required: true
+                  zipcode_required: true
                   currency: AUD
                   locales:
                   - en
-                - code: AW
+                - iso: AW
+                  iso3: ABW
+                  states_required: false
+                  zipcode_required: false
                   currency: AWG
                   locales:
                   - nl
-                - code: AZ
+                - iso: AZ
+                  iso3: AZE
+                  states_required: false
+                  zipcode_required: true
                   currency: AZN
                   locales:
                   - az
                   - hy
-                - code: BA
+                - iso: BA
+                  iso3: BIH
+                  states_required: false
+                  zipcode_required: true
                   currency: BAM
                   locales:
                   - bs
                   - hr
                   - sr
-                - code: BB
+                - iso: BB
+                  iso3: BRB
+                  states_required: false
+                  zipcode_required: true
                   currency: BBD
                   locales:
                   - en
-                - code: BD
+                - iso: BD
+                  iso3: BGD
+                  states_required: false
+                  zipcode_required: true
                   currency: BDT
                   locales:
                   - bn
-                - code: BE
+                - iso: BE
+                  iso3: BEL
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - nl
                   - fr
                   - de
-                - code: BF
+                - iso: BF
+                  iso3: BFA
+                  states_required: false
+                  zipcode_required: false
                   currency: XOF
                   locales:
                   - fr
                   - ff
-                - code: BG
+                - iso: BG
+                  iso3: BGR
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - bg
-                - code: BH
+                - iso: BH
+                  iso3: BHR
+                  states_required: false
+                  zipcode_required: true
                   currency: BHD
                   locales:
                   - ar
-                - code: BI
+                - iso: BI
+                  iso3: BDI
+                  states_required: false
+                  zipcode_required: false
                   currency: BIF
                   locales:
                   - fr
                   - rn
-                - code: BJ
+                - iso: BJ
+                  iso3: BEN
+                  states_required: false
+                  zipcode_required: false
                   currency: XOF
                   locales:
                   - fr
-                - code: BL
+                - iso: BL
+                  iso3: BLM
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: BM
+                - iso: BM
+                  iso3: BMU
+                  states_required: false
+                  zipcode_required: false
                   currency: BMD
                   locales:
                   - en
-                - code: BN
+                - iso: BN
+                  iso3: BRN
+                  states_required: false
+                  zipcode_required: true
                   currency: BND
                   locales:
                   - ms
-                - code: BO
+                - iso: BO
+                  iso3: BOL
+                  states_required: false
+                  zipcode_required: false
                   currency: BOB
                   locales:
                   - es
                   - ay
                   - qu
-                - code: BQ
+                - iso: BQ
+                  iso3: BES
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - nl
                   - en
-                - code: BR
+                - iso: BR
+                  iso3: BRA
+                  states_required: true
+                  zipcode_required: true
                   currency: BRL
                   locales:
                   - pt
-                - code: BS
+                - iso: BS
+                  iso3: BHS
+                  states_required: false
+                  zipcode_required: false
                   currency: BSD
                   locales:
                   - en
-                - code: BT
+                - iso: BT
+                  iso3: BTN
+                  states_required: false
+                  zipcode_required: true
                   currency: BTN
                   locales:
                   - dz
-                - code: BW
+                - iso: BW
+                  iso3: BWA
+                  states_required: false
+                  zipcode_required: false
                   currency: BWP
                   locales:
                   - en
                   - tn
-                - code: BY
+                - iso: BY
+                  iso3: BLR
+                  states_required: false
+                  zipcode_required: true
                   currency: BYN
                   locales:
                   - be
                   - ru
-                - code: BZ
+                - iso: BZ
+                  iso3: BLZ
+                  states_required: false
+                  zipcode_required: false
                   currency: BZD
                   locales:
                   - en
                   - es
-                - code: CA
+                - iso: CA
+                  iso3: CAN
+                  states_required: true
+                  zipcode_required: true
                   currency: CAD
                   locales:
                   - en
                   - fr
-                - code: CC
+                - iso: CC
+                  iso3: CCK
+                  states_required: false
+                  zipcode_required: true
                   currency: AUD
                   locales:
                   - en
-                - code: CD
+                - iso: CD
+                  iso3: COD
+                  states_required: false
+                  zipcode_required: false
                   currency: CDF
                   locales:
                   - fr
@@ -1137,886 +1248,1489 @@ paths:
                   - kg
                   - sw
                   - lu
-                - code: CF
+                - iso: CF
+                  iso3: CAF
+                  states_required: false
+                  zipcode_required: false
                   currency: XAF
                   locales:
                   - fr
                   - sg
-                - code: CG
+                - iso: CG
+                  iso3: COG
+                  states_required: false
+                  zipcode_required: false
                   currency: XAF
                   locales:
                   - fr
                   - ln
-                - code: CH
+                - iso: CH
+                  iso3: CHE
+                  states_required: false
+                  zipcode_required: true
                   currency: CHF
                   locales:
                   - de
                   - fr
                   - it
                   - rm
-                - code: CI
+                - iso: CI
+                  iso3: CIV
+                  states_required: false
+                  zipcode_required: false
                   currency: XOF
                   locales:
                   - fr
-                - code: CK
+                - iso: CK
+                  iso3: COK
+                  states_required: false
+                  zipcode_required: false
                   currency: NZD
                   locales:
                   - en
-                - code: CL
+                - iso: CL
+                  iso3: CHL
+                  states_required: false
+                  zipcode_required: true
                   currency: CLP
                   locales:
                   - es
-                - code: CM
+                - iso: CM
+                  iso3: CMR
+                  states_required: false
+                  zipcode_required: false
                   currency: XAF
                   locales:
                   - en
                   - fr
-                - code: CN
+                - iso: CN
+                  iso3: CHN
+                  states_required: true
+                  zipcode_required: true
                   currency: CNY
                   locales:
                   - zh-CN
-                - code: CO
+                - iso: CO
+                  iso3: COL
+                  states_required: false
+                  zipcode_required: true
                   currency: COP
                   locales:
                   - es
-                - code: CR
+                - iso: CR
+                  iso3: CRI
+                  states_required: false
+                  zipcode_required: true
                   currency: CRC
                   locales:
                   - es
-                - code: CU
+                - iso: CU
+                  iso3: CUB
+                  states_required: false
+                  zipcode_required: true
                   currency: CUP
                   locales:
                   - es
-                - code: CV
+                - iso: CV
+                  iso3: CPV
+                  states_required: false
+                  zipcode_required: true
                   currency: CVE
                   locales:
                   - pt
-                - code: CW
+                - iso: CW
+                  iso3: CUW
+                  states_required: false
+                  zipcode_required: true
                   currency: XCG
                   locales:
                   - nl
-                - code: CX
+                - iso: CX
+                  iso3: CXR
+                  states_required: false
+                  zipcode_required: true
                   currency: AUD
                   locales:
                   - en
                   - zh-CN
                   - ms
-                - code: CY
+                - iso: CY
+                  iso3: CYP
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - el
                   - tr
                   - hy
-                - code: CZ
+                - iso: CZ
+                  iso3: CZE
+                  states_required: false
+                  zipcode_required: true
                   currency: CZK
                   locales:
                   - cs
-                - code: DE
+                - iso: DE
+                  iso3: DEU
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - de
-                - code: DJ
+                - iso: DJ
+                  iso3: DJI
+                  states_required: false
+                  zipcode_required: false
                   currency: DJF
                   locales:
                   - ar
                   - fr
-                - code: DK
+                - iso: DK
+                  iso3: DNK
+                  states_required: false
+                  zipcode_required: true
                   currency: DKK
                   locales:
                   - da
-                - code: DM
+                - iso: DM
+                  iso3: DMA
+                  states_required: false
+                  zipcode_required: false
                   currency: XCD
                   locales:
                   - en
-                - code: DO
+                - iso: DO
+                  iso3: DOM
+                  states_required: false
+                  zipcode_required: true
                   currency: DOP
                   locales:
                   - es
-                - code: DZ
+                - iso: DZ
+                  iso3: DZA
+                  states_required: false
+                  zipcode_required: true
                   currency: DZD
                   locales:
                   - ar
-                - code: EC
+                - iso: EC
+                  iso3: ECU
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - es
-                - code: EE
+                - iso: EE
+                  iso3: EST
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - et
-                - code: EG
+                - iso: EG
+                  iso3: EGY
+                  states_required: false
+                  zipcode_required: true
                   currency: EGP
                   locales:
                   - ar
-                - code: ER
+                - iso: ER
+                  iso3: ERI
+                  states_required: false
+                  zipcode_required: false
                   currency: ERN
                   locales:
                   - en
                   - ar
                   - ti
-                - code: ES
+                - iso: ES
+                  iso3: ESP
+                  states_required: true
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - es
-                - code: ET
+                - iso: ET
+                  iso3: ETH
+                  states_required: false
+                  zipcode_required: true
                   currency: ETB
                   locales:
                   - am
-                - code: FI
+                - iso: FI
+                  iso3: FIN
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fi
                   - sv
-                - code: FJ
+                - iso: FJ
+                  iso3: FJI
+                  states_required: false
+                  zipcode_required: false
                   currency: FJD
                   locales:
                   - en
                   - fj
                   - hi
-                - code: FK
+                - iso: FK
+                  iso3: FLK
+                  states_required: false
+                  zipcode_required: true
                   currency: FKP
                   locales:
                   - en
-                - code: FM
+                - iso: FM
+                  iso3: FSM
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: FO
+                - iso: FO
+                  iso3: FRO
+                  states_required: false
+                  zipcode_required: true
                   currency: DKK
                   locales:
                   - fo
-                - code: FR
+                - iso: FR
+                  iso3: FRA
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: GA
+                - iso: GA
+                  iso3: GAB
+                  states_required: false
+                  zipcode_required: true
                   currency: XAF
                   locales:
                   - fr
-                - code: GB
+                - iso: GB
+                  iso3: GBR
+                  states_required: false
+                  zipcode_required: true
                   currency: GBP
                   locales:
                   - en
-                - code: GD
+                - iso: GD
+                  iso3: GRD
+                  states_required: false
+                  zipcode_required: false
                   currency: XCD
                   locales:
                   - en
-                - code: GE
+                - iso: GE
+                  iso3: GEO
+                  states_required: false
+                  zipcode_required: true
                   currency: GEL
                   locales:
                   - ka
-                - code: GF
+                - iso: GF
+                  iso3: GUF
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: GG
+                - iso: GG
+                  iso3: GGY
+                  states_required: false
+                  zipcode_required: true
                   currency: GBP
                   locales:
                   - en
                   - fr
-                - code: GH
+                - iso: GH
+                  iso3: GHA
+                  states_required: false
+                  zipcode_required: false
                   currency: GHS
                   locales:
                   - en
-                - code: GI
+                - iso: GI
+                  iso3: GIB
+                  states_required: false
+                  zipcode_required: true
                   currency: GIP
                   locales:
                   - en
-                - code: GL
+                - iso: GL
+                  iso3: GRL
+                  states_required: false
+                  zipcode_required: true
                   currency: DKK
                   locales:
                   - kl
-                - code: GM
+                - iso: GM
+                  iso3: GMB
+                  states_required: false
+                  zipcode_required: false
                   currency: GMD
                   locales:
                   - en
-                - code: GN
+                - iso: GN
+                  iso3: GIN
+                  states_required: false
+                  zipcode_required: false
                   currency: GNF
                   locales:
                   - fr
                   - ff
-                - code: GP
+                - iso: GP
+                  iso3: GLP
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: GQ
+                - iso: GQ
+                  iso3: GNQ
+                  states_required: false
+                  zipcode_required: false
                   currency: XAF
                   locales:
                   - es
                   - fr
-                - code: GR
+                - iso: GR
+                  iso3: GRC
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - el
-                - code: GT
+                - iso: GT
+                  iso3: GTM
+                  states_required: false
+                  zipcode_required: true
                   currency: GTQ
                   locales:
                   - es
-                - code: GU
+                - iso: GU
+                  iso3: GUM
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
                   - ch
                   - es
-                - code: GW
+                - iso: GW
+                  iso3: GNB
+                  states_required: false
+                  zipcode_required: true
                   currency: XOF
                   locales:
                   - pt
-                - code: GY
+                - iso: GY
+                  iso3: GUY
+                  states_required: false
+                  zipcode_required: false
                   currency: GYD
                   locales:
                   - en
-                - code: HK
+                - iso: HK
+                  iso3: HKG
+                  states_required: true
+                  zipcode_required: false
                   currency: HKD
                   locales:
                   - en
                   - zh-CN
-                - code: HN
+                - iso: HN
+                  iso3: HND
+                  states_required: false
+                  zipcode_required: true
                   currency: HNL
                   locales:
                   - es
-                - code: HR
+                - iso: HR
+                  iso3: HRV
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - hr
-                - code: HT
+                - iso: HT
+                  iso3: HTI
+                  states_required: false
+                  zipcode_required: true
                   currency: HTG
                   locales:
                   - fr
                   - ht
-                - code: HU
+                - iso: HU
+                  iso3: HUN
+                  states_required: false
+                  zipcode_required: true
                   currency: HUF
                   locales:
                   - hu
-                - code: ID
+                - iso: ID
+                  iso3: IDN
+                  states_required: false
+                  zipcode_required: true
                   currency: IDR
                   locales:
                   - id
-                - code: IE
+                - iso: IE
+                  iso3: IRL
+                  states_required: true
+                  zipcode_required: false
                   currency: EUR
                   locales:
                   - en
                   - ga
-                - code: IL
+                - iso: IL
+                  iso3: ISR
+                  states_required: false
+                  zipcode_required: true
                   currency: ILS
                   locales:
                   - he
                   - ar
-                - code: IM
+                - iso: IM
+                  iso3: IMN
+                  states_required: false
+                  zipcode_required: true
                   currency: GBP
                   locales:
                   - en
                   - gv
-                - code: IN
+                - iso: IN
+                  iso3: IND
+                  states_required: true
+                  zipcode_required: true
                   currency: INR
                   locales:
                   - hi
                   - en
-                - code: IQ
+                - iso: IQ
+                  iso3: IRQ
+                  states_required: false
+                  zipcode_required: true
                   currency: IQD
                   locales:
                   - ar
-                - code: IR
+                - iso: IR
+                  iso3: IRN
+                  states_required: false
+                  zipcode_required: true
                   currency: IRR
                   locales:
                   - fa
-                - code: IS
+                - iso: IS
+                  iso3: ISL
+                  states_required: false
+                  zipcode_required: true
                   currency: ISK
                   locales:
                   - is
-                - code: IT
+                - iso: IT
+                  iso3: ITA
+                  states_required: true
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - it
-                - code: JE
+                - iso: JE
+                  iso3: JEY
+                  states_required: false
+                  zipcode_required: true
                   currency: GBP
                   locales:
                   - en
                   - fr
-                - code: JM
+                - iso: JM
+                  iso3: JAM
+                  states_required: false
+                  zipcode_required: true
                   currency: JMD
                   locales:
                   - en
-                - code: JO
+                - iso: JO
+                  iso3: JOR
+                  states_required: false
+                  zipcode_required: true
                   currency: JOD
                   locales:
                   - ar
-                - code: JP
+                - iso: JP
+                  iso3: JPN
+                  states_required: false
+                  zipcode_required: true
                   currency: JPY
                   locales:
                   - ja
-                - code: KE
+                - iso: KE
+                  iso3: KEN
+                  states_required: false
+                  zipcode_required: true
                   currency: KES
                   locales:
                   - en
                   - sw
-                - code: KG
+                - iso: KG
+                  iso3: KGZ
+                  states_required: false
+                  zipcode_required: true
                   currency: KGS
                   locales:
                   - ky
                   - ru
-                - code: KH
+                - iso: KH
+                  iso3: KHM
+                  states_required: false
+                  zipcode_required: true
                   currency: KHR
                   locales:
                   - km
-                - code: KI
+                - iso: KI
+                  iso3: KIR
+                  states_required: false
+                  zipcode_required: false
                   currency: AUD
                   locales:
                   - en
-                - code: KM
+                - iso: KM
+                  iso3: COM
+                  states_required: false
+                  zipcode_required: false
                   currency: KMF
                   locales:
                   - ar
                   - fr
-                - code: KN
+                - iso: KN
+                  iso3: KNA
+                  states_required: false
+                  zipcode_required: false
                   currency: XCD
                   locales:
                   - en
-                - code: KP
+                - iso: KP
+                  iso3: PRK
+                  states_required: false
+                  zipcode_required: false
                   currency: KPW
                   locales:
                   - ko
-                - code: KR
+                - iso: KR
+                  iso3: KOR
+                  states_required: false
+                  zipcode_required: true
                   currency: KRW
                   locales:
                   - ko
-                - code: KW
+                - iso: KW
+                  iso3: KWT
+                  states_required: false
+                  zipcode_required: true
                   currency: KWD
                   locales:
                   - ar
-                - code: KY
+                - iso: KY
+                  iso3: CYM
+                  states_required: false
+                  zipcode_required: true
                   currency: KYD
                   locales:
                   - en
-                - code: KZ
+                - iso: KZ
+                  iso3: KAZ
+                  states_required: false
+                  zipcode_required: true
                   currency: KZT
                   locales:
                   - kk
                   - ru
-                - code: LA
+                - iso: LA
+                  iso3: LAO
+                  states_required: false
+                  zipcode_required: true
                   currency: LAK
                   locales:
                   - lo
-                - code: LB
+                - iso: LB
+                  iso3: LBN
+                  states_required: false
+                  zipcode_required: true
                   currency: LBP
                   locales:
                   - ar
                   - fr
-                - code: LC
+                - iso: LC
+                  iso3: LCA
+                  states_required: false
+                  zipcode_required: false
                   currency: XCD
                   locales:
                   - en
-                - code: LI
+                - iso: LI
+                  iso3: LIE
+                  states_required: false
+                  zipcode_required: true
                   currency: CHF
                   locales:
                   - de
-                - code: LK
+                - iso: LK
+                  iso3: LKA
+                  states_required: false
+                  zipcode_required: true
                   currency: LKR
                   locales:
                   - si
                   - ta
-                - code: LR
+                - iso: LR
+                  iso3: LBR
+                  states_required: false
+                  zipcode_required: true
                   currency: LRD
                   locales:
                   - en
-                - code: LS
+                - iso: LS
+                  iso3: LSO
+                  states_required: false
+                  zipcode_required: true
                   currency: LSL
                   locales:
                   - en
                   - st
-                - code: LT
+                - iso: LT
+                  iso3: LTU
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - lt
-                - code: LU
+                - iso: LU
+                  iso3: LUX
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
                   - de
                   - lb
-                - code: LV
+                - iso: LV
+                  iso3: LVA
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - lv
-                - code: LY
+                - iso: LY
+                  iso3: LBY
+                  states_required: false
+                  zipcode_required: false
                   currency: LYD
                   locales:
                   - ar
-                - code: MA
+                - iso: MA
+                  iso3: MAR
+                  states_required: false
+                  zipcode_required: true
                   currency: MAD
                   locales:
                   - ar
-                - code: MC
+                - iso: MC
+                  iso3: MCO
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: MD
+                - iso: MD
+                  iso3: MDA
+                  states_required: false
+                  zipcode_required: true
                   currency: MDL
                   locales:
                   - ro
-                - code: ME
+                - iso: ME
+                  iso3: MNE
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - sr
                   - bs
                   - sq
                   - hr
-                - code: MF
+                - iso: MF
+                  iso3: MAF
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - en
                   - fr
                   - nl
-                - code: MG
+                - iso: MG
+                  iso3: MDG
+                  states_required: false
+                  zipcode_required: true
                   currency: MGA
                   locales:
                   - fr
                   - mg
-                - code: MH
+                - iso: MH
+                  iso3: MHL
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
                   - mh
-                - code: MK
+                - iso: MK
+                  iso3: MKD
+                  states_required: false
+                  zipcode_required: true
                   currency: MKD
                   locales:
                   - mk
-                - code: ML
+                - iso: ML
+                  iso3: MLI
+                  states_required: false
+                  zipcode_required: false
                   currency: XOF
                   locales:
                   - fr
-                - code: MM
+                - iso: MM
+                  iso3: MMR
+                  states_required: false
+                  zipcode_required: true
                   currency: MMK
                   locales:
                   - my
-                - code: MN
+                - iso: MN
+                  iso3: MNG
+                  states_required: false
+                  zipcode_required: true
                   currency: MNT
                   locales:
                   - mn
-                - code: MO
+                - iso: MO
+                  iso3: MAC
+                  states_required: false
+                  zipcode_required: false
                   currency: MOP
                   locales:
                   - zh-CN
                   - pt
-                - code: MP
+                - iso: MP
+                  iso3: MNP
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
                   - ch
-                - code: MQ
+                - iso: MQ
+                  iso3: MTQ
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: MR
+                - iso: MR
+                  iso3: MRT
+                  states_required: false
+                  zipcode_required: false
                   currency: MRU
                   locales:
                   - ar
                   - fr
-                - code: MS
+                - iso: MS
+                  iso3: MSR
+                  states_required: false
+                  zipcode_required: true
                   currency: XCD
                   locales:
                   - en
-                - code: MT
+                - iso: MT
+                  iso3: MLT
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - mt
                   - en
-                - code: MU
+                - iso: MU
+                  iso3: MUS
+                  states_required: false
+                  zipcode_required: true
                   currency: MUR
                   locales:
                   - en
-                - code: MV
+                - iso: MV
+                  iso3: MDV
+                  states_required: false
+                  zipcode_required: true
                   currency: MVR
                   locales:
                   - dv
-                - code: MW
+                - iso: MW
+                  iso3: MWI
+                  states_required: false
+                  zipcode_required: false
                   currency: MWK
                   locales:
                   - en
                   - ny
-                - code: MX
+                - iso: MX
+                  iso3: MEX
+                  states_required: true
+                  zipcode_required: true
                   currency: MXN
                   locales:
                   - es
-                - code: MY
+                - iso: MY
+                  iso3: MYS
+                  states_required: true
+                  zipcode_required: true
                   currency: MYR
                   locales:
                   - ms
                   - en
-                - code: MZ
+                - iso: MZ
+                  iso3: MOZ
+                  states_required: false
+                  zipcode_required: true
                   currency: MZN
                   locales:
                   - pt
-                - code: NA
+                - iso: NA
+                  iso3: NAM
+                  states_required: false
+                  zipcode_required: true
                   currency: NAD
                   locales:
                   - en
                   - af
-                - code: NC
+                - iso: NC
+                  iso3: NCL
+                  states_required: false
+                  zipcode_required: true
                   currency: XPF
                   locales:
                   - fr
-                - code: NE
+                - iso: NE
+                  iso3: NER
+                  states_required: false
+                  zipcode_required: true
                   currency: XOF
                   locales:
                   - fr
-                - code: NF
+                - iso: NF
+                  iso3: NFK
+                  states_required: false
+                  zipcode_required: true
                   currency: AUD
                   locales:
                   - en
-                - code: NG
+                - iso: NG
+                  iso3: NGA
+                  states_required: false
+                  zipcode_required: true
                   currency: NGN
                   locales:
                   - en
-                - code: NI
+                - iso: NI
+                  iso3: NIC
+                  states_required: false
+                  zipcode_required: true
                   currency: NIO
                   locales:
                   - es
-                - code: NL
+                - iso: NL
+                  iso3: NLD
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - nl
-                - code: 'NO'
+                - iso: 'NO'
+                  iso3: NOR
+                  states_required: false
+                  zipcode_required: true
                   currency: NOK
                   locales:
                   - nb
                   - nn
-                - code: NP
+                - iso: NP
+                  iso3: NPL
+                  states_required: false
+                  zipcode_required: true
                   currency: NPR
                   locales:
                   - ne
-                - code: NR
+                - iso: NR
+                  iso3: NRU
+                  states_required: false
+                  zipcode_required: false
                   currency: AUD
                   locales:
                   - en
                   - na
-                - code: NU
+                - iso: NU
+                  iso3: NIU
+                  states_required: false
+                  zipcode_required: false
                   currency: NZD
                   locales:
                   - en
-                - code: NZ
+                - iso: NZ
+                  iso3: NZL
+                  states_required: true
+                  zipcode_required: true
                   currency: NZD
                   locales:
                   - en
-                - code: OM
+                - iso: OM
+                  iso3: OMN
+                  states_required: false
+                  zipcode_required: true
                   currency: OMR
                   locales:
                   - ar
-                - code: PA
+                - iso: PA
+                  iso3: PAN
+                  states_required: false
+                  zipcode_required: false
                   currency: PAB
                   locales:
                   - es
-                - code: PE
+                - iso: PE
+                  iso3: PER
+                  states_required: false
+                  zipcode_required: true
                   currency: PEN
                   locales:
                   - es
-                - code: PF
+                - iso: PF
+                  iso3: PYF
+                  states_required: false
+                  zipcode_required: true
                   currency: XPF
                   locales:
                   - fr
-                - code: PG
+                - iso: PG
+                  iso3: PNG
+                  states_required: false
+                  zipcode_required: true
                   currency: PGK
                   locales:
                   - en
-                - code: PH
+                - iso: PH
+                  iso3: PHL
+                  states_required: false
+                  zipcode_required: true
                   currency: PHP
                   locales:
                   - tl
                   - en
-                - code: PK
+                - iso: PK
+                  iso3: PAK
+                  states_required: false
+                  zipcode_required: true
                   currency: PKR
                   locales:
                   - en
                   - ur
-                - code: PL
+                - iso: PL
+                  iso3: POL
+                  states_required: false
+                  zipcode_required: true
                   currency: PLN
                   locales:
                   - pl
-                - code: PM
+                - iso: PM
+                  iso3: SPM
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: PN
+                - iso: PN
+                  iso3: PCN
+                  states_required: false
+                  zipcode_required: true
                   currency: NZD
                   locales:
                   - en
-                - code: PR
+                - iso: PR
+                  iso3: PRI
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - es
                   - en
-                - code: PS
+                - iso: PS
+                  iso3: PSE
+                  states_required: false
+                  zipcode_required: true
                   currency: ILS
                   locales:
                   - ar
                   - he
                   - en
-                - code: PT
+                - iso: PT
+                  iso3: PRT
+                  states_required: true
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - pt
-                - code: PW
+                - iso: PW
+                  iso3: PLW
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: PY
+                - iso: PY
+                  iso3: PRY
+                  states_required: false
+                  zipcode_required: true
                   currency: PYG
                   locales:
                   - es
                   - gn
-                - code: QA
+                - iso: QA
+                  iso3: QAT
+                  states_required: false
+                  zipcode_required: false
                   currency: QAR
                   locales:
                   - ar
-                - code: RE
+                - iso: RE
+                  iso3: REU
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: RO
+                - iso: RO
+                  iso3: ROU
+                  states_required: true
+                  zipcode_required: true
                   currency: RON
                   locales:
                   - ro
-                - code: RS
+                - iso: RS
+                  iso3: SRB
+                  states_required: false
+                  zipcode_required: true
                   currency: RSD
                   locales:
                   - sr
-                - code: RU
+                - iso: RU
+                  iso3: RUS
+                  states_required: false
+                  zipcode_required: true
                   currency: RUB
                   locales:
                   - ru
-                - code: RW
+                - iso: RW
+                  iso3: RWA
+                  states_required: false
+                  zipcode_required: false
                   currency: RWF
                   locales:
                   - rw
                   - en
                   - fr
-                - code: SA
+                - iso: SA
+                  iso3: SAU
+                  states_required: false
+                  zipcode_required: true
                   currency: SAR
                   locales:
                   - ar
-                - code: SB
+                - iso: SB
+                  iso3: SLB
+                  states_required: false
+                  zipcode_required: false
                   currency: SBD
                   locales:
                   - en
-                - code: SC
+                - iso: SC
+                  iso3: SYC
+                  states_required: false
+                  zipcode_required: false
                   currency: SCR
                   locales:
                   - fr
                   - en
-                - code: SD
+                - iso: SD
+                  iso3: SDN
+                  states_required: false
+                  zipcode_required: true
                   currency: SDG
                   locales:
                   - ar
                   - en
-                - code: SE
+                - iso: SE
+                  iso3: SWE
+                  states_required: false
+                  zipcode_required: true
                   currency: SEK
                   locales:
                   - sv
-                - code: SG
+                - iso: SG
+                  iso3: SGP
+                  states_required: false
+                  zipcode_required: true
                   currency: SGD
                   locales:
                   - en
                   - ms
                   - ta
-                - code: SH
+                - iso: SH
+                  iso3: SHN
+                  states_required: false
+                  zipcode_required: true
                   currency: SHP
                   locales:
                   - en
-                - code: SI
+                - iso: SI
+                  iso3: SVN
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - sl
-                - code: SJ
+                - iso: SJ
+                  iso3: SJM
+                  states_required: false
+                  zipcode_required: true
                   currency: NOK
                   locales:
                   - 'no'
-                - code: SK
+                - iso: SK
+                  iso3: SVK
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - sk
-                - code: SL
+                - iso: SL
+                  iso3: SLE
+                  states_required: false
+                  zipcode_required: false
                   currency: SLE
                   locales:
                   - en
-                - code: SM
+                - iso: SM
+                  iso3: SMR
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - it
-                - code: SN
+                - iso: SN
+                  iso3: SEN
+                  states_required: false
+                  zipcode_required: true
                   currency: XOF
                   locales:
                   - fr
-                - code: SO
+                - iso: SO
+                  iso3: SOM
+                  states_required: false
+                  zipcode_required: false
                   currency: SOS
                   locales:
                   - so
                   - ar
-                - code: SR
+                - iso: SR
+                  iso3: SUR
+                  states_required: false
+                  zipcode_required: false
                   currency: SRD
                   locales:
                   - nl
-                - code: SS
+                - iso: SS
+                  iso3: SSD
+                  states_required: false
+                  zipcode_required: true
                   currency: SSP
                   locales:
                   - ar
                   - en
-                - code: ST
+                - iso: ST
+                  iso3: STP
+                  states_required: false
+                  zipcode_required: false
                   currency: STN
                   locales:
                   - pt
-                - code: SV
+                - iso: SV
+                  iso3: SLV
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - es
-                - code: SX
+                - iso: SX
+                  iso3: SXM
+                  states_required: false
+                  zipcode_required: true
                   currency: XCG
                   locales:
                   - nl
                   - en
-                - code: SY
+                - iso: SY
+                  iso3: SYR
+                  states_required: false
+                  zipcode_required: false
                   currency: SYP
                   locales:
                   - ar
-                - code: SZ
+                - iso: SZ
+                  iso3: SWZ
+                  states_required: false
+                  zipcode_required: true
                   currency: SZL
                   locales:
                   - en
                   - ss
-                - code: TC
+                - iso: TC
+                  iso3: TCA
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: TD
+                - iso: TD
+                  iso3: TCD
+                  states_required: false
+                  zipcode_required: true
                   currency: XAF
                   locales:
                   - ar
                   - fr
-                - code: TG
+                - iso: TG
+                  iso3: TGO
+                  states_required: false
+                  zipcode_required: false
                   currency: XOF
                   locales:
                   - fr
-                - code: TH
+                - iso: TH
+                  iso3: THA
+                  states_required: true
+                  zipcode_required: true
                   currency: THB
                   locales:
                   - th
-                - code: TJ
+                - iso: TJ
+                  iso3: TJK
+                  states_required: false
+                  zipcode_required: true
                   currency: TJS
                   locales:
                   - tg
                   - ru
-                - code: TK
+                - iso: TK
+                  iso3: TKL
+                  states_required: false
+                  zipcode_required: false
                   currency: NZD
                   locales:
                   - en
-                - code: TL
+                - iso: TL
+                  iso3: TLS
+                  states_required: false
+                  zipcode_required: false
                   currency: IDR
                   locales:
                   - pt
-                - code: TM
+                - iso: TM
+                  iso3: TKM
+                  states_required: false
+                  zipcode_required: true
                   currency: TMT
                   locales:
                   - tk
-                - code: TN
+                - iso: TN
+                  iso3: TUN
+                  states_required: false
+                  zipcode_required: true
                   currency: TND
                   locales:
                   - ar
                   - fr
-                - code: TO
+                - iso: TO
+                  iso3: TON
+                  states_required: false
+                  zipcode_required: false
                   currency: TOP
                   locales:
                   - en
                   - to
-                - code: TR
+                - iso: TR
+                  iso3: TUR
+                  states_required: false
+                  zipcode_required: true
                   currency: TRY
                   locales:
                   - tr
-                - code: TT
+                - iso: TT
+                  iso3: TTO
+                  states_required: false
+                  zipcode_required: true
                   currency: TTD
                   locales:
                   - en
-                - code: TV
+                - iso: TV
+                  iso3: TUV
+                  states_required: false
+                  zipcode_required: false
                   currency: AUD
                   locales:
                   - en
-                - code: TW
+                - iso: TW
+                  iso3: TWN
+                  states_required: false
+                  zipcode_required: true
                   currency: TWD
                   locales:
                   - zh-CN
-                - code: TZ
+                - iso: TZ
+                  iso3: TZA
+                  states_required: false
+                  zipcode_required: false
                   currency: TZS
                   locales:
                   - sw
                   - en
-                - code: UA
+                - iso: UA
+                  iso3: UKR
+                  states_required: false
+                  zipcode_required: true
                   currency: UAH
                   locales:
                   - uk
-                - code: UG
+                - iso: UG
+                  iso3: UGA
+                  states_required: false
+                  zipcode_required: false
                   currency: UGX
                   locales:
                   - en
                   - sw
-                - code: US
+                - iso: US
+                  iso3: USA
+                  states_required: true
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: UY
+                - iso: UY
+                  iso3: URY
+                  states_required: false
+                  zipcode_required: true
                   currency: UYU
                   locales:
                   - es
-                - code: UZ
+                - iso: UZ
+                  iso3: UZB
+                  states_required: false
+                  zipcode_required: true
                   currency: UZS
                   locales:
                   - uz
-                - code: VA
+                - iso: VA
+                  iso3: VAT
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - it
                   - la
-                - code: VC
+                - iso: VC
+                  iso3: VCT
+                  states_required: false
+                  zipcode_required: true
                   currency: XCD
                   locales:
                   - en
-                - code: VE
+                - iso: VE
+                  iso3: VEN
+                  states_required: false
+                  zipcode_required: true
                   currency: VES
                   locales:
                   - es
-                - code: VG
+                - iso: VG
+                  iso3: VGB
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: VI
+                - iso: VI
+                  iso3: VIR
+                  states_required: false
+                  zipcode_required: true
                   currency: USD
                   locales:
                   - en
-                - code: VN
+                - iso: VN
+                  iso3: VNM
+                  states_required: false
+                  zipcode_required: true
                   currency: VND
                   locales:
                   - vi
-                - code: VU
+                - iso: VU
+                  iso3: VUT
+                  states_required: false
+                  zipcode_required: false
                   currency: VUV
                   locales:
                   - bi
                   - en
                   - fr
-                - code: WF
+                - iso: WF
+                  iso3: WLF
+                  states_required: false
+                  zipcode_required: true
                   currency: XPF
                   locales:
                   - fr
-                - code: WS
+                - iso: WS
+                  iso3: WSM
+                  states_required: false
+                  zipcode_required: true
                   currency: WST
                   locales:
                   - sm
                   - en
-                - code: YE
+                - iso: YE
+                  iso3: YEM
+                  states_required: false
+                  zipcode_required: false
                   currency: YER
                   locales:
                   - ar
-                - code: YT
+                - iso: YT
+                  iso3: MYT
+                  states_required: false
+                  zipcode_required: true
                   currency: EUR
                   locales:
                   - fr
-                - code: ZA
+                - iso: ZA
+                  iso3: ZAF
+                  states_required: true
+                  zipcode_required: true
                   currency: ZAR
                   locales:
                   - af
@@ -2029,11 +2743,17 @@ paths:
                   - ve
                   - xh
                   - zu
-                - code: ZM
+                - iso: ZM
+                  iso3: ZMB
+                  states_required: false
+                  zipcode_required: true
                   currency: ZMW
                   locales:
                   - en
-                - code: ZW
+                - iso: ZW
+                  iso3: ZWE
+                  states_required: false
+                  zipcode_required: false
                   currency: USD
                   locales:
                   - en
@@ -2045,28 +2765,7 @@ paths:
                   countries:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        code:
-                          type: string
-                          example: US
-                          description: ISO 3166-1 alpha-2 code
-                        currency:
-                          type: string
-                          example: USD
-                          description: The currency a store in this country starts
-                            with
-                        locales:
-                          type: array
-                          items:
-                            type: string
-                          example:
-                          - en
-                          - es
-                      required:
-                      - code
-                      - currency
-                      - locales
+                      "$ref": "#/components/schemas/Country"
                 required:
                 - countries
   "/api/v3/admin/allowed_origins":
@@ -40009,81 +40708,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: object
-                    properties:
-                      resource_type:
-                        type: string
-                        example: product
-                      default_locale:
-                        type: string
-                        example: en
-                      locales:
-                        type: array
-                        items:
-                          type: string
-                        description: 'The locales translated into: every supported
-                          locale but the default'
-                      field_count:
-                        type: integer
-                        description: How many fields of a record can be translated
-                      search_field:
-                        type: string
-                        nullable: true
-                        description: The predicate `search` was applied through
-                      coverage:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            locale:
-                              type: string
-                              example: de
-                            translated:
-                              type: integer
-                              description: Records with every field translated
-                            total:
-                              type: integer
-                              description: Records of this type in the store
-                            coverage:
-                              type: number
-                              example: 0.25
-                              description: The share translated, from 0 to 1
-                          required:
-                          - locale
-                          - translated
-                          - total
-                          - coverage
-                      records:
-                        type: array
-                        description: This page of records, each with how many of its
-                          fields are translated per locale
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              example: prod_UkLWZg9DAJ
-                            label:
-                              type: string
-                              nullable: true
-                            locales:
-                              type: object
-                              additionalProperties:
-                                type: integer
-                              example:
-                                de: 2
-                          required:
-                          - id
-                          - label
-                          - locales
-                    required:
-                    - resource_type
-                    - default_locale
-                    - locales
-                    - field_count
-                    - search_field
-                    - coverage
-                    - records
+                    "$ref": "#/components/schemas/TranslationCoverage"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:
@@ -51100,35 +51725,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        resource_type:
-                          type: string
-                          example: product
-                        fields:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              key:
-                                type: string
-                                example: name
-                              type:
-                                type: string
-                                example: string
-                                description: 'How the field is edited: `string`, `text`
-                                  or `html`'
-                            required:
-                            - key
-                            - type
-                        readable:
-                          type: boolean
-                          description: Whether the caller may read records of this
-                            type
-                      required:
-                      - resource_type
-                      - fields
-                      - readable
+                      "$ref": "#/components/schemas/TranslatableResource"
                 required:
                 - data
   "/api/v3/admin/translations/batch":
@@ -60432,6 +61029,18 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: payment.capture_failed
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.capture_requested
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: payment.captured
                   group: payment
                   credential_permission:
@@ -60469,6 +61078,18 @@ paths:
                   deprecated: false
                   replaced_by:
                 - name: payment.updated
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.void_failed
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.void_requested
                   group: payment
                   credential_permission:
                   credential: false
@@ -60781,6 +61402,18 @@ paths:
                   deprecated: false
                   replaced_by:
                 - name: refund.deleted
+                  group: refund
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: refund.failed
+                  group: refund
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: refund.requested
                   group: refund
                   credential_permission:
                   credential: false
@@ -61158,6 +61791,12 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: store.updated
+                  group: store
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: store_credit.created
                   group: store_credit
                   credential_permission:
@@ -61297,7 +61936,15 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 264
+                  page: 1
+                  limit: 271
+                  count: 271
+                  pages: 1
+                  from: 1
+                  to: 271
+                  in: 271
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -61306,12 +61953,7 @@ paths:
                     items:
                       "$ref": "#/components/schemas/WebhookEvent"
                   meta:
-                    type: object
-                    properties:
-                      count:
-                        type: integer
-                    required:
-                    - count
+                    "$ref": "#/components/schemas/PaginationMeta"
                 required:
                 - data
                 - meta
@@ -65030,11 +65672,406 @@ components:
             nullable: true
             enum:
             -
+        currency:
+          type: string
+          nullable: true
+          description: The country's own currency, which a store set up there starts
+            with
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        locales:
+          type: array
+          items:
+            type: string
+            enum:
+            - aa
+            - ab
+            - ae
+            - af
+            - ak
+            - am
+            - an
+            - ar
+            - as
+            - av
+            - ay
+            - az
+            - ba
+            - be
+            - bg
+            - bh
+            - bi
+            - bm
+            - bn
+            - bo
+            - br
+            - bs
+            - ca
+            - ce
+            - ch
+            - co
+            - cr
+            - cs
+            - cu
+            - cv
+            - cy
+            - da
+            - de
+            - de-AT
+            - de-CH
+            - dv
+            - dz
+            - ee
+            - el
+            - en
+            - en-AU
+            - en-CA
+            - en-GB
+            - en-IN
+            - en-NZ
+            - en-US
+            - eo
+            - es
+            - es-419
+            - es-CL
+            - es-EC
+            - es-MX
+            - et
+            - eu
+            - fa
+            - ff
+            - fi
+            - fj
+            - fo
+            - fr
+            - fr-CA
+            - fy
+            - ga
+            - gd
+            - gl
+            - gn
+            - gu
+            - gv
+            - ha
+            - he
+            - hi
+            - ho
+            - hr
+            - ht
+            - hu
+            - hy
+            - hz
+            - ia
+            - id
+            - ie
+            - ig
+            - ii
+            - ik
+            - io
+            - is
+            - it
+            - iu
+            - ja
+            - jv
+            - ka
+            - kg
+            - ki
+            - kj
+            - kk
+            - kl
+            - km
+            - kn
+            - ko
+            - kr
+            - ks
+            - ku
+            - kv
+            - kw
+            - ky
+            - la
+            - lb
+            - lg
+            - li
+            - ln
+            - lo
+            - lt
+            - lu
+            - lv
+            - mg
+            - mh
+            - mi
+            - mk
+            - ml
+            - mn
+            - mr
+            - ms
+            - mt
+            - my
+            - na
+            - nb
+            - nd
+            - ne
+            - ng
+            - nl
+            - nn
+            - 'no'
+            - nr
+            - nv
+            - ny
+            - oc
+            - oj
+            - om
+            - or
+            - os
+            - pa
+            - pi
+            - pl
+            - ps
+            - pt
+            - pt-BR
+            - pt-PT
+            - qu
+            - rm
+            - rn
+            - ro
+            - ru
+            - rw
+            - sa
+            - sc
+            - sd
+            - se
+            - sg
+            - si
+            - sk
+            - sl
+            - sl-SI
+            - sm
+            - sn
+            - so
+            - sq
+            - sr
+            - ss
+            - st
+            - su
+            - sv
+            - sw
+            - ta
+            - te
+            - tg
+            - th
+            - ti
+            - tk
+            - tl
+            - tn
+            - to
+            - tr
+            - ts
+            - tt
+            - tw
+            - ty
+            - ug
+            - uk
+            - ur
+            - uz
+            - ve
+            - vi
+            - vo
+            - wa
+            - wo
+            - xh
+            - yi
+            - yo
+            - za
+            - zh-CN
+            - zh-HK
+            - zh-TW
+            - zu
+          description: The country's official languages, such as `de`, `fr`, `it`
+            and `rm` for Switzerland
       required:
       - iso
       - iso3
       - states_required
       - zipcode_required
+      - currency
+      - locales
       x-typelizer: true
     CouponCode:
       type: object
@@ -79919,6 +80956,109 @@ components:
       - store_id
       - country_code
       - state_code
+      x-typelizer: true
+    TranslatableResource:
+      type: object
+      properties:
+        resource_type:
+          type: string
+          description: The resource type as translation requests name it, e.g. product
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Field name, e.g. name
+              type:
+                type: string
+                description: 'How the field is edited: string or html'
+            required:
+            - key
+            - type
+          description: The fields of a record that can be translated
+        readable:
+          type: boolean
+          description: Whether one record's translations can be read on their own.
+            A type that cannot is read as children of its parent, such as option values
+            under an option type, and written through the batch endpoint.
+      required:
+      - resource_type
+      - fields
+      - readable
+      x-typelizer: true
+    TranslationCoverage:
+      type: object
+      properties:
+        resource_type:
+          type: string
+          description: The resource type the figures are for, e.g. product
+        default_locale:
+          type: string
+        locales:
+          type: array
+          items:
+            type: string
+          description: 'The locales translated into: every supported locale but the
+            default'
+        field_count:
+          type: number
+          description: How many fields of a record can be translated
+        search_field:
+          type: string
+          nullable: true
+          description: The predicate `search` filters by, e.g. name_cont; null when
+            the type has nothing searchable
+        coverage:
+          type: array
+          items:
+            type: object
+            properties:
+              locale:
+                type: string
+              translated:
+                type: number
+                description: Records with every field translated
+              total:
+                type: number
+                description: Records of this type in the store
+              coverage:
+                type: number
+                description: The share translated, from 0 to 1
+            required:
+            - locale
+            - translated
+            - total
+            - coverage
+          description: Store-wide totals, one entry per locale
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+                nullable: true
+              locales:
+                type: object
+                description: How many fields are translated, keyed by locale. Compare
+                  with field_count.
+            required:
+            - id
+            - label
+            - locales
+          description: This page of records
+      required:
+      - resource_type
+      - default_locale
+      - locales
+      - field_count
+      - search_field
+      - coverage
+      - records
       x-typelizer: true
     UpdateStatus:
       type: object

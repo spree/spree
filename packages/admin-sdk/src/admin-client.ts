@@ -6473,12 +6473,8 @@ export class AdminClient {
    * event that replaces it in `replaced_by`.
    */
   readonly webhookEvents = {
-    list: (options?: RequestOptions): Promise<{ data: WebhookEvent[]; meta: { count: number } }> =>
-      this.request<{ data: WebhookEvent[]; meta: { count: number } }>(
-        'GET',
-        '/webhook_events',
-        options,
-      ),
+    list: (options?: RequestOptions): Promise<PaginatedResponse<WebhookEvent>> =>
+      this.request<PaginatedResponse<WebhookEvent>>('GET', '/webhook_events', options),
   }
 
   /**

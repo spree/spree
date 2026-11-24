@@ -50,6 +50,24 @@ module Spree
 
         protected
 
+        # Metadata for collection responses
+        # @return [Hash] pagination metadata
+        def collection_meta(_collection)
+          return {} unless @pagy
+
+          {
+            page: @pagy.page,
+            limit: @pagy.limit,
+            count: @pagy.count,
+            pages: @pagy.pages,
+            from: @pagy.from,
+            to: @pagy.to,
+            in: @pagy.in,
+            previous: @pagy.previous,
+            next: @pagy.next
+          }
+        end
+
         # A request parameter, only when it arrived as a string. `token[]=x`
         # and `token[k]=x` parse to an Array and a Hash, which token lookups
         # and verifiers built for a string cannot read.
