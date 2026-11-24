@@ -30,11 +30,20 @@ RSpec.shared_examples 'a purchase lifecycle host' do
   end
 
   describe '#backordered?' do
-    it 'reflects backordered fulfillment items' do
+    it 'reflects backordered fulfillments' do
       record = new_record
-      allow(record).to receive(:fulfillment_items).and_return([double(backordered?: false), double(backordered?: true)])
+      allow(record).to receive(:fulfillments).and_return(
+        [double(canceled?: false, backordered?: false), double(canceled?: false, backordered?: true)]
+      )
 
       expect(record).to be_backordered
+    end
+
+    it 'ignores a canceled fulfillment' do
+      record = new_record
+      allow(record).to receive(:fulfillments).and_return([double(canceled?: true, backordered?: true)])
+
+      expect(record).not_to be_backordered
     end
   end
 
