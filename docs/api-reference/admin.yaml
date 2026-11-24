@@ -33840,8 +33840,8 @@ paths:
                     name: Spree Commerce
                     default: false
                     gateway_payment_profile_id:
-                    customer_id:
                     payment_method_id: pm_gbHJdmfrXB
+                    customer_id:
                     metadata: {}
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
@@ -33850,6 +33850,7 @@ paths:
                   cvv_response_code:
                   cvv_response_message:
                   gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-343039b69b86
+                  requested_action:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   avs_risky: false
@@ -33948,6 +33949,7 @@ paths:
                 cvv_response_code:
                 cvv_response_message:
                 gateway_dashboard_payment_url:
+                requested_action:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
@@ -34052,8 +34054,8 @@ paths:
                   name: Spree Commerce
                   default: false
                   gateway_payment_profile_id:
-                  customer_id:
                   payment_method_id: pm_gbHJdmfrXB
+                  customer_id:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -34062,6 +34064,7 @@ paths:
                 cvv_response_code:
                 cvv_response_message:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-4a236d40ef07
+                requested_action:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
@@ -34147,8 +34150,8 @@ paths:
                   name: Spree Commerce
                   default: false
                   gateway_payment_profile_id:
-                  customer_id:
                   payment_method_id: pm_gbHJdmfrXB
+                  customer_id:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -34157,6 +34160,7 @@ paths:
                 cvv_response_code:
                 cvv_response_message:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/BGS-ccc19f06b194
+                requested_action:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
@@ -34256,8 +34260,8 @@ paths:
                   name: Spree Commerce
                   default: false
                   gateway_payment_profile_id:
-                  customer_id:
                   payment_method_id: pm_gbHJdmfrXB
+                  customer_id:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -34266,6 +34270,7 @@ paths:
                 cvv_response_code:
                 cvv_response_message:
                 gateway_dashboard_payment_url: https://dashboard.bogus.example/payments/void-BGS-11f2e975ba0c
+                requested_action:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 avs_risky: false
@@ -45227,6 +45232,8 @@ paths:
                 originator_id:
                 originator_type:
                 metadata: {}
+                status: completed
+                failure_reason:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 tax_amount: '0.00'
