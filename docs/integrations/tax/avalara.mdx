@@ -1,120 +1,124 @@
 ---
 title: "Connect Avalara AvaTax to Spree Commerce"
 sidebarTitle: Avalara AvaTax
-description: "Set up Spree's native Avalara AvaTax integration to automate sales tax, VAT, exemptions, and address validation on every checkout."
+description: "Set up Spree's native Avalara AvaTax integration to calculate sales tax, VAT and GST at checkout, file every order with Avalara, and handle exemptions and returns."
 ---
 
-Avalara AvaTax is an automated tax compliance platform that calculates accurate sales tax, VAT, and other indirect taxes in real time. Spree's native integration connects your store to AvaTax for transaction-level tax calculation on both products and shipping, handles tax exemptions for eligible customers, commits transactions to Avalara after order placement, and validates US and Canadian addresses at checkout.
+Avalara AvaTax works out sales tax, VAT and GST for each sale in real time. With the integration connected, Avalara calculates the tax on every line and delivery charge at checkout. Spree then files the placed order with Avalara, voids it if the order is cancelled, and files a credit when money goes back on a return, claim or exchange. It can also check US and Canadian addresses at checkout.
 
-<Info>You must have an existing Avalara account to connect this integration. A sandbox account can be used for testing before going live.</Info>
+<Info>You need an Avalara account. Use a sandbox account to try the integration before going live.</Info>
 
 ## Installation
 
-Before you can enable Avalara AvaTax, it must be installed. To do so, run the following command:
+Add the gem to your Spree application and restart the server:
 
-<CodeGroup>
-
-```bash Spree CLI (Docker)
-spree add avatax
+```bash
+bundle add spree_avalara
 ```
 
-```bash Without Spree CLI
-bundle add spree_avatax_official && bin/rails g spree_avatax_official:install && bin/rails db:migrate
-```
-
-</CodeGroup>
-
-The Spree CLI also runs the migrations and restarts the server for you. Without it, restart the server yourself after the commands finish.
+The gem adds no database tables, so there are no migrations to run. If you are moving from the 5.x extension (`spree_avatax_official`), see [Upgrading from Spree 5](#upgrading-from-spree-5).
 
 ## Connect Avalara
 
-Sign in to your Spree admin dashboard and navigate to the **Integrations** tab.
+In the Spree admin, go to **Settings → Integrations** and find the **Avalara AvaTax** tile.
 
-![The Integrations tab in the Spree admin showing the Avalara tile](/docs/images/integrations/avalara/1-integrations-tab.png)
+![The Integrations page in the Spree admin showing the Avalara AvaTax tile](/docs/images/integrations/avalara/1-integrations-tab.png)
 
-Locate the Avalara tile and click **Connect Avalara** to open the setup form.
+Click **Connect** and fill in the form:
 
-![The Avalara connection form in Spree](/docs/images/integrations/avalara/2-connection-form.png)
+- **Account number** and **License key** — your AvaTax credentials, from your Avalara account.
+- **Company code** — the company in your Avalara account that orders are filed against.
+- **Environment** — **Sandbox** for testing (the default) or **Production** for your live store. It must match the account the credentials belong to.
 
-You'll need to enter the following credentials, which can be found in your Avalara account (or sandbox account for testing):
+![The Avalara connection form in Spree, with the account number, license key, company code and environment](/docs/images/integrations/avalara/2-connection-form.png)
 
-- **Account Number** — Your unique Avalara account identifier.
-- **License Key** — The private key used to authenticate API requests.
-- **Company Code** — The code identifying the specific company in your Avalara account that transactions will be committed under.
-- **Environment** — Select **Sandbox** for testing or **Production** for your live store. Make sure this matches the account credentials you're using.
+When you save, Spree tests the connection. It checks that the credentials are accepted and that your Avalara account holds the company code you entered. If either check fails, the integration stays off and the form tells you which: Avalara's own message for rejected credentials, or **Company code … was not found in this Avalara account** for a mistyped code.
 
-Click **Create** to connect the integration.
+### Settings
 
-### Additional Settings
+These settings are on the same form.
 
-The following optional settings can be enabled on the Avalara integration page in the **Integrations** tab.
+![The Avalara settings in Spree](/docs/images/integrations/avalara/7-additional-settings.png)
 
-![Additional settings on the Avalara integration page](/docs/images/integrations/avalara/7-additional-settings.png)
+- **Document recording** — what happens to a placed order at Avalara:
+  - **Record and commit** (the default) files it as committed, so it appears in your Avalara reports and returns.
+  - **Record without committing** files it as saved. It stays out of your returns until you commit it in Avalara.
+  - **Don't record** files nothing. Spree still asks Avalara for the tax at checkout, but no order, cancellation or credit is sent. Choose this when another system, such as your ERP, records your sales with Avalara. Switching to it also stops cancellations and credits for orders recorded before the switch.
+- **Address validation** — when on, a checkout whose US or Canadian address Avalara cannot verify is refused before the order is placed.
+- **Logging** — when on, every call to Avalara is written to your application's log. See [Logging](#logging).
 
-- **Enable Address Validation** — When enabled, US and Canadian addresses entered at checkout are verified against Avalara's address database before an order is placed. This reduces failed deliveries and improves the accuracy of origin-based tax calculation.
-- **Show Rate in Adjustment Label** — When enabled, the calculated tax rate is displayed in the tax adjustment label on the order, giving customers and admins visibility into the rate being applied.
-- **Commit Transactions to Avalara** — Controls whether completed orders are committed as transactions in Avalara. This is enabled by default and should remain on in production so that transactions appear in your Avalara reports and are available for returns and voids.
+## Choose where Avalara calculates tax
 
-## How Tax Calculation Works
+Each [<u>market</u>](/user/settings/markets) chooses who calculates its tax. Set a market's tax calculation to **Avalara AvaTax** and every sale in it is taxed by Avalara. Markets you leave alone keep using Spree's own tax rates, so you can move one region at a time.
 
-Once connected, AvaTax calculates tax on both **line items** and **shipping charges** for each order. For US transactions in particular, the tax rate depends on both the origin and destination of the shipment.
+Avalara taxes a sale from where it ships to where it goes, so **your stock locations need full addresses**: street, city, state or region and postal code. Set them at **Settings → Locations**. An order shipped from several locations is taxed and reported per location.
 
-The origin address for each shipment is automatically set to the address of the **stock location** it ships from. Orders that ship from multiple stock locations will generate multiple origin addresses — one per shipment — ensuring accurate origin-based tax calculation across your entire fulfillment network.
+## Tax codes
 
-<Note>Stock location addresses can be configured at **Settings → Locations**.</Note>
+Each line is sent with an Avalara tax code, which tells Avalara what is being sold. Set the codes on your tax categories at **Settings → Taxes → Tax categories**.
 
-### Tax Codes
+When a market calculates through Avalara, the **Tax code** field searches Avalara's codes as you type. Type a word such as `clothing`, or the start of a code such as `PC04`, and pick a code from the list. You can still type a code that is not listed.
 
-To ensure products and shipping charges are taxed correctly, Spree sends an Avalara tax code with each line item. Tax codes tell Avalara what type of product or service is being sold, which affects the applicable rate.
+![Searching Avalara's tax codes on a tax category in Spree](/docs/images/integrations/avalara/3-tax-code.png)
 
-Tax codes can be assigned in the admin at **Settings → Tax → Tax Categories**. Set the appropriate Avalara tax code on each tax category for your products.
+- A product is sent with its tax category's code. A product without one uses the store's default tax category, and then Avalara's general tangible goods code, `P0000000`.
+- A delivery is sent as its own line with the code of its delivery method's tax category, or Avalara's freight code, `FR`, when it has none. Set delivery methods' tax categories at **Settings → Shipping**.
 
-![Setting an Avalara tax code on a tax category in Spree](/docs/images/integrations/avalara/3-tax-code.png)
+You can also browse every code at [taxcode.avatax.avalara.com](https://taxcode.avatax.avalara.com/).
 
-For shipping charges, use tax codes listed under the **Freight** label in the Avalara tax code directory.
+## Customers and exemptions
 
-<Note>You can browse all available Avalara tax codes at [taxcode.avatax.avalara.com](https://taxcode.avatax.avalara.com/).</Note>
+Avalara keys each sale to a customer code: the customer's ID, or the email address for a guest. Exemption certificates recorded in Avalara for that customer code are applied by Avalara automatically.
 
-## Tax Exemptions
+For business buyers, record exemptions in Spree on the company. Open the company at **Customers → Companies** and add its certificates on the **Exemption certificates** card. Each certificate names its states or countries, its certificate number and an exemption reason.
 
-Spree's Avalara integration supports several exemption methods for customers who qualify for full or partial tax exemption.
+![A company's exemption certificates in Spree](/docs/images/integrations/avalara/4-exemption-certificates.png)
 
-### Entity Use Codes
+Avalara decides an exemption by its entity use code, so give each exemption reason the matching Avalara code at **Settings → Taxes → Exemption reasons** (`G` for resale, `A` for federal government, and so on). Once a market uses Avalara, the reason form offers Avalara's codes. A reason with a code Avalara does not define is sent as `L` (other).
 
-Entity use codes identify the reason a customer is exempt from tax — for example, a reseller, a government entity, or a non-profit organisation. Avalara uses these codes to apply the correct exemption treatment per jurisdiction automatically.
+A company's tax registration (its VAT number) is set on its **Tax registration** card and sent with each sale, so Avalara can zero-rate an intra-EU business sale or apply reverse charge.
 
-To view the available codes, navigate to **Settings → Avalara Entity Use Codes** in the admin dashboard.
+See [<u>Companies</u>](/user/customers/companies) and [<u>Taxes</u>](/user/settings/taxes) for how to manage these.
 
-![The Avalara Entity Use Codes list in Spree admin settings](/docs/images/integrations/avalara/4-entity-use-codes.png)
+## What Spree sends to Avalara
 
-To assign a code to a customer, open the customer's profile, click the dropdown, and select **Avalara Tax Settings**.
+| When | What Spree files | Document code |
+|---|---|---|
+| An order is placed | A sales invoice | The order number |
+| An order is cancelled | A void of that sales invoice | The order number |
+| Money goes back on a return or claim | A return invoice crediting the lines and the tax the customer was refunded | The order number and the return or claim number, such as `R123456789-RET1001` |
+| An exchange is fulfilled | A return invoice for what came back, and a sales invoice for the replacement | The order and exchange numbers, with `-REPLACEMENT` on the sale |
 
-![The Avalara Tax Settings dropdown on a customer profile in Spree](/docs/images/integrations/avalara/5-customer-tax-settings.png)
+Each document carries the customer code, the ship-from, ship-to and bill-to addresses, the location it ships from as the reporting location (from the location's admin name), and the order's purchase order number when it has one. A credit is dated the day the money went back but taxed as of the original sale, and carries exactly the tax the customer was refunded.
 
-From here you can assign:
-
-- **Entity Use Code** — Applies a standard Avalara exemption reason to all transactions for this customer.
-- **VAT (Business) Identification Number** — Used for B2B transactions in VAT-registered regions. Supplying a valid VAT number allows Avalara to apply the correct zero-rated or reverse-charge treatment.
-- **Exemption Number** — A customer-specific exemption certificate number for jurisdictions that require documented exemption credentials.
-
-<Note>Learn more about each exemption method in the Avalara developer docs: [Entity Use Codes](https://developer.avalara.com/ecommerce-integration-guide/sales-tax-badge/transactions/exemptions/entity-use-codes/) · [Exemption Numbers](https://developer.avalara.com/avatax/handling-tax-exempt-customers/) · [VAT Business Identification](https://developer.avalara.com/vat-erp/transactions/certification-requirements/business-identification-number/)</Note>
-
-## Transactions
-
-After an order is placed, Spree commits a **sales invoice** transaction to Avalara. These transactions can be viewed in your Avalara account under **Transactions** and will appear in your Avalara reports.
-
-<Note>Transactions are only committed if **Commit Transactions to Avalara** is enabled on the integration settings page.</Note>
-
-Subsequent order events are also committed automatically:
-
-- **Refund (full or partial)** — commits a return invoice transaction to Avalara.
-- **Order cancellation** — voids the original sales invoice transaction.
+With **Don't record** chosen, none of these documents is sent.
 
 ![Transactions listed as sales invoices in the Avalara dashboard](/docs/images/integrations/avalara/6-transactions.png)
 
-## Managing Your Integration
+## Logging
 
-You can revisit the Avalara integration settings at any time from the **Integrations** tab to update your credentials, adjust additional settings, or remove the integration entirely.
+Turn on **Logging** to trace what Spree sends to Avalara. Each call writes one line to your application's log, tagged `[AVATAX]`, with the operation, the HTTP status (or the network error), how long the call took, and the request and response. Your credentials are never logged.
 
-<Warning>Removing the integration will stop tax calculation for new orders. Transactions already committed to Avalara will not be affected.</Warning>
+The requests contain customer addresses, and a guest's email address is their customer code, so turn logging on while you need it and keep the log under your usual retention.
 
+## Upgrading from Spree 5
+
+If your store used the 5.x extension, `spree_avatax_official`, run the upgrade task once after installing the gem:
+
+```bash
+bin/rails spree_avalara:upgrade
+```
+
+It keeps your credentials and settings (a commit setting that was off becomes **Record without committing**), turns customers' VAT numbers into tax registrations, removes the tax rate the old extension created, points markets that named no tax calculation at Avalara, and adds an exemption reason for each Avalara entity use code. It can be run again safely.
+
+The old extension's schema stays in place until you remove it:
+
+```bash
+bin/rails spree_avalara:upgrade:drop_legacy_schema
+```
+
+## Managing your integration
+
+You can change the credentials and settings at any time from **Settings → Integrations**.
+
+<Warning>Turning the integration off does not break checkout, but markets that calculate through Avalara then charge no tax at all until it is reconnected. The misconfiguration is reported to your error tracker. Point those markets at Spree's own tax rates if Avalara will be off for long. Orders already filed with Avalara are not affected.</Warning>
