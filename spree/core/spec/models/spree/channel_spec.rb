@@ -263,6 +263,17 @@ RSpec.describe Spree::Channel, type: :model do
       expect(channel.serves_location?(shop)).to be false
       expect(channel.served_stock_locations).to eq([warehouse])
     end
+
+    it 'destroys only the join row, never the stock location itself' do
+      channel.stock_locations = [warehouse, shop]
+
+      expect { channel.stock_locations = [warehouse] }
+        .to change { channel.channel_stock_locations.reload.count }.from(2).to(1)
+
+      expect(shop.reload).to be_persisted
+      expect(shop.deleted_at).to be_nil
+      expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
+    end
   end
 
 end
