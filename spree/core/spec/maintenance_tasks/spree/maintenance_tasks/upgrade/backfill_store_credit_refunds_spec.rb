@@ -72,6 +72,19 @@ RSpec.describe Spree::MaintenanceTasks::Upgrade::BackfillStoreCreditRefunds do
     expect(task.tallies).to include('credits_already_recorded' => 1)
   end
 
+  # Withdrawn after it was listed: recording it would count money that never went back.
+  it 'skips a credit withdrawn since it was listed' do
+    task = described_class.new
+    task.run = Spree::MaintenanceTasks::Start.call(task_name: described_class.name, dry_run: false, initiated_via: 'cli').value
+    listed = task.collection.to_a
+    credit.destroy!
+
+    listed.each { |record| task.process(record) }
+
+    expect(Spree::Refund.where(store_credit_id: credit.id)).to be_empty
+    expect(task.tallies).to include('credits_withdrawn' => 1)
+  end
+
   it 'changes nothing on a second run' do
     run_task
 

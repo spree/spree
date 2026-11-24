@@ -97,6 +97,16 @@ describe Spree::StoreCredit, type: :model do
       expect(credit.reload).not_to be_deleted
     end
 
+    # A cart may authorize it after this copy was loaded; the guard reads the
+    # row as locked, not the stale copy.
+    it 'is refused when an authorization landed after it was loaded' do
+      credit = create(:store_credit, amount: 10)
+      described_class.where(id: credit.id).update_all(amount_authorized: 5)
+
+      expect(credit.destroy).to be(false)
+      expect(credit.reload).not_to be_deleted
+    end
+
     context 'when it was issued as a refund' do
       let!(:credit) { give_back_as_store_credit(order, 10) }
 
@@ -133,6 +143,23 @@ describe Spree::StoreCredit, type: :model do
 
         expect(locked).to include(Spree::Order, Spree::Refund)
         expect(locked.index(Spree::Order)).to be < locked.index(Spree::Refund)
+      end
+
+      # Refund creation and the backfill lock the order before the credit.
+      it 'locks the order before the credit itself' do
+        calls = []
+        allow_any_instance_of(ActiveRecord::Relation).to receive(:lock).and_wrap_original do |original, *args|
+          calls << original.receiver.klass.base_class
+          original.call(*args)
+        end
+        allow(credit).to receive(:lock!).and_wrap_original do |original, *args|
+          calls << :credit
+          original.call(*args)
+        end
+
+        credit.destroy!
+
+        expect(calls.index(Spree::Order)).to be < calls.index(:credit)
       end
 
       it 'announces each failed refund once committed' do

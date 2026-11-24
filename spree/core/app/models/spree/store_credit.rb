@@ -106,9 +106,10 @@ module Spree
       end
     }
 
-    after_save :store_event
+    before_destroy :lock_for_destroy
     before_destroy :validate_no_amount_used
     before_destroy :withdraw_refunds
+    after_save :store_event
     after_destroy :refresh_withdrawn_orders
     after_commit :announce_withdrawn_refunds, on: :destroy
 
@@ -355,18 +356,27 @@ module Spree
       end
     end
 
+    # Takes the locks the destroy needs before anything is read: the orders
+    # its refunds were recorded against, in id order, then the credit itself,
+    # re-read. Refund creation and the backfill lock the order before they
+    # write a refund for the credit, and an authorization locks the credit,
+    # so neither can land between the guard below and the withdrawal. The
+    # order-then-credit order matches theirs, so the two cannot deadlock.
+    def lock_for_destroy
+      order_ids = (refunds.not_failed.distinct.pluck(:order_id) + [refunded_order_id]).compact.uniq.sort
+      @withdrawn_orders = Spree::Order.where(id: order_ids).order(:id).lock.to_a
+      # The re-read clears how the destroy was reached; keep it.
+      by_association = destroyed_by_association
+      lock!
+      self.destroyed_by_association = by_association
+    end
+
     # A credit withdrawn before it was spent gave the order nothing back after
     # all, so the refunds that recorded it fail — in the same transaction, so
     # they cannot be left standing. Not when the credit goes with its
     # customer: that money was given back, and the refunds stand.
-    #
-    # The orders are locked first, in id order, as refund creation locks them
-    # before its payment and refund rows, so the two cannot deadlock.
     def withdraw_refunds
       return if destroyed_by_association
-
-      order_ids = refunds.not_failed.distinct.pluck(:order_id).compact.sort
-      @withdrawn_orders = Spree::Order.where(id: order_ids).order(:id).lock.to_a
 
       @withdrawn_refunds = refunds.not_failed.lock.to_a
       @withdrawn_refunds.each do |refund|
@@ -378,7 +388,7 @@ module Spree
     # then the order would count it as credit given back that no refund
     # records.
     def refresh_withdrawn_orders
-      Array(@withdrawn_orders).each { |order| refresh_refunded_order(order) }
+      Array(@withdrawn_orders).each { |order| refresh_refunded_order(order) } unless destroyed_by_association
       @withdrawn_orders = nil
     end
 
