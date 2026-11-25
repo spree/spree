@@ -407,8 +407,10 @@ module SpreeStripe
         } if payment_method_id.blank?
 
         protect_from_error do
-          response = send_request do |opts|
-            Stripe::PaymentIntent.create(payload, opts.merge(idempotency_key: idempotency_key).compact)
+          response = protect_payment_method_from_error do
+            send_request do |opts|
+              Stripe::PaymentIntent.create(payload, opts.merge(idempotency_key: idempotency_key).compact)
+            end
           end
 
           success(response.id, response)
