@@ -259,6 +259,11 @@ edits, so an order-level discount is spread over the lines the change leaves.
 The [order discounts endpoints](/api-reference/admin) do the same on a placed
 order, one discount per change. Discounts from promotions are read-only.
 
+Updating a placed order's `items` through `PATCH /api/v3/admin/orders/{id}` is
+an order change as well: each item becomes an `add_item`, `update_item` or
+`remove_item` action, applied at once. A price can't be set on a placed
+order's items.
+
 Returns, exchanges and claims use the same mechanism: receiving goods back and
 shipping replacements each leave an order change on the order, linked to the
 return, exchange or claim that made it.

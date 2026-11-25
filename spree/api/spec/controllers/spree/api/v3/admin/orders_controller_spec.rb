@@ -727,6 +727,35 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    # A placed order's lines change only through an order change, whichever
+    # endpoint the edit arrives on.
+    context 'with items on a placed order' do
+      let(:order) { create(:completed_order_with_totals, store: store) }
+      let(:line_item) { order.line_items.first }
+
+      def update_quantity
+        patch :update, params: { id: order.prefixed_id, items: [{ variant_id: line_item.variant.prefixed_id, quantity: 2 }] }, as: :json
+      end
+
+      it 'applies the edit as a recorded order change' do
+        update_quantity
+
+        expect(response).to have_http_status(:ok)
+        expect(line_item.reload.quantity).to eq(2)
+        expect(order.order_changes.sole.actions.map(&:kind)).to eq(['update_item'])
+      end
+
+      it 'is refused while another change is open' do
+        create(:order_change, order: order, status: 'requested')
+
+        update_quantity
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(I18n.t('spree.order_change_in_progress'))
+        expect(line_item.reload.quantity).to eq(1)
+      end
+    end
+
     context 'with use_shipping' do
       let(:order) { create(:order, store: store, ship_address: create(:address), bill_address: nil) }
 

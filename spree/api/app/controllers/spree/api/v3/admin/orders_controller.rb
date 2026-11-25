@@ -57,7 +57,11 @@ module Spree
             body.attribute :use_shipping, :boolean,
               description: 'When true, copies the shipping address to the billing address.'
             body.attribute :items, :array,
-              description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, creating the line item when the order has none; `quantity: 0` removes it. Variants you do not send are left alone.' do |item|
+                           description: 'Line items to upsert, keyed by variant. An entry sets that variant\'s quantity, ' \
+                                        'creating the line item when the order has none; `quantity: 0` removes it. ' \
+                                        'Variants you do not send are left alone. On a placed order the edit is applied ' \
+                                        'as an order change, so it is recorded in the order\'s changes and refused while ' \
+                                        'another change is open.' do |item|
               item.attribute :variant_id, :id, required: true
               item.attribute :quantity, :integer, example: 1
               item.attribute :price, :decimal,
@@ -113,7 +117,8 @@ module Spree
             with_order_lock do
               result = Spree.order_update_service.call(
                 order: @resource,
-                params: order_update_params
+                params: order_update_params,
+                requested_by: current_actor
               )
 
               if result.success?
