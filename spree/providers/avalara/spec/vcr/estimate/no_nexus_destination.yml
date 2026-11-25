@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sandbox-rest.avatax.com/api/v2/transactions/create
+    body:
+      encoding: UTF-8
+      string: '{"type":"SalesOrder","companyCode":"AVALARA_COMPANY","date":"2026-09-01","commit":false,"currencyCode":"USD","customerCode":"cart_UkLWZg9DAJ","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"1
+        Lovely Street","line2":"Northwest","city":"Absarokee","region":"MT","country":"US","postalCode":"59001"}},"lines":[{"number":"li_UkLWZg9DAJ","quantity":1,"amount":"100.0","taxIncluded":false,"discounted":false,"discount":0,"taxCode":"P0000000","addresses":{"shipFrom":{"line1":"2000
+        Main Street","city":"Irvine","region":"CA","country":"US","postalCode":"92614"},"shipTo":{"line1":"1
+        Lovely Street","line2":"Northwest","city":"Absarokee","region":"MT","country":"US","postalCode":"59001"}}}]}'
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:22 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Location:
+      - "/api/v2/companies/848106/transactions/0"
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - ef237c30-6b3d-4997-8e93-138dc2e06064
+      X-Avalara-Uid:
+      - ef237c30-6b3d-4997-8e93-138dc2e06064
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-jb9p2
+      Serverduration:
+      - '00:00:00.0192716'
+      Api-Supported-Versions:
+      - '2.0'
+      X-Envoy-Upstream-Service-Time:
+      - '20'
+      Content-Security-Policy:
+      - frame-ancestors 'self';
+      X-Download-Options:
+      - noopen
+      X-Dns-Prefetch-Control:
+      - 'off'
+      Permissions-Policy:
+      - camera 'none';microphone 'none';geolocation 'none';encrypted-media 'none';payment
+        'none';speaker 'none';usb 'none';
+      X-Cip-Engine:
+      - containers
+      X-Cip-Site:
+      - gcp_us-west3
+      X-Cip-Environment:
+      - sbx
+    body:
+      encoding: UTF-8
+      string: '{"id":0,"code":"e54e4dc7-a487-40e8-ae6a-a534fd445a9f","companyId":848106,"date":"2026-09-01","paymentDate":"2026-09-01","status":"Temporary","type":"SalesOrder","batchCode":"","currencyCode":"USD","exchangeRateCurrencyCode":"USD","customerUsageType":"","entityUseCode":"","customerVendorCode":"cart_UkLWZg9DAJ","customerCode":"cart_UkLWZg9DAJ","exemptNo":"","reconciled":false,"locationCode":"","reportingLocationCode":"","purchaseOrderNo":"","referenceCode":"","salespersonCode":"","totalAmount":100.0,"totalExempt":100.0,"totalDiscount":0.0,"totalTax":0.0,"totalTaxable":0.0,"totalTaxCalculated":0.0,"adjustmentReason":"NotAdjusted","locked":false,"version":1,"originAddressId":2,"destinationAddressId":1,"exchangeRateEffectiveDate":"2026-09-01","exchangeRate":1.0,"modifiedDate":"2026-09-01T16:41:22.7397178Z","modifiedUserId":429316,"taxDate":"2026-09-01","lines":[{"id":0,"transactionId":0,"lineNumber":"li_UkLWZg9DAJ","customerUsageType":"","entityUseCode":"","destinationAddressId":1,"originAddressId":2,"discountAmount":0.0,"exemptAmount":100.0,"exemptCertId":0,"exemptNo":"","isItemTaxable":false,"itemCode":"","lineAmount":100.0,"quantity":1.0,"ref1":"","ref2":"","reportingDate":"2026-09-01","revAccount":"","sourcing":"Destination","tax":0.0,"taxableAmount":0.0,"taxCalculated":0.0,"taxCode":"P0000000","taxCodeId":8087,"taxDate":"2026-09-01","taxIncluded":false,"details":[{"id":0,"transactionLineId":0,"transactionId":0,"country":"US","region":"MT","stateFIPS":"30","exemptAmount":0.0,"jurisCode":"30","jurisName":"MONTANA","jurisdictionId":30,"stateAssignedNo":"","jurisType":"STA","jurisdictionType":"State","nonTaxableAmount":100.0,"rate":0.0,"sourcing":"Destination","tax":0.0,"taxableAmount":0.0,"taxType":"Use","taxSubTypeId":"U","taxTypeGroupId":"SalesAndUse","taxName":"MT
+        STATE TAX","taxAuthorityTypeId":45,"taxCalculated":0.0,"rateType":"General","rateTypeCode":"G","taxableUnits":0.0,"nonTaxableUnits":100.0,"exemptUnits":0.0,"unitOfBasis":"PerCurrencyUnit","isNonPassThru":false,"isFee":false,"reportingTaxableUnits":0.0,"reportingNonTaxableUnits":100.0,"reportingExemptUnits":0.0,"reportingTax":0.0,"reportingTaxCalculated":0.0,"liabilityType":"Seller","chargedTo":"Buyer"}],"nonPassthroughDetails":[],"lineLocationTypes":[{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLineLocationTypeId":0,"documentLineId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"hsCode":"","costInsuranceFreight":0.0,"vatCode":"","vatNumberTypeId":0}],"addresses":[{"id":1,"transactionId":0,"boundaryLevel":"Zip5","line1":"1
+        Lovely Street","line2":"Northwest","line3":"","city":"Absarokee","region":"MT","postalCode":"59001","country":"US","taxRegionId":4012952,"taxRegionIdAv":0,"latitude":"45.4914","longitude":"-109.4607"},{"id":2,"transactionId":0,"boundaryLevel":"Zip5","line1":"2000
+        Main St","line2":"","line3":"","city":"Irvine","region":"CA","postalCode":"92614-7211","country":"US","taxRegionId":4017409,"taxRegionIdAv":0,"latitude":"33.68433","longitude":"-117.850632"}],"locationTypes":[{"documentLocationTypeId":0,"documentId":0,"documentAddressId":2,"locationTypeCode":"ShipFrom"},{"documentLocationTypeId":0,"documentId":0,"documentAddressId":1,"locationTypeCode":"ShipTo"}],"summary":[{"country":"US","region":"MT","jurisType":"State","jurisCode":"30","jurisName":"MONTANA","taxAuthorityType":45,"stateAssignedNo":"","taxType":"Use","taxSubType":"U","taxName":"MT
+        STATE TAX","rateType":"General","taxable":0.0,"rate":0.0,"tax":0.0,"taxCalculated":0.0,"nonTaxable":100.0,"exemption":0.0}]}'
+  recorded_at: Tue, 01 Sep 2026 16:41:22 GMT
+recorded_with: VCR 6.4.0

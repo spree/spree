@@ -1,0 +1,11 @@
+---
+en:
+  spree:
+    integrations:
+      avalara:
+        description: Calculate sales tax, VAT and GST at checkout through your Avalara AvaTax account, and file every order against the same transaction.
+        errors:
+          address_unresolved: Avalara could not verify this address
+          company_not_found: Company code %{company_code} was not found in this Avalara account
+          connection_failed: Could not connect to AvaTax
+          invalid_credentials: Invalid credentials

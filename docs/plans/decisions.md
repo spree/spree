@@ -159,6 +159,16 @@ Rejected: the storefront record, which only earns its place when a store has sev
 
 **Plan amended:** `5.4-6.0-eu-legal-compliance.md` (Key Decision 8 and the Constraints on Current Work).
 
+## 2026-10-19: Avalara reads whether prices include tax from core
+
+**Context:** The Avalara gem worked out inclusiveness itself, through the market covering the tax country, because 5.x restated prices for the destination and the browsing market could disagree with it. Core now passes `tax_inclusive:` to every provider and charges every customer of a market its prices as entered (2026-10-16).
+
+**Decision:** The gem sends Avalara the `tax_inclusive:` core passes, and asks the owner where none is passed (filing). `SpreeAvalara.tax_inclusive?` is removed. Reverses the inclusiveness part of 2026-08-19.
+
+**Consequences:** Avalara is told the same thing about a price that Spree charged and showed. A merchant who wants a country's prices stated differently gives it a market of its own, as with Spree's own tax rates.
+
+**Plan:** `6.0-avalara-provider-gem.md`.
+
 ## 2026-10-17: Certificates point at their exemption reason
 
 **Context:** Certificates stored a copy of their reason's code, so a code had to be locked once any certificate used it. A new store's seeded reasons could then never be switched to Avalara's codes, and finding a reason's certificates meant joining through companies on a copied string.
@@ -5703,6 +5713,55 @@ shortfall on the cart, so neither side blocks the other.
 Plans amended: `6.0-b2b-quantity-rules.md` (implementation started),
 `6.0-b2b-wholesale-shipping.md` (`units_per_carton` no longer its column).
 
+## 2026-08-19 — Avalara reference gem: `spree_avalara` in the monorepo, whole-owner fail-closed estimate
+
+The 6.0 first-party tax provider (tax-provider plan, Phase 6) gets its own
+plan — `6.0-avalara-provider-gem.md` — and lands as a **new monorepo gem at
+`spree/providers/avalara`**, not a rewrite of `spree_avatax_official`
+(which stays the 5.x line and becomes the salvage + upgrade source). The
+gem is **`spree_avalara`** / `SpreeAvalara`, superseding the
+`spree_tax_avalara` working name: a class named exactly `Integration`
+derives its `api_type` from the outer module, so `SpreeAvalara::Integration`
+speaks `'avalara'` on the wire — the same string as `TaxLine.provider_id`
+and the locale key — and no Zeitwerk inflection is needed.
+
+Design headlines, each recorded with rationale in the new plan: `estimate`
+prices the **whole owner** per API call (Avalara is a whole-document
+engine; the `items` subset is ignored, replace-all is honored by sweeping
+and rewriting only `provider_id: 'avalara'` rows, and a 5-minute response
+cache absorbs the single-item call sites) and **fails closed** — an
+unreachable Avalara raises rather than under-collecting. `taxability_reason`
+is mostly a deterministic fold of Avalara's structured reason fields
+(`nonTaxableType`, `exemptCertId`/`exemptNo`, `rateTypeCode`,
+`isItemTaxable` — verified against the legacy gem's recorded cassettes);
+only the `intra_community_supply` vs `reverse_charge` split derives from
+request-side facts, because Avalara reports the zero rate but not that
+distinction. Commit is idempotent via
+`create_or_adjust_transaction` with the document id in `order.metadata` —
+no ledger table. The gem consumes core's exemption seam as-is (company
+certificates through `tax_resolve_exemptions_service` — no swap, no
+gem-owned storage; whether customer-level/no-Company exemptions deserve
+first-class handling is the plan's open question, preferring a core
+extension — customer-resolvable certificates — over gem storage, with the
+legacy user columns preserved as the migration source), and
+enforces Avalara address validation at `carts.complete.validate` (fail-open
+on transport) — deliberately not `Spree.validators.addresses`, which fires
+on every address-book and admin save with no checkout context.
+
+Two knock-ons settled elsewhere: **`Market#tax_inclusive` stays** (the gem
+wires it as the external-provider inclusive-price signal, answering the
+tax-provider plan's Phase 9 "wire or drop") — but read
+**destination-derived**: the flag comes from the market covering the tax
+address's country, falling back to the owner's market, never naively from
+`owner.market`. The browsing market can diverge from the tax destination
+(currency changes re-resolve the market by currency past the one
+address-clearing guard; bill-address tax destinations are never validated
+against markets; a missing country hint drops a cart onto the default
+market) — the recorded 5.x bug fixed by spree_avatax_official#198, whose
+policy the gem restates. And the gem's upgrade task points **only blank**
+`Market#tax_provider` values at Avalara — a value someone set, including
+an explicit Internal, is never rewritten.
+
 ## 2026-08-31 — Catalog phase 4: the agreement's prices are shown where it is curated, and a new one is built in steps
 
 Settling the last of the catalog agreement rework
@@ -6822,3 +6881,13 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Consequences:** Capture-immediately against a checkout payment with a blank `response_code` still cannot capture (capture needs an existing intent). Completing the draft runs purchase, which mints the intent. The Admin API accepts only a card saved through the chosen payment method, and the dashboard lists only those cards.
 
 **Plans amended:** `6.0-payment-gateways-monorepo.md` (`authorize`/`purchase` mint an off-session intent when `response_code` is blank). The Admin API contract is unchanged: `POST /payments` with `source_id`, no PaymentSession.
+
+## 2026-11-24 — Avalara certification scope; tax providers can offer a tax code lookup
+
+**Context:** Avalara certifies the AvaTax integration against its Sales Tax Badge checklist. Reviewed against the new gem, the 5.x extension and its unmerged re-certification PR (spree/spree_avatax_official#193), ten rows need work. One of them, Tax Code Lookup, asks for Avalara's tax codes to be searchable where a merchant maps them, which in 6.0 is the store-wide tax category form in the dashboard. Core and the dashboard must not name a vendor.
+
+**Decision:** The ten rows become Phase 8 of the Avalara plan, numbered 8.1–8.10. The tax code lookup is a provider-agnostic seam: `Spree::TaxProvider::Base.tax_codes(store, query:)` returns nil (no lookup) unless a provider overrides it, `to_api_hash` reports `tax_code_lookup`, and `GET /api/v3/admin/tax_providers/:id/tax_codes?q=` serves it. The dashboard offers the search on a tax category when a market of the store uses a provider that has one — the rule that already decides when an engine's exemption reason codes are offered — and still accepts a typed code. One row is argued with Avalara rather than built: entity use codes on the customer record (company certificates are the customer record for B2B).
+
+**Consequences:** Any tax provider can offer a lookup by implementing one class method. The Avalara gem's `commit_transaction_enabled` preference becomes a three-way `document_recording` choice, translated by the upgrade task. A workflow failure carrying a hash renders its messages in the Admin and Store APIs instead of the hash printed as text.
+
+**Plan:** `6.0-avalara-provider-gem.md` (Key Decision "Sales Tax Badge certification scope", Phase 8).

@@ -442,7 +442,9 @@ Spree::Core::Engine.add_routes do
         resources :tax_rates, concerns: :custom_fieldable
 
         # Selectable tax engines and their declared limits (discovery only)
-        resources :tax_providers, only: [:index]
+        resources :tax_providers, only: [:index] do
+          member { get :tax_codes }
+        end
         # How sellers get paid. Discovery only — the choice itself is a store
         # preference, so there is nothing here to create.
         resources :payout_providers, only: [:index]

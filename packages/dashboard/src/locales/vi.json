@@ -2468,7 +2468,10 @@
         },
         "tax_code": {
           "label": "Mã số thuế",
-          "placeholder": "Mã nhà cung cấp thuế bên ngoài (Avalara, v.v.)"
+          "placeholder": "Mã nhà cung cấp thuế bên ngoài (Avalara, v.v.)",
+          "search_placeholder": "Tìm mã hoặc nhập mã",
+          "empty": "Không có mã phù hợp",
+          "typed": "Dùng mã này"
         }
       },
       "tax_category_id": {

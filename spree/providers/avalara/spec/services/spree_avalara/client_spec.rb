@@ -1,0 +1,362 @@
+require 'spec_helper'
+
+RSpec.describe SpreeAvalara::Client do
+  subject(:client) do
+    described_class.new(
+      account_number: '2000000000',
+      license_key: 'test_license_key',
+      endpoint: 'https://sandbox-rest.avatax.com',
+      company_code: 'DEFAULT'
+    )
+  end
+
+  let(:ping_url) { 'https://sandbox-rest.avatax.com/api/v2/utilities/ping' }
+
+  def stub_ping(**options)
+    stub_request(:get, /#{Regexp.escape(ping_url)}/).to_return(
+      { headers: { 'Content-Type' => 'application/json' } }.merge(options)
+    )
+  end
+
+  describe 'a successful call' do
+    it 'returns the parsed body' do
+      stub_ping(status: 200, body: { authenticated: true, version: '26.7.0' }.to_json)
+
+      expect(client.ping).to include('authenticated' => true, 'version' => '26.7.0')
+    end
+
+    it 'authenticates with the account number and license key' do
+      stub_ping(status: 200, body: { authenticated: true }.to_json)
+
+      client.ping
+
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).
+        with(basic_auth: ['2000000000', 'test_license_key'])
+    end
+
+    # Avalara attributes calls to the certified integration through this header:
+    # name; Avalara-issued id; integration version, then the SDK's own fields.
+    it 'identifies the integration to Avalara' do
+      stub_ping(status: 200, body: { authenticated: true }.to_json)
+
+      client.ping
+
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).with { |request|
+        request.headers['X-Avalara-Client'].start_with?("SpreebySpark;a0n0b00000PqwGxAAJ;#{Spree.version};")
+      }
+    end
+  end
+
+  describe 'timeouts' do
+    around do |example|
+      original = ENV.to_hash
+      # An exported override would otherwise fail the default-value examples.
+      ENV.delete('SPREE_AVALARA_OPEN_TIMEOUT')
+      ENV.delete('SPREE_AVALARA_READ_TIMEOUT')
+      example.run
+      ENV.replace(original)
+    end
+
+    # Reaching for the wrapped SDK client on purpose: the timeouts only matter as
+    # what Faraday was actually handed.
+    def connection_options_of(built)
+      built.send(:avatax_client).connection_options
+    end
+
+    it 'holds the cart lock for no longer than the documented defaults' do
+      expect(connection_options_of(client)).to eq(request: { open_timeout: 2.0, timeout: 6.0 })
+    end
+
+    it 'lets a deployment override them' do
+      ENV['SPREE_AVALARA_OPEN_TIMEOUT'] = '0.5'
+      ENV['SPREE_AVALARA_READ_TIMEOUT'] = '3.5'
+
+      expect(connection_options_of(client)).to eq(request: { open_timeout: 0.5, timeout: 3.5 })
+    end
+  end
+
+  describe 'failures' do
+    it 'raises with the status and Avalara details on a rejected credential' do
+      stub_ping(
+        status: 401,
+        body: { error: { code: 'AuthenticationIncomplete', message: 'Authentication Incomplete.' } }.to_json
+      )
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError) { |error|
+        expect(error.status).to eq(401)
+        expect(error.message).to eq('Authentication Incomplete.')
+        expect(error.details).to include('code' => 'AuthenticationIncomplete')
+      }
+    end
+
+    it 'raises on a server error even without a parseable body' do
+      stub_ping(status: 500, headers: { 'Content-Type' => 'text/html' }, body: '<html>Bad Gateway</html>')
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError) { |error|
+        expect(error.status).to eq(500)
+        expect(error.message).to include('500')
+      }
+    end
+
+    # AvaTax also reports refusals inside an otherwise successful response.
+    it 'raises when a 200 carries an error object' do
+      stub_ping(status: 200, body: { error: { code: 'EntityNotFoundError', message: 'Company not found.' } }.to_json)
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, 'Company not found.')
+    end
+  end
+
+  # Translated, never repeated: retrying would mean sleeping inside the request
+  # while a customer waits, and the caller is told the engine was unavailable so
+  # its own client can decide.
+  describe 'transport failures' do
+    it 'reports a refused connection as unavailable, having called once' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /connection refused/) { |error|
+        # No status: nothing answered, so the failure was the network.
+        expect(error.status).to be_nil
+      }
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
+    end
+
+    it 'reports a timeout the same way' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::TimeoutError.new('execution expired'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /execution expired/) { |error|
+        expect(error.status).to be_nil
+      }
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
+    end
+
+    # Certificate verification stays on; a failed handshake is an outage like
+    # any other, so address validation falls back instead of failing checkout.
+    it 'reports a TLS failure the same way' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::SSLError.new('certificate verify failed'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /certificate verify failed/) { |error|
+        expect(error.status).to be_nil
+      }
+    end
+
+    it 'never sleeps inside the request' do
+      allow(client).to receive(:sleep)
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(client).not_to have_received(:sleep)
+    end
+
+    it 'does not repeat a call Avalara already refused' do
+      stub_ping(status: 401, body: { error: { message: 'Authentication Incomplete.' } }.to_json)
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError)
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
+    end
+  end
+
+  describe '#company_exists?' do
+    let(:companies_url) { %r{/api/v2/companies\?} }
+
+    def stub_companies(value)
+      stub_request(:get, companies_url).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' }, body: { value: value }.to_json
+      )
+    end
+
+    it 'is true when the account holds a company with the code' do
+      stub_companies([{ id: 1, companyCode: 'DEFAULT' }])
+
+      expect(client.company_exists?('DEFAULT')).to be(true)
+      expect(WebMock).to have_requested(:get, companies_url).with(
+        query: hash_including('$filter' => "companyCode eq 'DEFAULT'", '$top' => '1')
+      )
+    end
+
+    it 'is false when it holds none' do
+      stub_companies([])
+
+      expect(client.company_exists?('MISSING')).to be(false)
+    end
+
+    # OData escapes a quote inside a literal by doubling it.
+    it 'escapes a quote in the code' do
+      stub_companies([])
+
+      client.company_exists?("O'BRIEN")
+
+      expect(WebMock).to have_requested(:get, companies_url).with(
+        query: hash_including('$filter' => "companyCode eq 'O''BRIEN'")
+      )
+    end
+  end
+
+  describe '#list_tax_codes' do
+    let(:tax_codes_url) { %r{/api/v2/definitions/taxcodes\?} }
+
+    before do
+      stub_request(:get, tax_codes_url).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' },
+        body: { value: [{ taxCode: 'PC040100', description: 'Clothing and related products (B2C)' }] }.to_json
+      )
+    end
+
+    it 'searches active codes by code or description, a page at a time, in code order' do
+      expect(client.list_tax_codes('cloth')).to eq([{ 'taxCode' => 'PC040100', 'description' => 'Clothing and related products (B2C)' }])
+      expect(WebMock).to have_requested(:get, tax_codes_url).with(
+        query: hash_including(
+          '$filter' => "(taxCode contains 'cloth' OR description contains 'cloth') AND isActive eq true",
+          '$top' => '1000', '$orderBy' => 'taxCode ASC'
+        )
+      )
+    end
+
+    it 'escapes a quote in the query' do
+      client.list_tax_codes("men's")
+
+      expect(WebMock).to have_requested(:get, tax_codes_url).with(
+        query: hash_including('$filter' => "(taxCode contains 'men''s' OR description contains 'men''s') AND isActive eq true")
+      )
+    end
+  end
+
+  describe 'logging' do
+    subject(:logging_client) do
+      described_class.new(account_number: '2000000000', license_key: 'test_license_key',
+                          endpoint: 'https://sandbox-rest.avatax.com', company_code: 'DEFAULT', logging: true)
+    end
+
+    let(:lines) { [] }
+
+    before { allow(Rails.logger).to receive(:info) { |message| lines << message } }
+
+    def avatax_lines
+      lines.grep(/\A\[AVATAX\]/)
+    end
+
+    it 'writes the operation, status, duration and both bodies, and no credentials' do
+      stub_request(:post, %r{/api/v2/companies/DEFAULT/transactions/R1001/void}).
+        to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: { status: 'Cancelled' }.to_json)
+
+      logging_client.void_transaction('R1001')
+
+      line = avatax_lines.sole
+      expect(line).to match(/\A\[AVATAX\] void_transaction 200 \d+ms /)
+      expect(line).to include('request={"code":"DocVoided","transaction_code":"R1001"}')
+      expect(line).to include('response={"status":"Cancelled"}')
+      expect(line).not_to include('2000000000')
+      expect(line).not_to include('test_license_key')
+    end
+
+    # The ping answers with the account number as the user name, and a company
+    # listing carries the account id on every company.
+    it "keeps the account's identifiers out of the logged answers" do
+      stub_ping(status: 200, body: { authenticated: true, authenticatedUserName: '2000000000',
+                                     authenticatedAccountId: 2_000_000_000 }.to_json)
+      stub_request(:get, %r{/api/v2/companies\?}).to_return(
+        status: 200, headers: { 'Content-Type' => 'application/json' },
+        body: { value: [{ id: 1, accountId: 2_000_000_000, companyCode: 'DEFAULT' }] }.to_json
+      )
+
+      logging_client.ping
+      logging_client.company_exists?('DEFAULT')
+
+      expect(avatax_lines.size).to eq(2)
+      expect(avatax_lines).to all(satisfy { |line| !line.include?('2000000000') })
+      expect(avatax_lines.last).to include('"companyCode":"DEFAULT"')
+    end
+
+    it 'logs a refusal with the status Avalara answered' do
+      stub_ping(status: 401, body: { error: { message: 'Authentication Incomplete.' } }.to_json)
+
+      expect { logging_client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(avatax_lines.sole).to match(/\A\[AVATAX\] ping 401 \d+ms request=null response=.*Authentication Incomplete/)
+    end
+
+    it 'logs a network failure with no status' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+
+      expect { logging_client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(avatax_lines.sole).to match(/\A\[AVATAX\] ping Faraday::ConnectionFailed \d+ms /)
+    end
+
+    it 'writes nothing when logging is off' do
+      stub_ping(status: 200, body: { authenticated: true }.to_json)
+
+      client.ping
+
+      expect(avatax_lines).to be_empty
+    end
+  end
+
+  it 'builds the underlying SDK client once' do
+    expect(client.send(:avatax_client)).to be(client.send(:avatax_client))
+  end
+
+  # Every checkout loads the integration afresh, so a listener per client would
+  # pile up for the life of the process.
+  it 'leaves no Faraday listener behind for each client built' do
+    listeners = -> { ActiveSupport::Notifications.notifier.listeners_for('request.faraday').size }
+
+    build = -> { described_class.new(account_number: '1', license_key: 'k', endpoint: client.endpoint, company_code: 'X') }
+
+    expect { 3.times { build.call.send(:avatax_client) } }.not_to(change { listeners.call })
+  end
+
+  describe '#void_transaction' do
+    it 'files the void against its own company' do
+      stub_request(:post, %r{/api/v2/companies/DEFAULT/transactions/R1001/void}).
+        to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: { status: 'Cancelled' }.to_json)
+
+      expect(client.void_transaction('R1001')).to include('status' => 'Cancelled')
+      expect(WebMock).to have_requested(:post, %r{/companies/DEFAULT/transactions/R1001/void}).
+        with(body: { code: 'DocVoided' }.to_json)
+    end
+  end
+
+  # Which refusals mean "the ledger already says what you wanted it to say".
+  # The exact codes are confirmed when the cassettes are recorded.
+  describe 'idempotency predicates' do
+    def error(code)
+      SpreeAvalara::RequestError.new('refused', status: 400, details: { 'code' => code })
+    end
+
+    it 'recognises an already-filed document' do
+      expect(client.duplicate_document_error?(error('DocumentAlreadyExists'))).to be(true)
+      # Unverified — no recording has produced this name. Pinned so it is not
+      # dropped as dead weight; the recorded path is the DocStatusError below.
+      expect(client.duplicate_document_error?(error('DuplicateDocumentException'))).to be(true)
+      expect(client.duplicate_document_error?(error('EntityNotFoundError'))).to be(false)
+    end
+
+    # The code AvaTax actually returns, taken from a recorded cassette.
+    it 'recognises a transaction that is already cancelled' do
+      expect(client.already_voided_error?(error('TransactionAlreadyCancelled'))).to be(true)
+      # Never filed is as good as voided for the caller.
+      expect(client.already_voided_error?(error('EntityNotFoundError'))).to be(true)
+      expect(client.already_voided_error?(error('AuthenticationIncomplete'))).to be(false)
+    end
+
+    # A committed document cannot be recreated, and AvaTax says so through a
+    # DocStatus fault rather than by naming a duplicate.
+    it 'recognises a committed document as already filed' do
+      refusal = SpreeAvalara::RequestError.new(
+        'DocStatus is invalid for this operation.', status: 400,
+        details: { 'code' => 'GetTaxError', 'details' => [{ 'faultSubCode' => 'DocStatusError' }] }
+      )
+
+      expect(client.duplicate_document_error?(refusal)).to be(true)
+    end
+
+    # A transport failure carries no details at all.
+    it 'claims nothing about a failure Avalara never explained' do
+      transport = SpreeAvalara::RequestError.new('connection refused', status: nil)
+
+      expect(client.duplicate_document_error?(transport)).to be(false)
+      expect(client.already_voided_error?(transport)).to be(false)
+    end
+  end
+end

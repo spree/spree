@@ -50817,6 +50817,115 @@ paths:
             schema:
               "$ref": "#/components/schemas/TaxCategoryUpdateParams"
         required: true
+  "/api/v3/admin/tax_providers/{id}/tax_codes":
+    get:
+      summary: Search a tax provider's tax codes
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Searches the tax codes a tax engine defines, by a word in the description
+        or the start of a code, for setting a tax category's `tax_code`. Only
+        engines with `tax_code_lookup: true` on `GET /tax_providers` have codes to
+        search; any other engine answers an empty list, as does a query shorter
+        than two characters.
+
+        A tax category may still hold a code this search does not list.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-spree-agent: true
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: codes } = await client.taxProviders.taxCodes('avalara', { q: 'clothing' })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tax_providers/{id}/tax_codes -d '{"q":"clothing"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: The tax provider id, as listed on `GET /tax_providers` (for example
+          `avalara`)
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: true
+        description: A word from the description or the start of a code, at least
+          two characters
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tax codes found
+          content:
+            application/json:
+              example:
+                data:
+                - code: PC040100
+                  description: Clothing and related products (business-to-consumer)
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: PC040100
+                        description:
+                          type: string
+                          example: Clothing and related products (business-to-consumer)
+                      required:
+                      - code
+                      - description
+                required:
+                - data
+        '404':
+          description: tax provider not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: record not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/tax_rates":
     get:
       summary: List tax rates

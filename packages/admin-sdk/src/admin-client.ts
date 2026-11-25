@@ -571,6 +571,7 @@ import type {
   SupplierUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
+  TaxCodeOption,
   TaxExemptionCertificateCreateParams,
   TaxExemptionCertificateUpdateParams,
   TaxExemptionReasonCreateParams,
@@ -3958,6 +3959,20 @@ export class AdminClient {
   readonly taxProviders = {
     list: (options?: RequestOptions): Promise<PaginatedResponse<TaxProviderOption>> =>
       this.request<PaginatedResponse<TaxProviderOption>>('GET', '/tax_providers', options),
+    /**
+     * Searches one engine's own tax codes, for the tax category form. Empty for
+     * an engine without a search (`tax_code_lookup: false`) or a query shorter
+     * than two characters.
+     */
+    taxCodes: (
+      id: string,
+      params: { q: string },
+      options?: RequestOptions,
+    ): Promise<{ data: TaxCodeOption[] }> =>
+      this.request<{ data: TaxCodeOption[] }>('GET', `/tax_providers/${id}/tax_codes`, {
+        ...options,
+        params: { q: params.q },
+      }),
   }
 
   /**

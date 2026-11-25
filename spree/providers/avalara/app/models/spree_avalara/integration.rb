@@ -1,0 +1,160 @@
+module SpreeAvalara
+  # Per-store AvaTax credentials. Preference names are deliberately identical to
+  # the legacy `spree_avatax_official` integration's, so upgrading a store is a
+  # matter of retyping the row — its serialized preferences carry over untouched.
+  class Integration < Spree::Integration
+    SANDBOX_ENDPOINT = 'https://sandbox-rest.avatax.com'.freeze
+    PRODUCTION_ENDPOINT = 'https://rest.avatax.com'.freeze
+
+    preference :account_number, :string
+    preference :license_key, :password
+    # Sandbox by default: a merchant connecting for the first time should not be
+    # filing live documents before they have looked at one. Avalara publishes
+    # these two hosts and no others, and the legacy extension offered the same
+    # pair under the same labels, so a merchant sees the choice they already
+    # know rather than a URL to type.
+    preference :endpoint, :string, default: SANDBOX_ENDPOINT,
+                                   choices: { SANDBOX_ENDPOINT => 'Sandbox',
+                                              PRODUCTION_ENDPOINT => 'Production' }
+    preference :company_code, :string
+
+    # What happens to a placed sale at Avalara. "Don't record" leaves recording to
+    # another system, such as an ERP, so only quotes are sent and nothing is
+    # filed, voided or credited.
+    DOCUMENT_RECORDING_CHOICES = {
+      'commit' => 'Record and commit',
+      'save' => 'Record without committing',
+      'none' => "Don't record"
+    }.freeze
+
+    preference :address_validation_enabled, :boolean, default: false
+    preference :document_recording, :string, default: 'commit', choices: DOCUMENT_RECORDING_CHOICES
+    preference :show_rate_in_label, :boolean, default: false
+    # Off by default: requests carry customer addresses, and a guest's customer
+    # code is their email.
+    preference :logging_enabled, :boolean, default: false
+
+    # Without these a half-filled credential set saves and then fails at
+    # activation with a vendor error, which reads as an Avalara outage rather
+    # than a missing field.
+    validates :preferred_account_number, :preferred_license_key, :preferred_company_code, presence: true
+
+    # `choices:` above builds the picker and guards API writes; the allowlist is
+    # enforced on the model as well, so no other write path gets past it: the value is handed to the HTTP client along with the credentials,
+    # and an arbitrary host turns this into a way to make the server issue
+    # requests wherever an admin points it — internal services and cloud
+    # metadata included — with the reply readable through the connection test.
+    validates :preferred_endpoint, inclusion: { in: [SANDBOX_ENDPOINT, PRODUCTION_ENDPOINT] }
+    validates :preferred_document_recording, inclusion: { in: DOCUMENT_RECORDING_CHOICES.keys }
+
+    def self.integration_group
+      'tax'
+    end
+
+    def self.integration_name
+      'Avalara AvaTax'
+    end
+
+    # Avalara's own mark, hotlinked. The path is year-versioned, so it may
+    # eventually stop resolving; the gallery falls back to a letter avatar for an
+    # unreachable logo, so that degrades rather than breaks.
+    def self.logo_url
+      'https://www.avalara.com/etc.clientlibs/avalara/clientlibs/clientlib-ava-26-site/resources/favicons/favicon.svg'
+    end
+
+    # Fallback for hosts without the gem's translations; the localized
+    # description in config/locales wins.
+    def self.description
+      'Calculate sales tax, VAT and GST at checkout through your Avalara AvaTax account.'
+    end
+
+    # The connected integration a store calculates tax through, or nil.
+    #
+    # @param store [Spree::Store, nil]
+    # @return [SpreeAvalara::Integration, nil]
+    def self.active_for(store)
+      store&.integrations&.active&.find_by(type: name)
+    end
+
+    # @param store [Spree::Store, nil]
+    # @return [SpreeAvalara::Integration]
+    # @raise [SpreeAvalara::NotConfiguredError] when the store has none
+    def self.active_for!(store)
+      active_for(store) ||
+        raise(SpreeAvalara::NotConfiguredError,
+              "Store #{store&.id.inspect} has no active Avalara integration")
+    end
+
+    # @return [SpreeAvalara::Client]
+    def client
+      @client ||= SpreeAvalara::Client.new(
+        account_number: preferred_account_number,
+        license_key: preferred_license_key,
+        endpoint: preferred_endpoint,
+        company_code: preferred_company_code,
+        logging: preferred_logging_enabled
+      )
+    end
+
+    # Whether placed sales, cancellations and credits are filed with Avalara.
+    #
+    # @return [Boolean]
+    def records_documents?
+      preferred_document_recording != 'none'
+    end
+
+    # Whether a filed document is committed rather than left Saved.
+    #
+    # @return [Boolean]
+    def commits_documents?
+      preferred_document_recording == 'commit'
+    end
+
+    # Verifies the credentials with a ping, the one AvaTax call that costs
+    # nothing and files nothing, then that the account holds the company code.
+    # The ping reports authentication rather than raising on a bad key, so a
+    # successful response still has to be read.
+    #
+    # @return [Boolean]
+    def can_connect?
+      body = client.ping
+
+      if body.is_a?(Hash) && body['authenticated']
+        return true if client.company_exists?(preferred_company_code)
+
+        self.connection_error_message =
+          I18n.t('spree.integrations.avalara.errors.company_not_found', company_code: preferred_company_code)
+        return false
+      end
+
+      self.connection_error_message =
+        if body.is_a?(Hash) && body.key?('authenticated')
+          I18n.t('spree.integrations.avalara.errors.invalid_credentials')
+        else
+          I18n.t('spree.integrations.avalara.errors.connection_failed')
+        end
+
+      false
+    rescue SpreeAvalara::RequestError => error
+      self.connection_error_message = request_failure_message(error)
+
+      false
+    rescue StandardError => error
+      self.connection_error_message = error.message
+
+      false
+    end
+
+    private
+
+    # A request with no status was never answered, so the network error is the
+    # only thing worth showing. Anything Avalara did answer speaks for itself
+    # when it explained why.
+    def request_failure_message(error)
+      return error.message if error.status.nil?
+
+      (error.details.is_a?(Hash) && error.details['message'].presence) ||
+        I18n.t('spree.integrations.avalara.errors.connection_failed')
+    end
+  end
+end

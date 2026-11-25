@@ -71,7 +71,7 @@ jobs:
       - name: Install all project dependencies
         if: steps.gems.outputs.cache-hit != 'true'
         run: |
-          for project in core api emails providers/adyen providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
+          for project in core api emails providers/adyen providers/avalara providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -103,7 +103,7 @@ jobs:
           # so spree_meilisearch's integration spec runs here.
           - {
               project: providers,
-              dirs: 'providers/adyen providers/easypost providers/meilisearch providers/paypal providers/stripe',
+              dirs: 'providers/adyen providers/avalara providers/easypost providers/meilisearch providers/paypal providers/stripe',
               shard: 1,
               total_shards: 1,
               procs: 2,

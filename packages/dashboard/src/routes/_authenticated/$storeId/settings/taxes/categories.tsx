@@ -42,6 +42,7 @@ import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { SettingsListCard } from '../../../../../components/spree/settings-list-card'
+import { TaxCodeField } from '../../../../../components/spree/taxes/tax-code-field'
 import {
   useCreateTaxCategory,
   useDeleteTaxCategory,
@@ -367,16 +368,7 @@ function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormVa
         <FieldError errors={[errors.name]} />
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="tax_code">{t('admin.fields.tax_category.tax_code.label')}</FieldLabel>
-        <Input
-          id="tax_code"
-          placeholder={t('admin.fields.tax_category.tax_code.placeholder')}
-          aria-invalid={!!errors.tax_code || undefined}
-          {...form.register('tax_code')}
-        />
-        <FieldError errors={[errors.tax_code]} />
-      </Field>
+      <TaxCodeField form={form} />
 
       <Field>
         <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>

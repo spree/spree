@@ -1322,6 +1322,47 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('cart_cannot_complete')
       end
+
+      # The workflow names what is missing in a hash, which used to reach the
+      # client printed whole as Ruby.
+      it 'says what is missing in words, with the requirements in the details' do
+        incomplete_order.update!(email: user.email, ship_address: create(:address), bill_address: create(:address))
+        incomplete_order.rebuild_fulfillments!
+
+        post :complete, params: { id: incomplete_order.prefixed_id }
+
+        error = json_response['error']
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(error['message']).to include(I18n.t('spree.checkout_requirements.payment_required'))
+        expect(error['message']).not_to include('=>')
+        expect(error['message']).not_to include('{')
+        expect(error['details']['code']).to eq('validation_failed')
+        expect(error['details']['errors']).to include(a_hash_including('code' => 'payment_required'))
+      end
+
+      it 'carries the reason a hash failure gives beside its message' do
+        error = Spree::ServiceModule::ResultError.new({ code: 'cart_changed', current_total: 12.5 })
+        allow(Spree::Carts::Complete).to receive(:call).
+          and_return(Spree::ServiceModule::Result.new(false, incomplete_order, error))
+
+        post :complete, params: { id: incomplete_order.prefixed_id }
+
+        expect(json_response['error']['code']).to eq('cart_cannot_complete')
+        expect(json_response['error']['details']).to include('code' => 'cart_changed', 'current_total' => 12.5)
+        # Named only by its reason, so the reason is what it says.
+        expect(json_response['error']['message']).to eq(I18n.t('spree.cart_changed', default: 'Cart changed'))
+      end
+
+      it 'keeps the message of a hash failure that carries one' do
+        error = Spree::ServiceModule::ResultError.new({ code: 'payment_failed', message: 'Card declined.' })
+        allow(Spree::Carts::Complete).to receive(:call).
+          and_return(Spree::ServiceModule::Result.new(false, incomplete_order, error))
+
+        post :complete, params: { id: incomplete_order.prefixed_id }
+
+        expect(json_response['error']['message']).to eq('Card declined.')
+        expect(json_response['error']['details']).to eq('code' => 'payment_failed')
+      end
     end
 
     context 'when order was already completed by the gateway' do

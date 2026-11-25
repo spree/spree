@@ -1,0 +1,67 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://sandbox-rest.avatax.com/api/v2/utilities/ping
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - AvaTax Ruby Gem 26.7.3
+      X-Avalara-Client:
+      - a0o0b000005HsXPAA0;Spree by AVALARA_COMPANY;RubySdk;26.7.3;
+      Authorization:
+      - "<AVATAX_AUTHORIZATION>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 01 Sep 2026 16:41:28 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '225'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - private, no-cache, no-store
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - sameorigin
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - same-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Correlation-Id:
+      - 283c9b14-5ba0-497e-a0ec-1c9b6ef8b352
+      X-Avalara-Uid:
+      - 283c9b14-5ba0-497e-a0ec-1c9b6ef8b352
+      X-Avalara-Gateway-Pod:
+      - avagateway-6766775548-45xdb
+      Serverduration:
+      - '00:00:00.0000958'
+      Databasecalls:
+      - '0'
+      Databaseduration:
+      - '00:00:00'
+      Serviceduration:
+      - '00:00:00'
+      Api-Supported-Versions:
+      - '2.0'
+    body:
+      encoding: UTF-8
+      string: '{"version":"26.8.3","authenticated":true,"authenticationType":"AccountIdLicenseKey","authenticatedUserName":"redacted","authenticatedUserId":0,"authenticatedAccountId":0,"crmid":"redacted"}'
+  recorded_at: Tue, 01 Sep 2026 16:41:28 GMT
+recorded_with: VCR 6.4.0

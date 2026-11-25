@@ -2486,7 +2486,10 @@
         },
         "tax_code": {
           "label": "Kod podatkowy",
-          "placeholder": "Kod zewnętrznego dostawcy podatkowego (Avalara itp.)"
+          "placeholder": "Kod zewnętrznego dostawcy podatkowego (Avalara itp.)",
+          "search_placeholder": "Wyszukaj kod lub wpisz własny",
+          "empty": "Brak pasujących kodów",
+          "typed": "Użyj tego kodu"
         }
       },
       "tax_category_id": {

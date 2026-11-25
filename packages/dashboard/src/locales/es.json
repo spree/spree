@@ -2495,7 +2495,10 @@
         },
         "tax_code": {
           "label": "Código de impuesto",
-          "placeholder": "Código del proveedor de impuestos externo (Avalara, etc.)"
+          "placeholder": "Código del proveedor de impuestos externo (Avalara, etc.)",
+          "search_placeholder": "Busca códigos o escribe uno",
+          "empty": "No hay códigos coincidentes",
+          "typed": "Usar este código"
         }
       },
       "tax_category_id": {

@@ -2463,7 +2463,10 @@
         },
         "tax_code": {
           "label": "税码",
-          "placeholder": "外部税务服务商代码（Avalara 等）"
+          "placeholder": "外部税务服务商代码（Avalara 等）",
+          "search_placeholder": "搜索或输入税码",
+          "empty": "没有匹配的税码",
+          "typed": "使用此税码"
         }
       },
       "tax_category_id": {
