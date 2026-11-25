@@ -63,6 +63,7 @@ describe('extension catalog', () => {
     expect(resolveExtension('avalara')?.gem).toBe('spree_avalara')
     expect(resolveExtension('AvaTax')?.gem).toBe('spree_avalara')
     expect(resolveExtension('avatax-official')?.gem).toBe('spree_avalara')
+    expect(resolveExtension('spree_avatax_official')?.gem).toBe('spree_avalara')
     expect(resolveExtension('stirpe')).toBeUndefined()
     expect(resolveExtension('spree_paypal')).toBeUndefined()
   })

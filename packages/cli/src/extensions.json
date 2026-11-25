@@ -14,7 +14,7 @@
     "avalara": {
       "label": "Avalara AvaTax",
       "gem": "spree_avalara",
-      "aliases": ["avatax", "avatax_official"],
+      "aliases": ["avatax", "avatax_official", "spree_avatax_official"],
       "release": "spree"
     },
     "meilisearch": { "label": "Meilisearch", "gem": "spree_meilisearch", "release": "spree" },

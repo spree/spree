@@ -133,6 +133,7 @@ Replace `spree_avatax_official` with `spree_avalara` in your `Gemfile`, using th
 requirement as your `spree` gem. The old extension's install generator and migrations are gone. Then run:
 
 ```bash
+bundle install
 bin/rails spree_avalara:upgrade
 ```
 
