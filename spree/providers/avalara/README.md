@@ -93,7 +93,8 @@ you chose an engine explicitly, including Spree's own, is never rewritten.
 A legacy `vat_id` that no longer validates is reported rather than migrated, so you can reconcile the
 list; until then that buyer is charged as a consumer, which is the safe direction.
 
-Legacy schema is left in place. When you are satisfied with the result:
+Legacy schema is left in place. Dropping it removes `spree_users.vat_id`, the only copy of a reported
+value, so reconcile or export those first. When you are satisfied with the result:
 
 ```bash
 bin/rails spree_avalara:upgrade:drop_legacy_schema

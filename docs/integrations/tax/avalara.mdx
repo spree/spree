@@ -111,7 +111,7 @@ bin/rails spree_avalara:upgrade
 
 It keeps your credentials and settings (a commit setting that was off becomes **Record without committing**), turns customers' VAT numbers into tax registrations, removes the tax rate the old extension created, points markets that named no tax calculation at Avalara, and adds an exemption reason for each Avalara entity use code. It can be run again safely.
 
-The old extension's schema stays in place until you remove it:
+The old extension's schema stays in place until you remove it. Removing it deletes the old `vat_id` column, so first add by hand any VAT numbers the upgrade task listed as not valid, or export the column. A customer whose number is lost is charged tax as a consumer.
 
 ```bash
 bin/rails spree_avalara:upgrade:drop_legacy_schema
