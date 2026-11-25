@@ -708,7 +708,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--cdc3c189cf300471608fa6cf8fb876400b32121c
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--45eeaa949eb2e9320bf85a521f2bad39dd2afd5e
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -716,7 +716,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f8439e98e58b83e016ba8bbbb3cfeb99b19a8c18
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--40d360e2387c4d3fafd826847b41e64689ee8287
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -1142,6 +1142,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Cart"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -5007,6 +5019,15 @@ paths:
                     po_number_required: false
                     parent_id:
                     ancestors: []
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                required:
+                - data
         '401':
           description: not authenticated
           content:
@@ -5069,6 +5090,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
         '404':
           description: no standing over this node
           content:
@@ -5109,6 +5132,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
       requestBody:
         content:
           application/json:
@@ -5193,6 +5218,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add a member by email
       tags:
@@ -5245,6 +5282,8 @@ paths:
                 expires_at: '2026-02-14T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
                 status: pending
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
       requestBody:
         content:
           application/json:
@@ -5463,6 +5502,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Address"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add an address book entry
       tags:
@@ -6021,6 +6072,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Order"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/company_invitations/{token}":
     parameters:
     - name: token
@@ -6045,6 +6108,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Send `company` to include the company the invitation is to.
+        schema:
+          type: string
       responses:
         '200':
           description: invitation found
@@ -6056,8 +6125,17 @@ paths:
                 expires_at: '2026-02-14T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
                 status: pending
+                company:
+                  id: comp_UkLWZg9DAJ
+                  name: Acme Industrial
+                  kind: company
+                  po_number_required: false
+                  parent_id:
+                  ancestors: []
                 company_name: Acme Industrial
                 store_name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
         '404':
           description: token spent, revoked or expired
           content:
@@ -6118,6 +6196,8 @@ paths:
                 company_id: comp_UkLWZg9DAJ
                 customer_id: cust_UkLWZg9DAJ
                 email: new@acme.test
+              schema:
+                "$ref": "#/components/schemas/CompanyMembership"
       requestBody:
         content:
           application/json:
@@ -6743,15 +6823,17 @@ paths:
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `payment_method_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `created_at`, `id`, `name`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `created_at`, `id`, `name`, `payment_method_id`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: CreditCard
         sortable:
         - created_at
         - id
         - name
+        - payment_method_id
         - updated_at
       responses:
         '200':
@@ -9288,6 +9370,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/delivery_methods/{id}/pickup_locations":
     get:
       summary: List pickup locations
@@ -9350,6 +9444,15 @@ paths:
                   state_abbr: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockLocation"
+                required:
+                - data
   "/api/v3/store/customers/me/digital_links":
     get:
       summary: List my digital links
@@ -11187,7 +11290,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-23T09:11:54.125Z'
+                  updated_at: '2026-11-25T14:07:25.907Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11205,19 +11308,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-23T09:11:54.128Z'
+                  updated_at: '2026-11-25T14:07:25.909Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-23T09:11:54.131Z'
+                  updated_at: '2026-11-25T14:07:25.911Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-23T09:11:54.120Z'
+                  updated_at: '2026-11-25T14:07:25.904Z'
                 meta:
                   page: 1
                   limit: 25
@@ -15380,6 +15483,14 @@ components:
           - accepted
           - revoked
           - expired
+        company:
+          "$ref": "#/components/schemas/Company"
+        company_name:
+          type: string
+          deprecated: true
+        store_name:
+          type: string
+          deprecated: true
       required:
       - id
       - email
@@ -15399,6 +15510,8 @@ components:
         email:
           type: string
           nullable: true
+        company:
+          "$ref": "#/components/schemas/Company"
       required:
       - id
       - company_id
@@ -20778,7 +20891,10 @@ components:
           - "$ref": "#/components/schemas/CreditCard"
           - "$ref": "#/components/schemas/StoreCredit"
           - "$ref": "#/components/schemas/PaymentSource"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
         custom_fields:
@@ -25165,6 +25281,7 @@ components:
         created_at: datetime
         id: id
         name: text
+        payment_method_id: id
         updated_at: datetime
       associations: {}
       scopes: {}
