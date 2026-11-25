@@ -671,7 +671,7 @@ Each payment update also recalculates the order's `payment_status`, derived from
 | `partially_refunded` | Refunded in part; the customer has paid something net |
 | `refunded` | Refunds returned everything captured |
 | `overcharged` | Captured more than the order total — the customer is owed the difference |
-| `voided` | The order was canceled and its authorization released |
+| `voided` | The order was canceled and its payments were voided |
 
 <Warning>
 Keep an eye on orders sitting at `authorized` or `partially_paid` long after placement — a sudden increase can indicate a problem with your payment gateway that is affecting customers. Check the gateway's own dashboard for recent transactions.
