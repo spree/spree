@@ -35,15 +35,21 @@ module Spree
       RECOVERABLE_REQUIREMENT_CODES = %w[out_of_stock].freeze
 
       # The cart failed only requirements in RECOVERABLE_REQUIREMENT_CODES.
-      # Retried for longer than a stock reservation lives
-      # (Spree::Store#preferred_stock_reservation_ttl_minutes, 10 by default),
-      # then reported like a blocked completion.
+      # Retried until every reservation that could be holding the stock has
+      # expired: the store's reservation TTL
+      # (Spree::Store#preferred_stock_reservation_ttl_minutes, unbounded)
+      # plus STOCK_GRACE after settlement. Past that, it is reported like a
+      # blocked completion.
       class StockUnavailable < StandardError; end
 
+      STOCK_RETRY_WAIT = 5.minutes
+      # Leaves the expiry job time to release reservations past their TTL.
+      STOCK_GRACE = 10.minutes
+
       retry_on SettlementFailed, wait: :polynomially_longer, attempts: 5
-      retry_on StockUnavailable, wait: 5.minutes, attempts: 6 do |_job, error|
-        Rails.error.report(error, handled: false, severity: :error, source: 'spree.payments.webhook')
-      end
+      # Bounded by #stock_retry_deadline, not an attempt count: a store's
+      # reservation TTL can outlast any fixed number of attempts.
+      retry_on StockUnavailable, wait: STOCK_RETRY_WAIT, attempts: :unlimited
 
       # metadata defaults to {} so jobs enqueued before it was passed still run.
       def perform(payment_method_id:, action:, payment_session_id:, metadata: {})
@@ -59,7 +65,7 @@ module Spree
         )
         return unless result&.failure?
 
-        if awaiting_stock?(result)
+        if awaiting_stock?(result) && Time.current < stock_retry_deadline(payment_session)
           raise StockUnavailable,
                 "Payment session #{payment_session.id} settled, but its cart is out of stock (#{result.error}); " \
                 'the buyer was charged without an order'
@@ -86,6 +92,13 @@ module Spree
 
         codes = requirement_codes(result)
         codes.any? && (codes - RECOVERABLE_REQUIREMENT_CODES).empty?
+      end
+
+      # Measured from when the payment was settled, which a replay of the
+      # webhook does not move.
+      def stock_retry_deadline(payment_session)
+        settled_at = [payment_session.payment&.created_at, payment_session.updated_at].compact.min
+        settled_at + Spree::StockReservation.ttl_for(payment_session.cart || payment_session.order) + STOCK_GRACE
       end
 
       def requirement_codes(result)

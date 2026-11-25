@@ -212,7 +212,7 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
         )
       end
 
-      it 'retries after a stock reservation could have expired, without reporting yet' do
+      it 'retries in five minutes without reporting yet' do
         freeze_time do
           expect { perform_job }.to have_enqueued_job(described_class)
 
@@ -222,15 +222,25 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
         expect(Rails.error).not_to have_received(:report)
       end
 
-      it 'reports the charged cart once the retries run out' do
-        job = described_class.new(payment_method_id: payment_method.id, action: 'captured', payment_session_id: payment_session.id)
-        job.executions = 5
+      it 'keeps retrying while a reservation under a long store TTL could still hold the stock' do
+        store.update!(preferred_stock_reservation_ttl_minutes: 120)
+        payment_session
 
-        job.perform_now
+        travel 90.minutes do
+          expect { perform_job }.to have_enqueued_job(described_class)
+        end
+        expect(Rails.error).not_to have_received(:report)
+      end
 
+      it 'reports the charged cart once every reservation that could hold the stock has expired' do
+        payment_session
+
+        travel 30.minutes do
+          expect { perform_job }.not_to have_enqueued_job(described_class)
+        end
         expect(Rails.error).to have_received(:report).once.with(
-          an_instance_of(described_class::StockUnavailable),
-          hash_including(handled: false, severity: :error, source: 'spree.payments.webhook')
+          an_instance_of(described_class::CompletionBlocked),
+          hash_including(handled: false, severity: :error, context: hash_including(code: 'validation_failed'))
         )
       end
 
