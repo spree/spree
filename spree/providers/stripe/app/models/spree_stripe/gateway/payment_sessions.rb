@@ -184,8 +184,10 @@ module SpreeStripe
         send_request { |opts| Stripe::PaymentIntent.retrieve({ id: payment_intent_id, expand: ['payment_method'] }, opts) }
       end
 
-      def confirm_payment_intent(payment_intent_id)
-        send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, {}, opts) }
+      def confirm_payment_intent(payment_intent_id, payment_method_id: nil, off_session: false)
+        payload = { payment_method: payment_method_id, off_session: (true if off_session) }.compact
+
+        send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, payload, opts) }
       end
 
       def capture_payment_intent(payment_intent_id, stripe_amount)
@@ -355,6 +357,26 @@ module SpreeStripe
       def payment_intent_unpayable?(payment_intent_id)
         payment_intent = find_payment_intent(payment_intent_id)
         payment_intent.nil? || payment_intent.status == 'canceled'
+      end
+
+      # An admin payment is saved with a card and no intent. Storefront
+      # payments already have one from the session. The intent is not confirmed
+      # here: the id is stored first, and the charge is a later confirm.
+      def ensure_payment_intent_exists_for_payment(payment, money, payment_source = nil)
+        return payment if payment.response_code.present?
+
+        payment_source ||= payment.source
+        return payment if payment_source&.gateway_payment_profile_id.blank?
+
+        response = create_payment_intent(
+          SpreeStripe::Units.to_stripe(money || payment.amount, payment.currency),
+          payment.owner,
+          payment_method_id: payment_source.gateway_payment_profile_id,
+          customer_profile_id: payment_source.gateway_customer_profile_id
+        )
+
+        payment.update_columns(response_code: response.authorization, updated_at: Time.current)
+        payment
       end
 
       # @param order [Spree::Cart, Spree::Order]
