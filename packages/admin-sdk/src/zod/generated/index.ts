@@ -27,6 +27,7 @@ export { CollectionSchema, type Collection } from './Collection';
 export { CollectionExclusionSchema, type CollectionExclusion } from './CollectionExclusion';
 export { CollectionPublicationSchema, type CollectionPublication } from './CollectionPublication';
 export { CollectionRuleSchema, type CollectionRule } from './CollectionRule';
+export { CollectionRuleTypeDefinitionSchema, type CollectionRuleTypeDefinition } from './CollectionRuleTypeDefinition';
 export { CommissionLineSchema, type CommissionLine } from './CommissionLine';
 export { CommissionRateSchema, type CommissionRate } from './CommissionRate';
 export { CommissionRuleSchema, type CommissionRule } from './CommissionRule';

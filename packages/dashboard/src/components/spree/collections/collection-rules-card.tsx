@@ -1,4 +1,4 @@
-import type { CustomFieldDefinition, ResourceTypeDefinition } from '@spree/admin-sdk'
+import type { CollectionRuleTypeDefinition, CustomFieldDefinition } from '@spree/admin-sdk'
 import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
 import {
   CurrencySelect,
@@ -46,14 +46,6 @@ import {
   type CollectionFormValues,
   type CollectionRuleFormValues,
 } from '../../../schemas/collection'
-
-/** A rule type as `/collection_rules/types` lists it. */
-type CollectionRuleType = ResourceTypeDefinition & {
-  match_policies?: string[]
-  value_required?: boolean
-  /** Evaluated in a currency, the store's default when the rule names none. */
-  uses_currency?: boolean
-}
 
 type MatchPolicy = CollectionRuleFormValues['match_policy']
 
@@ -133,7 +125,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
   // Rule kinds come from the server registry, so a plugin-registered rule shows
   // up here without a dashboard change. Labels are localized server-side.
   const { data: ruleTypesResponse } = useCollectionRuleTypes()
-  const ruleTypes = (ruleTypesResponse?.data ?? []) as CollectionRuleType[]
+  const ruleTypes = ruleTypesResponse?.data ?? []
   const typeOptions = ruleTypes.map((ruleType) => ({
     value: ruleType.type,
     label: typeLabel('collection_rule', ruleType.type, ruleType.label),
@@ -230,7 +222,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
   )
 }
 
-function policiesFor(ruleTypes: CollectionRuleType[], type: string): MatchPolicy[] {
+function policiesFor(ruleTypes: CollectionRuleTypeDefinition[], type: string): MatchPolicy[] {
   const known: readonly string[] = COLLECTION_RULE_MATCH_POLICIES
   const listed = ruleTypes.find((ruleType) => ruleType.type === type)?.match_policies
   return (listed ?? COLLECTION_RULE_MATCH_POLICIES).filter((policy): policy is MatchPolicy =>
@@ -248,7 +240,7 @@ function RuleRow({
 }: {
   form: UseFormReturn<CollectionFormValues>
   index: number
-  ruleTypes: CollectionRuleType[]
+  ruleTypes: CollectionRuleTypeDefinition[]
   typeOptions: { value: string; label: string }[]
   onTypeChange: (type: string) => void
   onRemove: () => void

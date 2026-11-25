@@ -34,9 +34,7 @@ export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
   const { data } = useCollectionRuleTypes()
   const valuelessTypes = useRef<string[] | null>(null)
   valuelessTypes.current = data
-    ? data.data
-        .filter((ruleType) => (ruleType as { value_required?: boolean }).value_required === false)
-        .map((ruleType) => ruleType.type)
+    ? data.data.filter((ruleType) => !ruleType.value_required).map((ruleType) => ruleType.type)
     : null
 
   const moneyLocale = useRef('')

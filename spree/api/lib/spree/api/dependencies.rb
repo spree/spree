@@ -44,7 +44,7 @@ module Spree
            maintenance_task_run
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations translatable_resource translation_coverage
-           resource_type_definition payment_method_type integration_type_definition calculator_type
+           resource_type_definition collection_rule_type_definition payment_method_type integration_type_definition calculator_type
            product_membership_result bulk_stock_level_result bulk_product_result setup_status
            password_reset_acknowledgement integration_connection_result tag
            email_template email_template_draft email_template_revision email_template_preview

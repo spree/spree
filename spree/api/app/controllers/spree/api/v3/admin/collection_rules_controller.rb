@@ -16,7 +16,7 @@ module Spree
           def types
             authorize! :read, model_class
 
-            render json: { data: model_class.types_listing }
+            render json: { data: serialize_types(model_class.types_listing, Spree.api.admin_collection_rule_type_definition_serializer) }
           end
 
           protected

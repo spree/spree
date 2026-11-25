@@ -614,6 +614,7 @@ import type {
   Collection,
   CollectionExclusion,
   CollectionPublication,
+  CollectionRuleTypeDefinition,
   CommissionLine,
   CommissionRate,
   Company,
@@ -5215,8 +5216,12 @@ export class AdminClient {
    * registry-driven server-side, so plugin-registered rules appear here too.
    */
   readonly collectionRules = {
-    types: (options?: RequestOptions): Promise<{ data: ResourceTypeDefinition[] }> =>
-      this.request<{ data: ResourceTypeDefinition[] }>('GET', '/collection_rules/types', options),
+    types: (options?: RequestOptions): Promise<{ data: CollectionRuleTypeDefinition[] }> =>
+      this.request<{ data: CollectionRuleTypeDefinition[] }>(
+        'GET',
+        '/collection_rules/types',
+        options,
+      ),
   }
 
   // ============================================

@@ -318,12 +318,12 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       response '200', 'types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTypeDefinition'))
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('CollectionRuleTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.pluck('type')).to include('tag', 'sale', 'available_on', 'category', 'price', 'in_stock')
-          expect(data.first).to include('label', 'description', 'schema', 'match_policies', 'value_required')
+          expect(data.first).to include('label', 'description', 'schema', 'match_policies', 'value_required', 'uses_currency')
         end
       end
     end
