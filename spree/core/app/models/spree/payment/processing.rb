@@ -142,8 +142,8 @@ module Spree
           else raise ArgumentError, "Unknown payment success state: #{success_state.inspect}"
           end
         else
-          # A failed payment is never processed again; see Payment#failure!.
-          release_store_credit_hold!
+          # See Payment#failure!: the hold goes back, and a retry starts afresh.
+          release_store_credit_hold_for_retry!
           self.status = 'failed'
           save
           gateway_error(response)

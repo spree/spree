@@ -227,10 +227,11 @@ module Spree
       true
     end
 
-    # A failed payment is never processed again, so it gives back any store
-    # credit it held.
+    # A failed payment gives back any store credit it held. It can still be
+    # retried, so it keeps a fresh code with an eligibility event, which a
+    # retry takes against what the credit then has free.
     def failure!
-      release_store_credit_hold!
+      release_store_credit_hold_for_retry!
       update!(status: 'failed')
     end
     alias failure failure!
@@ -384,6 +385,18 @@ module Spree
       source.with_lock do
         source.void(response_code, action_originator: self) if store_credit_held?
       end
+    end
+
+    # Releases a held amount from a payment that failed and may be retried.
+    # The released code is spent, so the payment moves to a new one.
+    #
+    # @return [void]
+    def release_store_credit_hold_for_retry!
+      return unless store_credit_held?
+
+      release_store_credit_hold!
+      update_column(:response_code, source.generate_authorization_code)
+      create_eligible_credit_event
     end
 
     # Statuses a payment can be resized from: nobody has claimed it for the
@@ -590,6 +603,7 @@ module Spree
     def split_uncaptured_amount
       return if uncaptured_amount <= 0
 
+      release_uncaptured_store_credit!
       remainder = owner.payments.new(
         amount: uncaptured_amount,
         payment_method: payment_method,
@@ -738,6 +752,27 @@ module Spree
     end
 
     private
+
+    # A partial capture of store credit leaves the rest authorized under this
+    # payment's code, which nothing can capture or void any more: the credit
+    # voids by code, and a void would take off the whole original amount. The
+    # rest goes back to the credit here, so the remainder authorizes it afresh.
+    def release_uncaptured_store_credit!
+      return unless store_credit? && source.is_a?(Spree::StoreCredit) && response_code.present?
+
+      source.with_lock do
+        events = source.store_credit_events.where(authorization_code: response_code)
+        next unless events.exists?(action: Spree::StoreCredit::AUTHORIZE_ACTION)
+        next if events.exists?(action: Spree::StoreCredit::VOID_ACTION)
+
+        leftover = [uncaptured_amount, source.amount_authorized].min
+        next unless leftover.positive?
+
+        source.update!(action: Spree::StoreCredit::VOID_ACTION, action_amount: leftover,
+                       action_authorization_code: response_code, action_originator: self,
+                       amount_authorized: source.amount_authorized - leftover)
+      end
+    end
 
     # Moves a held payment to a new amount. The credit voids an authorization
     # by its code, so the new hold takes a code of its own.

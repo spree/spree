@@ -138,6 +138,46 @@ module Spree
         expect(result).to be_success
         expect(payment.reload.amount).to eq(6)
         expect(credit.reload.amount_used).to eq(6)
+
+        # The 4 left over is held by the remainder, which can still settle it.
+        remainder = draft.payments.store_credits.where.not(id: payment.id).sole
+        expect(remainder).to be_pending
+        expect(remainder.amount).to eq(4)
+        expect(credit.amount_authorized).to eq(4)
+
+        expect(Spree.payment_capture_workflow.call(payment: remainder)).to be_success
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'releases what is left of a partly captured held payment when its remainder is voided' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+        Spree.payment_capture_workflow.call(payment: payment, amount: BigDecimal('6'))
+        remainder = draft.payments.store_credits.where.not(id: payment.id).sole
+
+        expect(Spree.payment_void_workflow.call(payment: remainder)).to be_success
+
+        expect(credit.reload.amount_used).to eq(6)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'retries a held payment that failed' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        payment = draft.reload.payments.store_credits.first
+        payment.failure!
+        expect(credit.reload.amount_authorized).to eq(0)
+
+        result = Spree.payment_process_workflow.call(payment: payment.reload)
+
+        expect(result).to be_success
+        expect(payment.reload).to be_completed
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
       end
 
       it 'gives the credit back when other payments already covered the draft' do
