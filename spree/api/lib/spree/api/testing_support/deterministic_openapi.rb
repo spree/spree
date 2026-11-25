@@ -37,11 +37,6 @@ if ENV['OPENAPI'] == 'true'
       # to match across machines.
       JWT_SECRET = 'openapi-example-signing-secret'
 
-      # Stands in for the dummy app's `secret_key_base` when Active Storage
-      # signs the blob ids and file URLs shown in the examples, for the same
-      # reason: that secret is generated when the dummy app is built.
-      SIGNING_SECRET = 'openapi-example-secret-key-base'
-
       class << self
         # Freezes the clock for the whole run, not only inside examples. The
         # default store, its market and its channel are created once, in a
@@ -65,13 +60,6 @@ if ENV['OPENAPI'] == 'true'
             assignments = timestamps.map { |column| "#{connection.quote_column_name(column)} = #{frozen}" }.join(', ')
             connection.execute("UPDATE #{connection.quote_table_name(table)} SET #{assignments}")
           end
-        end
-
-        def pin_signing_secret
-          return unless defined?(ActiveStorage)
-
-          secret = Rails.application.key_generator(SIGNING_SECRET).generate_key('ActiveStorage')
-          ActiveStorage.verifier = ActiveSupport::MessageVerifier.new(secret)
         end
 
         # A rolled-back transaction gives SQLite its ids back, so every example
@@ -183,7 +171,6 @@ if ENV['OPENAPI'] == 'true'
     config.before(:suite) do
       Spree::OpenAPIDeterminism.freeze_clock
       Spree::OpenAPIDeterminism.restamp_committed_records
-      Spree::OpenAPIDeterminism.pin_signing_secret
     end
 
     config.before do
