@@ -296,7 +296,8 @@ module Spree
           dimension = registry.dimension!(member_name(filter[:dimension], 'dimension'))
           op = filter[:op].to_s
           raise InvalidQuery, "invalid filter op #{op}. Valid ops: #{FILTER_OPS.join(', ')}" unless FILTER_OPS.include?(op)
-          raise InvalidQuery, "filter on #{dimension.name} requires a value" if filter[:value].blank?
+          # `false` is a value (`false.blank?` is true); nil, "" and [] are not.
+          raise InvalidQuery, "filter on #{dimension.name} requires a value" if filter[:value] != false && filter[:value].blank?
 
           { dimension: dimension, op: op.to_sym, values: filter_values(dimension, filter[:value]) }
         end
