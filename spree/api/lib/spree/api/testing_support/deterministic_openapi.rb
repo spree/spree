@@ -51,14 +51,14 @@ if ENV['OPENAPI'] == 'true'
         # first used. Everything committed is stamped with the frozen instant.
         def restamp_committed_records
           connection = ActiveRecord::Base.connection
-          frozen = connection.quote(FROZEN_TIME)
 
           connection.tables.each do |table|
             timestamps = connection.columns(table).map(&:name) & %w[created_at updated_at]
             next if timestamps.empty?
 
-            assignments = timestamps.map { |column| "#{connection.quote_column_name(column)} = #{frozen}" }.join(', ')
-            connection.execute("UPDATE #{connection.quote_table_name(table)} SET #{assignments}")
+            arel_table = Arel::Table.new(table)
+            update = Arel::UpdateManager.new.table(arel_table).set(timestamps.map { |column| [arel_table[column], FROZEN_TIME] })
+            connection.update(update)
           end
         end
 
