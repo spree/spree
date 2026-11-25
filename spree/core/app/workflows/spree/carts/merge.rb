@@ -58,13 +58,15 @@ module Spree
 
       # Neither cart may change while a completion attempt holds it or a
       # gateway has taken money for it: merging would change the totals that
-      # money was charged for, and folding in a paid cart would destroy it
-      # along with the payment session its gateway webhook settles.
+      # money was charged for. The folded-in cart is destroyed, so it must
+      # also have no payment session the gateway may still settle — a
+      # session can be captured while still +pending+ here, and destroying
+      # it leaves the webhook nothing to record the payment against.
       #
       # A fast refusal before the validate hooks run; the answer that counts
       # is +lock_unclaimed_carts+, read under the row locks.
       def ensure_carts_unclaimed
-        return unless [cart, other_cart].any?(&:completion_claimed?)
+        return unless [cart, other_cart].any?(&:completion_claimed?) || other_cart.payment_session_open?
 
         reject_claimed_carts
       end
@@ -77,10 +79,15 @@ module Spree
         held = Spree::Cart.uncached do
           locked = Spree::Cart.lock.where(id: [cart.id, other_cart.id]).order(:id).to_a
           # A cart deleted since the merge began is not one to fold either.
-          locked.size < 2 || locked.any? { |locked_cart| locked_cart.completed_at.present? || locked_cart.completion_claimed? }
+          locked.size < 2 || locked.any? { |locked_cart| claimed_or_unsafe_to_drain?(locked_cart) }
         end
 
         reject_claimed_carts if held
+      end
+
+      def claimed_or_unsafe_to_drain?(locked_cart)
+        locked_cart.completed_at.present? || locked_cart.completion_claimed? ||
+          (locked_cart.id == other_cart.id && locked_cart.payment_session_open?)
       end
 
       def reject_claimed_carts

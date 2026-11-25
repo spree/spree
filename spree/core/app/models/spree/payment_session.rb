@@ -27,6 +27,12 @@ module Spree
 
     include Spree::PaymentSessionTransitions
 
+    # Statuses after which a session's intent can no longer take money:
+    # placement cancels the provider intent, and an expired session's intent
+    # is gone. A failed session is not one of them — a declined confirm can
+    # leave its intent payable (see +unused+).
+    RETIRED_STATUSES = %w[canceled expired].freeze
+
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
     # A declined confirm marks the session failed while its intent can still

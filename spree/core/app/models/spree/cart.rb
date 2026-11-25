@@ -208,6 +208,23 @@ module Spree
         payments.valid.where.not(status: 'checkout').exists?(response_code: payment_sessions.select(:external_id))
     end
 
+    # Whether a payment session on this cart may still take money, or
+    # already has: any session not canceled or expired. The gateway can
+    # capture a session while it is still +pending+ here, before its webhook
+    # lands, so only a retired session is safe to discard with the cart.
+    #
+    # Narrower in effect than +completion_claimed?+ on purpose: a pending
+    # session does not fix the cart's contents, but destroying the cart
+    # would take the session with it and leave the webhook nothing to
+    # settle (see Spree::Carts::Merge).
+    #
+    # @return [Boolean]
+    def payment_session_open?
+      return false unless persisted?
+
+      payment_sessions.where.not(status: Spree::PaymentSession::RETIRED_STATUSES).exists?
+    end
+
     # Recomputes and persists money totals (item, tax, promotion, delivery)
     # and derived item counts. Convenience for
     # {Spree::Carts::RecalculateTotals}.
