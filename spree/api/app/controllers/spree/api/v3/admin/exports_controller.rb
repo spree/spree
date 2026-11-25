@@ -166,7 +166,24 @@ module Spree
           #
           # @return [Boolean] whether the request was refused
           def render_missing_member_scopes(export)
-            missing = export.required_key_scopes.reject { |scope| holds_permission?(scope) }
+            required = export.required_key_scopes
+
+            if required.nil?
+              # A new export's query that does not compile is the model's to
+              # refuse, with a validation error naming the problem. A stored
+              # one whose members can no longer be resolved fails closed:
+              # what it reads cannot be checked against this credential.
+              return false if export.new_record?
+
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+                message: 'This report export can no longer be checked against your permissions',
+                status: :forbidden
+              )
+              return true
+            end
+
+            missing = required.reject { |scope| holds_permission?(scope) }
             return false if missing.empty?
 
             render_error(

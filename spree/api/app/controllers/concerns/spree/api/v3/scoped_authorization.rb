@@ -228,7 +228,14 @@ module Spree
           return current_api_key.has_scope?(key) if scope_limited_principal?
 
           ability = current_ability
-          return true unless ability.respond_to?(:permission_keys)
+          # A custom ability without catalog keys leaves the staffer's own
+          # authority to CanCanCan, but a delegated credential still narrows
+          # it: the grant is checked on its own, or an OAuth token approved for
+          # `read_reports` would pass every member check its owner could.
+          unless ability.respond_to?(:permission_keys)
+            granted = delegated_permission_keys
+            return granted.nil? || granted.include?(key.to_s)
+          end
 
           staff_permission_keys.include?(key.to_s)
         end

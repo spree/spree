@@ -27,14 +27,18 @@ module Spree
 
       # The key scopes of the members the query groups or filters by — the
       # same list the reporting endpoint checks (see
-      # Spree::Reporting::Query#required_key_scopes). A query that does not
-      # compile needs none here; validation refuses it.
+      # Spree::Reporting::Query#required_key_scopes).
       #
-      # @return [Array<String>]
+      # nil when the query no longer compiles — a stored export naming a
+      # dimension an extension has since removed — so the caller can refuse
+      # rather than read "nothing required". A new export with such a query
+      # is refused by validation instead.
+      #
+      # @return [Array<String>, nil]
       def required_key_scopes
         reporting_query.required_key_scopes
       rescue Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery, JSON::ParserError
-        []
+        nil
       end
 
       def csv_headers

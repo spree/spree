@@ -384,6 +384,33 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
       end
+
+      it 'refuses to download a report export whose query no longer resolves' do
+        export = create(:export, type: 'Spree::Exports::Report', store: store, user: admin_user,
+                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[removed_dimension] } }.to_json)
+        export.attachment.attach(io: StringIO.new("Removed,Total sales\n"), filename: 'report.csv', content_type: 'text/csv')
+
+        get :download, params: { id: export.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      # A host app's ability class need not expose catalog keys; the grant
+      # still narrows what the token may read.
+      context 'when the ability class exposes no permission keys' do
+        before do
+          allow_any_instance_of(Spree.ability_class).to receive(:respond_to?).and_wrap_original do |original, name, *args|
+            name.to_sym == :permission_keys ? false : original.call(name, *args)
+          end
+        end
+
+        it 'still refuses a report export broken down by customer' do
+          post :create, params: report_params(%w[customer]), as: :json
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+        end
+      end
     end
   end
 end
