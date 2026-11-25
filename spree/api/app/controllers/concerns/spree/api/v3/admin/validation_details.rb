@@ -58,28 +58,10 @@ module Spree
           end
 
           def wire_error_value(record, attribute, key, value)
-            return wire_prefixed_id(value.class, value.id) if value.is_a?(ActiveRecord::Base)
-            return value unless key == :value && value.present? && record.is_a?(ActiveRecord::Base)
+            return Spree::Base.api_prefixed_id(value.class, value.id) if value.is_a?(ActiveRecord::Base)
+            return value unless key == :value && value.present? && record.respond_to?(:api_value_for)
 
-            model = record.class
-            attribute = model.attribute_aliases[attribute] || attribute
-            references = model.reflect_on_all_associations(:belongs_to)
-
-            if attribute == model.primary_key
-              wire_prefixed_id(model, value)
-            elsif attribute == model.inheritance_column
-              model.try(:api_type_for, value)
-            elsif (reference = references.find { |reflection| reflection.foreign_key.to_s == attribute })
-              wire_prefixed_id(reference.polymorphic? ? record[reference.foreign_type].to_s.safe_constantize : reference.klass, value)
-            elsif references.any? { |reflection| reflection.polymorphic? && reflection.foreign_type == attribute }
-              Spree::Base.polymorphic_api_type(value)
-            else
-              value
-            end
-          end
-
-          def wire_prefixed_id(model, id)
-            model.prefixed_id_for(id) if model.try(:_prefix_id_prefix).present? && id.is_a?(Integer)
+            record.api_value_for(attribute, value)
           end
 
           # Whether `message` says more than its `code` alone would.

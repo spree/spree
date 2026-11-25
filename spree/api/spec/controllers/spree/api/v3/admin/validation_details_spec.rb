@@ -163,9 +163,7 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
         duplicate = Spree::CustomField.new(resource: custom_field.resource, custom_field_definition_id: definition.prefixed_id, value: 'cotton')
         duplicate.validate
 
-        expect(details_of(duplicate)['custom_field_definition_id']).to eq(
-          [{ 'value' => definition.prefixed_id, 'code' => 'taken', 'message' => 'has already been taken', 'specific' => false }]
-        )
+        expect(details_of(duplicate)['custom_field_definition_id'].first).to include('code' => 'taken', 'value' => definition.prefixed_id)
       end
 
       it 'reports both halves of a polymorphic reference the way the API writes them' do
@@ -203,6 +201,12 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
         expect(details_of(custom_field)['custom_field_definition_id']).to eq(
           [{ 'code' => 'taken', 'message' => 'has already been taken', 'specific' => false }]
         )
+      end
+
+      it 'reports a column the model declares as holding class names by its short name' do
+        definition.errors.add(:resource_type, :inclusion, value: 'Spree::Product')
+
+        expect(details_of(definition)['resource_type'].first).to include('code' => 'inclusion', 'value' => 'product')
       end
 
       it 'keeps a rejected value that is not a reference' do

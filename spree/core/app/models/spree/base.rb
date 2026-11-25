@@ -270,6 +270,43 @@ class Spree::Base < ApplicationRecord
     type.to_s.safe_constantize.try(:prefixed_id_for, id)
   end
 
+  # Prefixed id for a raw key of `model`, or nil when the model has no prefix
+  # (where `prefixed_id_for` would answer a bare `_<sqid>`) or the key is not
+  # an integer.
+  #
+  # @param model [Class, nil]
+  # @param id [Object]
+  # @return [String, nil]
+  def self.api_prefixed_id(model, id)
+    model.prefixed_id_for(id) if model.try(:_prefix_id_prefix).present? && id.is_a?(Integer)
+  end
+
+  # What a client reads for `value` held in `attribute` — the inverse of
+  # {.api_type_resolver}. A foreign key becomes the prefixed id of the record
+  # it points at, a column storing a class name becomes its short name, and
+  # anything else is returned unchanged. Override with `api_type_resolver`
+  # for a column whose stored values need their own mapping.
+  #
+  # @param attribute [String, Symbol]
+  # @param value [Object] a value as this model stores it
+  # @return [Object, nil] nil when the value has no form a client may see
+  def api_value_for(attribute, value)
+    model = self.class
+    attribute = model.attribute_aliases[attribute.to_s] || attribute.to_s
+    reference = model.reflect_on_all_associations(:belongs_to).find { |reflection| reflection.foreign_key.to_s == attribute }
+
+    if attribute == model.inheritance_column
+      model.base_class.api_type_for(value)
+    elsif reference
+      target = reference.polymorphic? ? self[reference.foreign_type].to_s.safe_constantize : reference.klass
+      Spree::Base.api_prefixed_id(target, value)
+    elsif model.api_type_resolver(attribute)
+      Spree::Base.polymorphic_api_type(value)
+    else
+      value
+    end
+  end
+
   # Reads the arguments of a two-state ransackable scope — one that answers a
   # question with two named sides ("erased" / "not erased", "outstanding" /
   # "spent") rather than narrowing to a value.
