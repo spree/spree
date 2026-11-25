@@ -157,12 +157,32 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         expect(earlier.reload.status).to eq('pending')
       end
 
-      context 'and Stripe accepted it since it was read' do
+      context 'and Stripe authorized it while the new intent was being created' do
+        before do
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
+            and_return(
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_capture', payment_method: { type: 'card' })
+            )
+        end
+
+        it 'fails without canceling it, and cancels the new intent' do
+          expect { subject }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress'))
+
+          expect(gateway).not_to have_received(:cancel_payment_intent).with('pi_earlier_123')
+          expect(gateway).to have_received(:cancel_payment_intent).with('pi_new_intent_123')
+          expect(earlier.reload.status).to eq('pending')
+          expect(order.payment_sessions.where(external_id: 'pi_new_intent_123')).to be_empty
+        end
+      end
+
+      context 'and Stripe accepted it after it was read again, before the cancel' do
         before do
           allow(gateway).to receive(:cancel_payment_intent).with('pi_earlier_123').
             and_raise(Stripe::InvalidRequestError.new('You cannot cancel this PaymentIntent because it has a status of succeeded.', nil))
           allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
             and_return(
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
               Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
               Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'succeeded', payment_method: { type: 'card' })
             )

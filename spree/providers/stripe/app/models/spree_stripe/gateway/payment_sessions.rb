@@ -70,8 +70,8 @@ module SpreeStripe
 
         gateway_customer = fetch_or_create_customer(order: order)
 
-        response = begin
-          create_payment_intent(
+        begin
+          response = create_payment_intent(
             stripe_amount, order,
             payment_method_id: stripe_payment_method_id,
             customer_profile_id: gateway_customer&.profile_id
@@ -258,12 +258,7 @@ module SpreeStripe
         # open ones, unless its charge is still in flight.
         open_sessions = sessions.active.order(:id).to_a + sessions.where(status: 'failed').order(:id).to_a
 
-        open_sessions.each do |payment_session|
-          payment_intent = find_payment_intent(payment_session.external_id)
-          next unless payment_intent && payment_intent_in_progress?(payment_intent)
-
-          raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress')
-        end
+        refuse_if_payment_in_progress(open_sessions)
 
         open_sessions
       rescue *RETRYABLE_STRIPE_ERRORS => error
@@ -272,10 +267,17 @@ module SpreeStripe
         raise Spree::Core::GatewayError, error.message
       end
 
-      # Cancels the sessions the new intent replaces. One that Stripe accepted
-      # since it was read cannot be canceled; the request then fails, and the
-      # new intent is canceled too so the buyer is never left with two.
+      # Cancels the sessions the new intent replaces. Each one is read again
+      # first: creating the new intent takes time, and an earlier intent the
+      # buyer paid meanwhile may now be authorized (`requires_capture`), which
+      # Stripe would let us cancel, releasing the authorization. If any is
+      # accepted or in flight, nothing is canceled. One that Stripe accepts
+      # between that read and its cancel request cannot be canceled once it
+      # has succeeded. Either way the request fails, and the new intent is
+      # canceled too, so the buyer is never left with two.
       def replace_open_sessions(open_sessions, replacement_intent_id:)
+        refuse_if_payment_in_progress(open_sessions)
+
         open_sessions.each do |payment_session|
           cancel_payment_session(payment_session: payment_session)
         end
@@ -284,6 +286,17 @@ module SpreeStripe
         raise if error.is_a?(Spree::Core::GatewayError)
 
         raise Spree::Core::GatewayError, error.message
+      end
+
+      # @raise [Spree::Core::GatewayError] when Stripe has accepted any of the
+      #   sessions' intents, or a charge for one is still in flight
+      def refuse_if_payment_in_progress(payment_sessions)
+        payment_sessions.each do |payment_session|
+          payment_intent = find_payment_intent(payment_session.external_id)
+          next unless payment_intent && payment_intent_in_progress?(payment_intent)
+
+          raise Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress')
+        end
       end
 
       # Its client secret was never handed out, so nobody can pay it. A

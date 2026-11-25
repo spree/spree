@@ -257,7 +257,7 @@ module SpreePaypalCheckout
       end
 
       def refuse_if_already_paid!(order)
-        return unless order.payment_sessions.where(payment_method: self, status: 'completed').exists?
+        return unless order.payment_sessions.exists?(payment_method: self, status: 'completed')
 
         raise Spree::Core::GatewayError, I18n.t('spree.paypal_checkout.payment_session_errors.payment_in_progress')
       end
