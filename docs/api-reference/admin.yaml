@@ -46574,8 +46574,11 @@ paths:
         bearer_auth: []
       description: |-
         Sends a pending invitation to the seller's team again, with a fresh
-        acceptance link. Use it when the email never arrived; an invitation that
-        has expired is refused, so invite the person again instead.
+        acceptance link. The invitation's `expires_at` moves to 14 days after
+        the resend, but never past 30 days after the invitation was created.
+        Use it when the email never arrived. An invitation that has expired or
+        was already accepted is refused with 422, so invite the person again
+        instead; a revoked invitation is not found (404).
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
@@ -46612,7 +46615,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
-          description: the invitation has expired
+          description: the invitation has expired or was already accepted
           content:
             application/json:
               example:
@@ -46620,6 +46623,16 @@ paths:
                   code: processing_error
                   message: This invitation has expired. Invite them again to send
                     a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/sellers/{id}/approve":
@@ -51015,7 +51028,14 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Issues a fresh token and dispatches the invitation email again.
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend, but never
+        past 30 days after the invitation was created. An invitation that has
+        expired or was already accepted is refused with 422 (as is one revoked
+        while the request was in flight), so invite the person again instead;
+        a revoked invitation is not found (404). An invitation that no longer
+        passes validation answers 422 `validation_error` with its errors.
+
 
         **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
@@ -51068,6 +51088,28 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+        '422':
+          description: the invitation has expired, was already accepted or failed
+            validation
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/permissions":
     get:
       summary: List the permission catalog
@@ -60373,9 +60415,12 @@ components:
           type: string
           nullable: true
         owner:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/AddressOwner"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -60460,9 +60505,12 @@ components:
           items:
             "$ref": "#/components/schemas/Session"
         inviter:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Actor"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         avatar_url:
           type: string
           nullable: true
@@ -61180,9 +61228,12 @@ components:
           type: boolean
           nullable: true
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_eq_billing_address:
           type: boolean
         items:
@@ -61190,17 +61241,26 @@ components:
           items:
             "$ref": "#/components/schemas/LineItem"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         completed_at:
           type: string
           nullable: true
@@ -61726,9 +61786,12 @@ components:
           type: string
           nullable: true
         quantity_rule:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/CatalogProductTerm"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         catalog_variants:
           type: array
           items:
@@ -63383,9 +63446,12 @@ components:
           items:
             "$ref": "#/components/schemas/State"
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - iso
       - iso3
@@ -63619,17 +63685,26 @@ components:
           items:
             "$ref": "#/components/schemas/Address"
         default_billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         default_shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         newsletter_subscriber:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/NewsletterSubscriber"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         customer_groups:
           type: array
           items:
@@ -63933,9 +64008,12 @@ components:
           description: 'Rate provider; null prices through the calculator. Built-in:
             internal, freight. Provider gems register more (e.g. easy_post).'
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/DeliveryMethodCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -64141,9 +64219,12 @@ components:
         unpriced:
           type: boolean
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
         metadata:
@@ -64906,9 +64987,12 @@ components:
           type: string
           nullable: true
         draft:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/EmailTemplateDraft"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - key
@@ -65207,9 +65291,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -68493,13 +68580,19 @@ components:
           type: string
           nullable: true
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         orders:
           type: array
           items:
@@ -69104,21 +69197,33 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -69282,9 +69387,12 @@ components:
           items:
             "$ref": "#/components/schemas/Claim"
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - market_id
@@ -70638,13 +70746,19 @@ components:
           items:
             type: string
         price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -70679,9 +70793,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         translations:
@@ -70711,9 +70828,12 @@ components:
           type: string
           nullable: true
         submission:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/ProductSubmission"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_name:
           type: string
           nullable: true
@@ -70928,9 +71048,12 @@ components:
         preferences:
           type: object
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         line_items:
           type: array
           items:
@@ -78322,9 +78445,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -78345,9 +78471,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         metadata:

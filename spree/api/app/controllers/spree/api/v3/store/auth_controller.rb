@@ -52,7 +52,7 @@ module Spree
           # Accepts: { "refresh_token": "rt_xxx" }
           # Returns new access JWT + rotated refresh token
           def refresh
-            refresh_token_value = params[:refresh_token]
+            refresh_token_value = string_param(:refresh_token)
 
             if refresh_token_value.blank?
               return render_error(
@@ -89,7 +89,7 @@ module Spree
           # access token can still log out. Narrowed to this surface's own
           # tokens: ending a session belongs to the surface that started it.
           def logout
-            refresh_token_value = params[:refresh_token]
+            refresh_token_value = string_param(:refresh_token)
 
             if refresh_token_value.present?
               Spree::RefreshToken.for_audience(JWT_AUDIENCE_STORE).find_by(token: refresh_token_value)&.destroy

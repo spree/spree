@@ -24108,8 +24108,11 @@ paths:
       - bearer_auth: []
       description: |
         Sends the invitation email again, for a colleague who never got the first
-        one. An invitation whose window has closed is refused rather than
-        re-sent.
+        one. The invitation's `expires_at` moves to 14 days after the resend,
+        but never past 30 days after the invitation was created. An
+        invitation whose window has closed, or that was already accepted, is
+        refused with 422 rather than re-sent; a revoked invitation is not
+        found (404).
       x-codeSamples:
       - lang: javascript
         label: Spree Seller SDK
@@ -24147,8 +24150,19 @@ paths:
                   name: Seller 85
               schema:
                 "$ref": "#/components/schemas/Invitation"
+        '422':
+          description: the invitation has expired or was already accepted
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
         '404':
-          description: another seller's invitation
+          description: another seller's invitation, or a revoked one
           content:
             application/json:
               example:
@@ -26063,9 +26077,12 @@ components:
           type: string
           nullable: true
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/DeliveryMethodCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -26461,9 +26478,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -28529,9 +28549,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -28566,9 +28589,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         status:
           anyOf:
           - type: string
@@ -28597,9 +28623,12 @@ components:
           type: number
           nullable: true
         submission:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/ProductSubmission"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -30858,9 +30887,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -30881,9 +30913,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         metadata:
           type: object
         position:

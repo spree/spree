@@ -93,6 +93,16 @@ module Spree
         expect(result.error.value[:code]).to eq('completion_in_progress')
       end
 
+      # The fence that keeps a paid cart from changing must not keep it from
+      # completing — that is the one thing left for it to do.
+      it 'completes a cart whose payment session has settled' do
+        create(:bogus_payment_session, cart: ready_cart, amount: ready_cart.total).update_column(:status, 'completed')
+        expect(ready_cart.reload).to be_completion_claimed
+
+        expect(subject).to be_success
+        expect(ready_cart.reload.completed_at).to be_present
+      end
+
       it 'takes over a stale completion lock' do
         ready_cart.update_columns(completing_at: 10.minutes.ago)
 

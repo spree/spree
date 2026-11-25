@@ -94,8 +94,11 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
       security [bearer_auth: []]
       description <<~DESC
         Sends the invitation email again, for a colleague who never got the first
-        one. An invitation whose window has closed is refused rather than
-        re-sent.
+        one. The invitation's `expires_at` moves to 14 days after the resend,
+        but never past 30 days after the invitation was created. An
+        invitation whose window has closed, or that was already accepted, is
+        refused with 422 rather than re-sent; a revoked invitation is not
+        found (404).
       DESC
 
       seller_sdk_example 'invitations/resend'
@@ -112,7 +115,19 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
         run_test!
       end
 
-      response '404', "another seller's invitation" do
+      response '422', 'the invitation has expired or was already accepted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:id) { pending_invitation.prefixed_id }
+
+        before { pending_invitation.update_column(:expires_at, 1.day.ago) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '404', "another seller's invitation, or a revoked one" do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:other_seller) { create(:seller, :approved, store: store) }

@@ -14,6 +14,7 @@ module Spree
       many :deliveries, resource: Spree::Emails::DeliverySerializer
       one :delivery_method, resource: Spree::Emails::DeliveryMethodSerializer
       one :stock_location, resource: Spree::Emails::StockLocationSerializer
+      one :pickup_location, resource: Spree::Emails::StockLocationSerializer
       many :delivery_rates, resource: Spree::Emails::DeliveryRateSerializer
 
       many :manifest, key: :manifest_items, source: proc { manifest.select(&:line_item) },

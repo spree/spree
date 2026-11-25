@@ -70,6 +70,106 @@ describe Spree::Cart, type: :model do
         expect(cart.reload).to be_completion_claimed
       end
     end
+
+    # The gateway took the buyer's money for this cart's contents; emptied or
+    # edited, the cart can no longer complete and the buyer stays charged
+    # without an order (SANDBOX-V2-1Y).
+    context 'when a payment session has settled' do
+      let(:payment_session) { create(:bogus_payment_session, cart: cart, amount: 10) }
+
+      # A payment may not exceed what the cart owes, and the cart has no
+      # priced items here.
+      before { cart.update_column(:total, 10) }
+
+      it 'fences a cart whose session the gateway completed' do
+        payment_session.update_column(:status, 'completed')
+
+        expect(cart.reload).to be_payment_session_settled
+        expect(cart).to be_completion_claimed
+      end
+
+      it 'fences a cart whose session the gateway accepted and is processing' do
+        payment_session.update_column(:status, 'processing')
+
+        expect(cart.reload).to be_completion_claimed
+      end
+
+      it 'fences a cart holding a live payment settled from a session' do
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).to be_completion_claimed
+      end
+
+      it 'leaves completion itself free to place the order' do
+        payment_session.update_column(:status, 'completed')
+
+        expect(cart.reload).not_to be_completion_attempt_claimed
+      end
+
+      %w[pending failed canceled expired].each do |status|
+        it "does not fence a cart whose only session is #{status}" do
+          payment_session.update_column(:status, status)
+
+          expect(cart.reload).not_to be_completion_claimed
+        end
+      end
+
+      # A completed session never moves again, so the payment settled from it
+      # is what says whether the money is still held.
+      %w[void failed].each do |payment_status|
+        it "releases a cart whose completed session's payment is #{payment_status}" do
+          payment_session.update_column(:status, 'completed')
+          create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                           response_code: payment_session.external_id, amount: 10, status: payment_status)
+
+          expect(cart.reload).not_to be_payment_session_settled
+          expect(cart).not_to be_completion_claimed
+        end
+      end
+
+      # Response codes are unique per payment method only, so the same
+      # identifier under another method is a different payment.
+      it 'keeps fencing a completed session when a payment under another method with its identifier is void' do
+        payment_session.update_column(:status, 'completed')
+        other_method = create(:credit_card_payment_method, store: store)
+        create(:payment, cart: cart, order: nil, payment_method: other_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'void')
+
+        expect(cart.reload).to be_payment_session_settled
+        expect(cart).to be_completion_claimed
+      end
+
+      it 'does not fence a failed session for a live payment under another method with its identifier' do
+        payment_session.update_column(:status, 'failed')
+        other_method = create(:credit_card_payment_method, store: store)
+        create(:payment, cart: cart, order: nil, payment_method: other_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).not_to be_payment_session_settled
+      end
+
+      it 'keeps fencing a cart whose failed session still has a valid settled payment' do
+        payment_session.update_column(:status, 'failed')
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).to be_payment_session_settled
+      end
+
+      it 'keeps fencing a completed session when another payment without a response code failed' do
+        payment_session.update_column(:status, 'completed')
+        create(:payment, cart: cart, order: nil, amount: 10, status: 'failed', response_code: nil)
+
+        expect(cart.reload).to be_payment_session_settled
+      end
+
+      it 'does not fence a cart for an offline payment awaiting checkout' do
+        create(:payment, cart: cart, order: nil, amount: 10, status: 'checkout')
+
+        expect(cart.reload).not_to be_completion_claimed
+      end
+    end
   end
 
   describe '#checkout_steps' do

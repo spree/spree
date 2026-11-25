@@ -3,6 +3,7 @@ require 'pagy'
 require 'typelizer'
 require 'typelizer/proc_resource_resolution'
 require 'typelizer/open_enums'
+require 'typelizer/nullable_references'
 require 'spree/api/extension_fields'
 
 module Spree

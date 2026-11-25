@@ -74,8 +74,29 @@ module Spree
             params.permit(*permitted_attributes)
           end
 
+          # The add-payment dialog on an order picks from this list, so staff
+          # who manage payments read it without the settings key. Writing, and
+          # the provider types, stay a settings matter.
+          def scoped_resource_name
+            reads_through_payments? ? :payments : super
+          end
+
           def scope
-            super.ordered
+            reads_through_payments? ? current_store.payment_methods.ordered : super.ordered
+          end
+
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            return authorize!(:show, Spree::Payment) if reads_through_payments?
+
+            super
+          end
+
+          def reads_through_payments?
+            return @reads_through_payments if defined?(@reads_through_payments)
+
+            @reads_through_payments = %w[index show].include?(action_name) &&
+                                      !holds_permission?('read_settings') &&
+                                      holds_permission?('read_payments')
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.

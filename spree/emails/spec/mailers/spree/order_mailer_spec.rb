@@ -81,6 +81,84 @@ describe Spree::OrderMailer, type: :mailer do
     expect(message.text_part.body.to_s).not_to include('PO Number')
   end
 
+  context 'when the order is collected from a pickup location' do
+    let(:pickup_location) do
+      create(:stock_location, store: store, name: 'Pickup counter', address1: '12 Market Street', address2: 'Unit 4B',
+                              city: 'Brooklyn', state: nil,
+                              zipcode: '11201', pickup_enabled: true, pickup_instructions: 'Ring the bell at the side door.')
+    end
+
+    before do
+      fulfillment = order.fulfillments.first
+      fulfillment.update_columns(stock_location_id: pickup_location.id)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.delivery_rates.create!(delivery_method: create(:pickup_delivery_method, name: 'Store Pickup'),
+                                         cost: 0, selected: true)
+    end
+
+    it 'names the location, its address and the collection instructions in both parts' do
+      message = described_class.confirm_email(order)
+
+      [message.html_part, message.text_part].each do |part|
+        body = part.body.to_s
+        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Unit 4B', 'Brooklyn 11201',
+                                'Ring the bell at the side door.')
+      end
+    end
+
+    it 'names a region typed as free text when the location has no coded state' do
+      pickup_location.update_columns(state_name: 'Kings County')
+
+      message = described_class.confirm_email(order)
+
+      [message.html_part, message.text_part].each do |part|
+        expect(part.body.to_s).to include('Brooklyn, Kings County 11201')
+      end
+    end
+
+    context 'when it ships to the chosen counter from a warehouse without pickup' do
+      let(:counter) do
+        create(:stock_location, store: store, name: 'Brooklyn counter', address1: '9 Front Street',
+                                pickup_enabled: true, pickup_stock_policy: 'any')
+      end
+
+      before do
+        pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+        order.update_columns(preferred_stock_location_id: counter.id)
+        order.fulfillments.reset
+      end
+
+      it 'names the counter the customer chose, not the warehouse it ships from' do
+        message = described_class.confirm_email(order)
+
+        [message.html_part, message.text_part].each do |part|
+          body = part.body.to_s
+          expect(body).to include('Pickup location', 'Brooklyn counter', '9 Front Street')
+          expect(body).not_to include('Back warehouse')
+        end
+      end
+    end
+
+    it 'names no location when the origin is not a pickup counter and none was chosen' do
+      pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location', 'Back warehouse')
+    end
+
+    it 'leaves out a canceled pickup' do
+      order.fulfillments.first.update_columns(status: 'canceled')
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location')
+    end
+  end
+
+  it 'names no pickup location when the order is shipped' do
+    message = described_class.confirm_email(order)
+
+    expect(message.html_part.body.to_s).not_to include('Pickup location')
+    expect(message.text_part.body.to_s).not_to include('Pickup location')
+  end
+
   it 'confirm_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do

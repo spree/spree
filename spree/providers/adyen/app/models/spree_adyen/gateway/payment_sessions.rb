@@ -12,7 +12,9 @@ module SpreeAdyen
       # Commands a client sends with an update or a completion, never stored.
       COMMAND_EXTERNAL_DATA_KEYS = %w[submit redirect_result].freeze
 
-      # Opens a new session, canceling the cart's open Adyen sessions first.
+      # Opens a new session, then cancels the cart's open Adyen sessions. They
+      # are canceled only once Adyen has created the new one, so a request it
+      # refuses leaves the buyer's open session as it was.
       #
       # @param order [Spree::Cart, Spree::Order]
       # @param external_data [Hash] `return_url` (required, on an allowed origin) and `channel`
@@ -26,7 +28,7 @@ module SpreeAdyen
         data = external_data.to_h.stringify_keys
         return_url = allowed_return_url!(order.store, data['return_url'])
         SpreeAdyen::Amounts.to_adyen(total, order.currency)
-        replace_open_sessions(order)
+        refuse_if_already_paid!(order)
 
         presenter = SpreeAdyen::SessionPresenter.new(
           payment_method: self, owner: order, amount: total, return_url: return_url, channel: data['channel']
@@ -35,6 +37,8 @@ module SpreeAdyen
         session = adyen_call(:create_session) do |client|
           client.checkout.payments_api.sessions(body, headers: { 'Idempotency-Key' => session_idempotency_key(presenter.reference, body) })
         end
+
+        cancel_open_sessions(order)
 
         payment_session_class.create!(
           owner: order,
@@ -226,13 +230,16 @@ module SpreeAdyen
         I18n.t('spree.adyen.payment_session_errors.refused', reason: reason)
       end
 
-      # Only the payable ones are canceled; one already completed means this
-      # cart has been paid through Adyen.
-      def replace_open_sessions(order)
-        sessions = order.payment_sessions.where(payment_method: self)
-        raise Spree::Core::GatewayError, I18n.t('spree.adyen.payment_session_errors.already_paid') if sessions.exists?(status: 'completed')
+      # One already completed means this cart has been paid through Adyen.
+      def refuse_if_already_paid!(order)
+        return unless order.payment_sessions.exists?(payment_method: self, status: 'completed')
 
-        sessions.active.order(:id).each(&:cancel)
+        raise Spree::Core::GatewayError, I18n.t('spree.adyen.payment_session_errors.already_paid')
+      end
+
+      # Only the payable ones are canceled.
+      def cancel_open_sessions(order)
+        order.payment_sessions.where(payment_method: self).active.order(:id).each(&:cancel)
       end
 
       # The cart and its session count, plus a digest of the request: a retry

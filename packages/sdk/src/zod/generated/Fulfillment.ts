@@ -35,6 +35,7 @@ export const FulfillmentSchema = z.object({
   deliveries: z.array(DeliverySchema),
   delivery_method: DeliveryMethodSchema,
   stock_location: StockLocationSchema,
+  pickup_location: StockLocationSchema.nullable(),
   delivery_rates: z.array(DeliveryRateSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),

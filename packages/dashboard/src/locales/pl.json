@@ -3405,7 +3405,11 @@
           "title": "Edytuj klienta",
           "customer_help": "Usuń klienta, aby zamówienie stało się zamówieniem gościa.",
           "confirm_detach": "To zamówienie zniknie z historii zamówień i konta klienta. Usunąć klienta?",
-          "detach": "Usuń klienta"
+          "detach": "Usuń klienta",
+          "confirm_change": "To zamówienie zostanie przeniesione do nowego klienta.",
+          "confirm_change_to_guest": "To zamówienie stanie się zamówieniem gościa i zniknie z historii zamówień klienta.",
+          "confirm_change_releases_balance": "Środki w sklepie i karty podarunkowe użyte przez poprzedniego klienta zostaną usunięte i zwrócone mu, więc kwota do zapłaty znowu wzrośnie.",
+          "change": "Zmień klienta"
         }
       },
       "edit": {

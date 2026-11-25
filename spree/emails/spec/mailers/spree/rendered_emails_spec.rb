@@ -80,6 +80,21 @@ describe 'rendered emails', type: :mailer do
     expect(emails['order confirmation'].html_part.decoded).to include('&lt;a href=&quot;https://evil.test&quot;&gt;')
   end
 
+  it 'names the pickup location on a pickup order, escaping what the merchant typed' do
+    instructions = '<b onclick="steal()">Ask at the pickup desk</b>'
+    location = create(:stock_location, store: store, name: 'Pickup counter', pickup_enabled: true,
+                                       pickup_instructions: instructions)
+    fulfillment = order.fulfillments.first
+    fulfillment.update_columns(stock_location_id: location.id)
+    fulfillment.delivery_rates.update_all(selected: false)
+    fulfillment.delivery_rates.create!(delivery_method: create(:pickup_delivery_method), cost: 0, selected: true)
+
+    html = Spree::OrderMailer.confirm_email(order).html_part.decoded
+
+    expect(html).to include('Pickup counter', '&lt;b onclick=&quot;steal()&quot;&gt;Ask at the pickup desk&lt;/b&gt;')
+    expect(html).not_to include(instructions, '{{', '{%', '<mj-')
+  end
+
   it 'shows the credited quantity on a refund, not the ordered or announced quantity' do
     html = Spree::ReturnMailer.refunded_email(refunded_return).html_part.decoded
 

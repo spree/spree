@@ -16,8 +16,10 @@ module SpreePaypalCheckout
       # before looking, or could not be reached at all.
       RETRYABLE_STATUS_CODES = [401, 408, 429].freeze
 
-      # Opens a new session on every call, canceling the cart's open PayPal
-      # sessions first so only one order can ever be paid.
+      # Opens a new session on every call, then cancels the cart's open PayPal
+      # sessions so only one order can ever be paid. They are canceled only
+      # once PayPal has created the new order, so a request it refuses leaves
+      # the buyer's open session as it was.
       #
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentSessions::PaypalCheckout]
@@ -28,11 +30,15 @@ module SpreePaypalCheckout
         raise Spree::Core::GatewayError, I18n.t('spree.paypal_checkout.payment_session_errors.zero_amount') unless total.positive?
 
         SpreePaypalCheckout::Amounts.to_paypal(total, order.currency)
-        replace_open_sessions(order)
+        refuse_if_already_paid!(order)
 
         intent = paypal_intent
         presenter = SpreePaypalCheckout::OrderPresenter.new(order: order, amount: total, intent: intent)
         paypal_order = protect_from_error { create_paypal_order(presenter.order_request) }
+
+        # The new order's id has not been handed out, so if this refuses,
+        # nobody can pay it and PayPal lets it expire.
+        replace_open_sessions(order)
 
         payment_session_class.create!(
           owner: order,
@@ -250,15 +256,16 @@ module SpreePaypalCheckout
         captures(paypal_order).first || authorizations(paypal_order).first
       end
 
+      def refuse_if_already_paid!(order)
+        return unless order.payment_sessions.exists?(payment_method: self, status: 'completed')
+
+        raise Spree::Core::GatewayError, I18n.t('spree.paypal_checkout.payment_session_errors.payment_in_progress')
+      end
+
       # Only the payable ones are canceled; a failed session's order can no
       # longer be completed by anyone.
       def replace_open_sessions(order)
-        sessions = order.payment_sessions.where(payment_method: self)
-        if sessions.exists?(status: 'completed')
-          raise Spree::Core::GatewayError, I18n.t('spree.paypal_checkout.payment_session_errors.payment_in_progress')
-        end
-
-        sessions.active.order(:id).each do |payment_session|
+        order.payment_sessions.where(payment_method: self).active.order(:id).each do |payment_session|
           cancel_payment_session(payment_session: payment_session)
         end
       rescue Spree::Core::GatewayError

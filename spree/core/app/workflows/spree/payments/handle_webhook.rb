@@ -54,16 +54,23 @@ module Spree
           # banks), and the capture webhook that follows must still be able to
           # complete its payment. Not halt! — that is forbidden inside a
           # transaction (there is nothing committed to halt with).
-          #
-          # Completing the owner is checked on its own, not folded into that
-          # guard: a payment can be completed (a synchronous confirmation, an
-          # earlier delivery) while the order is not, and a redelivery or job
-          # retry must still place the order or the buyer stays charged
-          # without one.
           step :ensure_payment unless payment_settled?
           step :complete_session
-          step :complete_owner unless order.reload.completed?
         end
+
+        # Completing the owner is checked on its own, not folded into the
+        # payment guard: a payment can be completed (a synchronous
+        # confirmation, an earlier delivery) while the order is not, and a
+        # redelivery or job retry must still place the order or the buyer
+        # stays charged without one.
+        #
+        # After the lock commits, not inside it: completion that fails must
+        # not roll the settled payment back with it. The gateway has the
+        # money either way; committed, the payment is the record of it on
+        # the cart (and fences the cart, see Spree::Cart#payment_session_settled?),
+        # and a retry or redelivery resumes at completion. Carts::Complete
+        # takes its own lock and replays an order a concurrent delivery placed.
+        step :complete_owner unless order.reload.completed?
       rescue Spree::Workflow::FailureSignal
         raise
       rescue StandardError => error
@@ -78,7 +85,7 @@ module Spree
       # A requested payment waits on its provider's answer to a capture or
       # void, so a redelivered authorization leaves it alone.
       def payment_settled?
-        payment_session.reload.payment&.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES)
+        payment_session.reload.own_payment&.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES)
       end
 
       # :captured means the gateway reports the funds as moved, so the payment

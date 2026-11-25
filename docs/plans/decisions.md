@@ -1,3 +1,11 @@
+## 2026-11-25: A new payment session replaces the open ones only after the provider creates it
+
+**Context:** The 2026-10-04 entry canceled a cart's open sessions before asking the provider for the new one. Any request the provider then refused still cost the buyer their session. That includes a Stripe payment method that isn't the cart customer's, an amount it refuses, or an outage. The storefront was left with nothing to pay (SANDBOX-V2-24). A Stripe refusal of the client's payment method also surfaced as a reported `GatewayError` even though the client caused it.
+
+**Decision:** Stripe, Adyen and PayPal check for a completed session (and Stripe for an intent already under way) before anything is created. They create the new intent, session or order, then cancel the open ones. If Stripe has accepted an open intent since it was read, the cancel fails, the new intent is canceled and the request fails with `payment_in_progress`, as before. When Stripe refuses the payment method the client named (`InvalidRequestError` on `payment_method`), create and update answer with the session's validation error (422), not a `GatewayError`. Ownership is left to Stripe: express checkout sends a fresh, unattached payment method, so Spree can't require a saved card.
+
+**Consequences:** A refused request leaves the buyer's open session payable. For a moment two intents exist, but the new one's client secret is handed out only after the old ones are canceled.
+
 ## 2026-11-23: No storefront record in core; a publishable key can be bound to several channels
 
 **Context:** A store knows its storefront through one `storefront_url` preference and its publishable keys. A hosted product needs somewhere to keep a storefront's repository, domains and deployments, and the Next.js storefront serves two channels from one deployment with one key, which the 5.6 single-channel binding can only express as an unbound key that reaches every channel. A `Spree::Storefront` record with its own keys, identity overrides and a link to its manager was drafted over 2026-11-21 to 2026-11-23, then compared with three other open-source commerce platforms: none has a storefront record in core, one binds its publishable keys to sales channels many-to-many, and all three keep hosting in a cloud console separate from the store's admin.

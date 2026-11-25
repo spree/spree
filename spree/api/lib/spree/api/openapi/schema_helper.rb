@@ -355,7 +355,7 @@ module Spree
           return unless props
 
           key = props.key?('calculator') ? 'calculator' : :calculator
-          props[key] = { allOf: [{ '$ref' => '#/components/schemas/PromotionActionCalculator' }], nullable: true } if props[key]
+          props[key] = Typelizer::NullableReferences.wrap(ref('PromotionActionCalculator')) if props[key]
         end
 
         # One component per subtype Spree ships (`PromotionRuleItemTotalPreferences`)
@@ -423,7 +423,7 @@ module Spree
           return unless props
 
           key = props.key?('calculator') ? 'calculator' : :calculator
-          props[key] = { allOf: [{ '$ref' => '#/components/schemas/DeliveryMethodCalculator' }], nullable: true } if props[key]
+          props[key] = Typelizer::NullableReferences.wrap(ref('DeliveryMethodCalculator')) if props[key]
         end
 
         # Typelizer adds nil to enum arrays for nullable fields.

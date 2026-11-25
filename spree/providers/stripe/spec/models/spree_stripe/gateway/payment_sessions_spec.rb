@@ -131,6 +131,115 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         expect(session.customer_external_id).to be_nil
       end
     end
+
+    context 'when the cart already has an open session' do
+      let!(:earlier) { create(:stripe_payment_session, owner: order, payment_method: gateway, external_id: 'pi_earlier_123') }
+
+      before do
+        allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
+          and_return(Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'))
+        allow(gateway).to receive(:cancel_payment_intent)
+      end
+
+      it 'cancels it only after the new intent is created' do
+        expect(gateway).to receive(:create_payment_intent).ordered.and_return(pi_response)
+        expect(gateway).to receive(:cancel_payment_intent).with('pi_earlier_123').ordered
+
+        expect(subject).to be_persisted
+        expect(earlier.reload.status).to eq('canceled')
+      end
+
+      it 'leaves it payable when Stripe refuses the new intent' do
+        allow(gateway).to receive(:create_payment_intent).and_raise(Spree::Core::GatewayError, 'Stripe is down')
+
+        expect { subject }.to raise_error(Spree::Core::GatewayError, 'Stripe is down')
+        expect(gateway).not_to have_received(:cancel_payment_intent)
+        expect(earlier.reload.status).to eq('pending')
+      end
+
+      context 'and Stripe authorized it while the new intent was being created' do
+        before do
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
+            and_return(
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_capture', capture_method: 'manual', payment_method: { type: 'card' })
+            )
+        end
+
+        it 'fails without canceling it, and cancels the new intent' do
+          expect { subject }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.payment_in_progress'))
+
+          expect(gateway).not_to have_received(:cancel_payment_intent).with('pi_earlier_123')
+          expect(gateway).to have_received(:cancel_payment_intent).with('pi_new_intent_123')
+          expect(earlier.reload.status).to eq('pending')
+          expect(order.payment_sessions.where(external_id: 'pi_new_intent_123')).to be_empty
+        end
+      end
+
+      context 'and Stripe accepted it after it was read again, before the cancel' do
+        before do
+          allow(gateway).to receive(:cancel_payment_intent).with('pi_earlier_123').
+            and_raise(Stripe::InvalidRequestError.new('You cannot cancel this PaymentIntent because it has a status of succeeded.', nil))
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
+            and_return(
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'succeeded', payment_method: { type: 'card' })
+            )
+        end
+
+        it 'fails, keeps the earlier session, and cancels the new intent' do
+          expect { subject }.to raise_error(Spree::Core::GatewayError)
+
+          expect(gateway).to have_received(:cancel_payment_intent).with('pi_new_intent_123')
+          expect(earlier.reload.status).to eq('pending')
+          expect(order.payment_sessions.where(external_id: 'pi_new_intent_123')).to be_empty
+        end
+      end
+    end
+
+    # SANDBOX-V2-24: a client named a payment method that is not the cart's.
+    context 'when Stripe refuses the payment method the client named' do
+      subject { gateway.create_payment_session(order: order, external_data: { stripe_payment_method_id: 'pm_1FOREIGNfakeCardId123' }) }
+
+      let!(:earlier) { create(:stripe_payment_session, owner: order, payment_method: gateway, external_id: 'pi_earlier_123') }
+
+      before do
+        allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
+          and_return(Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'))
+        allow(gateway).to receive(:cancel_payment_intent)
+        allow(gateway).to receive(:create_payment_intent).and_call_original
+        allow(Stripe::PaymentIntent).to receive(:create).
+          and_raise(Stripe::InvalidRequestError.new("No such PaymentMethod: 'pm_1FOREIGNfakeCardId123'", 'payment_method', code: 'resource_missing'))
+      end
+
+      it 'answers with an unsaved session carrying the refusal' do
+        session = subject
+
+        expect(session).not_to be_persisted
+        expect(session.errors.details[:base]).to include(a_hash_including(error: :payment_method_rejected))
+        expect(session.errors.full_messages).to include(I18n.t('spree.stripe.payment_session_errors.payment_method_rejected'))
+      end
+
+      it "leaves the shopper's open session payable" do
+        subject
+
+        expect(gateway).not_to have_received(:cancel_payment_intent)
+        expect(earlier.reload.status).to eq('pending')
+      end
+    end
+
+    context 'when Stripe refuses the intent for another reason' do
+      before do
+        allow(gateway).to receive(:create_payment_intent).and_call_original
+        allow(Stripe::PaymentIntent).to receive(:create).
+          and_raise(Stripe::InvalidRequestError.new('Amount must be at least 50 cents', 'amount'))
+      end
+
+      it 'raises a gateway error' do
+        expect { subject }.to raise_error(Spree::Core::GatewayError, 'Amount must be at least 50 cents')
+      end
+    end
   end
 
   describe '#cancel_payment_session' do
@@ -238,6 +347,24 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
     it 'updates the session amount' do
       gateway.update_payment_session(payment_session: payment_session, amount: 30.0)
       expect(payment_session.reload.amount).to eq(30.0)
+    end
+
+    context 'when Stripe refuses the payment method the client named' do
+      before do
+        allow(gateway).to receive(:update_payment_intent).and_call_original
+        allow(Stripe::PaymentIntent).to receive(:update).
+          and_raise(Stripe::InvalidRequestError.new("No such PaymentMethod: 'pm_foreign'", 'payment_method', code: 'resource_missing'))
+      end
+
+      it 'adds the refusal to the session and leaves it unchanged' do
+        gateway.update_payment_session(
+          payment_session: payment_session,
+          external_data: { stripe_payment_method_id: 'pm_foreign' }
+        )
+
+        expect(payment_session.errors.details[:base]).to include(a_hash_including(error: :payment_method_rejected))
+        expect(payment_session.reload.external_data).not_to have_key('stripe_payment_method_id')
+      end
     end
 
     it 'merges new external_data' do
