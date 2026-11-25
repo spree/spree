@@ -38,6 +38,20 @@ if ENV['OPENAPI'] == 'true'
       JWT_SECRET = 'openapi-example-signing-secret'
 
       class << self
+        # The steps below rewrite every committed row and reset id sequences, so
+        # they must never reach a development or production database. Both the
+        # running environment and the database must say test: DATABASE_URL can
+        # point a test run at any database, and a database that records no
+        # environment is refused rather than trusted.
+        def ensure_test_database!
+          raise "OpenAPI generation runs only in the test environment, not #{Rails.env}" unless Rails.env.test?
+
+          recorded = recorded_environment
+          return if recorded == 'test'
+
+          raise "OpenAPI generation runs only against a test database; this one records #{recorded.inspect}"
+        end
+
         # Freezes the clock for the whole run, not only inside examples. The
         # default store, its market and its channel are created once, in a
         # `before(:all)`, which runs ahead of every per-example hook, so their
@@ -77,6 +91,16 @@ if ENV['OPENAPI'] == 'true'
         end
 
         private
+
+        # The environment Rails wrote into the database when it was set up.
+        def recorded_environment
+          connection = ActiveRecord::Base.connection
+          metadata_table = ActiveRecord::Base.internal_metadata_table_name
+          return unless connection.data_source_exists?(metadata_table)
+
+          metadata = Arel::Table.new(metadata_table)
+          connection.select_value(metadata.project(metadata[:value]).where(metadata[:key].eq('environment')))
+        end
 
         # The last committed id is read when the statement runs, not when it is
         # built, so rows committed later in the run keep their ids.
@@ -169,14 +193,7 @@ if ENV['OPENAPI'] == 'true'
 
   RSpec.configure do |config|
     config.before(:suite) do
-      # The steps below rewrite every committed row and reset id sequences, so
-      # they must never reach a development or production database. The second
-      # check reads the environment the database itself records, which catches
-      # a DATABASE_URL pointing elsewhere, as `db:drop` does.
-      raise "OpenAPI generation runs only in the test environment, not #{Rails.env}" unless Rails.env.test?
-
-      ActiveRecord::Tasks::DatabaseTasks.check_protected_environments!
-
+      Spree::OpenAPIDeterminism.ensure_test_database!
       Spree::OpenAPIDeterminism.freeze_clock
       Spree::OpenAPIDeterminism.restamp_committed_records
     end
