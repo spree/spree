@@ -100,7 +100,7 @@ module Spree
       # where it still carries the time it was last pending.
       def stock_retry_deadline(payment_session)
         session = Spree::PaymentSession.find(payment_session.id)
-        settled_at = session.payment&.created_at || session.updated_at
+        settled_at = session.own_payment&.created_at || session.updated_at
         settled_at + Spree::StockReservation.ttl_for(session.cart || session.order) + STOCK_GRACE
       end
 
@@ -128,7 +128,7 @@ module Spree
           context: {
             payment_session_id: payment_session.id,
             payment_session_external_id: payment_session.external_id,
-            payment_id: payment_session.payment&.id,
+            payment_id: payment_session.own_payment&.id,
             cart_id: payment_session.cart_id,
             order_id: payment_session.order_id,
             code: code,

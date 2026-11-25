@@ -85,7 +85,7 @@ module Spree
       # A requested payment waits on its provider's answer to a capture or
       # void, so a redelivered authorization leaves it alone.
       def payment_settled?
-        payment_session.reload.payment&.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES)
+        payment_session.reload.own_payment&.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES)
       end
 
       # :captured means the gateway reports the funds as moved, so the payment

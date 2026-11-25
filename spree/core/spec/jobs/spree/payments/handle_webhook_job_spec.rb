@@ -245,6 +245,15 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
         expect(Rails.error).not_to have_received(:report)
       end
 
+      it 'does not measure the window from another method\'s payment with the same identifier' do
+        other_method = create(:credit_card_payment_method, store: store)
+        create(:payment, order: order, payment_method: other_method, response_code: payment_session.external_id,
+                         amount: 1, created_at: 2.hours.ago)
+
+        expect { perform_job }.to have_enqueued_job(described_class)
+        expect(Rails.error).not_to have_received(:report)
+      end
+
       it 'reports the charged cart once every reservation that could hold the stock has expired' do
         payment_session
 
