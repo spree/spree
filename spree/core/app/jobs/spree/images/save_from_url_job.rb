@@ -134,8 +134,13 @@ module Spree
           tempfile.rewind
 
           image.attachment.attach(io: tempfile, filename: filename)
-          image.save!
-          image.external_url = external_url
+          # Saved first so a non-image file fails validation here, rather than
+          # as a custom field with no owner; together, so a failed URL leaves
+          # no image behind for the retry to duplicate.
+          image.transaction do
+            image.save!
+            image.external_url = external_url
+          end
         ensure
           tempfile.close
           tempfile.unlink

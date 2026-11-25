@@ -238,6 +238,18 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
     end
 
+    context 'when the external URL cannot be saved' do
+      before do
+        allow_any_instance_of(Spree::Media).to receive(:external_url=).
+          and_raise(ActiveRecord::RecordInvalid.new(Spree::Media.new))
+      end
+
+      it 'rolls the media back so the retry does not duplicate it' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+      end
+    end
+
     context 'when downloaded file exceeds max size' do
       let(:max_size) { 1024 }
       let(:response_body) { 'x' * (max_size + 1) }
