@@ -559,6 +559,16 @@ RSpec.describe SpreeAvalara::TaxProvider do
       end
     end
 
+    it 'dates the replacement when the exchange was fulfilled, however late it is filed' do
+      exchange.update_columns(fulfilled_at: Time.utc(2026, 5, 4, 12))
+
+      travel_to(Time.utc(2026, 6, 20, 12)) { provider.commit_replacement(order, lines) }
+
+      expect(client).to have_received(:create_or_adjust_transaction) do |args|
+        expect(args[:createTransactionModel][:date]).to eq('2026-05-04')
+      end
+    end
+
     it 'treats a replayed filing as success' do
       allow(client).to receive(:create_or_adjust_transaction).
         and_raise(SpreeAvalara::RequestError.new('Document already exists.', status: 400,

@@ -237,10 +237,14 @@ module SpreeAvalara
       integration = filing_integration(order)
       return if integration.nil?
 
+      exchange = SpreeAvalara.post_sale_record(shipped.first)
       integration.client.create_or_adjust_transaction(
         createTransactionModel: TransactionPresenter.new(
           owner: order, integration: integration, items: shipped, type: 'SalesInvoice',
-          code: "#{order.number}-#{SpreeAvalara.post_sale_record(shipped.first)&.number}-REPLACEMENT",
+          code: "#{order.number}-#{exchange&.number}-REPLACEMENT",
+          # Dated when the exchange was fulfilled, so a replay on a later day
+          # adjusts the document without moving it to another period.
+          tax_date: exchange.try(:fulfilled_at),
           commit: integration.commits_documents?,
           tax_identifier: order.resolved_tax_identifier,
           exemptions: order.usable_exemptions
