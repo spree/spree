@@ -148,6 +148,69 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
 
       expect(json_response['error']['message']).to include("Name can't be blank")
     end
+
+    describe 'the rejected value' do
+      let(:definition) { create(:custom_field_definition, :short_text_field) }
+      let(:custom_field) { create(:custom_field, resource: create(:product), custom_field_definition: definition, value: 'wool') }
+
+      def details_of(record)
+        allow(controller).to receive(:probe_errors).and_return(record.errors)
+        post :create
+        json_response['error']['details']
+      end
+
+      it 'reports a taken foreign key as the prefixed id the client sent, never the raw primary key' do
+        duplicate = Spree::CustomField.new(resource: custom_field.resource, custom_field_definition_id: definition.prefixed_id, value: 'cotton')
+        duplicate.validate
+
+        expect(details_of(duplicate)['custom_field_definition_id']).to eq(
+          [{ 'value' => definition.prefixed_id, 'code' => 'taken', 'message' => 'has already been taken', 'specific' => false }]
+        )
+      end
+
+      it 'reports both halves of a polymorphic reference the way the API writes them' do
+        custom_field.errors.add(:resource_id, :taken, value: custom_field.resource_id)
+        custom_field.errors.add(:resource_type, :inclusion, value: custom_field.resource_type)
+        details = details_of(custom_field)
+
+        expect(details['resource_id'].first).to include('value' => custom_field.resource.prefixed_id)
+        expect(details['resource_type'].first).to include('value' => 'product')
+      end
+
+      it 'reports a record as its prefixed id rather than its columns' do
+        # `validates :variant, uniqueness:` records the variant itself, which
+        # would otherwise be rendered as every column the row has.
+        taken = create(:wishlist_item)
+        duplicate = Spree::WishlistItem.new(wishlist: taken.wishlist, variant: taken.variant, quantity: 1)
+        duplicate.validate
+
+        expect(details_of(duplicate)['variant'].first).to include('code' => 'taken', 'value' => taken.variant.prefixed_id)
+      end
+
+      it 'reports a taken type as its short name, never the class name' do
+        taken = create(:promotion_rule, type: 'Spree::Promotion::Rules::Currency')
+        duplicate = Spree::Promotion::Rules::Currency.new(promotion: taken.promotion)
+        duplicate.validate
+
+        expect(details_of(duplicate)['type'].first).to include('code' => 'taken', 'value' => 'currency')
+      end
+
+      it 'leaves the value out when the record it names has no prefixed id' do
+        # An extension's model may not declare `has_prefix_id`.
+        allow(Spree::CustomFieldDefinition).to receive(:_prefix_id_prefix).and_return(nil)
+        custom_field.errors.add(:custom_field_definition_id, :taken, value: definition.id)
+
+        expect(details_of(custom_field)['custom_field_definition_id']).to eq(
+          [{ 'code' => 'taken', 'message' => 'has already been taken', 'specific' => false }]
+        )
+      end
+
+      it 'keeps a rejected value that is not a reference' do
+        custom_field.errors.add(:value, :inclusion, value: 'wool')
+
+        expect(details_of(custom_field)['value'].first).to include('code' => 'inclusion', 'value' => 'wool')
+      end
+    end
   end
 
   describe 'the Store API' do
