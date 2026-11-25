@@ -1,24 +1,75 @@
-# spree_avalara
+# Spree Avalara
 
-Sales tax, VAT and GST for Spree through [Avalara AvaTax](https://www.avalara.com) — the first-party
-implementation of the `Spree::TaxProvider` interface, built on Avalara's official
-[`avatax`](https://github.com/avadev/AvaTax-REST-V2-Ruby-SDK) SDK.
+The officially supported Avalara AvaTax extension for [Spree Commerce](https://spreecommerce.org/)
+using [Avalara REST API v2](https://developer.avalara.com/api-reference/avatax/rest/v2/).
+
+`spree_avalara` is the Spree 6 successor of the `spree_avatax_official` extension. It implements
+Spree's `Spree::TaxProvider` interface on Avalara's official
+[`avatax`](https://github.com/avadev/AvaTax-REST-V2-Ruby-SDK) SDK. For Spree 5 use
+[spree_avatax_official](https://github.com/spree/spree_avatax_official).
+
+- [Introduction](#introduction)
+- [Maintenance & support](#maintenance--support)
+- [Features](#features)
+- [Installation](#installation)
+- [Setup](#setup)
+- [Upgrading from `spree_avatax_official`](#upgrading-from-spree_avatax_official)
+- [Development](#development)
+
+## Introduction
+
+<img src="https://spreecommerce.org/wp-content/uploads/2019/11/AvalaraCertifiedBadge_Refunds.png" width="150" align="right"> <img src="https://spreecommerce.org/wp-content/uploads/2019/11/AvalaraCertifiedBadge_SalesTax.png" width="150" align="right">
+
+Avalara AvaTax is a cloud-based solution automating transaction tax calculations and the tax filing
+process. Avalara provides real-time tax calculation using tax content from more than 12,000 US taxing
+jurisdictions and over 200 countries, ensuring your transaction tax is calculated based on the most
+current tax rules.
 
 Avalara prices the whole sale on every call and files a document when the order is placed, so tax is
 computed by Avalara rather than from rate tables you maintain.
 
-## Install
+## Maintenance & support
 
-```ruby
-gem 'spree_avalara'
+This extension is maintained by the Spree Commerce core team and Avalara, and will be kept up to date
+with future Avalara platform changes.
+
+For more information, support and guidance on how to implement the Spree Avalara extension feel free to:
+
+- Read the [Spree Avalara AvaTax documentation](https://spreecommerce.org/docs/integrations/tax/avalara)
+- Reach out through the [Spree contact form](https://spreecommerce.org/contact/)
+- Join the Spree Discord at [discord.spreecommerce.org](https://discord.spreecommerce.org/)
+
+## Features
+
+1. Tax calculation (additional and included tax) — US state tax, Canadian HST and VAT supported
+2. Tax calculation on line items, shipping charges and fees
+3. Tax codes for products and shipping, assignable per tax category and searchable from Avalara's catalogue
+4. Multi-stock location support — origin-based tax calculation per shipment across your fulfilment network
+5. Tax exemptions — entity use codes on company exemption certificates, and buyer tax registrations (VAT numbers)
+6. Address validation for US and Canada at checkout
+7. Committing complete orders as sales invoice transactions
+8. Cancelling (voiding) orders
+9. Refunding orders (full and partial) — returns, claims and exchanges file a credit with the tax the sale charged
+10. Per-market setup — move one region at a time while the others keep Spree's built-in tax engine
+11. Client-side logging
+
+## Installation
+
+```bash
+spree add avatax
 ```
 
-The gem ships no migrations and adds no columns.
+Without the Spree CLI, add `gem 'spree_avalara'` to the `Gemfile` with the same version
+requirement as your `spree` gem and run `bundle install`. The provider registers itself — there is
+nothing to generate, and the gem ships no migrations and adds no columns.
 
-## Connect
+## Setup
 
-Settings → Integrations → **Avalara AvaTax**. You need an account number, a license key and the
-company code the documents should be filed against. New connections default to Avalara's sandbox
+### Connect Spree to AvaTax
+
+In the admin dashboard open **Settings → Integrations**, find the **Avalara AvaTax** tile and connect
+it. You need an account number, a license key and the company code the documents should be filed
+against. New connections default to Avalara's sandbox
 host; switch `endpoint` to `https://rest.avatax.com` when you go live.
 
 | Preference | Meaning |
@@ -49,13 +100,13 @@ the misconfiguration is reported to your error tracker. Watch for orders with no
 credential change. A *connected* Avalara that cannot be reached does fail closed, because that is
 the case where quietly charging nothing is a liability rather than a setting.
 
-## Calculate through Avalara
+### Calculate through Avalara
 
 Tax engines are chosen per market: set a market's tax provider to **Avalara AvaTax** and every sale in
 it calculates through your account. Markets you leave alone keep using Spree's built-in engine, so you
 can move one region at a time.
 
-## How exemptions reach Avalara
+### How exemptions reach Avalara
 
 Company tax exemption certificates recorded in Spree are sent with the sale, each with the code of its
 exemption reason. Exemption reasons are your store's own list, managed under **Settings → Taxes → Exemption reasons**:
@@ -66,7 +117,7 @@ Avalara's; once a market uses Avalara the dashboard offers Avalara's codes, and 
 A reason whose code Avalara does not define is sent as OTHER/CUSTOM, and the reason you recorded is kept
 on the tax row.
 
-## Returns, claims and exchanges
+### Returns, claims and exchanges
 
 The tax given back on a return, a claim or an exchange is exactly what the sale charged on the units
 coming back, so a customer is never refunded more or less tax than they paid. Once the money has gone
@@ -78,6 +129,9 @@ An exchange's replacement is taxed by Avalara as a new sale while the exchange i
 its own document once it ships.
 
 ## Upgrading from `spree_avatax_official`
+
+Replace `spree_avatax_official` with `spree_avalara` in your `Gemfile`, using the same version
+requirement as your `spree` gem. The old extension's install generator and migrations are gone. Then run:
 
 ```bash
 bin/rails spree_avalara:upgrade
@@ -125,3 +179,10 @@ AVATAX_ACCOUNT_NUMBER=… AVATAX_LICENSE_KEY=… AVATAX_COMPANY_CODE=… VCR_REC
 ```
 
 Credentials and the account's own user name are filtered out of every cassette.
+
+## Contributing
+
+This gem lives in the [Spree monorepo](https://github.com/spree/spree) under `spree/providers/avalara`.
+Please open issues and pull requests there.
+
+Copyright (c) 2026 [Spark Solutions Sp. z o.o.](https://sparksolutions.co), [Vendo Sp. z o.o.](https://getvendo.com), [Vendo Connect Inc.](https://getvendo.com), released under the [MIT license](LICENSE).
