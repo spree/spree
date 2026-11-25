@@ -298,7 +298,23 @@ module Spree
           raise InvalidQuery, "invalid filter op #{op}. Valid ops: #{FILTER_OPS.join(', ')}" unless FILTER_OPS.include?(op)
           raise InvalidQuery, "filter on #{dimension.name} requires a value" if filter[:value].blank?
 
-          { dimension: dimension, op: op.to_sym, values: Array(filter[:value]) }
+          { dimension: dimension, op: op.to_sym, values: filter_values(dimension, filter[:value]) }
+        end
+      end
+
+      # Every dimension a filter can match is an identifier, a code or a
+      # status, compared as text. A JSON number (`"value": 123` against a
+      # country code) or a nested array/object would otherwise reach the
+      # statement as a non-string bind and fail in the database (PG cannot
+      # compare varchar to integer; Arel cannot quote an Array), so each value
+      # must be a scalar and is passed on as a string.
+      def filter_values(dimension, value)
+        Array(value).map do |item|
+          unless item.is_a?(String) || item.is_a?(Numeric) || item == true || item == false
+            raise InvalidQuery, "filter on #{dimension.name} takes a string or a list of strings"
+          end
+
+          item.to_s
         end
       end
 

@@ -59,6 +59,19 @@ RSpec.describe Spree::Reporting::Query do
       expect { run(metrics: %w[orders], time_range: 'last_month') }.to raise_error(Spree::Reporting::InvalidQuery)
     end
 
+    it 'refuses a filter value that is a nested list or an object' do
+      expect { run(metrics: %w[orders], filters: [{ dimension: 'country', op: 'in', value: [%w[US CA]] }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /country takes a string/)
+      expect { run(metrics: %w[orders], filters: [{ dimension: 'payment_status', op: 'eq', value: { a: 'b' } }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /payment_status takes a string/)
+    end
+
+    it 'compares a numeric filter value as text instead of failing in the database' do
+      result = run(metrics: %w[orders], filters: [{ dimension: 'country', op: 'in', value: [123] }])
+
+      expect(result.totals[:orders][:value]).to eq(0)
+    end
+
     it 'refuses a limit that is not a positive integer' do
       expect { run(metrics: %w[orders], dimensions: %w[channel], limit: 'abc') }
         .to raise_error(Spree::Reporting::InvalidQuery, /limit/)
