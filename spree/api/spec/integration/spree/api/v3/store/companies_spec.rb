@@ -30,7 +30,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('AccountCompanyMembership'))
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('CompanyMembership'))
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -384,14 +384,18 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       DESC
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Send `company` to include the company the invitation is to.'
 
       response '200', 'invitation found' do
         let!(:invitation) { create(:company_invitation, company: company, email: 'new@acme.test') }
         let(:token) { invitation.token }
         let(:'x-spree-api-key') { api_key.token }
+        let(:expand) { 'company' }
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['company']['name']).to eq('Acme Industrial')
           expect(data['company_name']).to eq('Acme Industrial')
           expect(data).not_to have_key('token')
         end

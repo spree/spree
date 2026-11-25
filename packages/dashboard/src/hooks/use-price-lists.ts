@@ -1,4 +1,9 @@
-import type { PriceList, PriceListCreateParams, PriceListUpdateParams } from '@spree/admin-sdk'
+import type {
+  PriceList,
+  PriceListCreateParams,
+  PriceListUpdateParams,
+  ProductMembershipResult,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -106,7 +111,7 @@ export function listPriceListProductsPage(priceListId: string, page: number, lim
 // whose update mutation already reports the outcome.
 
 export function useAddPriceListProducts(priceListId: string) {
-  return useResourceMutation<{ added_count: number }, Error, string[]>({
+  return useResourceMutation<ProductMembershipResult, Error, string[]>({
     mutationFn: (productIds) => adminClient.priceLists.products.create(priceListId, productIds),
     // No invalidate: the flush refreshes the list once, after every write.
     successMessage: false,
@@ -115,7 +120,7 @@ export function useAddPriceListProducts(priceListId: string) {
 }
 
 export function useRemovePriceListProducts(priceListId: string) {
-  return useResourceMutation<{ removed_count: number }, Error, string[]>({
+  return useResourceMutation<ProductMembershipResult, Error, string[]>({
     mutationFn: (productIds) => adminClient.priceLists.products.delete(priceListId, productIds),
     // No invalidate: the flush refreshes the list once, after every write.
     successMessage: false,

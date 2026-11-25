@@ -207,7 +207,7 @@ module Spree
             # "nothing was skipped" to clients that never skip anything.
             payload[:skipped_in_review_count] = skipped if skipped.positive?
 
-            render json: Spree.api.admin_bulk_product_status_result_serializer.new(payload).to_h
+            render json: Spree.api.admin_bulk_product_result_serializer.new(payload).to_h
           end
 
           # POST /api/v3/admin/products/bulk_add_to_categories
@@ -243,7 +243,7 @@ module Spree
             product_ids = bulk_collection.distinct.ids
             channels.add_products(product_ids)
 
-            render json: Spree.api.admin_bulk_product_channels_result_serializer.new(
+            render json: Spree.api.admin_bulk_product_result_serializer.new(
               { product_count: product_ids.size, channel_count: channels.size }
             ).to_h
           end
@@ -257,7 +257,7 @@ module Spree
             product_ids = bulk_collection.distinct.ids
             removed = channels.remove_products(product_ids)
 
-            render json: Spree.api.admin_bulk_product_channels_result_serializer.new(
+            render json: Spree.api.admin_bulk_product_result_serializer.new(
               { product_count: product_ids.size, channel_count: channels.size, removed: removed }
             ).to_h
           end
@@ -455,7 +455,7 @@ module Spree
           end
 
           def bulk_tags_response
-            Spree.api.admin_bulk_product_tags_result_serializer.new(super).to_h
+            Spree.api.admin_bulk_product_result_serializer.new(super).to_h
           end
 
           def apply_categories(service)
@@ -467,7 +467,7 @@ module Spree
 
             service.call(categories: categories, products: bulk_collection)
 
-            render json: Spree.api.admin_bulk_product_categories_result_serializer.new(
+            render json: Spree.api.admin_bulk_product_result_serializer.new(
               { product_count: bulk_collection.size, category_count: categories.size }
             ).to_h
           end
@@ -484,7 +484,7 @@ module Spree
 
             service.call(collections: collections, products: bulk_collection)
 
-            render json: Spree.api.admin_bulk_product_collections_result_serializer.new(
+            render json: Spree.api.admin_bulk_product_result_serializer.new(
               { product_count: bulk_collection.size, collection_count: collections.size }
             ).to_h
           end

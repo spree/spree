@@ -26,7 +26,13 @@ module Spree
             end
 
             def serializer_class
-              Spree.api.account_company_membership_serializer
+              Spree.api.company_membership_serializer
+            end
+
+            # A membership is listed here to choose a company to buy for, so
+            # each one always comes with its node.
+            def serializer_params
+              super.merge(expand: expand_list | ['company'])
             end
           end
         end

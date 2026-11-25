@@ -4101,7 +4101,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                "$ref": "#/components/schemas/AddedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
         '422':
           description: the catalog has no price list
           content:
@@ -4443,7 +4443,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                "$ref": "#/components/schemas/AddedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -4502,7 +4502,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                "$ref": "#/components/schemas/RemovedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -5912,7 +5912,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                "$ref": "#/components/schemas/AddedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -5973,7 +5973,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                "$ref": "#/components/schemas/RemovedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -7838,7 +7838,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                "$ref": "#/components/schemas/AddedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -7899,7 +7899,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                "$ref": "#/components/schemas/RemovedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -35598,7 +35598,7 @@ paths:
               example:
                 added_count: 1
               schema:
-                "$ref": "#/components/schemas/AddedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -35657,7 +35657,7 @@ paths:
               example:
                 removed_count: 1
               schema:
-                "$ref": "#/components/schemas/RemovedCount"
+                "$ref": "#/components/schemas/ProductMembershipResult"
       requestBody:
         content:
           application/json:
@@ -39238,7 +39238,7 @@ paths:
                 product_count: 0
                 status: archived
               schema:
-                "$ref": "#/components/schemas/BulkProductStatusResult"
+                "$ref": "#/components/schemas/BulkProductResult"
         '422':
           description: invalid status
           content:
@@ -39307,7 +39307,7 @@ paths:
                 product_count: 1
                 category_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductCategoriesResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39364,7 +39364,7 @@ paths:
                 product_count: 1
                 category_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductCategoriesResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39423,7 +39423,7 @@ paths:
                 product_count: 1
                 collection_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductCollectionsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39480,7 +39480,7 @@ paths:
                 product_count: 1
                 collection_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductCollectionsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39540,7 +39540,7 @@ paths:
                 product_count: 1
                 channel_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductChannelsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39598,7 +39598,7 @@ paths:
                 channel_count: 1
                 removed: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductChannelsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39655,7 +39655,7 @@ paths:
                 product_count: 1
                 tag_count: 2
               schema:
-                "$ref": "#/components/schemas/BulkProductTagsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -39712,7 +39712,7 @@ paths:
                 product_count: 1
                 tag_count: 1
               schema:
-                "$ref": "#/components/schemas/BulkProductTagsResult"
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -62069,14 +62069,6 @@ components:
       - type
       - label
       x-typelizer: true
-    AddedCount:
-      type: object
-      properties:
-        added_count:
-          type: number
-      required:
-      - added_count
-      x-typelizer: true
     AddressOwner:
       type: object
       properties:
@@ -62658,58 +62650,7 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
-    BulkProductCategoriesResult:
-      type: object
-      properties:
-        product_count:
-          type: number
-          description: Products the action applied to
-        category_count:
-          type: number
-          description: Categories the action applied to
-      required:
-      - product_count
-      - category_count
-      x-typelizer: true
-    BulkProductChannelsResult:
-      type: object
-      properties:
-        product_count:
-          type: number
-          description: Products the action applied to
-        channel_count:
-          type: number
-          description: Channels the action applied to
-        removed:
-          type: number
-          description: Publications removed. Present when unpublishing.
-      required:
-      - product_count
-      - channel_count
-      x-typelizer: true
-    BulkProductCollectionsResult:
-      type: object
-      properties:
-        product_count:
-          type: number
-          description: Products the action applied to
-        collection_count:
-          type: number
-          description: Manual collections the action applied to
-      required:
-      - product_count
-      - collection_count
-      x-typelizer: true
     BulkProductResult:
-      type: object
-      properties:
-        product_count:
-          type: number
-          description: Products the action applied to
-      required:
-      - product_count
-      x-typelizer: true
-    BulkProductStatusResult:
       type: object
       properties:
         product_count:
@@ -62717,26 +62658,28 @@ components:
           description: Products the action applied to
         status:
           type: string
-          description: The status the products were moved to
+          description: The status the products were moved to. Sent by a status change.
         skipped_in_review_count:
           type: number
-          description: Present only when products waiting for review were left alone
-      required:
-      - product_count
-      - status
-      x-typelizer: true
-    BulkProductTagsResult:
-      type: object
-      properties:
-        product_count:
+          description: Products waiting for review that a status change left alone.
+            Sent only when there were any.
+        category_count:
           type: number
-          description: Products the action applied to
+          description: Categories the action applied to
+        collection_count:
+          type: number
+          description: Collections the action applied to
+        channel_count:
+          type: number
+          description: Channels the action applied to
+        removed:
+          type: number
+          description: Publications removed. Sent when unpublishing.
         tag_count:
           type: number
           description: Tags sent in the request
       required:
       - product_count
-      - tag_count
       x-typelizer: true
     BulkStockLevelResult:
       type: object
@@ -65106,6 +65049,8 @@ components:
           - accepted
           - revoked
           - expired
+        company:
+          "$ref": "#/components/schemas/Company"
         accepted_at:
           type: string
           nullable: true
@@ -65139,6 +65084,8 @@ components:
         email:
           type: string
           nullable: true
+        company:
+          "$ref": "#/components/schemas/Company"
         created_at:
           type: string
         updated_at:
@@ -73246,6 +73193,16 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    ProductMembershipResult:
+      type: object
+      properties:
+        added_count:
+          type: number
+          description: Sent when products were added
+        removed_count:
+          type: number
+          description: Sent when products were removed
+      x-typelizer: true
     ProductPublication:
       type: object
       properties:
@@ -74453,14 +74410,6 @@ components:
       - tax_amount
       - refunder_id
       - refunder_type
-      x-typelizer: true
-    RemovedCount:
-      type: object
-      properties:
-        removed_count:
-          type: number
-      required:
-      - removed_count
       x-typelizer: true
     ResourceTypeDefinition:
       type: object

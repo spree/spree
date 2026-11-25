@@ -629,12 +629,7 @@ import type {
   AdminUser,
   AllowedOrigin,
   ApiKey,
-  BulkProductCategoriesResult,
-  BulkProductChannelsResult,
-  BulkProductCollectionsResult,
   BulkProductResult,
-  BulkProductStatusResult,
-  BulkProductTagsResult,
   CalculatorType,
   Catalog,
   CatalogAssignment,
@@ -714,6 +709,7 @@ import type {
   PriceList,
   PriceListProduct,
   Product,
+  ProductMembershipResult,
   ProductType,
   Promotion,
   PromotionAction,
@@ -927,8 +923,8 @@ export class AdminClient {
         parentId: string,
         productIds: string[],
         options?: RequestOptions,
-      ): Promise<{ added_count: number }> =>
-        this.request<{ added_count: number }>('POST', `${basePath}/${parentId}/products`, {
+      ): Promise<ProductMembershipResult> =>
+        this.request<ProductMembershipResult>('POST', `${basePath}/${parentId}/products`, {
           ...options,
           body: { product_ids: productIds },
         }),
@@ -938,8 +934,8 @@ export class AdminClient {
         parentId: string,
         productIds: string[],
         options?: RequestOptions,
-      ): Promise<{ removed_count: number }> =>
-        this.request<{ removed_count: number }>('DELETE', `${basePath}/${parentId}/products`, {
+      ): Promise<ProductMembershipResult> =>
+        this.request<ProductMembershipResult>('DELETE', `${basePath}/${parentId}/products`, {
           ...options,
           body: { product_ids: productIds },
         }),
@@ -1426,21 +1422,21 @@ export class AdminClient {
     bulkStatusUpdate: (
       params: ProductBulkStatusParams,
       options?: RequestOptions,
-    ): Promise<BulkProductStatusResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
 
     /** Attach every product in `ids` to every category in `category_ids`. */
     bulkAddToCategories: (
       params: ProductBulkCategoriesParams,
       options?: RequestOptions,
-    ): Promise<BulkProductCategoriesResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_add_to_categories', { ...options, body: params }),
 
     /** Detach every product in `ids` from every category in `category_ids`. */
     bulkRemoveFromCategories: (
       params: ProductBulkCategoriesParams,
       options?: RequestOptions,
-    ): Promise<BulkProductCategoriesResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
 
     /**
@@ -1451,42 +1447,39 @@ export class AdminClient {
     bulkAddToCollections: (
       params: ProductBulkCollectionsParams,
       options?: RequestOptions,
-    ): Promise<BulkProductCollectionsResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_add_to_collections', { ...options, body: params }),
 
     /** Detach every product in `ids` from every collection in `collection_ids`. */
     bulkRemoveFromCollections: (
       params: ProductBulkCollectionsParams,
       options?: RequestOptions,
-    ): Promise<BulkProductCollectionsResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_remove_from_collections', { ...options, body: params }),
 
     /** Publish every product in `ids` on every channel in `channel_ids`. */
     bulkAddToChannels: (
       params: ProductBulkChannelsParams,
       options?: RequestOptions,
-    ): Promise<BulkProductChannelsResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_add_to_channels', { ...options, body: params }),
 
     /** Unpublish every product in `ids` from every channel in `channel_ids`. */
     bulkRemoveFromChannels: (
       params: ProductBulkChannelsParams,
       options?: RequestOptions,
-    ): Promise<BulkProductChannelsResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_remove_from_channels', { ...options, body: params }),
 
     /** Add each tag name to every product. Tags are upserted by name. */
-    bulkAddTags: (
-      params: BulkTagsParams,
-      options?: RequestOptions,
-    ): Promise<BulkProductTagsResult> =>
+    bulkAddTags: (params: BulkTagsParams, options?: RequestOptions): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_add_tags', { ...options, body: params }),
 
     /** Remove each tag name from every product. No-op for non-tagged. */
     bulkRemoveTags: (
       params: BulkTagsParams,
       options?: RequestOptions,
-    ): Promise<BulkProductTagsResult> =>
+    ): Promise<BulkProductResult> =>
       this.request('POST', '/products/bulk_remove_tags', { ...options, body: params }),
 
     /** Soft-delete a list of products. */
@@ -4385,8 +4378,8 @@ export class AdminClient {
      * Explicit by design — an empty assortment is a pricing-only overlay
      * (nothing hidden), so making a catalog restrictive is deliberate.
      */
-    importProducts: (id: string, options?: RequestOptions): Promise<{ added_count: number }> =>
-      this.request<{ added_count: number }>('POST', `/catalogs/${id}/import_products`, options),
+    importProducts: (id: string, options?: RequestOptions): Promise<ProductMembershipResult> =>
+      this.request<ProductMembershipResult>('POST', `/catalogs/${id}/import_products`, options),
 
     /** Shows the catalog to an audience. */
     assign: (

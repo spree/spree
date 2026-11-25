@@ -27,7 +27,6 @@ import type { AddressUpdateParams, CompanyAddressUpdateParams, LineItemInputPara
 export * from './filters.generated'
 // Re-export all generated types (unprefixed: Product, Order, etc.)
 export type {
-  AccountCompanyMembership,
   Address,
   AddressOwner,
   AppliedPromotion,
@@ -40,7 +39,6 @@ export type {
   Collection,
   Company,
   CompanyInvitation,
-  CompanyInvitationDetails,
   CompanyMembership,
   Country,
   CreditCard,

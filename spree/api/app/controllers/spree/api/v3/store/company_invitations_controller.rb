@@ -71,7 +71,13 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.company_invitation_details_serializer
+            Spree.api.company_invitation_serializer
+          end
+
+          # The lookup still names the company and the store, as it did
+          # before `company` could be expanded.
+          def serializer_params
+            super.merge(invitee: true)
           end
 
 

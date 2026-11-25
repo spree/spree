@@ -8,7 +8,6 @@ import type {
 import { getParams, transformListParams } from '@spree/sdk-core'
 import type {
   AcceptCompanyInvitationParams,
-  AccountCompanyMembership,
   AddCompanyMemberParams,
   AddLineItemParams,
   Address,
@@ -28,7 +27,6 @@ import type {
   CompanyAddressCreateParams,
   CompanyAddressUpdateParams,
   CompanyInvitation,
-  CompanyInvitationDetails,
   CompanyInvitationFilters,
   CompanyInvitationSort,
   CompanyMembership,
@@ -1372,8 +1370,14 @@ export class StoreClient {
    */
   readonly account = {
     /** The buyer's memberships, each with its node and ancestor path. */
-    companies: (options?: RequestOptions): Promise<{ data: AccountCompanyMembership[] }> =>
-      this.request<{ data: AccountCompanyMembership[] }>('GET', '/account/companies', options),
+    companies: (
+      options?: RequestOptions,
+    ): Promise<{ data: Array<CompanyMembership & { company: Company }> }> =>
+      this.request<{ data: Array<CompanyMembership & { company: Company }> }>(
+        'GET',
+        '/account/companies',
+        options,
+      ),
   }
 
   readonly companies = {
@@ -1491,8 +1495,16 @@ export class StoreClient {
    * the token is the credential, and acceptance may register the account).
    */
   readonly companyInvitations = {
-    lookup: (token: string, options?: RequestOptions): Promise<CompanyInvitationDetails> =>
-      this.request<CompanyInvitationDetails>('GET', `/company_invitations/${token}`, options),
+    /** Pass `expand: ['company']` to get the company the invitation is to. */
+    lookup: (
+      token: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CompanyInvitation> =>
+      this.request<CompanyInvitation>('GET', `/company_invitations/${token}`, {
+        ...options,
+        params: getParams(params),
+      }),
 
     /**
      * Accepts by token: pass a registration payload for a new account (it is

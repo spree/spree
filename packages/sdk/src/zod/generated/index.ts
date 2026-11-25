@@ -1,5 +1,4 @@
 // This file is auto-generated. Do not edit directly.
-export { AccountCompanyMembershipSchema, type AccountCompanyMembership } from './AccountCompanyMembership';
 export { AddressSchema, type Address } from './Address';
 export { AddressOwnerSchema, type AddressOwner } from './AddressOwner';
 export { AppliedPromotionSchema, type AppliedPromotion } from './AppliedPromotion';
@@ -13,7 +12,6 @@ export { ClaimReasonSchema, type ClaimReason } from './ClaimReason';
 export { CollectionSchema, type Collection } from './Collection';
 export { CompanySchema, type Company } from './Company';
 export { CompanyInvitationSchema, type CompanyInvitation } from './CompanyInvitation';
-export { CompanyInvitationDetailsSchema, type CompanyInvitationDetails } from './CompanyInvitationDetails';
 export { CompanyMembershipSchema, type CompanyMembership } from './CompanyMembership';
 export { CountrySchema, type Country } from './Country';
 export { CreditCardSchema, type CreditCard } from './CreditCard';
