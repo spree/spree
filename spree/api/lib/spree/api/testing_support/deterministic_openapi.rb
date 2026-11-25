@@ -73,23 +73,23 @@ if ENV['OPENAPI'] == 'true'
           return unless connection.adapter_name.match?(/postg/i)
 
           @rewind_sequences ||= rewind_sequences_statement(connection)
-          connection.execute(@rewind_sequences)
+          connection.execute(@rewind_sequences) if @rewind_sequences
         end
 
         private
 
+        # The last committed id is read when the statement runs, not when it is
+        # built, so rows committed later in the run keep their ids.
         def rewind_sequences_statement(connection)
           calls = connection.tables.filter_map do |table|
             primary_key, sequence = connection.pk_and_sequence_for(table)
             next unless sequence
 
-            last_id = connection.select_value(
-              "SELECT MAX(#{connection.quote_column_name(primary_key)}) FROM #{connection.quote_table_name(table)}"
-            )
-            "setval(#{connection.quote(sequence.to_s)}, #{(last_id || 1).to_i}, #{last_id.present?})"
+            last_id = "(SELECT MAX(#{connection.quote_column_name(primary_key)}) FROM #{connection.quote_table_name(table)})"
+            "setval(#{connection.quote(sequence.to_s)}, COALESCE(#{last_id}, 1), #{last_id} IS NOT NULL)"
           end
 
-          "SELECT #{calls.join(', ')}"
+          "SELECT #{calls.join(', ')}" if calls.any?
         end
       end
 
