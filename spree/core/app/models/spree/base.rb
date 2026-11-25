@@ -272,13 +272,17 @@ class Spree::Base < ApplicationRecord
 
   # Prefixed id for a raw key of `model`, or nil when the model has no prefix
   # (where `prefixed_id_for` would answer a bare `_<sqid>`) or the key is not
-  # an integer.
+  # an integer Sqids can encode — a rejected `-1` must not turn a 422 into a 500.
   #
   # @param model [Class, nil]
   # @param id [Object]
   # @return [String, nil]
   def self.api_prefixed_id(model, id)
-    model.prefixed_id_for(id) if model.try(:_prefix_id_prefix).present? && id.is_a?(Integer)
+    return unless model.try(:_prefix_id_prefix).present? && id.is_a?(Integer)
+
+    model.prefixed_id_for(id)
+  rescue ArgumentError
+    nil
   end
 
   # What a client reads for `value` held in `attribute` — the inverse of

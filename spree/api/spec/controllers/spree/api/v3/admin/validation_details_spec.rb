@@ -209,6 +209,17 @@ RSpec.describe Spree::Api::V3::Admin::ValidationDetails, type: :controller do
         expect(details_of(definition)['resource_type'].first).to include('code' => 'inclusion', 'value' => 'product')
       end
 
+      it 'leaves the value out when a rejected id has no prefixed form' do
+        custom_field.errors.add(:custom_field_definition_id, :greater_than, count: 0, value: -1)
+
+        details = details_of(custom_field)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(details['custom_field_definition_id']).to eq(
+          [{ 'count' => 0, 'code' => 'greater_than', 'message' => 'must be greater than 0', 'specific' => false }]
+        )
+      end
+
       it 'keeps a rejected value that is not a reference' do
         custom_field.errors.add(:value, :inclusion, value: 'wool')
 
