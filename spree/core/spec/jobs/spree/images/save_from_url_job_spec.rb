@@ -126,6 +126,42 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
     end
 
+    context 'when the URL serves a file that is not a web image' do
+      let(:response_body) { '<!DOCTYPE html><html><body>Not found</body></html>' }
+
+      it 'discards the job without creating media or recording the URL' do
+        expect { subject }.not_to change { [Spree::Media.count, Spree::CustomField.count] }
+        expect(described_class).not_to have_been_enqueued
+      end
+
+      it 'leaves an image found by its identity on its old file and URL' do
+        image_response = instance_double(Net::HTTPResponse, code: '200', body: 'imagecontent')
+        allow(SsrfFilter).to receive(:get).and_return(image_response)
+        described_class.new(viewable_id, viewable_type, external_url, 'ASSET-1', position).perform_now
+        blob = image.attachment.blob
+
+        allow(SsrfFilter).to receive(:get).and_return(response)
+        described_class.new(viewable_id, viewable_type, 'https://cdn.example.com/moved', 'ASSET-1', position).perform_now
+
+        expect(image.reload.external_url).to eq(external_url)
+        expect(image.attachment.blob).to eq(blob)
+      end
+    end
+
+    context 'when the image is refused for something other than its file' do
+      before do
+        allow_any_instance_of(Spree::Media).to receive(:save) do |media|
+          media.errors.add(:base, 'is not ready')
+          false
+        end
+      end
+
+      it 'retries the job' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::CustomField.count).to eq(0)
+      end
+    end
+
     context 'when downloaded file exceeds max size' do
       let(:max_size) { 1024 }
       let(:response_body) { 'x' * (max_size + 1) }

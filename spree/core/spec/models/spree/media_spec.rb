@@ -545,7 +545,7 @@ describe Spree::Media, type: :model do
       end
 
       # store_id is filled in at before_validation, so a row still being built
-      # has none — and an imported image is given its URL before it is saved.
+      # has none.
       it 'files the definition on the viewable store while the row is unsaved' do
         other_store = create(:store)
         product = create(:product, store: other_store)
