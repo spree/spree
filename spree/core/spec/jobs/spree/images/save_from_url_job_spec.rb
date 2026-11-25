@@ -204,7 +204,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         expect(redirect).not_to receive(:read_body)
         final = double('response', code: '200')
         allow(final).to receive(:[]).with('Content-Length').and_return(nil)
-        allow(final).to receive(:read_body).and_yield('imagecontent')
+        allow(final).to receive(:read_body).and_yield(response_body)
         allow(SsrfFilter).to receive(:get) do |&block|
           block.call(redirect)
           block.call(final)
@@ -213,6 +213,16 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
         expect { subject }.to change(Spree::Media, :count).by(1)
         expect(image.attachment).to be_attached
+      end
+    end
+
+    context 'when the URL serves bytes that are not an image' do
+      let(:response_body) { 'not an image' }
+
+      it 'retries without writing the media or its external URL' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+        expect(Spree::CustomField.count).to eq(0)
       end
     end
 

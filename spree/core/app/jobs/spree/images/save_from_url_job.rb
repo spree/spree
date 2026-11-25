@@ -132,8 +132,8 @@ module Spree
           tempfile.rewind
 
           image.attachment.attach(io: tempfile, filename: filename)
-          image.external_url = external_url
           image.save!
+          image.external_url = external_url
         ensure
           tempfile.close
           tempfile.unlink
