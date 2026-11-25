@@ -94,7 +94,8 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
       }.not_to raise_error
     end
 
-    it 'raises SettlementFailed when the workflow fails' do
+    # A workflow can fail with a bare message instead of a coded ResultError.
+    it 'raises SettlementFailed when the workflow fails without a code' do
       failed = Spree::ServiceModule::Result.new(false, payment_session, 'Stripe timeout')
       allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
 
@@ -108,7 +109,9 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
     end
 
     it 're-enqueues the job when the workflow fails' do
-      failed = Spree::ServiceModule::Result.new(false, payment_session, 'Stripe timeout')
+      failed = Spree::ServiceModule::Result.new(
+        false, payment_session, Spree::ServiceModule::ResultError.new({ code: 'gateway_error', message: 'Stripe timeout' })
+      )
       allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
 
       expect {
@@ -183,6 +186,61 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
             anything, hash_including(context: hash_including(errors: requirements))
           )
         end
+      end
+    end
+
+    # Stock held by another cart's reservation comes back when the
+    # reservation expires, without anyone changing the paid cart.
+    context 'when the cart is only out of stock' do
+      let(:requirements) { [{ step: 'cart', field: 'line_items', code: 'out_of_stock', message: 'Shirt is out of stock' }] }
+      let(:failed) do
+        Spree::ServiceModule::Result.new(
+          false, order, Spree::ServiceModule::ResultError.new({ code: 'validation_failed', errors: requirements })
+        )
+      end
+
+      before do
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+        allow(Rails.error).to receive(:report)
+      end
+
+      def perform_job
+        described_class.perform_now(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      end
+
+      it 'retries after a stock reservation could have expired, without reporting yet' do
+        freeze_time do
+          expect { perform_job }.to have_enqueued_job(described_class)
+
+          retry_at = Time.zone.at(ActiveJob::Base.queue_adapter.enqueued_jobs.last[:at])
+          expect(retry_at).to be_between(5.minutes.from_now, 6.minutes.from_now) # retry_on adds jitter
+        end
+        expect(Rails.error).not_to have_received(:report)
+      end
+
+      it 'reports the charged cart once the retries run out' do
+        job = described_class.new(payment_method_id: payment_method.id, action: 'captured', payment_session_id: payment_session.id)
+        job.executions = 5
+
+        job.perform_now
+
+        expect(Rails.error).to have_received(:report).once.with(
+          an_instance_of(described_class::StockUnavailable),
+          hash_including(handled: false, severity: :error, source: 'spree.payments.webhook')
+        )
+      end
+
+      it 'treats a cart that also fails a requirement no retry can meet as blocked' do
+        requirements << { step: 'cart', field: 'line_items', code: 'discontinued', message: 'Hat is discontinued' }
+
+        expect { perform_job }.not_to have_enqueued_job(described_class)
+        expect(Rails.error).to have_received(:report).once.with(
+          an_instance_of(described_class::CompletionBlocked), anything
+        )
       end
     end
 
