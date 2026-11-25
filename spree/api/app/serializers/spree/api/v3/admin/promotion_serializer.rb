@@ -28,22 +28,22 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :action_ids do |promotion|
-            promotion.promotion_actions.map(&:prefixed_id)
+            promotion.ordered_actions.map(&:prefixed_id)
           end
 
           attribute :rule_ids do |promotion|
-            promotion.promotion_rules.map(&:prefixed_id)
+            promotion.ordered_rules.map(&:prefixed_id)
           end
 
           # The rows under the same names the write accepts, on request: a
           # reader holding only `rule_ids` cannot tell what a promotion does
           # without a request per rule.
-          many :promotion_rules,
+          many :ordered_rules,
                key: :rules,
                resource: proc { Spree.api.admin_promotion_rule_serializer },
                if: proc { expand?('rules') }
 
-          many :promotion_actions,
+          many :ordered_actions,
                key: :actions,
                resource: proc { Spree.api.admin_promotion_action_serializer },
                if: proc { expand?('actions') }

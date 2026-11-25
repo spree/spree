@@ -18,8 +18,10 @@ module Spree
 
       accepts_nested_attributes_for :ship_address, :bill_address
 
-      has_many :addresses, -> { where(deleted_at: nil).order('updated_at DESC') },
-                           class_name: 'Spree::Address', as: :owner
+      # `id` settles addresses saved in the same instant, which PostgreSQL
+      # otherwise returns in either order.
+      has_many :addresses, -> { where(deleted_at: nil).order(updated_at: :desc, id: :asc) },
+               class_name: 'Spree::Address', as: :owner, inverse_of: :owner, dependent: nil
 
       validate :address_not_associated_with_other_user, :address_not_deprecated_in_completed_order
 

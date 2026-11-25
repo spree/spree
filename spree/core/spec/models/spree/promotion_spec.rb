@@ -1178,4 +1178,35 @@ describe Spree::Promotion, type: :model do
       expect(promotion).not_to be_persisted
     end
   end
+
+  describe '#ordered_rules and #ordered_actions' do
+    let(:promotion) { create(:promotion) }
+
+    # PostgreSQL returns unordered rows in heap order, and an update moves the
+    # row to the end of it.
+    it 'keeps creation order after the first row is updated' do
+      actions = [
+        promotion.actions.create!(type: 'Spree::Promotion::Actions::FreeShipping'),
+        promotion.actions.create!(type: 'Spree::Promotion::Actions::CreateLineItems')
+      ]
+      rules = [
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder'),
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal')
+      ]
+
+      actions.first.touch
+      rules.first.touch
+      promotion.reload
+
+      expect(promotion.ordered_actions).to eq(actions)
+      expect(promotion.ordered_rules).to eq(rules)
+    end
+
+    it 'keeps unsaved rows after the saved ones' do
+      saved = promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+      unsaved = promotion.rules.build(type: 'Spree::Promotion::Rules::ItemTotal')
+
+      expect(promotion.ordered_rules).to eq([saved, unsaved])
+    end
+  end
 end

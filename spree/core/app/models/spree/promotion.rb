@@ -152,6 +152,21 @@ module Spree
       assign_typed_association(:promotion_actions, rows)
     end
 
+    # The rules, oldest first. The association carries no order, and
+    # PostgreSQL moves a row in its unordered results once it is updated.
+    #
+    # @return [Array<Spree::PromotionRule>]
+    def ordered_rules
+      in_creation_order(promotion_rules)
+    end
+
+    # Mirrors `ordered_rules` for promotion actions.
+    #
+    # @return [Array<Spree::PromotionAction>]
+    def ordered_actions
+      in_creation_order(promotion_actions)
+    end
+
     def pending_rules_or_actions?
       @pending_promotion_rules.present? || @pending_promotion_actions.present?
     end
@@ -374,6 +389,13 @@ module Spree
 
     def apply_pending_rules_and_actions
       flush_pending_typed_associations(:promotion_rules, :promotion_actions)
+    end
+
+    # Sorted in memory, so a preloaded association costs no query. Unsaved
+    # rows have no id yet and keep their place at the end.
+    def in_creation_order(rows)
+      saved, unsaved = rows.partition(&:id)
+      saved.sort_by(&:id) + unsaved
     end
 
     # Runs before the promotion's actions are destroyed, since the carts'
