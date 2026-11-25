@@ -45,7 +45,7 @@ delivery_methods:
     calculator:
       type: flat_rate
       preferences:
-        amount: 5
+        amount: '5'
         currency: ${STORE_CURRENCY}
   - name: International Shipping
     delivery_profile: General
@@ -53,7 +53,7 @@ delivery_methods:
     calculator:
       type: flat_rate
       preferences:
-        amount: 20
+        amount: '20'
         currency: ${STORE_CURRENCY}
   # Collection at the counter: no zone, every pickup-enabled location.
   - name: Store Pickup
@@ -63,7 +63,7 @@ delivery_methods:
     calculator:
       type: flat_rate
       preferences:
-        amount: 0
+        amount: '0'
         currency: ${STORE_CURRENCY}
 
 package_types:

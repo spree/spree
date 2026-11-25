@@ -350,15 +350,8 @@
           ]
         },
         "default_minimum_payout_amount": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "pattern": "^-?\\d+(\\.\\d+)?$"
-            }
-          ]
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$"
         },
         "auto_approve_sellers": {
           "type": "boolean"
@@ -370,15 +363,8 @@
           "type": "boolean"
         },
         "default_commission_tax_rate": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "string",
-              "pattern": "^-?\\d+(\\.\\d+)?$"
-            }
-          ]
+          "type": "string",
+          "pattern": "^-?\\d+(\\.\\d+)?$"
         },
         "document_number_format": {
           "type": "string"
@@ -947,15 +933,8 @@
             "minLength": 1
           },
           "rate_percent": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              }
-            ]
+            "type": "string",
+            "pattern": "^-?\\d+(\\.\\d+)?$"
           },
           "show_rate_in_label": {
             "type": "boolean"
@@ -1746,8 +1725,8 @@
               "pattern": "^[A-Z]{3}$"
             },
             "additionalProperties": {
-              "type": "number",
-              "minimum": 0
+              "type": "string",
+              "pattern": "^\\d+(\\.\\d+)?$"
             }
           },
           "compare_at_prices": {
@@ -1757,10 +1736,10 @@
               "pattern": "^[A-Z]{3}$"
             },
             "additionalProperties": {
-              "type": "number",
-              "minimum": 0
+              "type": "string",
+              "pattern": "^\\d+(\\.\\d+)?$"
             },
-            "description": "Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`."
+            "description": "Amount per currency, as decimal strings, e.g. `{ USD: \"29.99\", EUR: \"27.90\" }`."
           },
           "stock": {
             "type": "object",
@@ -1813,10 +1792,10 @@
                     "pattern": "^[A-Z]{3}$"
                   },
                   "additionalProperties": {
-                    "type": "number",
-                    "minimum": 0
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)?$"
                   },
-                  "description": "Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`."
+                  "description": "Amount per currency, as decimal strings, e.g. `{ USD: \"29.99\", EUR: \"27.90\" }`."
                 },
                 "compare_at_prices": {
                   "type": "object",
@@ -1825,10 +1804,10 @@
                     "pattern": "^[A-Z]{3}$"
                   },
                   "additionalProperties": {
-                    "type": "number",
-                    "minimum": 0
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)?$"
                   },
-                  "description": "Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`."
+                  "description": "Amount per currency, as decimal strings, e.g. `{ USD: \"29.99\", EUR: \"27.90\" }`."
                 },
                 "stock": {
                   "type": "object",
@@ -1879,8 +1858,8 @@
                 "cost_price": {
                   "anyOf": [
                     {
-                      "type": "number",
-                      "minimum": 0
+                      "type": "string",
+                      "pattern": "^\\d+(\\.\\d+)?$"
                     },
                     {
                       "type": "null"
@@ -2589,15 +2568,8 @@
             ]
           },
           "value": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              }
-            ]
+            "type": "string",
+            "pattern": "^-?\\d+(\\.\\d+)?$"
           },
           "tax_inclusive": {
             "type": "boolean"
@@ -2608,15 +2580,8 @@
           "commission_tax_rate": {
             "anyOf": [
               {
-                "anyOf": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^-?\\d+(\\.\\d+)?$"
-                  }
-                ]
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$"
               },
               {
                 "type": "null"

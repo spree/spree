@@ -59,7 +59,7 @@ channels:
     expect(api.calls[0].params?.['q[code_in][]']).toEqual(['online', 'wholesale', 'retail'])
   })
 
-  it('compares only what the file sets, treating numeric strings as numbers', async () => {
+  it('compares only what the file sets', async () => {
     const api = new FakeApi()
     api.seed('/tax_categories', [
       { name: 'Default', tax_code: 'A_GEN', is_default: true, description: 'x' },
@@ -132,7 +132,7 @@ delivery_methods:
     delivery_zone: Domestic
   - name: Standard EU
     delivery_zone: Europe
-    calculator: { type: flat_rate, preferences: { amount: 9.9, currency: EUR } }
+    calculator: { type: flat_rate, preferences: { amount: "9.9", currency: EUR } }
   - name: Broken
     delivery_zone: Mars
 `)
@@ -258,7 +258,7 @@ products:
     categories: [tees]
     channels: [online]
     sku: TEE
-    prices: { USD: 29.99 }
+    prices: { USD: "29.99" }
     stock: { Warehouse: 100 }
 `)
     const first = await deploySeeds(config, api)
@@ -331,7 +331,7 @@ products:
     variants:
       - sku: TEE-S
         options: { size: S }
-        prices: { USD: 12 }
+        prices: { USD: "12" }
 `)
     const plan = await planSeeds(config, api)
     expect(kinds(plan)).toEqual({ 'products/tee': 'update' })
@@ -346,7 +346,7 @@ products:
         {
           ...config.products?.[0],
           channels: ['online', 'b2b'],
-          variants: [{ sku: 'TEE-S', options: { size: 'S' }, prices: { USD: 10 } }],
+          variants: [{ sku: 'TEE-S', options: { size: 'S' }, prices: { USD: '10' } }],
         },
       ],
     } as typeof config
@@ -538,15 +538,15 @@ describe('introspect', () => {
         {
           name: 'Standard EU',
           delivery_zone: 'Europe',
-          calculator: { type: 'flat_rate', preferences: { amount: 9.9, currency: 'EUR' } },
+          calculator: { type: 'flat_rate', preferences: { amount: '9.9', currency: 'EUR' } },
         },
       ],
     })
   })
 })
 
-describe('introspect numbers', () => {
-  it('writes decimals the API reads back as strings as numbers', async () => {
+describe('introspect amounts', () => {
+  it('writes decimals as the strings the API reads back', async () => {
     const api = new FakeApi()
     api.seed('/commission_rates', [
       {
@@ -557,7 +557,7 @@ describe('introspect numbers', () => {
       },
     ])
     const config = await introspect(api, { include: ['commission_rates'] })
-    expect(config.commission_rates?.[0]).toMatchObject({ value: 0 })
+    expect(config.commission_rates?.[0]).toMatchObject({ value: '0.0' })
     expect(() => parseSeeds(renderSeedsYaml(config))).not.toThrow()
   })
 })
@@ -673,7 +673,7 @@ products:
   - slug: tee
     name: Tee
     sku: TEE
-    prices: { USD: 10 }
+    prices: { USD: "10" }
     stock: { Warehouse: 5 }
 `)
     const plan = await planSeeds(config, api)
@@ -689,7 +689,7 @@ products:
     const api = new FakeApi()
     api.seed('/products', [])
     const { config } = parseSeeds(
-      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    compare_at_prices: { USD: 40 }\n',
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    compare_at_prices: { USD: "40" }\n',
     )
     await deploySeeds(config, api)
     const create = api.calls.find((call) => call.method === 'POST' && call.path === '/products')
@@ -745,7 +745,7 @@ products:
       },
     ])
     const { config } = parseSeeds(
-      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    prices: { USD: 10 }\n',
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    prices: { USD: "10" }\n',
     )
     const plan = await planSeeds(config, api)
     expect(planOperations(plan)[0]).toMatchObject({
@@ -756,7 +756,9 @@ products:
 
   it('needs a SKU for a simple product with prices or stock', () => {
     expect(() =>
-      parseSeeds('version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    prices: { USD: 10 }\n'),
+      parseSeeds(
+        'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    prices: { USD: "10" }\n',
+      ),
     ).toThrow(/products\[0\]\.sku/)
   })
 
@@ -847,7 +849,7 @@ tax_rates:
   - name: German VAT
     tax_category: Default
     country: DE
-    rate_percent: 19
+    rate_percent: "19"
 `)
     const report = await deploySeeds(config, api)
     expect(reportHasFailures(report)).toBe(false)
@@ -866,7 +868,7 @@ tax_rates:
     })
     const captured = await introspect(api, { include: ['tax_rates'] })
     expect(captured.tax_rates).toEqual([
-      { name: 'German VAT', tax_category: 'Default', country: 'DE', rate_percent: 19 },
+      { name: 'German VAT', tax_category: 'Default', country: 'DE', rate_percent: '19.0' },
     ])
   })
 

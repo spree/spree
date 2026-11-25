@@ -17,7 +17,7 @@ import {
   type RuleEntry,
 } from '../schema.js'
 import type { LiveRecord } from '../types.js'
-import { comparableRules, desiredRules, rulesToFile, wirePreferences, wireRules } from './rules.js'
+import { checkAmounts, comparableRules, desiredRules, rulesToFile } from './rules.js'
 import {
   FIRST_PARTY,
   filePreferences,
@@ -231,7 +231,10 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
       payload.tax_category_id = await ctx.ref('tax_categories', entry.tax_category, path)
     const pickupLocations = await refs(ctx, 'stock_locations', entry.pickup_locations, path)
     if (pickupLocations) payload.stock_location_ids = pickupLocations
-    if (entry.calculator) payload.calculator = entry.calculator
+    if (entry.calculator) {
+      await checkAmounts(entry.calculator, CALCULATORS, ctx, `${path}.calculator`)
+      payload.calculator = entry.calculator
+    }
     if (entry.rules) payload.rules = await desiredRules(entry.rules, RULE_TYPES, ctx, path)
     return payload
   },
@@ -239,16 +242,6 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
     return {
       ...(await methodPickupLocations.current(live, ctx, desired)),
       ...(desired.rules ? { rules: comparableRules(live.rules) } : {}),
-    }
-  },
-  async wire(payload, ctx) {
-    const calculator = payload.calculator as
-      | { type: string; preferences?: Record<string, unknown> }
-      | undefined
-    return {
-      ...payload,
-      ...(calculator ? { calculator: await wirePreferences(calculator, CALCULATORS, ctx) } : {}),
-      ...(payload.rules ? { rules: await wireRules(payload.rules, RULE_TYPES, ctx) } : {}),
     }
   },
   async update(live, payload, _entry, ctx) {

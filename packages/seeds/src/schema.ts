@@ -31,10 +31,11 @@ const permalink = z
     'lowercase segments joined by hyphens and slashes, e.g. `clothing/t-shirts`, the form the API saves',
   )
 const scalar = z.union([z.string(), z.number(), z.boolean(), z.null()])
-const money = z.number().nonnegative()
+const AMOUNT = 'an amount is a quoted decimal string that is not negative, e.g. "19.99"'
+const money = z.string({ error: AMOUNT }).regex(/^\d+(\.\d+)?$/, AMOUNT)
 const moneyByCurrency = z
   .record(isoCurrency, money)
-  .describe('Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`.')
+  .describe('Amount per currency, as decimal strings, e.g. `{ USD: "29.99", EUR: "27.90" }`.')
 const stockByLocation = z
   .record(nonEmpty, z.number().int().nonnegative())
   .describe(

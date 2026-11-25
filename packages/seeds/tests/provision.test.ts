@@ -225,7 +225,7 @@ describe('provisionStore', () => {
   })
 
   // The API takes amounts as canonical decimal strings and refuses numbers.
-  it('sends the amounts the templates write as numbers as decimal strings', async () => {
+  it('sends the amounts the templates write as decimal strings', async () => {
     const api = new FakeApi()
     polishStore(api)
     api.seed('/delivery_methods/calculators', [

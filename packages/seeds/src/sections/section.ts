@@ -1,5 +1,5 @@
 import type { RunContext, SectionSource } from '../context.js'
-import { numericString, type PendingRef } from '../diff.js'
+import type { PendingRef } from '../diff.js'
 import type { SpreeSeeds } from '../schema.js'
 import { numbersAsNumbers } from '../spec.js'
 import type { AttributeChange, LiveRecord, SectionName } from '../types.js'
@@ -44,11 +44,6 @@ export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
    * the entry cannot be applied to this record.
    */
   current?(live: Live, ctx: RunContext, desired: Payload, entry: Entry): Promise<Payload>
-  /**
-   * The request body as the API takes it, just before it is sent: nested
-   * amounts the comparison keeps as numbers go out as decimal strings.
-   */
-  wire?(payload: Payload, ctx: RunContext): Promise<Payload>
   /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
   references?(config: SpreeSeeds): Partial<Record<string, string[]>>
   create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<Live>
@@ -168,18 +163,10 @@ function isEmptyPreference(value: unknown): boolean {
   return typeof value === 'object' && Object.keys(value as object).length === 0
 }
 
-/**
- * Preferences as a file reads best: unset ones left out, and amounts the API
- * reports as numeric strings written as plain numbers.
- */
+/** Preferences as a file reads best: unset ones left out. Amounts stay the strings the API reports. */
 export function filePreferences(preferences: Record<string, unknown> | undefined) {
   return Object.fromEntries(
-    Object.entries(preferences ?? {})
-      .filter(([, value]) => !isEmptyPreference(value))
-      .map(([key, value]) => [
-        key,
-        typeof value === 'string' ? (numericString(value) ?? value) : value,
-      ]),
+    Object.entries(preferences ?? {}).filter(([, value]) => !isEmptyPreference(value)),
   )
 }
 

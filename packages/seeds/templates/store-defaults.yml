@@ -103,7 +103,7 @@ commission_rates:
     position: 1000
     name: Marketplace default
     kind: percentage
-    value: 0
+    value: '0'
     enabled: false
 
 seller_requirements:

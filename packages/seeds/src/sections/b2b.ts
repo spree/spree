@@ -14,7 +14,7 @@ import {
 } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import { desiredMembers, liveMembers, membersToFile, syncMembers } from './membership.js'
-import { comparableRules, desiredRules, rulesToFile, wireRules, withLiveIds } from './rules.js'
+import { comparableRules, desiredRules, rulesToFile, withLiveIds } from './rules.js'
 import { type Payload, pick, present, type Section } from './section.js'
 
 type Company = SdkCompany & LiveRecord
@@ -142,11 +142,6 @@ export const priceLists: Section<PriceListEntry, PriceList> = {
       active: isActive(live),
       ...(desired.rules ? { rules: comparableRules(live.price_rules) } : {}),
     }
-  },
-  async wire(payload, ctx) {
-    return payload.rules
-      ? { ...payload, rules: await wireRules(payload.rules, PRICE_RULE_TYPES, ctx) }
-      : payload
   },
   async create(payload, _entry, ctx) {
     const { active: _active, ...body } = payload

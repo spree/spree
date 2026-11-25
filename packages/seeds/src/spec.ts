@@ -29,19 +29,17 @@ type PropertiesOf<R extends Resource> = Properties<Writable[R]['create']> &
 
 type ScalarOf<P> = P extends { enum: readonly (infer E)[] }
   ? E
-  : P extends { type: 'string'; format: 'decimal' | 'money' }
-    ? number | string
-    : P extends { type: 'string' }
-      ? string
-      : P extends { type: 'boolean' }
-        ? boolean
-        : P extends { type: 'integer' | 'number' }
-          ? number
-          : P extends { type: 'array'; items: { type: 'string' } }
-            ? string[]
-            : P extends { type: 'array' }
-              ? unknown[]
-              : string | number | boolean
+  : P extends { type: 'string' }
+    ? string
+    : P extends { type: 'boolean' }
+      ? boolean
+      : P extends { type: 'integer' | 'number' }
+        ? number
+        : P extends { type: 'array'; items: { type: 'string' } }
+          ? string[]
+          : P extends { type: 'array' }
+            ? unknown[]
+            : string | number | boolean
 
 type ValueOf<P> = P extends { nullable: true } ? ScalarOf<P> | null : ScalarOf<P>
 
@@ -73,15 +71,16 @@ export function writableAttributes(resource: Resource): string[] {
 }
 
 /**
- * A live record's attributes as the file writes them: the API reads decimals
- * back as strings ("12.0"), and the file types them as numbers.
+ * A live record's attributes as the file writes them: a number the API reads
+ * back as a string is written as the number the file types it as. Amounts are
+ * strings on both sides and are left alone.
  */
 export function numbersAsNumbers<T extends object>(resource: string, entry: T): T {
   if (!(resource in WRITABLE)) return entry
   const out = { ...entry } as Record<string, unknown>
   for (const [attribute, value] of Object.entries(out)) {
     const schema = property(resource as Resource, attribute)
-    const numeric = schema?.type === 'number' || schema?.type === 'integer' || isDecimal(schema)
+    const numeric = schema?.type === 'number' || schema?.type === 'integer'
     if (numeric && typeof value === 'string' && value.trim()) {
       const number = Number(value)
       if (Number.isFinite(number)) out[attribute] = number
@@ -90,36 +89,20 @@ export function numbersAsNumbers<T extends object>(resource: string, entry: T): 
   return out as T
 }
 
-/** Amounts the API takes as canonical decimal strings, never JSON numbers. */
-const DECIMAL = /^-?\d+(\.\d+)?$/
+/** How an amount is written, in the file and to the API: a decimal string, never a number. */
+export const DECIMAL = /^-?\d+(\.\d+)?$/
+export const AMOUNT_AS_STRING = 'write amounts and rates as quoted decimal strings, e.g. "19.99"'
 
-/** A decimal as the API takes it: `29.9` in a file is sent as `"29.9"`. */
-export function decimalString(value: unknown): unknown {
-  return typeof value === 'number' ? String(value) : value
-}
+/** An amount: a decimal string, so its digits are never read as a float. */
+export const decimal = z.string({ error: AMOUNT_AS_STRING }).regex(DECIMAL, AMOUNT_AS_STRING)
 
 function isDecimal(schema: PropertySchema | undefined): boolean {
   return schema?.type === 'string' && (schema.format === 'decimal' || schema.format === 'money')
 }
 
-/**
- * A request body as the API takes it: every decimal attribute the file wrote
- * as a number is sent as a decimal string.
- */
-export function asWireValues(resource: string, payload: Record<string, unknown>) {
-  if (!(resource in WRITABLE)) return payload
-  return Object.fromEntries(
-    Object.entries(payload).map(([attribute, value]) => [
-      attribute,
-      isDecimal(property(resource as Resource, attribute)) ? decimalString(value) : value,
-    ]),
-  )
-}
-
 function scalar(schema: PropertySchema): ZodType {
   if (schema.enum?.length) return z.enum(schema.enum.map(String) as [string, ...string[]])
-  // Written as a number or a decimal string; sent as a string.
-  if (isDecimal(schema)) return z.union([z.number(), z.string().regex(DECIMAL)])
+  if (isDecimal(schema)) return decimal
   switch (schema.type) {
     case 'string':
       return z.string()

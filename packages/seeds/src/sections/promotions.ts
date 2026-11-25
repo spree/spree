@@ -3,15 +3,14 @@ import type { RunContext } from '../context.js'
 import { PROMOTION_ATTRIBUTES, type PromotionEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import {
+  checkAmounts,
   comparableRules,
   desiredRules,
   rulesToFile,
   sortedRules,
-  wirePreferences,
-  wireRules,
   withLiveIds,
 } from './rules.js'
-import { filePreferences, type Payload, pick, present, type Section } from './section.js'
+import { filePreferences, pick, present, type Section } from './section.js'
 
 type Promotion = SdkPromotion & LiveRecord
 
@@ -32,24 +31,13 @@ interface LiveAction {
   calculator?: Calculator | null
 }
 
-async function wireActions(actions: unknown, ctx: RunContext) {
-  const wired = (await wireRules(actions, ACTION_TYPES, ctx)) as (Payload & {
-    calculator?: Calculator
-  })[]
-  return Promise.all(
-    wired.map(async (action) =>
-      action.calculator
-        ? {
-            ...action,
-            calculator: await wirePreferences(
-              action.calculator,
-              calculatorsOf(String(action.type)),
-              ctx,
-            ),
-          }
-        : action,
-    ),
-  )
+/** Actions as `desiredRules` leaves them, once their calculators' amounts are checked. */
+async function desiredActions(entry: PromotionEntry, ctx: RunContext, path: string) {
+  for (const action of entry.actions ?? []) {
+    if (!action.calculator) continue
+    await checkAmounts(action.calculator, calculatorsOf(action.type), ctx, `${path}.calculator`)
+  }
+  return desiredRules(entry.actions ?? [], ACTION_TYPES, ctx, path)
 }
 
 /**
@@ -71,9 +59,7 @@ export const promotions: Section<PromotionEntry, Promotion> = {
     return {
       ...pick(entry, PROMOTION_ATTRIBUTES),
       ...(entry.rules ? { rules: await desiredRules(entry.rules, RULE_TYPES, ctx, path) } : {}),
-      ...(entry.actions
-        ? { actions: await desiredRules(entry.actions, ACTION_TYPES, ctx, path) }
-        : {}),
+      ...(entry.actions ? { actions: await desiredActions(entry, ctx, path) } : {}),
     }
   },
   async current(live, _ctx, desired) {
@@ -81,13 +67,6 @@ export const promotions: Section<PromotionEntry, Promotion> = {
       ...live,
       ...(desired.rules ? { rules: comparableRules(live.rules) } : {}),
       ...(desired.actions ? { actions: comparableRules(live.actions) } : {}),
-    }
-  },
-  async wire(payload, ctx) {
-    return {
-      ...payload,
-      ...(payload.rules ? { rules: await wireRules(payload.rules, RULE_TYPES, ctx) } : {}),
-      ...(payload.actions ? { actions: await wireActions(payload.actions, ctx) } : {}),
     }
   },
   // A promotion holds one rule and one action of each kind, so a declared one

@@ -20,7 +20,6 @@ import {
   type ProductTypeEntry,
   type VariantEntry,
 } from '../schema.js'
-import { decimalString } from '../spec.js'
 import type { LiveRecord } from '../types.js'
 import {
   customFieldReferences,
@@ -612,29 +611,6 @@ export const products: Section<ProductEntry, Product> = {
       body,
     })
   },
-  async wire(payload) {
-    if (!Array.isArray(payload.variants)) return payload
-    return {
-      ...payload,
-      variants: (payload.variants as Payload[]).map((variant) => ({
-        ...variant,
-        ...(variant.cost_price !== undefined
-          ? { cost_price: decimalString(variant.cost_price) }
-          : {}),
-        ...(Array.isArray(variant.prices)
-          ? {
-              prices: (variant.prices as Payload[]).map((price) => ({
-                ...price,
-                ...(price.amount !== undefined ? { amount: decimalString(price.amount) } : {}),
-                ...(price.compare_at_amount !== undefined
-                  ? { compare_at_amount: decimalString(price.compare_at_amount) }
-                  : {}),
-              })),
-            }
-          : {}),
-      })),
-    }
-  },
   async afterWrite(entry, live, _changes, ctx) {
     if (!entry.channels) return
     const wanted = await Promise.all(
@@ -713,13 +689,12 @@ async function variantToFile(live: LiveVariant, ctx: RunContext): Promise<Varian
     (live.option_values ?? []).map((value) => [value.option_type_name, value.label ?? value.name]),
   )
   if (Object.keys(options).length) entry.options = options
-  const prices: Record<string, number> = {}
-  const compareAt: Record<string, number> = {}
+  const prices: Record<string, string> = {}
+  const compareAt: Record<string, string> = {}
   for (const price of live.prices ?? []) {
     if (price.price_list_id !== null || price.min_quantity > 1) continue
-    if (price.amount !== null) prices[price.currency] = Number(price.amount)
-    if (price.compare_at_amount !== null)
-      compareAt[price.currency] = Number(price.compare_at_amount)
+    if (price.amount !== null) prices[price.currency] = price.amount
+    if (price.compare_at_amount !== null) compareAt[price.currency] = price.compare_at_amount
   }
   if (Object.keys(prices).length) entry.prices = prices
   if (Object.keys(compareAt).length) entry.compare_at_prices = compareAt

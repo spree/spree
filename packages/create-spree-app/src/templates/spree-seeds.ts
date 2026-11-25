@@ -43,7 +43,7 @@ version: 1
 # delivery_methods:
 #   - name: Standard EU
 #     delivery_zone: Europe
-#     calculator: { type: flat_rate, preferences: { amount: 9.9, currency: EUR } }
+#     calculator: { type: flat_rate, preferences: { amount: "9.90", currency: EUR } }
 
 # stock_locations:
 #   - name: Warehouse
@@ -64,7 +64,7 @@ version: 1
 #     variants:
 #       - sku: TEE-S
 #         options: { size: S }
-#         prices: { USD: 29.99 }
+#         prices: { USD: "29.99" }
 #         stock: { Warehouse: 100 }
 
 # customers:

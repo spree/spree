@@ -116,7 +116,7 @@ product_types:
 })
 
 describe('rules', () => {
-  it('sends an amount as a decimal string and reads it back as a number', async () => {
+  it('takes an amount as a decimal string, whatever zeros the API closes it with', async () => {
     const api = new FakeApi()
     api.kinds['/delivery_method_rules/types'] = [
       { type: 'item_total_rule', schema: { properties: { minimum_amount: MONEY } } },
@@ -128,7 +128,7 @@ delivery_methods:
   - name: Free over 100
     rules:
       - type: item_total_rule
-        preferences: { minimum_amount: 100 }
+        preferences: { minimum_amount: "100" }
 `
     await deploySeeds(parseSeeds(file).config, api)
     const [method] = api.all('/delivery_methods')
@@ -139,8 +139,34 @@ delivery_methods:
     expect(await unchanged(api, file)).toBe(true)
     const captured = await introspect(api, { include: ['delivery_methods'] })
     expect(captured.delivery_methods?.[0].rules).toEqual([
-      { type: 'item_total_rule', preferences: { minimum_amount: 100 } },
+      { type: 'item_total_rule', preferences: { minimum_amount: '100.0' } },
     ])
+  })
+
+  it('refuses an amount written as a number', async () => {
+    const api = new FakeApi()
+    api.kinds['/delivery_method_rules/types'] = [
+      { type: 'item_total_rule', schema: { properties: { minimum_amount: MONEY } } },
+    ]
+    api.seed('/delivery_methods', [])
+    const { config } = parseSeeds(`
+version: 1
+delivery_methods:
+  - name: Free over 100
+    rules:
+      - type: item_total_rule
+        preferences: { minimum_amount: 100 }
+`)
+    const plan = await planSeeds(config, api)
+    expect(plan.sections[0].operations[0]).toMatchObject({
+      kind: 'error',
+      message: expect.stringMatching(/item_total_rule minimum_amount: .*quoted decimal strings/),
+    })
+    expect(() =>
+      parseSeeds(
+        'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    prices: { USD: 10 }\n',
+      ),
+    ).toThrow(/products\[0\]\.prices\.USD.*quoted decimal string/)
   })
 
   it('writes a setting that lists records as their natural keys', async () => {
@@ -255,7 +281,7 @@ describe('promotions', () => {
       { type: 'flat_rate', schema: { properties: { amount: MONEY } } },
     ]
     api.seed('/promotions', [])
-    const file = (amount: number) => `
+    const file = (amount: string) => `
 version: 1
 promotions:
   - name: Ten Off
@@ -264,9 +290,9 @@ promotions:
       - type: create_adjustment
         calculator:
           type: flat_rate
-          preferences: { amount: ${amount}, currency: USD }
+          preferences: { amount: "${amount}", currency: USD }
 `
-    await deploySeeds(parseSeeds(file(10)).config, api)
+    await deploySeeds(parseSeeds(file('10')).config, api)
     const [promotion] = api.all('/promotions')
     // Codes are saved in lower case.
     expect(promotion.code).toBe('tenoff')
@@ -275,9 +301,9 @@ promotions:
       type: 'flat_rate',
       preferences: { amount: '10', currency: 'USD' },
     })
-    expect(await unchanged(api, file(10))).toBe(true)
+    expect(await unchanged(api, file('10'))).toBe(true)
 
-    const report = await deploySeeds(parseSeeds(file(12)).config, api)
+    const report = await deploySeeds(parseSeeds(file('12')).config, api)
     expect(reportHasFailures(report)).toBe(false)
     expect((api.all('/promotions')[0].actions as Payload[])[0]).toMatchObject({
       id: action.id,

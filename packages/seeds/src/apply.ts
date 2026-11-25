@@ -2,7 +2,6 @@ import { inBatches } from './client.js'
 import { type PlannedOperation, type PlannedRun, planSeeds } from './plan.js'
 import type { SpreeSeeds } from './schema.js'
 import { type AnySection, SECTIONS } from './sections/index.js'
-import { asWireValues } from './spec.js'
 import type { ApplyReport, ApplyResult, LiveRecord, PlanOptions, SeedsClient } from './types.js'
 
 /** Writes within a section that run at once. */
@@ -33,8 +32,7 @@ async function write(
 ): Promise<ApplyResult> {
   const { ctx } = run
   try {
-    const plain = asWireValues(section.name, ctx.materialize(operation.payload ?? {}))
-    const payload = section.wire ? await section.wire(plain, ctx) : plain
+    const payload = ctx.materialize(operation.payload ?? {})
     const entry = operation.entry as never
     let live: LiveRecord
     if (operation.kind === 'create') {

@@ -47,7 +47,7 @@ tax_rates:
   - name: German VAT
     tax_category: Default
     country: DE
-    rate_percent: 19
+    rate_percent: "19"
 
 delivery_zones:
   - name: Europe
@@ -58,7 +58,7 @@ delivery_methods:
     delivery_zone: Europe
     calculator:
       type: flat_rate
-      preferences: { amount: 9.9, currency: EUR }
+      preferences: { amount: "9.90", currency: EUR }
 
 stock_locations:
   - name: Warehouse
@@ -79,7 +79,7 @@ products:
     variants:
       - sku: TEE-S-RED
         options: { size: S, color: Red }
-        prices: { USD: 29.99, EUR: 27.9 }
+        prices: { USD: "29.99", EUR: "27.90" }
         stock: { Warehouse: 100 }
 
 customers:
@@ -89,11 +89,12 @@ customers:
     customer_groups: [Wholesale]
 ```
 
-Three rules govern the file:
+Four rules govern the file:
 
 - **Only sections present in the file are managed.** A file with just `delivery_zones` and `delivery_methods` touches nothing else. Inside a section, live records absent from the file are left alone unless the section is pruned (see below).
 - **References use natural keys.** A delivery method names its zone, a product names its categories and channels, a variant names the warehouse its stock sits in. A reference to something that exists neither in the file nor on the store is reported, with its line, before anything is written.
 - **Secrets come from the environment.** `${VAR}` anywhere in the file is replaced with the variable's value at deploy time, so a committed file carries no passwords. A missing variable stops the run. Write `$${VAR}` for a literal `${VAR}`. A value that is nothing but a placeholder, such as `stock: ${OPENING_STOCK}`, is read as a number or `true`/`false` wherever the file expects one.
+- **Amounts and rates are quoted decimal strings.** Write `"19.99"`, never `19.99`: a bare number is read as a float, and money is never a float. This is how the Admin API takes and returns them. A bare number is reported as a mistake, with its line. `"20"`, `"20.0"` and `"20.00"` are the same amount.
 
 The header line points editors at the published JSON Schema, so VS Code and every editor with a YAML language server autocomplete keys and flag mistakes inline. The same schema is what the CLI validates with, and it is also shipped inside the package at `@spree/seeds/schemas/spree-seeds.json`.
 
@@ -139,7 +140,7 @@ Slugs and permalinks are written the way the store saves them: lowercase letters
 
 Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy. A simple product that sets `prices` or `stock` needs its `sku`, and the simple form is refused for a product whose variants have options, since it would replace them all.
 
-**Rules, actions and calculators** are written by kind, with that kind's settings under `preferences`. An amount is a plain number, and a setting that lists records takes their keys, not their ids:
+**Rules, actions and calculators** are written by kind, with that kind's settings under `preferences`. An amount is a quoted decimal string, and a setting that lists records takes their keys, not their ids:
 
 ```yaml spree.seeds.yml
 price_lists:

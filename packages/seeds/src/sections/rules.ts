@@ -1,13 +1,14 @@
 import type { RunContext } from '../context.js'
-import { decimalString } from '../spec.js'
+import { SeedsError } from '../errors.js'
+import { AMOUNT_AS_STRING } from '../spec.js'
 import { filePreferences, keysOf, type Payload, refs } from './section.js'
 
 /**
  * Rules, actions and calculators come in registered kinds, each with its own
  * settings. The API lists every kind with a schema of those settings, and
  * that schema is what tells the engine how to carry a setting between the
- * file and the API: an amount is written as a number and sent as a decimal
- * string, and a list of ids is written as natural keys.
+ * file and the API: an amount is a decimal string on both sides, and a list
+ * of ids is written as natural keys.
  */
 
 export interface PreferenceSchema {
@@ -85,22 +86,22 @@ function referencedSection(schema: PreferenceSchema | undefined): string | undef
   return prefix ? SECTION_BY_PREFIX[prefix] : undefined
 }
 
-/** Preferences as the API takes them: amounts the file wrote as numbers go out as decimal strings. */
-export async function wirePreferences<Entry extends TypedEntry>(
-  entry: Entry,
+/**
+ * Refuses an amount written as a number. The kinds are only known from the
+ * API, so the file's own schema cannot check this.
+ */
+export async function checkAmounts(
+  entry: TypedEntry,
   typesPath: string,
   ctx: RunContext,
-): Promise<Entry> {
-  if (!entry.preferences) return entry
+  path: string,
+): Promise<void> {
+  if (!entry.preferences) return
   const properties = await propertiesOf(ctx, typesPath, entry.type)
-  return {
-    ...entry,
-    preferences: Object.fromEntries(
-      Object.entries(entry.preferences).map(([key, value]) => [
-        key,
-        isDecimalPreference(properties[key]) ? decimalString(value) : value,
-      ]),
-    ),
+  for (const [key, value] of Object.entries(entry.preferences)) {
+    if (typeof value === 'number' && isDecimalPreference(properties[key])) {
+      throw new SeedsError(`${entry.type} ${key}: ${AMOUNT_AS_STRING}`, path)
+    }
   }
 }
 
@@ -158,6 +159,7 @@ export async function desiredRules(
   return Promise.all(
     sortedRules(rules).map(async (rule) => {
       if (!rule.preferences) return { ...rule }
+      await checkAmounts(rule, typesPath, ctx, path)
       const properties = await propertiesOf(ctx, typesPath, rule.type)
       const preferences: Payload = {}
       for (const [key, value] of Object.entries(rule.preferences)) {
@@ -169,15 +171,6 @@ export async function desiredRules(
       }
       return { ...rule, preferences }
     }),
-  )
-}
-
-/** A rule set as the API takes it. */
-export function wireRules(rules: unknown, typesPath: string, ctx: RunContext) {
-  return Promise.all(
-    ((rules as TypedEntry[] | undefined) ?? []).map((rule) =>
-      wirePreferences(rule, typesPath, ctx),
-    ),
   )
 }
 

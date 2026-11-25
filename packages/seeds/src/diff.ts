@@ -20,13 +20,28 @@ function isPrimitive(value: unknown): boolean {
 }
 
 /**
- * Money and numeric attributes come back from the API as strings ("19.99")
- * and are written in the file as numbers. Only that pairing is bridged: two
- * strings compare as strings, so a postcode "02134" never equals "2134".
+ * A decimal string without the zeros that end its fraction: "20.00", "20.0"
+ * and "20" are one amount. Leading zeros are kept, so a postcode "02134"
+ * never equals "2134".
+ */
+function trimmedDecimal(value: string): string | null {
+  if (!/^-?\d+(\.\d+)?$/.test(value)) return null
+  return value.includes('.') ? value.replace(/\.?0+$/, '') : value
+}
+
+/**
+ * Amounts are decimal strings in the file and from the API, which may write
+ * the same amount with more or fewer closing zeros. A number in the file may
+ * also come back as a string ("12.0"). Those two pairings are bridged and
+ * nothing else is.
  */
 function scalarsEqual(desired: unknown, current: unknown): boolean {
   const left = desired === undefined ? null : desired
   const right = current === undefined ? null : current
+  if (typeof left === 'string' && typeof right === 'string' && left !== right) {
+    const amount = trimmedDecimal(left)
+    return amount !== null && amount === trimmedDecimal(right)
+  }
   if (typeof left === 'number' && typeof right === 'string') return numericString(right) === left
   if (typeof left === 'string' && typeof right === 'number') return numericString(left) === right
   return left === right

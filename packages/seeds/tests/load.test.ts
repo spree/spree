@@ -12,10 +12,10 @@ products:
   - slug: tee
     name: Tee
     sku: TEE
-    prices: { USD: 29.99 }
+    prices: { USD: "29.99" }
 `)
     expect(config.channels?.[0]).toEqual({ code: 'retail', name: 'Retail' })
-    expect(config.products?.[0].prices).toEqual({ USD: 29.99 })
+    expect(config.products?.[0].prices).toEqual({ USD: '29.99' })
     expect(sections).toEqual(['channels', 'products'])
   })
 
