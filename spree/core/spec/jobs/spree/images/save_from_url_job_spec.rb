@@ -133,7 +133,8 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         Net::OpenTimeout.new('execution expired'),
         Net::ReadTimeout.new,
         SocketError.new('getaddrinfo: Name or service not known'),
-        OpenSSL::SSL::SSLError.new('certificate verify failed')
+        OpenSSL::SSL::SSLError.new('certificate verify failed'),
+        SsrfFilter::UnresolvedHostname.new("Could not resolve hostname 'cdn.example.com'")
       ].each do |error|
         it "retries the fetch on #{error.class} instead of raising" do
           allow(SsrfFilter).to receive(:get).and_raise(error)
@@ -147,11 +148,25 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         allow(SsrfFilter).to receive(:get).and_raise(Errno::ECONNREFUSED)
         allow(Rails.logger).to receive(:warn)
         job = described_class.new(viewable_id, viewable_type, external_url, external_id, position)
-        job.executions = Spree::Config.images_save_from_url_job_attempts.to_i - 1
+        # retry_on counts attempts per handler, keyed by its exception list.
+        job.exception_executions = {
+          [described_class::FetchFailed].to_s => Spree::Config.images_save_from_url_job_attempts.to_i - 1
+        }
 
         expect { job.perform_now }.not_to have_enqueued_job(described_class)
         expect(Spree::Media.count).to eq(0)
         expect(Rails.logger).to have_received(:warn).with(/Gave up fetching #{Regexp.escape(external_url)}: Errno::ECONNREFUSED/)
+      end
+    end
+
+    # A failure of this server, not of the remote host, is not swallowed.
+    context 'when the download cannot be written to disk' do
+      it 'raises instead of retrying' do
+        allow(Tempfile).to receive(:new).and_raise(Errno::ENOSPC)
+
+        expect { subject }.to raise_error(Errno::ENOSPC)
+        expect(described_class).not_to have_been_enqueued
+        expect(Spree::Media.count).to eq(0)
       end
     end
 
@@ -161,6 +176,42 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       it 'retries the fetch without attaching the error page' do
         expect { subject }.to have_enqueued_job(described_class)
         expect(Spree::Media.count).to eq(0)
+      end
+
+      # A large error page must not trip the image size limit and be
+      # discarded as an oversized image: the status is checked first.
+      it 'retries a streamed error response without reading its body' do
+        allow(Spree::Config).to receive(:max_image_download_size).and_return(1024)
+        streamed = double('response', code: '503')
+        allow(streamed).to receive(:[]).with('Content-Length').and_return('1048576')
+        expect(streamed).not_to receive(:read_body)
+        allow(SsrfFilter).to receive(:get) do |&block|
+          block.call(streamed)
+          response
+        end
+
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+      end
+    end
+
+    context 'when the URL redirects to the file' do
+      let(:response) { instance_double(Net::HTTPResponse, code: '200', body: nil) }
+
+      it 'skips the redirect body and attaches the final response' do
+        redirect = double('redirect', code: '301')
+        expect(redirect).not_to receive(:read_body)
+        final = double('response', code: '200')
+        allow(final).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(final).to receive(:read_body).and_yield('imagecontent')
+        allow(SsrfFilter).to receive(:get) do |&block|
+          block.call(redirect)
+          block.call(final)
+          response
+        end
+
+        expect { subject }.to change(Spree::Media, :count).by(1)
+        expect(image.attachment).to be_attached
       end
     end
 
@@ -180,7 +231,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       # an endless response is cut off once it passes the limit.
       it 'stops reading a streamed body once it passes the limit' do
         chunks_read = 0
-        streamed = double('response')
+        streamed = double('response', code: '200')
         allow(streamed).to receive(:[]).with('Content-Length').and_return(nil)
         allow(streamed).to receive(:read_body) do |&block|
           loop do
@@ -195,7 +246,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
 
       it 'refuses a declared length over the limit before reading' do
-        streamed = double('response')
+        streamed = double('response', code: '200')
         allow(streamed).to receive(:[]).with('Content-Length').and_return((max_size + 1).to_s)
         expect(streamed).not_to receive(:read_body)
         allow(SsrfFilter).to receive(:get) { |&block| block.call(streamed); response }
