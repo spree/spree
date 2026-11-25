@@ -177,7 +177,9 @@ module Spree
                   map { |code, subdivision| [code, subdivision_display_name(subdivision)] }
 
         entries.concat(SUBDIVISION_ADDITIONS.fetch(iso, {}).to_a)
-        entries.sort_by { |_code, name| name.to_s }.to_h
+        # By code where two share a name (Estonia's Viljandi city and parish):
+        # an unstable sort would order them differently from one platform to the next.
+        entries.sort_by { |code, name| [name.to_s, code.to_s] }.to_h
       end
 
       # Under a non-English locale a subdivision is named by its translation,

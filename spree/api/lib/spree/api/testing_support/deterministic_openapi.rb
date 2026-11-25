@@ -37,6 +37,74 @@ if ENV['OPENAPI'] == 'true'
       # to match across machines.
       JWT_SECRET = 'openapi-example-signing-secret'
 
+      # Stands in for the dummy app's `secret_key_base` when Active Storage
+      # signs the blob ids and file URLs shown in the examples, for the same
+      # reason: that secret is generated when the dummy app is built.
+      SIGNING_SECRET = 'openapi-example-secret-key-base'
+
+      class << self
+        # Freezes the clock for the whole run, not only inside examples. The
+        # default store, its market and its channel are created once, in a
+        # `before(:all)`, which runs ahead of every per-example hook, so their
+        # timestamps used to be the moment the run started.
+        def freeze_clock
+          Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(FROZEN_TIME)
+        end
+
+        # The same records stay in the test database from one run to the next,
+        # so on any run but the first they still carry the time the database was
+        # first used. Everything committed is stamped with the frozen instant.
+        def restamp_committed_records
+          connection = ActiveRecord::Base.connection
+          frozen = connection.quote(FROZEN_TIME)
+
+          connection.tables.each do |table|
+            timestamps = connection.columns(table).map(&:name) & %w[created_at updated_at]
+            next if timestamps.empty?
+
+            assignments = timestamps.map { |column| "#{connection.quote_column_name(column)} = #{frozen}" }.join(', ')
+            connection.execute("UPDATE #{connection.quote_table_name(table)} SET #{assignments}")
+          end
+        end
+
+        def pin_signing_secret
+          return unless defined?(ActiveStorage)
+
+          secret = Rails.application.key_generator(SIGNING_SECRET).generate_key('ActiveStorage')
+          ActiveStorage.verifier = ActiveSupport::MessageVerifier.new(secret)
+        end
+
+        # A rolled-back transaction gives SQLite its ids back, so every example
+        # starts from the same primary keys. PostgreSQL sequences only ever
+        # advance, which made every prefixed id depend on how many records the
+        # earlier examples created and on how often the suite had run against
+        # the database. Setting each sequence back to the last committed row
+        # before an example gives both databases the same ids.
+        def rewind_primary_keys
+          connection = ActiveRecord::Base.connection
+          return unless connection.adapter_name.match?(/postg/i)
+
+          @rewind_sequences ||= rewind_sequences_statement(connection)
+          connection.execute(@rewind_sequences)
+        end
+
+        private
+
+        def rewind_sequences_statement(connection)
+          calls = connection.tables.filter_map do |table|
+            primary_key, sequence = connection.pk_and_sequence_for(table)
+            next unless sequence
+
+            last_id = connection.select_value(
+              "SELECT MAX(#{connection.quote_column_name(primary_key)}) FROM #{connection.quote_table_name(table)}"
+            )
+            "setval(#{connection.quote(sequence.to_s)}, #{(last_id || 1).to_i}, #{last_id.present?})"
+          end
+
+          "SELECT #{calls.join(', ')}"
+        end
+      end
+
       # SecureRandom bypasses the global PRNG (it reads from the OS), so seeding
       # alone leaves API keys, invitation tokens and JWT ids churning. These
       # counter-backed replacements produce values with the right shape and
@@ -112,8 +180,15 @@ if ENV['OPENAPI'] == 'true'
   SecureRandom.singleton_class.prepend(Spree::OpenAPIDeterminism::PredictableSecureRandom)
 
   RSpec.configure do |config|
+    config.before(:suite) do
+      Spree::OpenAPIDeterminism.freeze_clock
+      Spree::OpenAPIDeterminism.restamp_committed_records
+      Spree::OpenAPIDeterminism.pin_signing_secret
+    end
+
     config.before do
       travel_to(Spree::OpenAPIDeterminism::FROZEN_TIME)
+      Spree::OpenAPIDeterminism.rewind_primary_keys
     end
 
     # Reset before each example rather than once for the run, so a value shown

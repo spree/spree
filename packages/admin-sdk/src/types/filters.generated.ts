@@ -96,7 +96,7 @@ export type CouponCodeFields = Filter.TextFilters<'code'>
   & Filter.EnumFilters<'state', 'unused' | 'used'>
 
 export type CreditCardFields = Filter.RangeFilters<'created_at' | 'updated_at'>
-  & Filter.IdFilters<'id'>
+  & Filter.IdFilters<'id' | 'payment_method_id'>
   & Filter.TextFilters<'name'>
 
 export type CustomFieldFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -274,8 +274,8 @@ export type PackageTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type PaymentFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
   & Filter.TextFilters<'avs_response' | 'cvv_response_code' | 'cvv_response_message' | 'response_code'>
   & Filter.IdFilters<'id'>
-  & Filter.EnumFilters<'state', 'checkout' | 'processing' | 'pending' | 'completed' | 'failed' | 'void' | 'invalid'>
-  & Filter.EnumFilters<'status', 'checkout' | 'processing' | 'pending' | 'completed' | 'failed' | 'void' | 'invalid'>
+  & Filter.EnumFilters<'state', 'checkout' | 'processing' | 'pending' | 'requested' | 'completed' | 'failed' | 'void' | 'invalid'>
+  & Filter.EnumFilters<'status', 'checkout' | 'processing' | 'pending' | 'requested' | 'completed' | 'failed' | 'void' | 'invalid'>
 
 export type PaymentMethodFields = Filter.BooleanFilters<'active' | 'storefront_visible'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -911,7 +911,7 @@ export type CreditCardFilters = CreditCardFields
   & Filter.OrFilters
   & CreditCardFilterExtensions
 
-export type CreditCardSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'updated_at' | (keyof CreditCardSortExtensions & string)>
+export type CreditCardSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'payment_method_id' | 'updated_at' | (keyof CreditCardSortExtensions & string)>
 
 /**
  * Filters your app adds to Customer lists. Generate them with `spree filters types`,

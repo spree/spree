@@ -42,6 +42,12 @@ RSpec.describe Spree::IsoData do
       expect(described_class.subdivisions('CN')).not_to include('HK', 'MO', 'TW')
     end
 
+    it 'orders subdivisions that share a name by code' do
+      viljandi = described_class.subdivisions('EE').select { |_code, name| name == 'Viljandi' }
+
+      expect(viljandi.keys).to eq(%w[897 899])
+    end
+
     it 'is empty for a country with no subdivisions' do
       expect(described_class.subdivisions('HK')).to be_empty
     end
