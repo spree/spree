@@ -46,17 +46,26 @@ jobs:
           sparse-checkout: .github/mcp-registry/server.json
           sparse-checkout-cone-mode: false
 
-      - name: Set the version from the tag
+      - name: Check the release and set the version
         env:
           TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::notice::$TAG is not a final release, so nothing is published."
-            echo "SKIP=1" >> "$GITHUB_ENV"
-            exit 0
-          fi
-          jq --arg v "${TAG#v}" '.version = $v' .github/mcp-registry/server.json > server.json
-          jq -r '"\(.name) \(.version)"' server.json
+          skip() { echo "::notice::$1"; echo "SKIP=1" >> "$GITHUB_ENV"; exit 0; }
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || skip "$TAG is not a final release, so nothing is published."
+          # A run by hand names a tag: publish only a published, final release.
+          release=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft,isPrerelease) \
+            || { echo "::error::$TAG has no published GitHub release."; exit 1; }
+          [[ $(jq -r '.isDraft or .isPrerelease' <<<"$release") == false ]] \
+            || skip "$TAG is a draft or a prerelease, so nothing is published."
+          version="${TAG#v}"
+          name=$(jq -r .name .github/mcp-registry/server.json)
+          entry="https://registry.modelcontextprotocol.io/v0/servers/${name/\//%2F}/versions/$version"
+          echo "ENTRY=$entry" >> "$GITHUB_ENV"
+          # An earlier run may already have published it; re-running then succeeds.
+          curl -fsS -o /dev/null "$entry" && skip "$name $version is already in the MCP Registry."
+          jq --arg v "$version" '.version = $v' .github/mcp-registry/server.json > server.json
+          echo "Publishing $name $version"
 
       - name: Install mcp-publisher
         if: env.SKIP != '1'
@@ -67,6 +76,11 @@ jobs:
         if: env.SKIP != '1'
         run: ./mcp-publisher login github-oidc
 
+      # If the registry took the entry but the answer was lost, the entry is
+      # there and the run counts as done.
       - name: Publish
         if: env.SKIP != '1'
-        run: ./mcp-publisher publish server.json
+        run: |
+          ./mcp-publisher publish server.json && exit 0
+          curl -fsS -o /dev/null "$ENTRY" && echo "::notice::The registry has the entry, so it is published." && exit 0
+          exit 1
