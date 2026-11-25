@@ -43,13 +43,16 @@ export function entityDimension(row: ReportingRow, name: string): ReportingDimen
     }
     return { id: null, label: '', meta: {} }
   }
+  // A plain dimension is null for a group with no value, such as discounts
+  // that carry no coupon code.
+  if (value === null) return { id: null, label: '', meta: {} }
   return typeof value === 'string' ? { id: null, label: value, meta: {} } : value
 }
 
 /** Narrows a row's dimension value to a raw bucket/status string. */
 export function rawDimension(row: ReportingRow, name: string): string {
   const value = row.dimensions[name]
-  if (value === undefined) return ''
+  if (value === undefined || value === null) return ''
   return typeof value === 'string' ? value : value.label
 }
 

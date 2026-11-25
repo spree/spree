@@ -46074,119 +46074,7 @@ paths:
                       previous: 0
                       growth: '0'
               schema:
-                type: object
-                properties:
-                  meta:
-                    type: object
-                    properties:
-                      currency:
-                        type: string
-                        example: USD
-                      time_range:
-                        type: object
-                        properties:
-                          since:
-                            type: string
-                          until:
-                            type: string
-                        required:
-                        - since
-                        - until
-                      previous_time_range:
-                        type: object
-                        properties:
-                          since:
-                            type: string
-                          until:
-                            type: string
-                        required:
-                        - since
-                        - until
-                        nullable: true
-                      metrics:
-                        type: array
-                        items:
-                          type: string
-                      dimensions:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            grain:
-                              type: string
-                          required:
-                          - name
-                    required:
-                    - currency
-                    - time_range
-                    - metrics
-                    - dimensions
-                  totals:
-                    type: object
-                    description: Keyed by metric
-                    additionalProperties:
-                      type: object
-                      properties:
-                        value:
-                          description: A decimal string for a money metric, a number
-                            for a count
-                        display:
-                          type: string
-                          description: The value formatted with its currency. Money
-                            metrics only.
-                        previous:
-                          description: The value in the period compared against. Present
-                            when the query asks for a comparison.
-                        growth:
-                          type: string
-                          nullable: true
-                          description: Percentage change from the previous period;
-                            null when that period has nothing to compare with
-                      required:
-                      - value
-                  rows:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        dimensions:
-                          type: object
-                          description: 'Keyed by dimension: the value itself for a
-                            time bucket or a status, and `{ id, label, meta }` for
-                            a record such as a product or a customer'
-                          additionalProperties: true
-                        metrics:
-                          type: object
-                          description: Keyed by metric
-                          additionalProperties:
-                            type: object
-                            properties:
-                              value:
-                                description: A decimal string for a money metric,
-                                  a number for a count
-                              display:
-                                type: string
-                                description: The value formatted with its currency.
-                                  Money metrics only.
-                              previous:
-                                description: The value in the period compared against.
-                                  Present when the query asks for a comparison.
-                              growth:
-                                type: string
-                                nullable: true
-                                description: Percentage change from the previous period;
-                                  null when that period has nothing to compare with
-                            required:
-                            - value
-                      required:
-                      - dimensions
-                      - metrics
-                required:
-                - meta
-                - totals
-                - rows
+                "$ref": "#/components/schemas/ReportingResult"
       requestBody:
         content:
           application/json:
@@ -72215,7 +72103,10 @@ components:
           - "$ref": "#/components/schemas/CreditCard"
           - "$ref": "#/components/schemas/StoreCredit"
           - "$ref": "#/components/schemas/PaymentSource"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
         custom_fields:
@@ -74410,6 +74301,152 @@ components:
       - tax_amount
       - refunder_id
       - refunder_type
+      x-typelizer: true
+    ReportingDimensionValue:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+          description: Prefixed id of the record (`cust_…`), or the raw value of an
+            enumerated dimension. Null when there is no record behind the group, such
+            as guest customers.
+        label:
+          type: string
+        meta:
+          type: object
+      required:
+      - id
+      - label
+      - meta
+      x-typelizer: true
+    ReportingMetricValue:
+      type: object
+      properties:
+        value:
+          anyOf:
+          - type: string
+          - type: number
+          - type: object
+            nullable: true
+            enum:
+            -
+          description: A decimal string for money, decimal and percent metrics (`"110.00"`);
+            a number for integer metrics. Null in `totals` for a metric that only
+            means something per group.
+        previous:
+          anyOf:
+          - type: string
+          - type: number
+          description: Present when the query requested a comparison; the same shape
+            as `value`.
+        growth:
+          type: string
+          nullable: true
+          description: Percentage change against the previous period, as a decimal
+            string (`"12.5"`); null when there is no baseline. Present when the query
+            requested a comparison.
+        display:
+          type: string
+          description: "`value` formatted with its currency symbol. Present on money
+            metrics only."
+      required:
+      - value
+      x-typelizer: true
+    ReportingResultMeta:
+      type: object
+      properties:
+        currency:
+          type: string
+        time_range:
+          type: object
+          properties:
+            since:
+              type: string
+            until:
+              type: string
+          required:
+          - since
+          - until
+          description: The period queried, as ISO 8601 times.
+        previous_time_range:
+          type: object
+          properties:
+            since:
+              type: string
+            until:
+              type: string
+          required:
+          - since
+          - until
+          nullable: true
+          description: The period compared against; null without `compare`.
+        metrics:
+          type: array
+          items:
+            type: string
+        dimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              grain:
+                type: string
+            required:
+            - name
+      required:
+      - currency
+      - time_range
+      - previous_time_range
+      - metrics
+      - dimensions
+      x-typelizer: true
+    ReportingResult:
+      type: object
+      properties:
+        meta:
+          "$ref": "#/components/schemas/ReportingResultMeta"
+        totals:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/ReportingMetricValue"
+          description: Each metric over the whole period, by metric name. Filters
+            on a metric narrow the rows only, never these.
+        rows:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ReportingRow"
+      required:
+      - meta
+      - totals
+      - rows
+      x-typelizer: true
+    ReportingRow:
+      type: object
+      properties:
+        dimensions:
+          type: object
+          additionalProperties:
+            anyOf:
+            - type: string
+            - "$ref": "#/components/schemas/ReportingDimensionValue"
+            - type: object
+              nullable: true
+              enum:
+              -
+          description: 'By dimension name: the raw value for plain dimensions (time
+            buckets, country codes), a display payload for lookup-backed and enumerated
+            ones.'
+        metrics:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/ReportingMetricValue"
+          description: By metric name.
+      required:
+      - dimensions
+      - metrics
       x-typelizer: true
     ResourceTypeDefinition:
       type: object

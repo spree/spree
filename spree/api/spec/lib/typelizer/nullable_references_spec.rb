@@ -30,4 +30,31 @@ RSpec.describe Typelizer::NullableReferences do
 
     expect(calculators).to all(include(anyOf: [hash_including('$ref'), null_branch]))
   end
+
+  # `nullable` beside an untyped `anyOf` admits no null in OpenAPI 3.0.
+  describe 'a nullable union' do
+    let(:schemas) { Spree::Api::OpenAPI::SchemaHelper.admin_schemas }
+
+    def property(component, name)
+      schemas.fetch(component).fetch(:properties).then { |properties| properties[name] || properties[name.to_sym] }
+    end
+
+    it 'gives null a branch of its own' do
+      value = property('ReportingMetricValue', 'value')
+
+      expect(value).to include(anyOf: [{ type: :string }, { type: :number }, null_branch])
+      expect(value).not_to have_key(:nullable)
+    end
+
+    it 'gives null a branch of its own in the values of a keyed map' do
+      expect(property('ReportingRow', 'dimensions')[:additionalProperties]).to eq(
+        anyOf: [{ type: :string }, { '$ref' => '#/components/schemas/ReportingDimensionValue' }, null_branch]
+      )
+    end
+
+    it 'gives null a branch of its own in a union of references' do
+      expect(property('Payment', 'source')).
+        to include(anyOf: [hash_including('$ref'), hash_including('$ref'), hash_including('$ref'), null_branch])
+    end
+  end
 end

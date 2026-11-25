@@ -63,6 +63,10 @@ module Spree
           }]
         }.freeze
 
+        # What a `Record<string, …>` type may hold for its values to be documented.
+        PUBLISHED_TYPE_NAME = /\A[A-Z]\w*\z/
+        RECORD_VALUE_TYPES = %w[string number boolean].freeze
+
         def common_schemas
           {
             PaginationMeta: {
@@ -357,6 +361,7 @@ module Spree
           schemas.each_value do |s|
             s[:'x-typelizer'] = true
             strip_null_from_enums(s)
+            patch_nullable_unions(s)
           end
           patch_typescript_only_types(schemas, writer_name)
           patch_promotion_action_calculator(schemas)
@@ -388,7 +393,42 @@ module Spree
           case type.delete_suffix(' | null')
           when /\AArray<(string|number|boolean)>\z/ then { type: :array, items: { type: Regexp.last_match(1).to_sym } }
           when /\AArray</ then { type: :array, items: { type: :object } }
+          when /\ARecord<string, (.+)>\z/ then record_schema(Regexp.last_match(1).split(' | '))
           when 'any', 'unknown' then {}
+          end
+        end
+
+        # A map whose values are a published type keeps the link to it, so the
+        # reference documents what is under each key. A map of plain values
+        # stays the plain object Typelizer publishes.
+        def record_schema(value_types)
+          nullable = value_types.delete('null')
+          return unless value_types.any? { |type| type.match?(PUBLISHED_TYPE_NAME) } &&
+                        value_types.all? { |type| RECORD_VALUE_TYPES.include?(type) || type.match?(PUBLISHED_TYPE_NAME) }
+
+          values = value_types.map { |type| RECORD_VALUE_TYPES.include?(type) ? { type: type.to_sym } : ref(type) }
+          value = values.one? ? values.first : { anyOf: values }
+          value = nullable_union(value[:anyOf] || [value]) if nullable
+          { type: :object, additionalProperties: value }
+        end
+
+        # OpenAPI 3.0 reads `nullable` only beside a `type`, so null gets a
+        # branch of its own, as a nullable reference does.
+        def nullable_union(alternatives)
+          { anyOf: [*alternatives, Typelizer::NullableReferences::NULL] }
+        end
+
+        # Typelizer writes a nullable union (`string | number | null`) as
+        # `nullable` beside an untyped `anyOf`, which admits no null.
+        def patch_nullable_unions(schema)
+          case schema
+          when Hash
+            schema.each_value { |value| patch_nullable_unions(value) }
+            if schema[:anyOf] && schema[:nullable] && !schema.key?(:type)
+              documentation = schema.except(:anyOf, :nullable)
+              schema.replace(nullable_union(schema[:anyOf]).merge(documentation))
+            end
+          when Array then schema.each { |item| patch_nullable_unions(item) }
           end
         end
 

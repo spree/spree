@@ -56,11 +56,7 @@ module Spree
 
             result = reporting_query.execute
 
-            render json: ReportingResultSerializer.new(
-              result,
-              store: current_store,
-              params: serializer_params
-            ).to_h
+            render json: ReportingResultSerializer.new(result, params: serializer_params).to_h
           end
 
           # GET /api/v3/admin/reporting/schema

@@ -86,6 +86,43 @@ test.describe('reports', () => {
     await expect(page.getByRole('link', { name: `${name} renamed` })).toHaveCount(0)
   })
 
+  test('lists a group with no value as an unnamed row', async ({ page }) => {
+    const creds = await login(page)
+    // Discounts applied without a code group under a null `coupon_code`. The
+    // seeded store has none, so the report's answer is given one such group.
+    await page.route('**/api/v3/admin/reporting/query', async (route) => {
+      const response = await route.fetch().catch(() => null)
+      // The page cancels a query it no longer needs, which disposes its response.
+      const result = await response?.json().catch(() => null)
+      if (!response || !result) return route.abort().catch(() => {})
+      if (result.meta?.dimensions?.[0]?.name !== 'coupon_code') return route.fulfill({ response })
+      result.rows = [{ dimensions: { coupon_code: null }, metrics: result.totals }]
+      await route.fulfill({ response, json: result })
+    })
+
+    await page.goto(`${REPORTS_PATH(creds.store_id)}/new`)
+    await expect(page.getByRole('heading', { name: /^new report$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Codes belong to line items, so the order-level defaults make way first.
+    await page.getByRole('checkbox', { name: /^promotion discounts$/i }).check()
+    await page.getByRole('checkbox', { name: /^total sales$/i }).uncheck()
+    await page.getByRole('checkbox', { name: /^orders$/i }).uncheck()
+    await page.getByRole('combobox', { name: /group by/i }).click()
+    await page.getByRole('option', { name: /^coupon code$/i }).click()
+
+    const table = page.getByTestId('report-table')
+    await expect(table.getByRole('columnheader', { name: /^coupon code$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    // The header, the group with no code, and the total.
+    await expect(table.getByRole('row')).toHaveCount(3)
+    const group = table.getByRole('row').nth(1)
+    await expect(group.getByRole('cell').first()).toHaveText('1.')
+    await expect(group).not.toContainText(/null|undefined|unassigned/i)
+  })
+
   test('switches the report to another metric group', async ({ page }) => {
     const creds = await login(page)
     await page.goto(`${REPORTS_PATH(creds.store_id)}/new`)

@@ -20884,7 +20884,10 @@ components:
           - "$ref": "#/components/schemas/CreditCard"
           - "$ref": "#/components/schemas/StoreCredit"
           - "$ref": "#/components/schemas/PaymentSource"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
         custom_fields:

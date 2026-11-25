@@ -81,6 +81,16 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(top['metrics']['orders']['value']).to eq(1)
       end
 
+      it 'sends a plain dimension with no value as null' do
+        promotion = create(:promotion, store: store)
+        Spree::Discount.create!(order: order1, line_item: order1.line_items.first, promotion: promotion,
+                                kind: 'promotion', label: promotion.name, amount: -5, code: nil)
+
+        post :query, params: { metrics: %w[promotion_discounts], dimensions: %w[coupon_code] }, as: :json
+
+        expect(json_response['rows'].pluck('dimensions')).to eq([{ 'coupon_code' => nil }])
+      end
+
       it 'filters by channel' do
         channel = create(:channel, store: store)
         create(:completed_order_with_totals, store: store, channel: channel, completed_at: 3.days.ago)
