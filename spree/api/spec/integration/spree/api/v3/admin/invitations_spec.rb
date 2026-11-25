@@ -124,7 +124,15 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
       tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Issues a fresh token and dispatches the invitation email again.'
+      description <<~DESC
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend, but never
+        past 30 days after the invitation was created. An invitation that has
+        expired or was already accepted is refused with 422 (as is one revoked
+        while the request was in flight), so invite the person again instead;
+        a revoked invitation is not found (404). An invitation that no longer
+        passes validation answers 422 `validation_error` with its errors.
+      DESC
       admin_scope :write, :staff
 
       admin_sdk_example 'invitations/resend'
@@ -135,6 +143,42 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
       response '200', 'invitation resent' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test!
+      end
+
+      response '422', 'the invitation has expired, was already accepted or failed validation' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.update_column(:expires_at, 1.day.ago) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('processing_error')
+        end
+      end
+
+      # A second 422 would replace the documented example above, so this one
+      # is tested but left out of the reference.
+      response '422', 'the invitation failed validation', document: false do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.update_column(:email, 'not-an-email') }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('validation_error')
+        end
+      end
+
+      response '404', 'the invitation was revoked' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.destroy }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end

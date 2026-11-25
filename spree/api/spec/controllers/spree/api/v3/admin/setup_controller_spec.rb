@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       expect(response).to have_http_status(:ok)
 
       countries = json_response['countries']
-      switzerland = countries.find { |country| country['code'] == 'CH' }
+      switzerland = countries.find { |country| country['iso'] == 'CH' }
 
       expect(switzerland['currency']).to eq('CHF')
       expect(switzerland['locales']).to include('de', 'fr', 'it')
@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
     it 'offers a regional locale for a language Spree ships only by region' do
       get :countries, as: :json
 
-      china = json_response['countries'].find { |country| country['code'] == 'CN' }
+      china = json_response['countries'].find { |country| country['iso'] == 'CN' }
 
       expect(china['locales']).to eq(['zh-CN'])
     end
@@ -51,7 +51,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
     it "offers every official language, whether or not Spree translates it" do
       get :countries, as: :json
 
-      switzerland = json_response['countries'].find { |country| country['code'] == 'CH' }
+      switzerland = json_response['countries'].find { |country| country['iso'] == 'CH' }
 
       expect(switzerland['locales']).to contain_exactly('de', 'fr', 'it', 'rm')
     end

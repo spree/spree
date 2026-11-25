@@ -9,6 +9,40 @@ RSpec.describe Spree::Market, type: :model do
       market = create(:market, store: store)
       expect { market.destroy }.to change(Spree::MarketCountry, :count).by(-1)
     end
+
+    context 'when the market is deleted' do
+      before { create(:market, :default, store: store) }
+      let(:market) { create(:market, store: store) }
+
+      it 'leaves its placed orders in it' do
+        order = create(:completed_order_with_totals, store: store, market: market)
+
+        market.destroy!
+
+        expect(order.reload.market_id).to eq(market.id)
+        expect(order.market).to eq(market)
+        expect(order).to be_valid
+      end
+
+      it 'moves a draft order to a live market' do
+        order = create(:order, store: store, market: market)
+
+        market.destroy!
+        expect(order.reload.market).to be_nil
+        order.save!
+
+        expect(order.market).to be_present.and(have_attributes(deleted_at: nil))
+      end
+
+      it 'moves a cart to a live market' do
+        cart = create(:cart, store: store, market: market)
+
+        market.destroy!
+        cart.reload.save!
+
+        expect(cart.market).to be_present.and(have_attributes(deleted_at: nil))
+      end
+    end
   end
 
   describe '.for_country' do

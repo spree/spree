@@ -284,10 +284,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          status: { type: :string }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -309,6 +306,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:other_store_product) { create(:product, store: create(:store)) }
         let(:body) { { ids: [other_store_product.prefixed_id], status: 'archived' } }
+
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -342,10 +341,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:category) { create(:category) }
         let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          category_count: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -377,6 +373,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
 
         before { product.categories << category }
+
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -410,10 +408,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:collection) { create(:collection, store: store) }
         let(:body) { { ids: [product.prefixed_id], collection_ids: [collection.prefixed_id] } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          collection_count: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -445,6 +440,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:body) { { ids: [product.prefixed_id], collection_ids: [collection.prefixed_id] } }
 
         before { Spree::Collections::AddProducts.call(collections: [collection], products: [product]) }
+
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -479,10 +476,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
         let(:body) { { ids: [product.prefixed_id], channel_ids: [channel.prefixed_id] } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          channel_count: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -515,11 +509,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
         before { channel.add_products([product.id]) }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          channel_count: { type: :integer },
-          removed: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -549,10 +539,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) { { ids: [product.prefixed_id], tags: %w[summer sale] } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer },
-          tag_count: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -584,6 +571,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
         before { product.tag_list.add('summer'); product.save! }
 
+        schema '$ref' => '#/components/schemas/BulkProductResult'
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1, 'tag_count' => 1)
@@ -613,9 +602,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) { { ids: [product.prefixed_id] } }
 
-        schema type: :object, properties: {
-          product_count: { type: :integer }
-        }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)

@@ -101,7 +101,7 @@ module Spree
               }
             end
 
-            render json: { data: data }
+            render json: { data: serialize_types(data, Spree.api.admin_calculator_type_serializer) }
           end
 
           # GET /api/v3/admin/delivery_methods/fulfillment_providers

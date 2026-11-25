@@ -120,8 +120,8 @@ Accepting an invitation either signs an existing customer in, or registers a new
 
 ```typescript Store SDK
 // The token comes from the invitation email — no sign-in needed to read it
-const invitation = await client.companyInvitations.lookup(token)
-invitation.company_name
+const invitation = await client.companyInvitations.lookup(token, { expand: ['company'] })
+invitation.company?.name
 
 await client.companyInvitations.accept(token, {
   first_name: 'Dana',
@@ -132,7 +132,7 @@ await client.companyInvitations.accept(token, {
 
 ```bash cURL
 # Reading an invitation needs no sign-in — just the emailed token
-curl 'https://api.mystore.com/api/v3/store/company_invitations/TOKEN' \
+curl 'https://api.mystore.com/api/v3/store/company_invitations/TOKEN?expand=company' \
   -H 'X-Spree-API-Key: pk_xxx'
 
 curl -X POST 'https://api.mystore.com/api/v3/store/company_invitations/TOKEN/accept' \

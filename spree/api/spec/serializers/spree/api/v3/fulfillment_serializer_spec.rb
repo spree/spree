@@ -13,6 +13,41 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
     }
   end
 
+  describe '#fulfillment_type' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+    let(:shipment) { order.fulfillments.first }
+
+    it 'says pickup, with the location to collect from, for a pickup delivery' do
+      shipment.selected_delivery_rate.delivery_method.update!(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup')
+
+      result = described_class.new(shipment.reload, params: params).to_h
+
+      expect(result['fulfillment_type']).to eq('pickup')
+      expect(result['stock_location']['name']).to eq(shipment.stock_location.name)
+    end
+  end
+
+  describe '#pickup_location' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+    let(:shipment) { order.fulfillments.first }
+    let(:counter) { create(:stock_location, name: 'Brooklyn counter', pickup_enabled: true, pickup_stock_policy: 'any') }
+
+    it 'is the counter the customer chose, not the warehouse a pickup ships from' do
+      shipment.stock_location.update!(pickup_enabled: false)
+      shipment.selected_delivery_rate.delivery_method.update!(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup')
+      order.update_columns(preferred_stock_location_id: counter.id)
+
+      result = described_class.new(shipment.reload, params: params).to_h
+
+      expect(result['pickup_location']).to include('id' => counter.prefixed_id, 'name' => 'Brooklyn counter')
+      expect(result['stock_location']['id']).to eq(shipment.stock_location.prefixed_id)
+    end
+
+    it 'is null for a shipped delivery' do
+      expect(described_class.new(shipment, params: params).to_h['pickup_location']).to be_nil
+    end
+  end
+
   describe '#items' do
     let(:order) { create(:order_ready_to_ship, store: store) }
     let(:shipment) { order.fulfillments.first }

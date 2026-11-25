@@ -36,6 +36,17 @@ RSpec.describe 'Spree::Order withdrawal period' do
     it 'is still open' do
       expect(order).to be_within_withdrawal_period
     end
+
+    it 'keeps its period after the market it was sold in is deleted' do
+      eurozone = create(:market, store: store)
+      order.update_columns(market_id: eurozone.id)
+      eurozone.destroy!
+
+      order.reload
+      expect(order.market_id).to eq(eurozone.id)
+      expect(order.withdrawal_period_ends_at).to be_within(1.minute).of(delivered_at + 14.days)
+      expect(order).to be_within_withdrawal_period
+    end
   end
 
   describe 'with a split shipment' do

@@ -41,6 +41,100 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
+  describe '#fulfillment_type' do
+    let(:fulfillment) { create(:fulfillment) }
+
+    def choose(method_factory)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(method_factory), true)
+      fulfillment.reload
+    end
+
+    it 'reads the kind from the selected delivery method' do
+      { pickup_delivery_method: 'pickup', pickup_point_delivery_method: 'pickup_point',
+        digital_delivery_method: 'digital', delivery_method: 'shipping' }.each do |method_factory, kind|
+        expect(choose(method_factory).fulfillment_type).to eq(kind), method_factory.to_s
+      end
+    end
+
+    it 'follows a change of rate over the stored kind' do
+      fulfillment.update_columns(fulfillment_type: 'shipping')
+
+      expect(choose(:pickup_delivery_method).fulfillment_type).to eq('pickup')
+    end
+
+    it 'ignores a rate that was not selected' do
+      choose(:delivery_method)
+      fulfillment.add_delivery_method(create(:pickup_delivery_method))
+
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+    end
+
+    it 'keeps the stored kind over an offered rate when none is selected' do
+      choose(:pickup_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: 'shipping')
+
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+    end
+
+    it 'falls back to digital or shipping when none is selected and no kind is stored' do
+      choose(:digital_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: nil)
+      expect(fulfillment.reload.fulfillment_type).to eq('digital')
+
+      choose(:pickup_delivery_method)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.update_columns(fulfillment_type: nil)
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+    end
+
+    it 'falls back to the stored kind, then shipping, without a delivery method' do
+      fulfillment.delivery_rates.destroy_all
+      expect(fulfillment.reload.fulfillment_type).to eq('shipping')
+
+      fulfillment.update_columns(fulfillment_type: 'digital')
+      expect(fulfillment.fulfillment_type).to eq('digital')
+    end
+  end
+
+  describe '#pickup_location' do
+    let(:order) { create(:order_ready_to_ship) }
+    let(:fulfillment) { order.fulfillments.first }
+    let(:counter) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any') }
+
+    before do
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+      fulfillment.stock_location.update!(pickup_enabled: false)
+    end
+
+    it 'is the counter the customer chose, over a warehouse that ships to it' do
+      order.update_columns(preferred_stock_location_id: counter.id)
+
+      expect(fulfillment.reload.pickup_location).to eq(counter)
+    end
+
+    it 'is the origin when none was chosen and the origin is a pickup counter' do
+      fulfillment.stock_location.update!(pickup_enabled: true)
+
+      expect(fulfillment.reload.pickup_location).to eq(fulfillment.stock_location)
+    end
+
+    it 'is nil when none was chosen and the origin does not offer pickup' do
+      expect(fulfillment.reload.pickup_location).to be_nil
+    end
+
+    it 'is nil for a delivery that is not a pickup' do
+      order.update_columns(preferred_stock_location_id: counter.id)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:delivery_method), true)
+
+      expect(fulfillment.reload.pickup_location).to be_nil
+    end
+  end
+
   describe '#name' do
     it 'returns the shipment number and shipping method name' do
       expect(shipment.name).to eq('H21265865494 UPS')

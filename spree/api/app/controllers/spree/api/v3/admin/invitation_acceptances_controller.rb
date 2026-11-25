@@ -56,7 +56,7 @@ module Spree
           # leaking whether an ID exists.
           def load_invitation
             decoded_id = Spree::Invitation.decode_prefixed_id(params[:id])
-            @invitation = Spree::Invitation.pending.not_expired.find_by(id: decoded_id, token: params[:token])
+            @invitation = Spree::Invitation.pending.not_expired.find_by(id: decoded_id, token: string_param(:token).to_s)
 
             unless @invitation
               render_error(
@@ -99,7 +99,7 @@ module Spree
           end
 
           def create_new_invitee(invitation)
-            if params[:password].blank?
+            if string_param(:password).blank?
               render_error(
                 code: ERROR_CODES[:parameter_missing],
                 message: 'Password is required to create your account',
@@ -108,7 +108,14 @@ module Spree
               return nil
             end
 
-            Spree.admin_user_class.create!(signup_params(invitation))
+            # A rejected sign-up (a weak password, a mismatched confirmation, an
+            # email the store's own validations refuse) is answered with the
+            # field errors, and the invitation stays pending.
+            user = Spree.admin_user_class.new(signup_params(invitation))
+            return user if user.save
+
+            render_validation_error(user.errors)
+            nil
           end
 
           def signup_params(invitation)

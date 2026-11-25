@@ -31,7 +31,14 @@ module Spree
             # The source must belong to the customer assigned to the order.
             def create
               with_order_lock do
-                payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
+                # Managing payments is enough to pick any of the store's payment
+                # methods. A caller who reads settings stays bound by the
+                # ability's rules, as the payment methods list binds them.
+                payment_methods = current_store.payment_methods
+                if holds_permission?('read_settings')
+                  payment_methods = payment_methods.accessible_by(current_ability, :show)
+                end
+                payment_method = payment_methods.find_by_prefix_id!(params[:payment_method_id])
                 # The default is what the order still owes beside the payments
                 # already recorded, which is nothing once they cover it — a zero
                 # payment is refused the same way a zero amount is.
@@ -100,11 +107,12 @@ module Spree
 
             # Saved-source charges require an order customer — sources are scoped
             # to that customer to prevent attaching customer A's card to
-            # customer B's order. Refuse if no customer is assigned.
+            # customer B's order. Refuse if no customer is assigned. Cards are
+            # also scoped to this payment method.
             def find_source!(payment_method, source_id)
               raise ActiveRecord::RecordNotFound unless @parent.customer
 
-              @parent.customer.credit_cards.find_by_prefix_id!(source_id)
+              @parent.customer.credit_cards.where(payment_method: payment_method).find_by_prefix_id!(source_id)
             end
           end
         end

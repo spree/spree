@@ -304,6 +304,46 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         expect(result.products).to include(product_1, product_2)
       end
     end
+
+    # The index is created by the first product write, so a store nothing has
+    # been indexed for has none yet.
+    context 'when the store has no index yet' do
+      before do
+        error = Meilisearch::ApiError.new(
+          404, 'Not Found',
+          { 'code' => 'index_not_found', 'message' => "Index `#{store.code}_products` not found." }
+        )
+        allow(mock_index).to receive(:search).and_raise(error)
+      end
+
+      it 'returns an empty result without reporting an error' do
+        expect(Rails.error).not_to receive(:report)
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt')
+
+        expect(result.products).to be_empty
+        expect(result.total_count).to eq(0)
+      end
+
+      it 'does not create the index or push settings' do
+        expect(mock_index).not_to receive(:update_filterable_attributes)
+
+        provider.search_and_filter(scope: store.products)
+      end
+    end
+
+    context 'when Meilisearch API fails' do
+      before do
+        allow(mock_index).to receive(:search).and_raise(Meilisearch::ApiError.new(500, 'Internal Server Error', { 'code' => 'internal' }))
+      end
+
+      it 'reports the error and returns an empty result' do
+        expect(Rails.error).to receive(:report).with(an_instance_of(Meilisearch::ApiError), hash_including(handled: true))
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt')
+        expect(result.total_count).to eq(0)
+      end
+    end
   end
 
   describe '#filters' do
@@ -445,6 +485,38 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
       it 'returns empty FiltersResult' do
         result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.filters).to eq([])
+        expect(result.total_count).to eq(0)
+      end
+    end
+
+    context 'when the store has no index yet' do
+      let(:index_not_found) do
+        Meilisearch::ApiError.new(
+          404, 'Not Found',
+          { 'code' => 'index_not_found', 'message' => "Inside `.queries[0]`: Index `#{store.code}_products` not found." }
+        )
+      end
+      let(:option_value) { create(:option_value) }
+
+      before do
+        allow(mock_index).to receive(:search).and_raise(index_not_found)
+        allow(mock_client).to receive(:multi_search).and_raise(index_not_found)
+      end
+
+      it 'returns an empty FiltersResult without reporting an error' do
+        expect(Rails.error).not_to receive(:report)
+
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.filters).to eq([])
+        expect(result.total_count).to eq(0)
+        expect(result.sort_options).to be_present
+      end
+
+      it 'returns an empty FiltersResult for an option filter without reporting an error' do
+        expect(Rails.error).not_to receive(:report)
+
+        result = provider.filters(scope: store.products, filters: { 'with_option_value_ids' => [option_value.prefixed_id] })
         expect(result.filters).to eq([])
         expect(result.total_count).to eq(0)
       end

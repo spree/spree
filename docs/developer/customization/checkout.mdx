@@ -176,6 +176,12 @@ Spree.hooks.register('carts.merge.after_items_moved') do |merge|
 end
 ```
 
+The merge is refused with `completion_in_progress`, and both carts are left as they were,
+while either cart is locked for completion or the guest cart has a payment session that
+is not `canceled` or `expired`. A gateway can take the money while its session is still
+`pending` in Spree, and deleting the guest cart would take that session with it, leaving
+the gateway's webhook nothing to record the payment or place the order against.
+
 ## Related
 
 - [Carts](/developer/core-concepts/carts) — reading requirements and completing a cart

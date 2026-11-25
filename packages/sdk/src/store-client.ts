@@ -1495,15 +1495,16 @@ export class StoreClient {
    * the token is the credential, and acceptance may register the account).
    */
   readonly companyInvitations = {
+    /** Pass `expand: ['company']` to get the company the invitation is to. */
     lookup: (
       token: string,
+      params?: { expand?: string[] },
       options?: RequestOptions,
-    ): Promise<CompanyInvitation & { company_name: string; store_name: string }> =>
-      this.request<CompanyInvitation & { company_name: string; store_name: string }>(
-        'GET',
-        `/company_invitations/${token}`,
-        options,
-      ),
+    ): Promise<CompanyInvitation> =>
+      this.request<CompanyInvitation>('GET', `/company_invitations/${token}`, {
+        ...options,
+        params: getParams(params),
+      }),
 
     /**
      * Accepts by token: pass a registration payload for a new account (it is

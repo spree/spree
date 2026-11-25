@@ -19,6 +19,7 @@ module Spree
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          step :lock_invitation
           step :grant_role
           step :mark_accepted
           run_hooks :after_accept
@@ -34,6 +35,20 @@ module Spree
         failure(invitation, :invitation_already_accepted) if invitation.accepted?
         failure(invitation, :invitation_expired) if invitation.expired?
         failure(invitation, :invitation_invitee_missing) if invitation.invitee.blank?
+      end
+
+      # Re-read under a row lock: a removal from staff revokes the invitation
+      # in its own transaction, and an acceptance racing it must not grant the
+      # role back once that has committed.
+      def lock_invitation
+        current = Spree::Invitation.lock.find_by(id: invitation.id)
+        failure(invitation, :invitation_not_acceptable) unless still_acceptable?(current)
+      end
+
+      # A resend that committed after the caller loaded the invitation rotated
+      # its token, so the link the caller presented no longer works.
+      def still_acceptable?(current)
+        current.present? && !current.accepted? && current.token == invitation.token
       end
 
       def grant_role

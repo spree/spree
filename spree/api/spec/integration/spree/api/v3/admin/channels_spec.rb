@@ -162,7 +162,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         let(:product) { create(:product) }
         let(:body) { { product_ids: [product.prefixed_id] } }
 
-        schema type: :object, properties: { product_count: { type: :integer } }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -197,7 +197,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
 
         before { channel.add_products([product.id]) }
 
-        schema type: :object, properties: { product_count: { type: :integer } }
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)

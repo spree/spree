@@ -9,6 +9,14 @@ module Spree
         class CountrySerializer < V3::CountrySerializer
           _attributes.delete(:name)
 
+          typelize currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode',
+                                       comment: "The country's own currency, which a store set up there starts with"],
+                   locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode',
+                                      comment: "The country's official languages, such as `de`, `fr`, `it` and `rm` for Switzerland"]
+
+          attribute :currency, &:default_currency
+          attribute :locales, &:offerable_locales
+
           many :states,
                resource: proc { Spree.api.admin_state_serializer },
                if: proc { params[:expand]&.include?('states') }

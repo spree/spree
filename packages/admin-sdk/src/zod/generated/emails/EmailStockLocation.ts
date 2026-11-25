@@ -15,6 +15,7 @@ export const EmailStockLocationSchema = z.object({
   state_abbr: z.string().nullable(),
   pickup_ready_in_minutes: z.number().nullable(),
   pickup_instructions: z.string().nullable(),
+  address2: z.string().nullable(),
 });
 
 export type EmailStockLocation = z.infer<typeof EmailStockLocationSchema>;

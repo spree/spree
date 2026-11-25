@@ -94,6 +94,8 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '200', 'integration types found' do
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('IntegrationTypeDefinition'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           entry = data['data'].find { |row| row['type'] == 'carrier' }
@@ -152,6 +154,8 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
         let(:id) do
           SpreeCarrier::Integration.create!(store: store, preferences: { api_key: 'sk-secret' }).prefixed_id
         end
+
+        schema '$ref' => '#/components/schemas/IntegrationConnectionResult'
 
         run_test! do |response|
           data = JSON.parse(response.body)

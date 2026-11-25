@@ -985,6 +985,7 @@ en:
     gift_card_no_amount_remaining: The Gift Card has no amount remaining.
     gift_card_not_applied: The Gift Card could not be applied.
     gift_card_not_found: The Gift Card was not found.
+    gift_card_paid_by_previous_customer: The previous customer's gift card has already been taken on this order. Refund or void that payment before changing the customer.
     gift_card_removed: The Gift Card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     guest_checkout_not_allowed: You must be signed in to complete checkout.
@@ -1027,6 +1028,7 @@ en:
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
+    invitation_revoked: This invitation was revoked. Invite them again to send a new one.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitation_seller_rejected: This seller was rejected, so nobody can join its team.
     iso: ISO Alpha-2
@@ -1801,6 +1803,7 @@ en:
       eligible: Eligible
     store_credit_name: Store Credit
     store_credit_not_applied: No Store Credit could be applied to this order.
+    store_credit_paid_by_previous_customer: Store credit from the previous customer has already been taken on this order. Refund or void that payment before changing the customer.
     store_credit_payment_method:
       currency_mismatch: Store credit currency does not match order currency
       insufficient_authorized_amount: Unable to capture more than authorized amount

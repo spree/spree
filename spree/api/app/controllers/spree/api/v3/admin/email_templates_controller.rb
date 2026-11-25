@@ -15,8 +15,8 @@ module Spree
           def index
             authorize! :read, Spree::EmailTemplate
 
-            entries = Spree::EmailTemplates::Entry.all(current_store, locale: language)
-            render json: { data: serialize_collection(entries), meta: {} }
+            entries = paginate_whole(Spree::EmailTemplates::Entry.all(current_store, locale: language))
+            render json: { data: serialize_collection(entries), meta: collection_meta(entries) }
           end
 
           # GET /api/v3/admin/email_templates/:id

@@ -43,6 +43,12 @@ RSpec.describe Spree::Api::V3::Admin::InvitationAcceptancesController, type: :co
         get :lookup, params: { id: invitation.prefixed_id, token: 'bogus' }
         expect(response).to have_http_status(:not_found)
       end
+
+      # A parameter sent as `name[]=x` or `name[k]=x` arrives as an Array or a Hash, not a string.
+      it 'returns 404 for a token sent as a hash' do
+        get :lookup, params: { id: invitation.prefixed_id, token: { a: 'x' } }
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context 'when the invitation has expired' do
@@ -109,6 +115,37 @@ RSpec.describe Spree::Api::V3::Admin::InvitationAcceptancesController, type: :co
              params: { id: invitation.prefixed_id, token: invitation.token, first_name: 'Pat' }
 
         expect(response).to have_http_status(:unprocessable_content)
+        expect(invitation.reload.status).to eq('pending')
+      end
+
+      it 'answers a rejected sign-up with its field errors, leaving the invitation pending' do
+        allow(Rails.error).to receive(:report)
+
+        expect {
+          post :accept, params: {
+            id: invitation.prefixed_id,
+            token: invitation.token,
+            password: 'password123',
+            password_confirmation: 'something-else'
+          }
+        }.not_to change(Spree.admin_user_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']).to have_key('password_confirmation')
+        expect(invitation.reload.status).to eq('pending')
+        # The invitee is told what to fix; there is nothing for the error tracker.
+        expect(Rails.error).not_to have_received(:report)
+      end
+
+      it 'returns a validation error when password is sent as an array' do
+        expect {
+          post :accept,
+               params: { id: invitation.prefixed_id, token: invitation.token, password: ['password123'] }
+        }.not_to change(Spree.admin_user_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('parameter_missing')
         expect(invitation.reload.status).to eq('pending')
       end
     end

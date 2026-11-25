@@ -8,6 +8,7 @@ module Spree
           # The member as a customer, so a list can show their name, not only
           # the email.
           one :customer, resource: proc { Spree.api.admin_customer_serializer }, if: proc { expand?('customer') }
+          one :company, resource: proc { Spree.api.admin_company_serializer }, if: proc { expand?('company') }
         end
       end
     end

@@ -758,10 +758,62 @@ RSpec.describe SpreeStripe::Gateway do
 
     context 'when the payment has no payment intent' do
       let(:payment_intent_id) { nil }
+      let!(:credit_card) { create(:credit_card, gateway_payment_profile_id: nil, payment_method: gateway) }
 
       it 'returns failure' do
         expect(subject.success?).to be(false)
         expect(subject.message).to eq('Payment is missing a payment intent')
+      end
+    end
+
+    context 'when a saved card has no payment intent' do
+      let(:payment_intent_id) { nil }
+      let(:new_intent_id) { 'pi_off_session' }
+      let(:unconfirmed_intent) do
+        Stripe::StripeObject.construct_from(id: new_intent_id, status: 'requires_confirmation', capture_method: 'automatic')
+      end
+      let(:confirmed_intent) do
+        Stripe::StripeObject.construct_from(id: new_intent_id, status: 'succeeded', capture_method: 'automatic')
+      end
+
+      before do
+        allow(gateway).to receive(:create_payment_intent).with(
+          anything,
+          payment.owner,
+          payment_method_id: payment_method_id,
+          customer_profile_id: credit_card.gateway_customer_profile_id
+        ).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: new_intent_id))
+        allow(gateway).to receive(:retrieve_payment_intent).with(new_intent_id).and_return(unconfirmed_intent)
+      end
+
+      it 'stores the unconfirmed intent and confirms it off-session' do
+        expect(gateway).to receive(:confirm_payment_intent).with(
+          new_intent_id, payment_method_id: payment_method_id, off_session: true
+        ).and_return(confirmed_intent)
+
+        expect(subject.success?).to be(true)
+        expect(payment.reload.response_code).to eq(new_intent_id)
+      end
+
+      it 'confirms the same intent after a decline' do
+        attempts = 0
+        allow(gateway).to receive(:confirm_payment_intent).with(
+          new_intent_id, payment_method_id: payment_method_id, off_session: true
+        ) do
+          attempts += 1
+          raise Spree::Core::GatewayError, 'Your card has insufficient funds.' if attempts == 1
+
+          confirmed_intent
+        end
+
+        expect(subject.success?).to be(false)
+        expect(payment.reload.response_code).to eq(new_intent_id)
+
+        retry_result = gateway.purchase(amount_in_cents, credit_card, gateway_options)
+
+        expect(retry_result.success?).to be(true)
+        expect(gateway).to have_received(:create_payment_intent).once
+        expect(attempts).to eq(2)
       end
     end
   end

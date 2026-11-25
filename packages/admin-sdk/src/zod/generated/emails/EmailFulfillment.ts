@@ -28,6 +28,7 @@ export const EmailFulfillmentSchema = z.object({
   deliveries: z.array(EmailDeliverySchema),
   delivery_method: EmailDeliveryMethodSchema,
   stock_location: EmailStockLocationSchema,
+  pickup_location: EmailStockLocationSchema.nullable(),
   delivery_rates: z.array(EmailDeliveryRateSchema),
   delivery_method_name: z.string().nullable(),
   manifest_items: z.array(EmailParcelItemSchema),

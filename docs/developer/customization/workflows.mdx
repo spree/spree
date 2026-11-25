@@ -305,6 +305,8 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `gift_cards.redeem` | `after_redeem` | lifecycle | After the status is written (in transaction) |
 | `gift_cards.cancel` | `validate` | validate | Before a card is voided |
 | `gift_cards.cancel` | `after_cancel` | lifecycle | After the card is voided (in transaction) |
+| `gift_cards.destroy` | `validate` | validate | Before a card is deleted |
+| `gift_cards.destroy` | `after_destroy` | lifecycle | After the card is taken off open carts and draft orders and deleted (in transaction) |
 | `price_lists.create` | `validate` | validate | After the list is built, before it is saved |
 | `price_lists.create` | `after_create` | lifecycle | After the list and its product membership exist (in transaction) |
 | `price_lists.update` | `validate` | validate | With the pending attributes assigned, before anything is written |

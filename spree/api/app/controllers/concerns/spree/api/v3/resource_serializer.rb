@@ -20,6 +20,11 @@ module Spree
           end
         end
 
+        # Serialize the entries of a `types` list
+        def serialize_types(entries, serializer = Spree.api.admin_resource_type_definition_serializer)
+          entries.map { |entry| serializer.new(entry).to_h }
+        end
+
         # Params passed to serializers
         def serializer_params
           {

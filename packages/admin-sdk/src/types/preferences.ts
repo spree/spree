@@ -8,6 +8,9 @@ import type PriceRule from './generated/PriceRule'
 import type PromotionRule from './generated/PromotionRule'
 import type SellerRequirement from './generated/SellerRequirement'
 
+/** The JSON Schema of a type's `preferences`, as a `types` endpoint lists it. */
+export type { PreferenceSchema } from '@spree/sdk-core'
+
 /** `Resource` with its `preferences` typed by its `type`, one member per entry of `Map`. */
 type Narrowed<Resource, Map> = {
   [Type in keyof Map]: Omit<Resource, 'type' | 'preferences'> & {

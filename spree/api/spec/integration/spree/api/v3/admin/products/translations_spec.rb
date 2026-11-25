@@ -31,6 +31,8 @@ RSpec.describe 'Admin Product Translations API', type: :request, swagger_doc: 'a
 
         before { Mobility.with_locale(:de) { product.update!(name: 'Espressomaschine') } }
 
+        schema type: :object, properties: { data: { '$ref' => '#/components/schemas/ResourceTranslations' } }, required: %w[data]
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data['resource_type']).to eq('product')

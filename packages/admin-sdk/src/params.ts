@@ -2,13 +2,7 @@
 // Based on the Admin API OpenAPI specification
 
 import type { PaginationMeta, PreferenceSchema } from '@spree/sdk-core'
-import type {
-  CountryCode,
-  CurrencyCode,
-  LocaleCode,
-  SellerRequirementStatus,
-  StoreCredit,
-} from './types'
+import type { Country, SellerRequirementStatus, StoreCredit } from './types'
 import type {
   CollectionRuleParams,
   CommissionRuleDraftParams,
@@ -160,25 +154,9 @@ export type VariantPrice = PriceParams
 /** @deprecated Renamed to `StockLevelParams`. */
 export type VariantStockLevel = StockLevelParams
 
-/** Response of the public first-run setup availability check. */
-export interface SetupStatus {
-  /** True only while the installation has no admin user. */
-  setup_required: boolean
-}
-
-/** A country the store can be set up in, with everything derived from it. */
-export interface SetupCountry {
-  /** ISO 3166-1 alpha-2 code, e.g. `CH`. */
-  code: CountryCode
-  /** ISO 4217 currency the store gets when this country is chosen, e.g. `CHF`. */
-  currency: CurrencyCode | null
-  /** Official languages, e.g. `['de', 'fr', 'it', 'rm']`. */
-  locales: LocaleCode[]
-}
-
 /** Response of the public first-run setup country list. */
 export interface SetupCountries {
-  countries: SetupCountry[]
+  countries: Country[]
 }
 
 /** @deprecated Renamed to `StockLevelBulkUpsertRowParams`. */
@@ -278,20 +256,6 @@ export interface CommissionRuleType {
   association_fields: string[]
 }
 
-export interface ResourceTypeDefinition {
-  type: string
-  label: string
-  description: string | null
-  /** JSON Schema of the type's `preferences`. */
-  schema: PreferenceSchema
-  /**
-   * Present (true) only on kinds a better mechanism has replaced: existing
-   * records keep working and rendering, but pickers must stop offering the
-   * kind to new setups.
-   */
-  superseded?: boolean
-}
-
 // ---------------------------------------------------------------------------
 // Price Lists
 // ---------------------------------------------------------------------------
@@ -305,47 +269,6 @@ export type PriceListRuleDraft = PriceListRuleParams
 
 /** @deprecated Renamed to `PriceBulkUpsertRowParams`. */
 export type PriceBulkUpsertRow = PriceBulkUpsertRowParams
-
-/**
- * One entry returned by `GET /payment_methods/types` — the registered list
- * of available STI subclasses, with their per-provider preference schemas
- * for the universal configuration form and their gallery listing.
- */
-export interface PaymentMethodType extends ResourceTypeDefinition {
-  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI. Render with a fallback. */
-  logo_url: string | null
-  /** Absolute URL of the provider's setup guide. */
-  docs_url: string | null
-  /** Backed by an external payment provider rather than handled by the store itself. */
-  third_party: boolean
-  /** The store already has a payment method of this type; leave it out of a create picker. */
-  installed: boolean
-}
-
-/**
- * One entry returned by `GET /integrations/types` — every registered
- * integration with its gallery metadata and configuration schema. Pure
- * registry discovery: read live connection state from `integrations.list()`.
- */
-export interface IntegrationTypeDefinition {
-  /** Wire shorthand (`Spree::Integration.api_type`), not the Ruby class name. */
-  type: string
-  name: string
-  /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
-  group: string | null
-  /**
-   * One-line description in the request locale. A fallback: the dashboard
-   * prefers its own translation of `type` and reads this only when it has
-   * none, which is the case for provider gems shipping no dashboard locales.
-   */
-  description: string | null
-  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
-  logo_url: string | null
-  /** Absolute URL of the integration's setup guide. */
-  docs_url: string | null
-  /** JSON Schema of the type's `preferences`. */
-  schema: PreferenceSchema
-}
 
 /**
  * API shorthand for an export type (`Spree::Export.api_type`), not the Ruby

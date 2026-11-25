@@ -356,11 +356,12 @@ function AddPaymentDialog({
   const sourceRequired = (selectedMethod?.source_required ?? false) && !isStoreCredit
 
   const { data: cardsData } = useQuery({
-    queryKey: ['customer-credit-cards', customerId],
+    queryKey: ['customer-credit-cards', customerId, paymentMethodId],
     queryFn: () =>
-      customerId
-        ? adminClient.customers.creditCards.list(customerId, { limit: 50 })
-        : Promise.resolve(null),
+      adminClient.customers.creditCards.list(customerId as string, {
+        limit: 50,
+        q: { payment_method_id_eq: paymentMethodId },
+      }),
     enabled: open && Boolean(customerId) && sourceRequired,
     staleTime: 30_000,
   })

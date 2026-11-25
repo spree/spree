@@ -22,6 +22,8 @@ module Spree
         attribute :email do |membership|
           membership.customer.email
         end
+
+        one :company, resource: proc { Spree.api.company_serializer }, if: proc { expand?('company') }
       end
     end
   end

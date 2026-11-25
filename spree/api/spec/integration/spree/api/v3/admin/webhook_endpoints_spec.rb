@@ -256,6 +256,8 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
           allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
         end
 
+        schema '$ref' => '#/components/schemas/WebhookDelivery'
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['event_name']).to eq('webhook.test')

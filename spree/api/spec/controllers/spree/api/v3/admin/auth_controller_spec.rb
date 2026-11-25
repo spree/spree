@@ -115,6 +115,20 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(response).to have_http_status(:bad_request)
         expect(json_response['error']['code']).to eq('invalid_provider')
       end
+
+      it 'returns 400 invalid_provider for a provider sent as an array' do
+        post :create, params: { provider: ['email'], email: existing_admin.email, password: 'password123' }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
+
+      it 'returns 400 invalid_provider for a provider sent as an empty array' do
+        post :create, params: { provider: [], email: existing_admin.email, password: 'password123' }, as: :json
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
     end
 
     context 'with a non-admin user' do
@@ -578,6 +592,19 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
 
       it 'rejects a missing state' do
         get :callback, params: { provider: 'entra', code: 'auth-code' }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      # `state[]=x` and `state[k]=x` arrive as an Array and a Hash, not a string.
+      it 'rejects a state sent as an array' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: [valid_state] }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'rejects a state sent as a hash' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: { token: valid_state } }
 
         expect(response).to redirect_to(/error=invalid_oauth_state/)
       end

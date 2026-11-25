@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import type CompanyMembership from '../../types/generated/CompanyMembership';
+import { CompanySchema } from './Company';
 import { CustomerSchema } from './Customer';
 
 export const CompanyMembershipSchema = z.object({
@@ -8,6 +9,7 @@ export const CompanyMembershipSchema = z.object({
   company_id: z.string(),
   customer_id: z.string(),
   email: z.string().nullable(),
+  get company() { return CompanySchema.optional(); },
   created_at: z.string(),
   updated_at: z.string(),
   get customer() { return CustomerSchema.optional(); },
@@ -16,6 +18,7 @@ export const CompanyMembershipSchema = z.object({
   company_id: z.ZodType<CompanyMembership['company_id']>;
   customer_id: z.ZodType<CompanyMembership['customer_id']>;
   email: z.ZodType<CompanyMembership['email']>;
+  company: z.ZodOptional<z.ZodType<Exclude<CompanyMembership['company'], undefined>>>;
   created_at: z.ZodType<CompanyMembership['created_at']>;
   updated_at: z.ZodType<CompanyMembership['updated_at']>;
   customer: z.ZodOptional<z.ZodType<Exclude<CompanyMembership['customer'], undefined>>>;

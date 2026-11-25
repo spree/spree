@@ -40,7 +40,7 @@ module Spree
               scope = scope.where('LOWER(name) LIKE ? ESCAPE ?', "%#{escaped}%", '\\')
             end
 
-            render json: { data: scope.pluck(:name).map { |name| { name: name } } }
+            render json: { data: scope.pluck(:name).map { |name| Spree.api.admin_tag_serializer.new({ name: name }).to_h } }
           end
 
           private

@@ -105,6 +105,32 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['status']).to be_present
     end
 
+    context 'as a staffer with the Order manager permissions' do
+      let(:staffer) do
+        permissions = %w[write_orders write_payments write_fulfillments write_refunds write_gift_cards
+                         write_store_credits read_customers read_products]
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user, role: create(:role, name: 'order manager', permissions: permissions, resource: store))
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'creates a payment' do
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_method_id: payment_method.prefixed_id,
+          amount: order.total
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.payments.pluck(:payment_method_id)).to eq([payment_method.id])
+      end
+    end
+
     it 'returns 404 for unknown payment_method prefixed id' do
       post :create, params: {
         order_id: order.prefixed_id,
@@ -154,7 +180,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       let(:credit_card_method) { create(:credit_card_payment_method) }
       let(:saved_card) { create(:credit_card, customer: customer, payment_method: credit_card_method) }
 
-      it 'attaches the saved card as the payment source' do
+      it 'attaches the saved card' do
         post :create, params: {
           order_id: order.prefixed_id,
           payment_method_id: credit_card_method.prefixed_id,
@@ -177,6 +203,23 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
             order_id: order.prefixed_id,
             payment_method_id: credit_card_method.prefixed_id,
             source_id: other_card.prefixed_id,
+            amount: order.total
+          }, as: :json
+
+          expect(response).to have_http_status(:not_found)
+          expect(order.reload.payments.count).to eq(0)
+        end
+      end
+
+      context 'when the card was saved through another payment method' do
+        let(:other_method) { create(:credit_card_payment_method) }
+        let(:other_method_card) { create(:credit_card, customer: customer, payment_method: other_method) }
+
+        it 'returns 404 because this gateway cannot charge it' do
+          post :create, params: {
+            order_id: order.prefixed_id,
+            payment_method_id: credit_card_method.prefixed_id,
+            source_id: other_method_card.prefixed_id,
             amount: order.total
           }, as: :json
 

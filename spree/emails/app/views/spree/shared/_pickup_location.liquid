@@ -1,0 +1,23 @@
+{%- comment -%}
+  One location a buyer collects from: its name, address and the merchant's
+  collection instructions, as column content. Arguments: location.
+{%- endcomment -%}
+{%- assign locality = location.city | default: '' -%}
+{%- if location.state_text != blank -%}
+  {%- if locality != blank -%}{%- assign locality = locality | append: ', ' -%}{%- endif -%}
+  {%- assign locality = locality | append: location.state_text -%}
+{%- endif -%}
+{%- if location.zipcode != blank -%}
+  {%- if locality != blank -%}{%- assign locality = locality | append: ' ' -%}{%- endif -%}
+  {%- assign locality = locality | append: location.zipcode -%}
+{%- endif -%}
+<mj-text mj-class="body" padding="0">
+  <strong>{{ location.name }}</strong>
+  {%- if location.address1 != blank -%}<br />{{ location.address1 }}{%- endif -%}
+  {%- if location.address2 != blank -%}<br />{{ location.address2 }}{%- endif -%}
+  {%- if locality != blank -%}<br />{{ locality }}{%- endif -%}
+  {%- if location.country_name != blank -%}<br />{{ location.country_name }}{%- endif -%}
+</mj-text>
+{%- if location.pickup_instructions != blank -%}
+  <mj-text mj-class="note" align="left" padding="16px 0 0">{{ location.pickup_instructions }}</mj-text>
+{%- endif -%}
