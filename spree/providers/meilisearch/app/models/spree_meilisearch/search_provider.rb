@@ -267,6 +267,18 @@ module SpreeMeilisearch
           retry
         end
 
+        # The index is created by the first product write, so a store nothing
+        # has been indexed for yet has none. It holds no products, which is
+        # exactly what an empty result says — not an error worth reporting on
+        # every listing of every new store.
+        if e.code == 'index_not_found'
+          Rails.logger.info do
+            "[Meilisearch] Index #{index_name} does not exist yet; returning no results. " \
+              'It is created on the first product write or by `rake spree:search:reindex`.'
+          end
+          return nil
+        end
+
         Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
         Rails.error.report(e, handled: true, context: { index: index_name, query: query })
         return nil
