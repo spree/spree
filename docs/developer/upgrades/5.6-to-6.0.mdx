@@ -664,7 +664,8 @@ Price history entries (a product's `prior_price`) and OAuth access tokens (the
 people connected to an OAuth application) had no prefix of their own, so the
 API reported their IDs as a bare `_` followed by the encoded part. They now
 use `pricehist_` and `oauthtok_`. The encoded part doesn't change. If you
-stored one of these IDs, add the prefix in front of it.
+stored one of these IDs, replace its leading `_` with the prefix:
+`_AXs1igzRC6` becomes `pricehist_AXs1igzRC6`.
 
 A model without a prefix now has no prefixed ID at all: `prefixed_id` and
 `prefixed_id_for` return `nil` instead of a string starting with `_`. They also
