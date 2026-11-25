@@ -108,7 +108,14 @@ module Spree
               return nil
             end
 
-            Spree.admin_user_class.create!(signup_params(invitation))
+            # A rejected sign-up (a weak password, a mismatched confirmation, an
+            # email the store's own validations refuse) is answered with the
+            # field errors, and the invitation stays pending.
+            user = Spree.admin_user_class.new(signup_params(invitation))
+            return user if user.save
+
+            render_validation_error(user.errors)
+            nil
           end
 
           def signup_params(invitation)
