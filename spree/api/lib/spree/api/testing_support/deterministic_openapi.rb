@@ -169,6 +169,10 @@ if ENV['OPENAPI'] == 'true'
 
   RSpec.configure do |config|
     config.before(:suite) do
+      # The steps below rewrite every committed row and reset id sequences, so
+      # they must never reach a development or production database.
+      raise "OpenAPI generation runs only in the test environment, not #{Rails.env}" unless Rails.env.test?
+
       Spree::OpenAPIDeterminism.freeze_clock
       Spree::OpenAPIDeterminism.restamp_committed_records
     end
