@@ -4,7 +4,7 @@ sidebarTitle: Tools
 description: "Every tool the MCP server offers, what it is for and which permission it needs."
 ---
 
-100 tools ship with the server: 17 general ones, and one for each action the Admin API offers — cancel an order, capture a payment, approve a seller. An assistant is only ever shown the ones you approved, so a connection for products alone sees a fraction of them.
+101 tools ship with the server: 17 general ones, and one for each action the Admin API offers — cancel an order, capture a payment, approve a seller. An assistant is only ever shown the ones you approved, so a connection for products alone sees a fraction of them.
 
 The catalog is not a mirror of the API's 500-odd operations. Plain reads and writes of a record go through the generic tools under [creating, changing and deleting records](#creating-changing-and-deleting-records), and each [action](#actions) is a tool of its own, built from the Admin API operation it runs.
 
@@ -77,7 +77,7 @@ quantity, sets a negotiated unit price or adds a discount on a draft order.
 
 ## Actions
 
-Every Admin API action that is not a plain create, update or delete is a tool, named after the record and the action. Its description, its arguments and the permission it needs are the operation's own, so the [Admin API reference](/api-reference/admin) is the full description of each one. Every action is a write, and asks your client to confirm before it runs.
+Every Admin API action that is not a plain create, update or delete is a tool, named after the record and the action. Its description, its arguments and the permission it needs are the operation's own, so the [Admin API reference](/api-reference/admin) is the full description of each one. Every action is a write, and asks your client to confirm before it runs, except `tax_providers_tax_codes`, which only reads.
 
 ### Catalogs
 
@@ -248,6 +248,12 @@ Every Admin API action that is not a plain create, update or delete is a tool, n
 | `stock_transfers_mark_in_transit` | `write_stock` |
 | `stock_transfers_mark_ready` | `write_stock` |
 | `stock_transfers_receive` | `write_stock` |
+
+### Tax Providers
+
+| Tool | Permission |
+| --- | --- |
+| `tax_providers_tax_codes` | `read_settings` |
 
 <Note>
   Tools named in Spree 6.0.0 that no longer appear here — `fulfillments_create`, `refunds_create`, `variants_create` and the like, which are now `create_resource` calls — still answer through 6.0.x, as do the 6.0.0 argument names. A call that uses one says what to send instead. `deliveries_update_tracking` no longer answers: in 6.0.0 it marked the delivery delivered and dropped its tracking fields.
