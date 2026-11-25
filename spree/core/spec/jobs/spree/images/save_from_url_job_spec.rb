@@ -25,7 +25,8 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
   context "when performing the job" do
     let(:image) { variant.images.last }
-    let(:response_body) { "imagecontent" }
+    # Real image bytes: the media reads what a file is from its bytes.
+    let(:response_body) { File.binread(Spree::Core::Engine.root.join('spec/fixtures/files/icon_256x256.png')) }
     let(:response) { instance_double(Net::HTTPResponse, code: '200', body: response_body) }
 
     before do

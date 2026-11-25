@@ -124,6 +124,19 @@ module Spree
               if: :video?
     validates :poster, content_type: Rails.application.config.active_storage.web_image_content_types,
               if: -> { poster.attached? }
+    # The checks above trust the type the uploader declared — or, failing
+    # that, the file name — so a file of any bytes named `photo.webp` passes
+    # them. Every image is resized into its preprocessed variants right after
+    # upload, and bytes that are not an image fail there instead, in a job,
+    # once per variant. Reading the leading bytes refuses such a file here.
+    # Only a newly attached file is read: an unchanged one was checked when it
+    # arrived, and reading it again would cost a storage request per save.
+    validates_with Spree::AttachmentContentTypeValidator,
+                   attributes: [:attachment], in: Rails.application.config.active_storage.web_image_content_types,
+                   if: -> { image? && attachment_changes.key?('attachment') }
+    validates_with Spree::AttachmentContentTypeValidator,
+                   attributes: [:poster], in: Rails.application.config.active_storage.web_image_content_types,
+                   if: -> { attachment_changes.key?('poster') }
     validates :external_video_url, presence: true, if: :external_video?
     validate :external_video_url_is_supported, if: -> { external_video? && external_video_url.present? }
     validate :poster_signed_id_is_resolvable, if: -> { @poster_signed_id.present? }
