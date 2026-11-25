@@ -7,9 +7,7 @@ RSpec.describe Spree::Api::V3::ErrorHandler, type: :controller do
   # to the error tracker can be checked one failure at a time.
   controller(Spree::Api::V3::Store::BaseController) do
     def record_invalid
-      probe = ErrorHandlerProbe.new
-      probe.validate
-      raise ActiveRecord::RecordInvalid, probe
+      Spree::TaxCategory.new.save!
     end
 
     def parameter_missing
@@ -24,14 +22,6 @@ RSpec.describe Spree::Api::V3::ErrorHandler, type: :controller do
   include_context 'API v3 Store'
 
   before do
-    stub_const('ErrorHandlerProbe', Class.new do
-      include ActiveModel::Model
-
-      attr_accessor :name
-
-      validates :name, presence: true
-    end)
-
     routes.draw do
       post 'record_invalid' => 'spree/api/v3/store/base#record_invalid'
       post 'parameter_missing' => 'spree/api/v3/store/base#parameter_missing'
