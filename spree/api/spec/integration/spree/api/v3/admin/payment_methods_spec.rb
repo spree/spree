@@ -103,29 +103,6 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       response '200', 'provider types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema type: :object,
-               properties: {
-                 data: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       type: { type: :string },
-                       label: { type: :string },
-                       description: { type: :string, nullable: true },
-                       schema: { type: :object, description: "JSON Schema of the provider's preferences." },
-                       logo_url: { type: :string, nullable: true },
-                       docs_url: { type: :string, nullable: true },
-                       third_party: { type: :boolean },
-                       installed_count: { type: :integer, description: 'How many payment methods of this provider the store has.' },
-                       installed: { type: :boolean, deprecated: true, description: 'Use installed_count. Removed in 6.2.' }
-                     },
-                     required: %w[type label schema installed_count]
-                   }
-                 }
-               },
-               required: %w[data]
-
         before do
           # Install StoreCredit in the store so the entry is marked installed.
           # (Check is also installed via the let!(:payment_method), but other
@@ -346,6 +323,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
 
       response '200', 'types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTypeDefinition'))
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
