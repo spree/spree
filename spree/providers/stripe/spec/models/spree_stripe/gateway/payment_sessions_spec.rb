@@ -162,7 +162,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           allow(gateway).to receive(:retrieve_payment_intent).with('pi_earlier_123').
             and_return(
               Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_payment_method'),
-              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_capture', payment_method: { type: 'card' })
+              Stripe::StripeObject.construct_from(id: 'pi_earlier_123', status: 'requires_capture', capture_method: 'manual', payment_method: { type: 'card' })
             )
         end
 

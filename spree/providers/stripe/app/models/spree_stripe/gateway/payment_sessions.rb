@@ -335,8 +335,10 @@ module SpreeStripe
       # A card can sit in `processing` while its charge is in flight.
       # `payment_intent_accepted?` does not record that yet, and canceling
       # the intent can drop or refund the charge.
+      # An intent in +requires_capture+ holds an authorization whatever its
+      # capture method says, and canceling it releases the buyer's money.
       def payment_intent_in_progress?(payment_intent)
-        payment_intent.status == 'processing' || payment_intent_accepted?(payment_intent)
+        payment_intent.status.in?(%w[processing requires_capture]) || payment_intent_accepted?(payment_intent)
       end
 
       # nil when the account the keys now reach has no such intent.
