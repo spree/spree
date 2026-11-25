@@ -5,11 +5,14 @@ module Typelizer
   # reference becomes one branch of an `anyOf` whose other branch accepts
   # only null, the form OpenAPI 3.0.3 itself describes for this case.
   module NullableReferences
+    # The branch of an `anyOf` that accepts null and nothing else.
+    NULL = { type: :object, nullable: true, enum: [nil] }.freeze
+
     # @param reference [Hash] a `$ref`, or an `allOf` of several
     # @param metadata [Hash] description and deprecation of the property
     # @return [Hash] a schema accepting the reference or null
     def self.wrap(reference, **metadata)
-      { anyOf: [reference, { type: :object, nullable: true, enum: [nil] }] }.merge(metadata)
+      { anyOf: [reference, NULL] }.merge(metadata)
     end
 
     module Schema

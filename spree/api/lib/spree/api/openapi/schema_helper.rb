@@ -361,6 +361,7 @@ module Spree
           schemas.each_value do |s|
             s[:'x-typelizer'] = true
             strip_null_from_enums(s)
+            patch_nullable_unions(s)
           end
           patch_typescript_only_types(schemas, writer_name)
           patch_promotion_action_calculator(schemas)
@@ -407,8 +408,28 @@ module Spree
 
           values = value_types.map { |type| RECORD_VALUE_TYPES.include?(type) ? { type: type.to_sym } : ref(type) }
           value = values.one? ? values.first : { anyOf: values }
-          value = value.merge(nullable: true) if nullable
+          value = nullable_union(value[:anyOf] || [value]) if nullable
           { type: :object, additionalProperties: value }
+        end
+
+        # OpenAPI 3.0 reads `nullable` only beside a `type`, so null gets a
+        # branch of its own, as a nullable reference does.
+        def nullable_union(alternatives)
+          { anyOf: [*alternatives, Typelizer::NullableReferences::NULL] }
+        end
+
+        # Typelizer writes a nullable union (`string | number | null`) as
+        # `nullable` beside an untyped `anyOf`, which admits no null.
+        def patch_nullable_unions(schema)
+          case schema
+          when Hash
+            schema.each_value { |value| patch_nullable_unions(value) }
+            if schema[:anyOf] && schema[:nullable] && !schema.key?(:type)
+              documentation = schema.except(:anyOf, :nullable)
+              schema.replace(nullable_union(schema[:anyOf]).merge(documentation))
+            end
+          when Array then schema.each { |item| patch_nullable_unions(item) }
+          end
         end
 
         # The calculator's TypeScript type has another name than its component.

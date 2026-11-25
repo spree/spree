@@ -72103,7 +72103,10 @@ components:
           - "$ref": "#/components/schemas/CreditCard"
           - "$ref": "#/components/schemas/StoreCredit"
           - "$ref": "#/components/schemas/PaymentSource"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
         custom_fields:
@@ -74324,7 +74327,10 @@ components:
           anyOf:
           - type: string
           - type: number
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
           description: A decimal string for money, decimal and percent metrics (`"110.00"`);
             a number for integer metrics. Null in `totals` for a metric that only
             means something per group.
@@ -74426,7 +74432,10 @@ components:
             anyOf:
             - type: string
             - "$ref": "#/components/schemas/ReportingDimensionValue"
-            nullable: true
+            - type: object
+              nullable: true
+              enum:
+              -
           description: 'By dimension name: the raw value for plain dimensions (time
             buckets, country codes), a display payload for lookup-backed and enumerated
             ones.'
