@@ -86,6 +86,9 @@ RSpec.describe Spree::Carts::Merge do
           unless settled
             settled = true
             payment_session.update_column(:status, 'completed')
+            # Line items created directly leave the total at zero, and a
+            # payment may not exceed what the cart owes.
+            other_cart.update_column(:total, 10)
             create(:payment, cart: other_cart, order: nil, payment_method: payment_session.payment_method,
                              response_code: payment_session.external_id, amount: 10, status: 'pending')
           end
