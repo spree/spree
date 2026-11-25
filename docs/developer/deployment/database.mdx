@@ -153,7 +153,3 @@ For production deployments, you can use managed database services:
 | **Prisma** | Prisma Postgres | — |
 
 Set the `DATABASE_URL` environment variable to the connection string provided by your cloud provider.
-
-<Note>
-  Use a direct connection string for `DATABASE_URL`, not a transaction-mode connection pooler. Migrations run when the container boots, and Rails holds a session-level advisory lock while they run. Through a transaction-mode pooler that lock is not always released, and migrations can fail with `ActiveRecord::ConcurrentMigrationError`. On Prisma Postgres, this means the `db.prisma.io` host rather than `pooled.db.prisma.io`.
-</Note>
