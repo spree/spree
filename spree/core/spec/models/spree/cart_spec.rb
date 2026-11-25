@@ -77,6 +77,10 @@ describe Spree::Cart, type: :model do
     context 'when a payment session has settled' do
       let(:payment_session) { create(:bogus_payment_session, cart: cart, amount: 10) }
 
+      # A payment may not exceed what the cart owes, and the cart has no
+      # priced items here.
+      before { cart.update_column(:total, 10) }
+
       it 'fences a cart whose session the gateway completed' do
         payment_session.update_column(:status, 'completed')
 
