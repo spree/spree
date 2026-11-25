@@ -458,24 +458,6 @@ module Spree
           [limit_param, 100].min # Max 100 per page
         end
 
-        # Metadata for collection responses
-        # @return [Hash] pagination metadata
-        def collection_meta(_collection)
-          return {} unless @pagy
-
-          {
-            page: @pagy.page,
-            limit: @pagy.limit,
-            count: @pagy.count,
-            pages: @pagy.pages,
-            from: @pagy.from,
-            to: @pagy.to,
-            in: @pagy.in,
-            previous: @pagy.previous,
-            next: @pagy.next
-          }
-        end
-
         # Base scope, store-scoped (or parent-scoped for nested resources).
         # Deliberately free of CanCanCan: the Store API authorizes by ownership
         # — every account controller scopes through `current_user` — while the

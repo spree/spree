@@ -215,6 +215,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         let(:id) { fulfillment.prefixed_id }
         let(:body) { { variant_id: fulfillment.fulfillment_items.first.variant.prefixed_id, quantity: 1 } }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('Fulfillment'))
+
         run_test! do |response|
           expect(JSON.parse(response.body)['data'].size).to eq(2)
         end

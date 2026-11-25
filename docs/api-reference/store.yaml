@@ -1196,6 +1196,18 @@ paths:
                   in: 2
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Cart"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -2131,6 +2143,7 @@ paths:
                     name: Spree Commerce
                     default: false
                     gateway_payment_profile_id:
+                    payment_method_id: pm_UkLWZg9DAJ
                   payment_method:
                     id: pm_UkLWZg9DAJ
                     name: Check 9
@@ -2226,6 +2239,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -2931,6 +2945,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -5045,6 +5060,15 @@ paths:
                     po_number_required: false
                     parent_id:
                     ancestors: []
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                required:
+                - data
         '401':
           description: not authenticated
           content:
@@ -5107,6 +5131,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
         '404':
           description: no standing over this node
           content:
@@ -5147,6 +5173,8 @@ paths:
                 po_number_required: false
                 parent_id:
                 ancestors: []
+              schema:
+                "$ref": "#/components/schemas/Company"
       requestBody:
         content:
           application/json:
@@ -5231,6 +5259,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanyMembership"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add a member by email
       tags:
@@ -5283,6 +5323,8 @@ paths:
                 expires_at: '2026-02-14T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
                 status: pending
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
       requestBody:
         content:
           application/json:
@@ -5501,6 +5543,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Address"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add an address book entry
       tags:
@@ -5959,6 +6013,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -6058,6 +6113,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Order"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/company_invitations/{token}":
     parameters:
     - name: token
@@ -6082,6 +6149,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Send `company` to include the company the invitation is to.
+        schema:
+          type: string
       responses:
         '200':
           description: invitation found
@@ -6093,8 +6166,17 @@ paths:
                 expires_at: '2026-02-14T12:00:00.000Z'
                 company_id: comp_UkLWZg9DAJ
                 status: pending
+                company:
+                  id: comp_UkLWZg9DAJ
+                  name: Acme Industrial
+                  kind: company
+                  po_number_required: false
+                  parent_id:
+                  ancestors: []
                 company_name: Acme Industrial
                 store_name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/CompanyInvitation"
         '404':
           description: token spent, revoked or expired
           content:
@@ -6155,6 +6237,8 @@ paths:
                 company_id: comp_UkLWZg9DAJ
                 customer_id: cust_UkLWZg9DAJ
                 email: new@acme.test
+              schema:
+                "$ref": "#/components/schemas/CompanyMembership"
       requestBody:
         content:
           application/json:
@@ -6805,6 +6889,7 @@ paths:
                   name: Spree Commerce
                   default: false
                   gateway_payment_profile_id:
+                  payment_method_id: pm_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -6894,6 +6979,7 @@ paths:
                 name: Spree Commerce
                 default: false
                 gateway_payment_profile_id:
+                payment_method_id: pm_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/CreditCard"
         '404':
@@ -7269,6 +7355,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -7598,6 +7685,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -9315,6 +9403,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/DeliveryMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/delivery_methods/{id}/pickup_locations":
     get:
       summary: List pickup locations
@@ -9377,6 +9477,15 @@ paths:
                   state_abbr: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StockLocation"
+                required:
+                - data
   "/api/v3/store/customers/me/digital_links":
     get:
       summary: List my digital links
@@ -10853,6 +10962,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -14212,9 +14322,12 @@ components:
           type: string
           nullable: true
         owner:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/AddressOwner"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -14913,9 +15026,12 @@ components:
           type: boolean
           nullable: true
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_eq_billing_address:
           type: boolean
         discounts:
@@ -14935,25 +15051,37 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_methods:
           type: array
           items:
             "$ref": "#/components/schemas/PaymentMethod"
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - market_id
@@ -15355,6 +15483,14 @@ components:
           - accepted
           - revoked
           - expired
+        company:
+          "$ref": "#/components/schemas/Company"
+        company_name:
+          type: string
+          deprecated: true
+        store_name:
+          type: string
+          deprecated: true
       required:
       - id
       - email
@@ -15374,6 +15510,8 @@ components:
         email:
           type: string
           nullable: true
+        company:
+          "$ref": "#/components/schemas/Company"
       required:
       - id
       - company_id
@@ -15684,9 +15822,12 @@ components:
           items:
             "$ref": "#/components/schemas/State"
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - iso
       - iso3
@@ -15715,6 +15856,11 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        payment_method_id:
+          type: string
+          nullable: true
+          description: The payment method the card was saved with; a card is offered
+            only for it.
         custom_fields:
           type: array
           items:
@@ -15728,6 +15874,7 @@ components:
       - name
       - default
       - gateway_payment_profile_id
+      - payment_method_id
       x-typelizer: true
     Currency:
       type: object
@@ -15999,17 +16146,26 @@ components:
           items:
             "$ref": "#/components/schemas/Address"
         default_billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         default_shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         newsletter_subscriber:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/NewsletterSubscriber"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         customer_groups:
           type: array
           items:
@@ -16245,9 +16401,12 @@ components:
         unpriced:
           type: boolean
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         display_cost:
           type: string
           nullable: true
@@ -16974,9 +17133,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -17150,6 +17312,16 @@ components:
           "$ref": "#/components/schemas/DeliveryMethod"
         stock_location:
           "$ref": "#/components/schemas/StockLocation"
+        pickup_location:
+          anyOf:
+          - "$ref": "#/components/schemas/StockLocation"
+          - type: object
+            nullable: true
+            enum:
+            -
+          description: Where the customer collects a pickup — the counter chosen at
+            checkout, which can differ from the stock location it ships from. Null
+            unless the delivery is a pickup.
         delivery_rates:
           type: array
           items:
@@ -17190,6 +17362,7 @@ components:
       - deliveries
       - delivery_method
       - stock_location
+      - pickup_location
       - delivery_rates
       x-typelizer: true
     GiftCardBatch:
@@ -19858,13 +20031,19 @@ components:
           type: string
           nullable: true
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         orders:
           type: array
           items:
@@ -20515,21 +20694,33 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -21925,9 +22116,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -21962,9 +22156,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -23327,9 +23524,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -23350,9 +23550,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - product_id

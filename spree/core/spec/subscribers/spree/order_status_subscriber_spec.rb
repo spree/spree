@@ -11,6 +11,22 @@ RSpec.describe Spree::OrderStatusSubscriber do
     )
   end
 
+  it 'recomputes the order once a refund completes, and not while it is requested' do
+    payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    order.update_statuses!
+    refund = create(:refund, :requested, payment: payment, amount: order.total)
+
+    created = Spree::Event.new(name: 'refund.created', payload: { 'id' => refund.prefixed_id }, store_id: order.store_id)
+    described_class.new.handle(created)
+    expect(order.reload.payment_status).to eq('paid')
+
+    refund.update_columns(status: 'completed')
+    refunded = Spree::Event.new(name: 'payment.refunded', payload: { 'id' => payment.prefixed_id }, store_id: order.store_id)
+    described_class.new.handle(refunded)
+
+    expect(order.reload.payment_status).to eq('refunded')
+  end
+
   # Credit issued as a refund is the other half of what an order gave back,
   # and nothing else announces it — a claim settled this way writes no refund.
   it 'recomputes the owning order statuses when a refund is issued as store credit' do

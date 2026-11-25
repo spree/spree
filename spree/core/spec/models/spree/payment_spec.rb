@@ -224,6 +224,30 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'invalidating earlier payments' do
+      let(:check_method) { create(:check_payment_method, store: store) }
+
+      context 'on a cart' do
+        let(:cart) { create(:cart_with_line_items, store: store) }
+
+        it 'invalidates the payment the new one replaces' do
+          replaced = create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+          create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+
+          expect(replaced.reload.status).to eq('invalid')
+        end
+      end
+
+      context 'on an order' do
+        it "leaves the order's other unprocessed payments live" do
+          first = create(:payment, order: order, payment_method: check_method, amount: 40)
+          create(:payment, order: order, payment_method: check_method, amount: 10)
+
+          expect(first.reload.status).to eq('checkout')
+        end
+      end
+    end
+
     describe '#create_payment_profile' do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do
@@ -573,17 +597,21 @@ describe Spree::Payment, type: :model do
         context 'if successful' do
           it 'records the capture under the owner row lock' do
             expect(payment.payment_method).to receive(:capture).and_return(success_response)
-            expect(payment.owner).to receive(:with_lock).and_call_original
+            # Twice: the claim checks what is owed under the lock, then the
+            # capture is recorded under it.
+            expect(payment.owner).to receive(:with_lock).twice.and_call_original
 
             payment.capture!
             expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)
           end
 
           it 'records nothing when another caller already completed the payment' do
-            expect(payment.payment_method).to receive(:capture).and_return(success_response)
             # Simulates the concurrent winner committing between the gateway
             # call and the bookkeeping lock.
-            allow(Spree::Payment).to receive_message_chain(:where, :exists?).and_return(true)
+            expect(payment.payment_method).to receive(:capture) do
+              Spree::Payment.where(id: payment.id).update_all(status: 'completed')
+              success_response
+            end
 
             expect { payment.capture! }.not_to change { payment.capture_events.count }
           end
@@ -722,6 +750,115 @@ describe Spree::Payment, type: :model do
       allow(payment.payment_method).to receive(:can_capture?).with(payment).and_return(false)
 
       expect(payment.can_capture?).to be false
+    end
+  end
+
+  describe 'a requested payment' do
+    let(:requested_payment) { create(:payment, order: order, status: 'requested') }
+
+    it 'cannot be claimed, voided or captured' do
+      expect { requested_payment.started_processing! }.to raise_error(Spree::Core::GatewayError, /requested/)
+      expect(requested_payment.can_void?).to be false
+      expect(requested_payment.can_capture?).to be false
+    end
+
+    describe '#requested_action' do
+      it 'is capture when a capture event waits on the provider' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('capture')
+      end
+
+      it 'is void when no capture event waits' do
+        create(:payment_capture_event, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('void')
+      end
+
+      it 'reads preloaded capture events without a query' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+        loaded = Spree::Payment.includes(:capture_events).find(requested_payment.id)
+
+        expect(loaded.capture_events).not_to receive(:requested)
+        expect(loaded.requested_action).to eq('capture')
+      end
+
+      it 'is nil for a payment that is not requested' do
+        expect(build_stubbed(:payment, status: 'pending').requested_action).to be_nil
+      end
+    end
+  end
+
+  describe '#cancel!' do
+    let(:bogus) { create(:credit_card_payment_method, store: store) }
+    let(:uncaptured) { create(:payment, order: order, payment_method: bogus, status: 'pending') }
+    let(:captured) { create(:payment, order: order, payment_method: bogus, status: 'completed') }
+
+    context 'when the provider answers at once' do
+      it 'voids the payment' do
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_void
+      end
+    end
+
+    context 'when the provider answers later' do
+      before { bogus.update!(preferred_requested_mode: true) }
+
+      it 'leaves an uncaptured payment requested, waiting on the void' do
+        expect(uncaptured).to receive(:publish_event).with('payment.void_requested')
+
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_requested
+      end
+
+      # A provider answers this only after recording the refund its outcome settles.
+      it 'keeps a completed payment completed' do
+        allow(captured.payment_method).to receive(:cancel).and_return(Spree::PaymentResponse.new(true, 'Refund requested', {}, requested: true))
+
+        captured.cancel!
+
+        expect(captured.reload).to be_completed
+      end
+    end
+  end
+
+  describe '#request_void!' do
+    it 'waits on the void of an authorized payment' do
+      payment = create(:payment, status: 'pending')
+      expect(payment).to receive(:publish_event).with('payment.void_requested')
+
+      expect(payment.request_void!).to be(true)
+      expect(payment.reload).to be_requested
+    end
+
+    it 'leaves a payment already void as it is, so a late answer cannot reopen it' do
+      payment = create(:payment, status: 'void')
+      expect(payment).not_to receive(:publish_event)
+
+      expect(payment.request_void!).to be(false)
+      expect(payment.reload).to be_void
+    end
+  end
+
+  describe 'money waiting on the provider' do
+    let(:settled) { create(:payment, order: order, amount: 100, status: 'completed') }
+
+    it 'counts completed and empty capture events as captured, not requested or failed ones' do
+      create(:payment_capture_event, payment: settled, amount: 40)
+      create(:payment_capture_event, payment: settled, amount: 10).update_column(:status, nil)
+      create(:payment_capture_event, :requested, payment: settled, amount: 30)
+      create(:payment_capture_event, :failed, payment: settled, amount: 20)
+
+      expect(settled.captured_amount).to eq(50)
+    end
+
+    it 'reserves the balance of a requested refund and releases a failed one' do
+      create(:refund, :requested, payment: settled, amount: 30)
+      create(:refund, :failed, payment: settled, amount: 20)
+
+      expect(settled.credit_allowed).to eq(70)
     end
   end
 
@@ -1244,6 +1381,105 @@ describe Spree::Payment, type: :model do
 
         payment.void!
       end
+    end
+  end
+
+  describe '#trim_remainder_to_amount_owed!' do
+    let(:remainder) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50)
+    end
+
+    before { create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 170) }
+
+    it 'shrinks a remainder to what the order still owes' do
+      expect(remainder.trim_remainder_to_amount_owed!).to be(true)
+      expect(remainder.reload.amount).to eq(30)
+    end
+
+    it 'leaves a remainder another run claimed at the amount it was claimed at' do
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload.amount).to eq(50)
+    end
+
+    it 'voids a remainder when the order owes nothing' do
+      order.update_columns(total: 170)
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_void
+    end
+
+    it 'leaves a remainder another run claimed alone when the order owes nothing' do
+      order.update_columns(total: 170)
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_processing
+    end
+  end
+
+  describe '#amount_owed_by_order' do
+    let(:payment) { create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50) }
+
+    it 'counts a sibling waiting on its provider by what it asked to capture, once' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: card, status: 'requested', amount: 100)
+      sibling.capture_events.create!(amount: 40, status: 'requested')
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 20)
+
+      expect(payment.amount_owed_by_order(including_in_flight: true)).to eq(140)
+    end
+
+    # A sibling's capture moves it from processing to requested, with its
+    # requested capture event, in one transaction. A read that sums statuses
+    # and capture events in separate statements can land between them and
+    # count the sibling twice; one statement sees it once.
+    it 'counts a sibling once when its capture is requested while the balance is read' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: card, status: 'processing', amount: 40)
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 20)
+
+      moved = false
+      move_sibling = lambda do |*, payload|
+        # The read of the siblings by status; the move lands right after it.
+        next if moved || payload[:sql] !~ /\ASELECT .*FROM [`"]?spree_payments[`"]? WHERE .*status[`"]? IN \(/im
+
+        moved = true
+        sibling.update_column(:status, 'requested')
+        sibling.capture_events.create!(amount: 40, status: 'requested')
+      end
+
+      owed = ActiveSupport::Notifications.subscribed(move_sibling, 'sql.active_record') do
+        payment.amount_owed_by_order(including_in_flight: true)
+      end
+
+      expect(moved).to be(true)
+      expect(owed).to eq(140)
+    end
+
+    it 'leaves order payment processing charging a payment still owed when a sibling capture is requested meanwhile' do
+      # Its own order, without the payment the outer setup adds.
+      other_order = create(:order, store: store, total: 80)
+      sibling = create(:payment, order: other_order, payment_method: gateway, source: card, status: 'processing', amount: 40)
+      needed = create(:payment, order: other_order, payment_method: gateway, source: card, status: 'checkout', amount: 40)
+      processed = []
+      allow(Spree.payment_process_workflow).to receive(:call) do |payment:, **|
+        processed << payment
+        Spree::ServiceModule::Result.new(true, payment, nil)
+      end
+
+      moved = false
+      move_sibling = lambda do |*, payload|
+        next if moved || payload[:sql] !~ /\ASELECT .*FROM [`"]?spree_payments[`"]? WHERE .*status[`"]? IN \(/im
+
+        moved = true
+        sibling.update_column(:status, 'requested')
+        sibling.capture_events.create!(amount: 40, status: 'requested')
+      end
+
+      ActiveSupport::Notifications.subscribed(move_sibling, 'sql.active_record') { other_order.process_payments! }
+
+      expect(moved).to be(true)
+      expect(processed).to eq([needed])
     end
   end
 end

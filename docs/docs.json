@@ -498,6 +498,10 @@
       "destination": "/user/sellers/sellers"
     },
     {
+      "source": "/user/vendors/vendor-onboarding",
+      "destination": "/user/sellers/onboarding"
+    },
+    {
       "source": "/user/vendors/vendor-onboarding-manual",
       "destination": "/user/sellers/onboarding"
     },
@@ -3076,7 +3080,8 @@
   },
   "logo": {
     "light": "/logo/logo_light.png",
-    "dark": "/logo/logo_dark.png"
+    "dark": "/logo/logo_dark.png",
+    "href": "https://spreecommerce.org"
   },
   "api": {
     "examples": {

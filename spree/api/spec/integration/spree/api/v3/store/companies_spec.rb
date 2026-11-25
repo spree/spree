@@ -30,6 +30,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('CompanyMembership'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].first['company']['name']).to eq('Acme Industrial')
@@ -159,6 +161,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         let(:body) { { customer_email: 'colleague@acme.test' } }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema '$ref' => '#/components/schemas/CompanyInvitation'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['email']).to eq('colleague@acme.test')
@@ -380,14 +384,18 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       DESC
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Send `company` to include the company the invitation is to.'
 
       response '200', 'invitation found' do
         let!(:invitation) { create(:company_invitation, company: company, email: 'new@acme.test') }
         let(:token) { invitation.token }
         let(:'x-spree-api-key') { api_key.token }
+        let(:expand) { 'company' }
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['company']['name']).to eq('Acme Industrial')
           expect(data['company_name']).to eq('Acme Industrial')
           expect(data).not_to have_key('token')
         end
@@ -428,6 +436,8 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
           { first_name: 'Ada', password: 'a-strong-password', password_confirmation: 'a-strong-password' }
         end
         let(:'x-spree-api-key') { api_key.token }
+
+        schema '$ref' => '#/components/schemas/CompanyMembership'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['email']).to eq('new@acme.test')

@@ -31,9 +31,12 @@ module Spree
         !completed? && payments.completed.empty?
       end
 
+      # Items on a canceled fulfillment keep their backordered status, but
+      # nothing waits on that stock any more.
+      #
       # @return [Boolean]
       def backordered?
-        fulfillment_items.any?(&:backordered?)
+        fulfillments.not_canceled.includes(:fulfillment_items).any?(&:backordered?)
       end
 
       # A +prices_hidden+ channel also disallows guest completion regardless

@@ -7,6 +7,9 @@ module Spree
 
           without_formatted_money
 
+          # The admin reads the counter from the order's preferred_stock_location.
+          _attributes.delete(:pickup_location)
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
           typelize cost: [:string, nullable: false],

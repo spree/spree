@@ -81,6 +81,84 @@ describe Spree::OrderMailer, type: :mailer do
     expect(message.text_part.body.to_s).not_to include('PO Number')
   end
 
+  context 'when the order is collected from a pickup location' do
+    let(:pickup_location) do
+      create(:stock_location, store: store, name: 'Pickup counter', address1: '12 Market Street', address2: 'Unit 4B',
+                              city: 'Brooklyn', state: nil,
+                              zipcode: '11201', pickup_enabled: true, pickup_instructions: 'Ring the bell at the side door.')
+    end
+
+    before do
+      fulfillment = order.fulfillments.first
+      fulfillment.update_columns(stock_location_id: pickup_location.id)
+      fulfillment.delivery_rates.update_all(selected: false)
+      fulfillment.delivery_rates.create!(delivery_method: create(:pickup_delivery_method, name: 'Store Pickup'),
+                                         cost: 0, selected: true)
+    end
+
+    it 'names the location, its address and the collection instructions in both parts' do
+      message = described_class.confirm_email(order)
+
+      [message.html_part, message.text_part].each do |part|
+        body = part.body.to_s
+        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Unit 4B', 'Brooklyn 11201',
+                                'Ring the bell at the side door.')
+      end
+    end
+
+    it 'names a region typed as free text when the location has no coded state' do
+      pickup_location.update_columns(state_name: 'Kings County')
+
+      message = described_class.confirm_email(order)
+
+      [message.html_part, message.text_part].each do |part|
+        expect(part.body.to_s).to include('Brooklyn, Kings County 11201')
+      end
+    end
+
+    context 'when it ships to the chosen counter from a warehouse without pickup' do
+      let(:counter) do
+        create(:stock_location, store: store, name: 'Brooklyn counter', address1: '9 Front Street',
+                                pickup_enabled: true, pickup_stock_policy: 'any')
+      end
+
+      before do
+        pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+        order.update_columns(preferred_stock_location_id: counter.id)
+        order.fulfillments.reset
+      end
+
+      it 'names the counter the customer chose, not the warehouse it ships from' do
+        message = described_class.confirm_email(order)
+
+        [message.html_part, message.text_part].each do |part|
+          body = part.body.to_s
+          expect(body).to include('Pickup location', 'Brooklyn counter', '9 Front Street')
+          expect(body).not_to include('Back warehouse')
+        end
+      end
+    end
+
+    it 'names no location when the origin is not a pickup counter and none was chosen' do
+      pickup_location.update!(name: 'Back warehouse', pickup_enabled: false)
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location', 'Back warehouse')
+    end
+
+    it 'leaves out a canceled pickup' do
+      order.fulfillments.first.update_columns(status: 'canceled')
+
+      expect(described_class.confirm_email(order).html_part.body.to_s).not_to include('Pickup location')
+    end
+  end
+
+  it 'names no pickup location when the order is shipped' do
+    message = described_class.confirm_email(order)
+
+    expect(message.html_part.body.to_s).not_to include('Pickup location')
+    expect(message.text_part.body.to_s).not_to include('Pickup location')
+  end
+
   it 'confirm_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do
@@ -186,6 +264,54 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
+  context 'when store credit pays part of the order' do
+    before do
+      order.update_columns(item_total: 40, delivery_total: 5, additional_tax_total: 0, total: 45)
+      order.fulfillments.first.update_columns(cost: 5)
+      store_credit = create(:store_credit, amount: 10, store: store, customer: order.customer)
+      create(:store_credit_payment, order: order, amount: 10, source: store_credit)
+      create(:check_payment, order: order, amount: 35)
+    end
+
+    def row(label, value)
+      /#{Regexp.escape(label)}\s*#{Regexp.escape(value)}/
+    end
+
+    def summary_texts
+      email = described_class.confirm_email(order)
+      [email.text_part.body.to_s, email.html_part.body.to_s].map { |body| ActionView::Base.full_sanitizer.sanitize(body).squish }
+    end
+
+    it 'shows the store credit line, so the lines add up to the total' do
+      summary_texts.each do |text|
+        expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$40.00'))
+        expect(text).to match(/#{Regexp.escape(I18n.t('spree.shipping'))}[^$]*\$5\.00/)
+        expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
+        expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+      end
+    end
+
+    # A gift card is redeemed as store credit, but an order takes either a
+    # gift card or store credit, never both.
+    context 'when a gift card pays instead' do
+      before do
+        order.payments.store_credits.each(&:invalidate!)
+        gift_card = create(:gift_card, amount: 10, store: store)
+        gift_card_credit = create(:store_credit, amount: 10, store: store, customer: order.customer, originator: gift_card)
+        create(:store_credit_payment, order: order, amount: 10, source: gift_card_credit)
+        order.update_columns(gift_card_id: gift_card.id)
+      end
+
+      it 'shows only the gift card line, so it is not taken off twice' do
+        summary_texts.each do |text|
+          expect(text).to match(row(I18n.t('spree.gift_card'), '-$10.00'))
+          expect(text).not_to include(I18n.t('spree.store_credit_name'))
+          expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+        end
+      end
+    end
+  end
+
   context 'displays unit costs from line item' do
     # Regression test for #2772
 
@@ -251,13 +377,12 @@ describe Spree::OrderMailer, type: :mailer do
           order
 
           I18n.locale = :'pt-BR'
-          store.update(default_locale: 'pt-BR')
+          store.default_market.update!(default_locale: 'pt-BR', supported_locales: 'en,pt-BR')
           order.update_column(:locale, 'pt-BR')
         end
 
         after do
           I18n.locale = :en
-          store.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
@@ -266,13 +391,12 @@ describe Spree::OrderMailer, type: :mailer do
       context 'via Store locale' do
         before do
           order
-          order.store.update!(default_locale: 'pt-BR')
+          order.store.default_market.update!(default_locale: 'pt-BR', supported_locales: 'en,pt-BR')
           order.update_column(:locale, 'pt-BR')
         end
 
         after do
           I18n.locale = :en
-          order.store.reload.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
@@ -324,6 +448,58 @@ describe Spree::OrderMailer, type: :mailer do
       }
       confirmation_email = described_class.confirm_email(order)
       expect(confirmation_email.subject).to include('Confirmação do Pedido')
+    end
+  end
+
+  # https://github.com/spree/spree/issues/15257 — a store written in Dutch sent
+  # its emails with a blank product name and its options as ": , :", because mail jobs read the base columns as the application's
+  # default locale rather than the language the store's content is written in.
+  context "when the store's content is written in a locale other than the application's" do
+    # A store of its own: the shared default store memoizes its supported
+    # locales, which an earlier example may already have read.
+    let(:dutch_store) do
+      created = create(:store, name: 'Dutch Store', url: 'nl.example.com')
+      created.default_market.update!(default_locale: 'nl', supported_locales: 'nl')
+      Spree::Store.find(created.id)
+    end
+
+    let(:dutch_order) do
+      kleur = create(:option_type, store: dutch_store, name: 'kleur', label: 'Kleur', position: 1)
+      formaat = create(:option_type, store: dutch_store, name: 'formaat', label: 'Formaat', position: 2)
+      product = create(:product, name: 'Template binder', store: dutch_store, option_types: [kleur, formaat])
+      variant = create(:variant, product: product, option_values: [
+        create(:option_value, option_type: kleur, name: 'donker-blauw', label: 'Donker blauw'),
+        create(:option_value, option_type: formaat, name: '4-pocket', label: '4-Pocket')
+      ])
+
+      order = create(:completed_order_with_totals, email: 'klant@example.com', store: dutch_store, locale: 'nl')
+      order.line_items.destroy_all
+      create(:line_item, variant: variant, order: order, quantity: 1, price: BigDecimal('12.50'))
+      order.reload
+    end
+
+    it 'shows the product name and options with the default line item template' do
+      body = email_body(described_class.confirm_email(dutch_order))
+
+      expect(body).to include('Template binder')
+      expect(body).to include('Kleur: Donker blauw, Formaat: 4-Pocket')
+    end
+
+    it "shows the product name and options with a store's localised line item template" do
+      dutch_order # the template's locale must be one the store supports
+      item_template = <<~LIQUID
+        <mj-text>Artikel: <a href="{{ item.url }}" class="item_name">{{ item.name }}</a>
+        {%- if item.options_text != blank -%}<p class="item_meta">{{ item.options_text }}</p>{%- endif -%}</mj-text>
+      LIQUID
+      create(:email_template, store: dutch_store, key: 'spree/shared/line_item', locale: 'nl',
+                              subject: nil, base_subject: nil, body: item_template, base_body: item_template)
+
+      body = email_body(described_class.confirm_email(dutch_order))
+
+      expect(body).to include('Artikel:') # the store's template, not the default partial
+      expect(body).to include('Template binder')
+      expect(body).to include('Kleur: Donker blauw, Formaat: 4-Pocket')
+      expect(body).not_to include(': , :')
     end
   end
 

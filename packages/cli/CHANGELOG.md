@@ -1,5 +1,13 @@
 # @spree/cli
 
+## 3.8.1
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/cli` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/cli/`.
+
+- `spree add adyen` installs the `spree_adyen` gem at the project's Spree version. Adyen ships with Spree from 6.0.6; before, the command resolved to the old 0.x gem, which does not run on Spree 6.
+
 ## 3.8.0
 
 ### Minor Changes

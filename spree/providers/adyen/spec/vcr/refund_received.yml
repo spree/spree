@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/XHL52DJVLGKLJJV5/refunds
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","amount":{"value":1000,"currency":"USD"},"reference":"R1001-spree-py_UkLWZg9DAJ-refund-0"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-refund-0
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:41:14 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '224'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-4b94bb214b01b7643d6e2cc34194c3f6-242946110f3930f2-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=103D6205AD1AAA320C9A99F4FC09B7F5; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=nQHPs8BGMgR5A0uQg0nY.mS_xAPbAk8uoRA9mkEHyUw-1795023674.6375084-1.0.1.1-Bk86n.YG5k0rsehNhG5XHSFON7vL_sT3HAFWZlo1BvsD7gCnjBvfcODWwiNjXp8y2tJnb.hQGq0eysYtu4FlnMe6N.L.U7aluuDQzGsizgPuLW7WRciYHoYSJI4BvLos;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:11:14 GMT
+      - _cfuvid=Yut5iiqYb8AFZsdHT4Ydib3mEfzoxVR0VuPt9BUoOl4-1795023674.6375084-1.0.1.1-ziESendzKmnEK7YB5fvPFRGOYD2DIjiKxQc2_VraHAk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-refund-0
+      Pspreference:
+      - HXRLV85V27XN4MW5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c3ce7be621be-WAW
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","paymentPspReference":"XHL52DJVLGKLJJV5","pspReference":"WRB7SKF8WTG3ZMV5","reference":"R1001-spree-py_UkLWZg9DAJ-refund-0","status":"received","amount":{"currency":"USD","value":1000}}'
+  recorded_at: Wed, 18 Nov 2026 17:41:14 GMT
+recorded_with: VCR 6.4.1

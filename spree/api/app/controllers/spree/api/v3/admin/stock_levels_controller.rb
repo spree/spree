@@ -86,7 +86,7 @@ module Spree
               )
             end
 
-            render json: result.value
+            render json: Spree.api.admin_bulk_stock_level_result_serializer.new(result.value).to_h
           end
 
           # PATCH /api/v3/admin/stock_levels/:id

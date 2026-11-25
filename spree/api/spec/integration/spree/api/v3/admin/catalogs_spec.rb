@@ -118,6 +118,8 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let!(:company) { create(:company, store: store) }
         let(:body) { { assignable_type: 'company', assignable_id: company.prefixed_id } }
 
+        schema '$ref' => '#/components/schemas/CatalogAssignment'
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['assignable_type']).to eq('company')
@@ -154,9 +156,7 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
           catalog.update!(price_list: price_list)
         end
 
-        schema type: :object,
-               properties: { added_count: { type: :integer } },
-               required: %w[added_count]
+        schema '$ref' => '#/components/schemas/ProductMembershipResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['added_count']).to eq(1)
@@ -254,6 +254,8 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let(:catalog_id) { catalog.prefixed_id }
         let(:body) { { product_ids: [product.prefixed_id] } }
 
+        schema '$ref' => '#/components/schemas/ProductMembershipResult'
+
         run_test! do |response|
           expect(JSON.parse(response.body)['added_count']).to eq(1)
         end
@@ -282,6 +284,8 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
         let(:body) { { product_ids: [product.prefixed_id] } }
 
         before { catalog.add_products([product.id]) }
+
+        schema '$ref' => '#/components/schemas/ProductMembershipResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['removed_count']).to eq(1)

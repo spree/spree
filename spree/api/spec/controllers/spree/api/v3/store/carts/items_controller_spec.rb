@@ -278,6 +278,24 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['id']).to start_with('cart_')
     end
 
+    # The gateway already took the buyer's money for this cart: emptied, it
+    # could never complete and the buyer stayed charged without an order
+    # (SANDBOX-V2-1Y).
+    context 'when a payment session has settled' do
+      before do
+        create(:bogus_payment_session, cart: order, amount: 10).update_column(:status, 'completed')
+      end
+
+      it 'refuses the removal with a conflict' do
+        expect do
+          delete :destroy, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id }
+        end.not_to change(Spree::LineItem, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+      end
+    end
+
     context 'error handling' do
       it 'returns not found for non-existent line item' do
         delete :destroy, params: { cart_id: order.prefixed_id, id: 'li_nonexistent' }

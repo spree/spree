@@ -192,7 +192,7 @@ module Spree
           end
 
           def valid_oauth_state?
-            state = params[:state]
+            state = string_param(:state)
             return false if state.blank?
 
             # The verifier round-trips through JSON, so payload keys come back as strings.

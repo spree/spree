@@ -24,7 +24,7 @@ export default defineConfig({
   // shared across specs, and the suite mutates server state (store settings,
   // the admin profile, creating + accepting invitations), so concurrent
   // workers against one backend would interfere. CI still parallelizes by
-  // sharding (`--shard=n/m`): each shard is a separate machine with its own
+  // sharding (`e2e/shard.mjs`): each shard is a separate machine with its own
   // Rails + DB + Vite stack, and specs are self-contained (fixtures come from
   // global-setup; dynamic records use `Date.now()` suffixes).
   fullyParallel: false,
@@ -32,8 +32,15 @@ export default defineConfig({
 
   // `github` gives inline PR annotations; `html` is what the failure-artifact
   // upload ships (with the plain `github` reporter alone, playwright-report/
-  // stays empty and the artifact is useless).
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  // stays empty and the artifact is useless). `json` feeds the per-spec
+  // timings CI prints after each shard (e2e/spec-timings.mjs).
+  reporter: process.env.CI
+    ? [
+        ['github'],
+        ['html', { open: 'never' }],
+        ['json', { outputFile: 'test-results/report.json' }],
+      ]
+    : 'list',
   retries: process.env.CI ? 2 : 0,
   timeout: 30_000,
   expect: { timeout: 10_000 },

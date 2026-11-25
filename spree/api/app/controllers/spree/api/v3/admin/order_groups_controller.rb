@@ -32,7 +32,7 @@ module Spree
           def collection_includes
             [
               :customer, :ship_address, :bill_address,
-              { payments: %i[payment_method source capture_events] },
+              { payments: %i[payment_method source capture_events refunds] },
               { orders: %i[market gift_card] }
             ]
           end

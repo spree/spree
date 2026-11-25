@@ -105,6 +105,32 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(json_response['status']).to be_present
     end
 
+    context 'as a staffer with the Order manager permissions' do
+      let(:staffer) do
+        permissions = %w[write_orders write_payments write_fulfillments write_refunds write_gift_cards
+                         write_store_credits read_customers read_products]
+        create(:admin_user, :without_admin_role).tap do |user|
+          create(:role_user, user: user, role: create(:role, name: 'order manager', permissions: permissions, resource: store))
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'creates a payment' do
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_method_id: payment_method.prefixed_id,
+          amount: order.total
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.payments.pluck(:payment_method_id)).to eq([payment_method.id])
+      end
+    end
+
     it 'returns 404 for unknown payment_method prefixed id' do
       post :create, params: {
         order_id: order.prefixed_id,
@@ -200,7 +226,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
     end
 
     context 'when amount is missing' do
-      it 'defaults to order total after store credit' do
+      it 'defaults to the outstanding balance' do
         post :create, params: {
           order_id: order.prefixed_id,
           payment_method_id: payment_method.prefixed_id
@@ -208,19 +234,42 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
         expect(response).to have_http_status(:created)
         payment = order.payments.find_by_prefix_id(json_response['id'])
-        expect(payment.amount).to eq(order.order_total_after_store_credit)
+        expect(payment.amount).to eq(order.outstanding_balance)
+      end
+
+      it 'defaults to what the payments already recorded leave unpaid' do
+        first = create(:payment, order: order, payment_method: payment_method, amount: 40, response_code: nil)
+
+        post :create, params: { order_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        payment = order.payments.find_by_prefix_id(json_response['id'])
+        expect(payment.amount).to eq(order.total - 40)
+        expect(first.reload.status).to eq('checkout')
+      end
+    end
+
+    context "when the order already has a payment that isn't processed" do
+      let!(:first) { create(:payment, order: order, payment_method: payment_method, amount: 40, response_code: nil) }
+
+      it 'leaves it live' do
+        post :create, params: { order_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id, amount: '10' }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(first.reload.status).to eq('checkout')
+        expect(first.can_capture?).to be(true)
       end
     end
 
     context 'when the order has nothing left to pay and no amount is given' do
       it 'refuses a zero payment' do
-        allow_any_instance_of(Spree::Order).to receive(:order_total_after_store_credit).and_return(BigDecimal('0'))
+        create(:payment, order: order, payment_method: payment_method, amount: order.total, response_code: nil)
 
         post :create, params: { order_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('invalid_money_format')
-        expect(order.payments).to be_empty
+        expect(order.payments.count).to eq(1)
       end
     end
 
@@ -282,6 +331,40 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
           expect(json_response['error']['code']).to eq('invalid_money_format')
           expect(json_response['error']['details']).to have_key('amount')
         end
+      end
+    end
+
+    context 'when the order total came down after the payment was authorized' do
+      let!(:order_with_payment) { create(:order_with_line_items, store: store, line_items_count: 2) }
+      let!(:payment) { create(:payment, order: order_with_payment, amount: order_with_payment.total, status: 'pending') }
+
+      before do
+        removed_item = order_with_payment.line_items.last
+        Spree.order_remove_line_item_service.call(order: order_with_payment, line_item: removed_item)
+        expect(order_with_payment.reload.total).to be < payment.amount
+      end
+
+      it 'captures only what the order still owes, and the order reads paid' do
+        patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(BigDecimal(json_response['amount'])).to eq(order_with_payment.total)
+        expect(payment.reload.captured_amount).to eq(order_with_payment.total)
+        expect(order_with_payment.payments.pending).to be_empty
+
+        Spree::Orders::UpdateStatuses.new.call(order: order_with_payment)
+        expect(order_with_payment.reload.payment_status).to eq('paid')
+      end
+
+      it 'refuses an amount above what the order still owes, capturing nothing' do
+        patch :capture, params: {
+          order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: payment.amount.to_s
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to match(/cannot exceed the .+ the order still owes/)
+        expect(payment.reload).to be_pending
+        expect(payment.captured_amount).to eq(0)
       end
     end
 

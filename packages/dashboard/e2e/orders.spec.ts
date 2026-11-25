@@ -1,6 +1,7 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
+import { formatMoney, subtractMoney } from '@spree/core'
 import {
   addNewOrderItem,
   adminRequest,
@@ -12,6 +13,7 @@ import {
   FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   fillAddressForm,
   login,
   section,
@@ -543,6 +545,77 @@ test.describe('removing a draft order line', () => {
   })
 })
 
+// An order placed with nothing on hand waits on stock. Cancelling it ends the
+// wait, so it must stop reading Backorder.
+test.describe('cancelling a backordered order', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('moves its fulfillment status from Backorder to Canceled', async ({ page }) => {
+    const session = await login(page)
+    const locations = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      '/stock_locations',
+    )
+    const channels = await adminRequest<{ data: { id: string; default: boolean }[] }>(
+      page,
+      session,
+      'get',
+      '/channels',
+    )
+    const defaultChannel = channels.data.find((channel) => channel.default)
+    expect(defaultChannel, 'the store has a default channel').toBeDefined()
+    const stamp = Date.now()
+    const sku = `E2E-BACKORDER-${stamp}`
+    await seedRecord(page, session, '/products', {
+      name: `Backordered ${stamp}`,
+      status: 'active',
+      prices: [{ amount: '10.00', currency: 'USD' }],
+      product_publications: [{ channel_id: defaultChannel?.id }],
+      variants: [
+        {
+          options: [],
+          sku,
+          track_inventory: true,
+          stock_levels: [
+            { stock_location_id: locations.data[0].id, count_on_hand: 0, backorderable: true },
+          ],
+        },
+      ],
+    })
+    const order = await createPlacedOrder(page, session.accessToken, {
+      sku,
+      quantity: 1,
+      ship: false,
+    })
+
+    await page.goto(`/${session.store_id}/orders/${order.id}`)
+    // The header's status badges: payment status, then fulfillment status.
+    const headerStatuses = page
+      .getByRole('heading', { level: 1 })
+      .first()
+      .locator('xpath=..')
+      .locator('[data-slot="status-badge"]')
+    await expect(headerStatuses.filter({ hasText: /^backorder$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: /more actions/i }).click()
+    await page.getByRole('menuitem', { name: /cancel order/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^cancel order$/i })
+      .click()
+
+    await expect(page.getByText(/^order canceled$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(headerStatuses.filter({ hasText: /^canceled$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/^backorder$/i)).toHaveCount(0)
+  })
+})
+
 test.describe('order addresses', () => {
   // Regression: the dashboard sent `shipping_address` while the API permitted
   // only `ship_address`, so the request succeeded and the address never
@@ -688,9 +761,103 @@ test.describe('order customer', () => {
     await expect(editor.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
     await editor.getByRole('button', { name: /^save$/i }).click()
 
+    // A draft without store credit or a gift card only warns about the move.
+    const confirmDialog = page.getByRole('dialog')
+    await expect(confirmDialog).toContainText('This order will become a guest order')
+    await expect(confirmDialog).not.toContainText('Store credit')
+    await confirmDialog.getByRole('button', { name: /^change customer$/i }).click()
+
     await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
+  })
+
+  test("takes the first customer's store credit off a draft moved to another customer", async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const firstCustomer = await adminRequest<{ id: string }>(page, creds, 'post', '/customers', {
+      email: `e2e-credit-owner-${Date.now()}@example.com`,
+    })
+    await adminRequest(page, creds, 'post', `/customers/${firstCustomer.id}/store_credits`, {
+      amount: '15.00',
+      currency: 'USD',
+      memo: 'E2E credit that stays with its owner',
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      customer_id: firstCustomer.id,
+      items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+    })
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/store_credits`, {
+      amount: '15.00',
+    })
+    const withCredit = await adminRequest<{ total: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(withCredit.amount_due).not.toBe(withCredit.total)
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const outstanding = section(page, /^summary$/i)
+      .getByText(/^outstanding balance$/i)
+      .locator('..')
+    await expect(outstanding).toContainText(formatMoney(withCredit.amount_due, 'USD', 'en'), {
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /edit customer/i }).click({ timeout: 15_000 })
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await editor.locator('#order-customer-picker').fill('Promo')
+    await page.getByRole('option').filter({ hasText: FIXTURE_PROMO_CUSTOMER_EMAIL }).first().click()
+    await editor.getByRole('button', { name: /^save$/i }).click()
+
+    const confirmDialog = page.getByRole('dialog')
+    await expect(confirmDialog).toContainText('This order will move to the new customer.')
+    await expect(confirmDialog).toContainText(
+      'Store credit and gift cards the previous customer applied will be removed and returned to them, so the amount due goes back up.',
+    )
+    await confirmDialog.getByRole('button', { name: /^cancel$/i }).click()
+    await expect(confirmDialog).toBeHidden()
+
+    // Cancelling sends nothing: the order keeps its customer and its credit.
+    const kept = await adminRequest<{ customer_id: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(kept.customer_id).toBe(firstCustomer.id)
+    expect(kept.amount_due).toBe(withCredit.amount_due)
+    await expect(outstanding).toContainText(formatMoney(withCredit.amount_due, 'USD', 'en'))
+
+    await editor.getByRole('button', { name: /^save$/i }).click()
+    await confirmDialog.getByRole('button', { name: /^change customer$/i }).click()
+
+    await expect(editor).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: 'Promo Customer', exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // The credit goes back to its owner, so the whole total is owed again.
+    await expect(outstanding).toContainText(formatMoney(withCredit.total, 'USD', 'en'), {
+      timeout: 15_000,
+    })
+
+    const moved = await adminRequest<{ total: string; amount_due: string }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}`,
+    )
+    expect(moved.amount_due).toBe(moved.total)
   })
 
   test('asks before removing the customer from a placed order', async ({ page }) => {
@@ -901,5 +1068,127 @@ test.describe('order payments', () => {
 
     await expect(page.getByRole('menuitem', { name: 'View details' })).toBeVisible()
     await expect(page.getByRole('menuitem', { name: 'Void' })).toHaveCount(0)
+  })
+})
+
+test.describe('recording several payments on a draft order', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('suggests what is left to pay and keeps the earlier payment', async ({ page }) => {
+    const creds = await login(page)
+    const methodName = `E2E Bank transfer ${Date.now()}`
+    await seedRecord(page, creds, '/payment_methods', {
+      type: 'check',
+      name: methodName,
+      active: true,
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string; total: string; currency: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        email: `e2e-two-payments-${Date.now()}@example.com`,
+        items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+      },
+    )
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    const payments = section(page, /^payments/i)
+
+    const addPayment = async (amount?: string) => {
+      await payments.getByRole('button', { name: /^add$/i }).click({ timeout: 15_000 })
+      const dialog = page.getByRole('dialog')
+      await dialog.locator('#pay-method').click()
+      await page.getByRole('option', { name: methodName }).click()
+      if (amount) await dialog.locator('#pay-amount').fill(amount)
+      return dialog
+    }
+
+    let dialog = await addPayment('5')
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(1)
+
+    // The second payment is offered what the first leaves unpaid, and
+    // recording it leaves the first one live.
+    dialog = await addPayment()
+    await expect(dialog.locator('#pay-amount')).toHaveValue(
+      subtractMoney(order.total, '5', order.currency),
+    )
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(2)
+    await expect(payments.getByText(/^invalid$/i)).toHaveCount(0)
+  })
+
+  test('captures what is still owed after the order total dropped below the payment', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const methodName = `E2E Bank transfer ${Date.now()}`
+    const method = await seedRecord(page, creds, '/payment_methods', {
+      type: 'check',
+      name: methodName,
+      active: true,
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string; total: string; currency: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        email: `e2e-shrunk-order-${Date.now()}@example.com`,
+        items: [{ variant_id: variants.data[0].id, quantity: 2 }],
+      },
+    )
+    // Paid for both units, then one is taken off the order.
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/payments`, {
+      payment_method_id: method.id,
+    })
+    const items = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/items`,
+    )
+    await adminRequest(page, creds, 'patch', `/orders/${order.id}/items/${items.data[0].id}`, {
+      quantity: 1,
+    })
+    const shrunk = await adminRequest<{ total: string }>(page, creds, 'get', `/orders/${order.id}`)
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    const payments = section(page, /^payments/i)
+    const rows = payments.locator('tr').filter({ hasText: methodName })
+    await rows
+      .first()
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+    await page.getByRole('menuitem', { name: /^capture$/i }).click()
+    await page
+      .getByRole('alertdialog')
+      .or(page.getByRole('dialog'))
+      .getByRole('button', { name: /^capture$/i })
+      .click()
+
+    // The capture takes the new total and releases the rest of the payment.
+    await expect(rows).toHaveCount(2, { timeout: 15_000 })
+    const captured = rows.filter({ hasText: /completed/i })
+    await expect(captured).toHaveCount(1)
+    await expect(captured).toContainText(shrunk.total.replace(/\.?0+$/, ''))
+    await expect(rows.filter({ hasText: /^.*void/i })).toHaveCount(1)
   })
 })

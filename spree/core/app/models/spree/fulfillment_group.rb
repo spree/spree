@@ -63,6 +63,19 @@ module Spree
       primary.stock_location
     end
 
+    # Where the customer collects the parcel when it is a pickup — see
+    # {Spree::Fulfillment#pickup_location}. Split orders share the counter
+    # the customer chose, so the first answers for all of them. A parcel
+    # canceled in every order it belongs to has nothing left to collect.
+    #
+    # @return [Spree::StockLocation, nil]
+    def pickup_location
+      return unless delivery_method&.pickup?
+      return if fulfillments.all?(&:canceled?)
+
+      orders.first&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
+    end
+
     # What this parcel costs to deliver: the halves' apportioned shares added
     # back up, which is what the customer was quoted for it before the split
     # divided anything.
@@ -103,8 +116,8 @@ module Spree
     #
     # @return [Array<Spree::Fulfillment::ManifestItem>]
     def manifest
-      fulfillments.flat_map(&:manifest).group_by(&:line_item).map do |line_item, items|
-        Spree::Fulfillment::ManifestItem.new(line_item, line_item.variant, items.sum(&:quantity), nil)
+      fulfillments.flat_map(&:manifest).group_by { |item| [item.line_item, item.variant] }.map do |(line_item, variant), items|
+        Spree::Fulfillment::ManifestItem.new(line_item, variant, items.sum(&:quantity), nil)
       end
     end
 

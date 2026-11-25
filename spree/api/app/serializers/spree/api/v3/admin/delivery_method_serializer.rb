@@ -18,7 +18,8 @@ module Spree
                    markup_percent: [:string, nullable: true],
                    available_to_sellers: :boolean,
                    seller_id: [:string, nullable: true],
-                   seller_name: [:string, nullable: true]
+                   seller_name: [:string, nullable: true],
+                   deleted_at: [:string, nullable: true]
 
           attributes :admin_name, :storefront_visible, :tracking_url, :available_to_sellers,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601

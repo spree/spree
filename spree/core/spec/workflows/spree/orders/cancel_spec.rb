@@ -59,6 +59,16 @@ module Spree
           to change { stock_level.reload.allocated_count }.by(-(placed_quantity + 1))
       end
 
+      # A canceled parcel's items keep their backordered status, but the stock
+      # they waited on is no longer owed, so the order stops reading backorder.
+      it 'moves a backordered order to canceled' do
+        order.fulfillment_items.update_all(status: 'backordered')
+        order.update_statuses!
+
+        expect { subject.call(order: order, canceler: user) }.
+          to change { order.reload.fulfillment_status }.from('backorder').to('canceled')
+      end
+
       # The carrier calls are batched after the order transaction commits, so
       # they must still happen — just not from inside the fulfillment workflow.
       it 'tells each provider to stand down' do
@@ -219,6 +229,63 @@ module Spree
           expect(payment.reload).to be_completed
           expect(payment.refunds.sum(:amount)).to eq(payment.amount)
           expect(order.reload.payment_total).to eq(0)
+        end
+      end
+    end
+
+    describe 'a payment waiting on its provider' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'requested') }
+
+      it 'refuses to cancel the order' do
+        result = subject.call(order: order, canceler: user)
+
+        expect(result).to be_failure
+        expect(order.errors[:base]).to include(I18n.t('spree.payment_requested_awaiting_provider'))
+        expect(order.reload).not_to be_canceled
+        expect(payment.reload).to be_requested
+      end
+    end
+
+    describe 'a payment whose capture or void is in flight' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'processing') }
+
+      it 'refuses to cancel the order, since the provider may yet capture it' do
+        result = subject.call(order: order, canceler: user)
+
+        expect(result).to be_failure
+        expect(order.errors[:base]).to include(I18n.t('spree.payment_requested_awaiting_provider'))
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
+    describe 'a provider that answers a cancel later' do
+      let(:order) { create(:completed_order_with_totals) }
+
+      before { payment.payment_method.update!(preferred_requested_mode: true) }
+
+      context 'with an uncaptured payment' do
+        let!(:payment) { create(:payment, order: order, amount: order.total, status: 'pending') }
+
+        it 'leaves the payment requested, waiting on the void' do
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_requested
+          expect(payment.requested_action).to eq('void')
+        end
+      end
+
+      context 'with a completed payment' do
+        let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+        # A provider answers this only after recording the refund its outcome settles.
+        it 'keeps the payment completed' do
+          allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_return(Spree::PaymentResponse.new(true, 'Refund requested', {}, requested: true))
+
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_completed
         end
       end
     end

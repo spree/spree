@@ -31,7 +31,8 @@ module Spree
     # location serves this channel (docs/plans/6.0-channel-delivery.md).
     has_many :channel_stock_locations, class_name: 'Spree::ChannelStockLocation',
              dependent: :destroy, inverse_of: :channel
-    has_many :stock_locations, through: :channel_stock_locations, class_name: 'Spree::StockLocation'
+    has_many :stock_locations, through: :channel_stock_locations, class_name: 'Spree::StockLocation',
+             dependent: :destroy
 
     attribute :active, :boolean, default: true
 

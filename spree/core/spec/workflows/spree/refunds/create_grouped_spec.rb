@@ -24,6 +24,16 @@ RSpec.describe Spree::Refunds::Create, 'against a shared payment' do
 
   before { payment }
 
+  it 'leaves the refund requested when the provider answers later' do
+    payment.payment_method.update!(preferred_requested_mode: true)
+
+    result = described_class.call(payment: payment, amount: 40, order: seller_order)
+
+    expect(result).to be_success
+    expect(result.value.reload).to be_requested
+    expect(result.value.order).to eq(seller_order)
+  end
+
   it 'refunds up to the order’s own share' do
     result = described_class.call(payment: payment, amount: 40, order: seller_order)
 

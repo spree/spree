@@ -271,6 +271,36 @@ module Spree
       delivery_method&.digital? || false
     end
 
+    # How the goods reach the customer, read from the selected rate's
+    # delivery method the way the 6.0 upgrade backfill did, so it follows a
+    # later change of rate. With no rate selected, an offered rate says
+    # nothing about the choice: the column (only the backfill writes it)
+    # answers, else the kind every fulfillment had before the column.
+    #
+    # @return [String] shipping, digital, pickup or pickup_point
+    def fulfillment_type
+      provider_class = selected_delivery_rate&.delivery_method&.provider_class
+      return super.presence || (digital? ? 'digital' : 'shipping') if provider_class.nil?
+
+      if provider_class.digital? then 'digital'
+      elsif provider_class.pickup_point? then 'pickup_point'
+      elsif provider_class.pickup? then 'pickup'
+      else 'shipping'
+      end
+    end
+
+    # Where the customer collects a pickup: the counter they chose at
+    # checkout, else the origin when it is itself a pickup counter. Under the
+    # 'any' pickup stock policy the origin can be a warehouse that ships to
+    # the counter, which the customer cannot visit.
+    #
+    # @return [Spree::StockLocation, nil] nil unless this is a pickup
+    def pickup_location
+      return unless delivery_method&.pickup?
+
+      (order || cart)&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
+    end
+
     # @deprecated Use {#delivery_method}; removed in 6.3.
     def shipping_method
       Spree::Deprecation.warn('Spree::Fulfillment#shipping_method is deprecated and will be removed in Spree 6.3. Use #delivery_method instead.')
@@ -474,7 +504,17 @@ module Spree
       fulfillment_items.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states) do
+      # An exchange replacement rides on the original line item, so it is priced
+      # as its own variant rather than at the line's price.
+      #
+      # @return [BigDecimal]
+      def price
+        return line_item.price if variant.nil? || variant.id == line_item.variant_id
+
+        variant.price_in(line_item.currency).amount || line_item.price
+      end
+    end
 
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
@@ -521,6 +561,14 @@ module Spree
                          sort_by(&:uncaptured_amount).reverse
 
       shipment_to_pay = final_price_with_items
+      # The capture workflow refuses an amount above what the order still
+      # owes, so a parcel priced above it (the total came down after
+      # authorization) takes the balance rather than failing the dispatch. A
+      # shared payment is bounded by this order's share instead, in #capture_from.
+      # Read from the payment rows, as the workflow does: an owner loaded
+      # before an earlier parcel captured still carries that parcel's balance.
+      owed = pending_payments.first&.amount_owed_by_order(including_in_flight: false) unless grouped_owner?
+      shipment_to_pay = [shipment_to_pay, owed].min if owed
       payments_amount = 0
 
       payments_pool = pending_payments.each_with_object([]) do |payment, pool|
@@ -874,6 +922,9 @@ module Spree
 
       begin
         capture_at_gateway(payment, bounded)
+        # The provider answers by webhook: the claim stays until then, which
+        # records the share as captured or releases it.
+        return bounded if payment.reload.requested?
       rescue StandardError
         # Released only when the money truly never moved. The capture workflow
         # keeps working after the charge commits — it authorizes the remainder
@@ -893,11 +944,7 @@ module Spree
     # caller in the rescue path is already raising the reason the capture
     # failed, and losing that to a bookkeeping error would hide it.
     def settle_share(split, amount, captured:)
-      split.with_lock do
-        attributes = { claimed_amount: split.claimed_amount - amount }
-        attributes[:captured_amount] = split.captured_amount + amount if captured
-        split.update!(attributes)
-      end
+      split.with_lock { split.settle_claim!(amount, captured: captured) }
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end

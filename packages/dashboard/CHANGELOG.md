@@ -1,5 +1,30 @@
 # @spree/dashboard
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/dashboard` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/dashboard/`.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - Add discount, Add fee, Add payment, Split fulfillment and a customer group's Add member report a failed save instead of staying open without a word. A stock location's on-hand row and a company's Add member dialog show a rejected value under its field.
+
+- [#15265](https://github.com/spree/spree/pull/15265) [`d687295`](https://github.com/spree/spree/commit/d6872959314974a355fe6ad6e96ab929e69e838c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A payment's details dialog shows "Not available" instead of "Did not pass" when the address or security code check was not run — the issuer's system was unavailable, the card or its issuer does not support it, or the street line was not verified. The payments table's warning reads "Card checks not available" in that case. A result where the details did not match still shows "Did not pass" and "Failed card checks".
+
+- [#15271](https://github.com/spree/spree/pull/15271) [`d6f8de8`](https://github.com/spree/spree/commit/d6f8de8207db74e72c0ea23d247f51745946a36a) Thanks [@mad-eel](https://github.com/mad-eel)! - A payment whose provider accepted a capture or void and has not answered yet shows as "Capture requested" or "Void requested", with no payment actions until the provider answers. A payment's details list its refunds with each one's status and, for a failed refund, the provider's reason.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - The purchase orders Columns picker offers Cancel by, Overdue and Past cancel-by, which could be filtered and sorted on but never shown.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - A purchase order unit cost typed with a comma ("3,80") is read as 3.80 in every browser. It was a number input, which Safari in English read as 380, saving the draft at 100 times the cost; it is now read in the admin's own format, like the store credit and price editors.
+
+- [#15283](https://github.com/spree/spree/pull/15283) [`6f7cf35`](https://github.com/spree/spree/commit/6f7cf3571ca571cd2896580698794065ddd8c723) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The webhook endpoint form lists the new `store.updated` event under a Store group.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - Saving a supplier under a name already in use, or with an invalid email, shows the reason under the field on the supplier sheet and page instead of doing nothing.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - Create transfer from an Inventory row lets you choose where the stock leaves from. The line it adds no longer locks an empty From, which left Create draft disabled until the line was removed.
+  From no longer offers the warehouse the transfer is going to, so choosing it cannot leave To showing an id instead of a name.
+
+- [#14955](https://github.com/spree/spree/pull/14955) [`0e3f1b8`](https://github.com/spree/spree/commit/0e3f1b82817447b199f2df9bd57b5b813b7d3a69) Thanks [@mad-eel](https://github.com/mad-eel)! - Variant pickers wait for three characters before searching and say so, since a shorter variant search finds nothing. Searching for "1", "t" or "true" in a variant picker, or in the order and returns lists, no longer fails.
+
 ## 6.0.5
 
 ### Patch Changes

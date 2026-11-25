@@ -27,6 +27,12 @@ module Spree
 
     include Spree::PaymentSessionTransitions
 
+    # Statuses after which a session's intent can no longer take money:
+    # placement cancels the provider intent, and an expired session's intent
+    # is gone. A failed session is not one of them — a declined confirm can
+    # leave its intent payable (see +unused+).
+    RETIRED_STATUSES = %w[canceled expired].freeze
+
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
     # A declined confirm marks the session failed while its intent can still
@@ -55,6 +61,19 @@ module Spree
     #
     # @param metadata [Hash] gateway-specific metadata
     # @return [Spree::Payment] the payment record
+    # The payment settled from this session: its owner's payment under the
+    # session's payment method carrying the gateway's identifier, the row
+    # find_or_create_payment! creates. The +payment+ association matches the
+    # identifier alone, which gateways only keep unique per payment method,
+    # so it can return another method's or another owner's payment.
+    #
+    # @return [Spree::Payment, nil]
+    def own_payment
+      return unless persisted?
+
+      owner&.payments&.find_by(payment_method_id: payment_method_id, response_code: external_id)
+    end
+
     def find_or_create_payment!(metadata = {})
       # An unsaved session has no identity to key a payment to, and nothing
       # has settled against it.
@@ -64,7 +83,8 @@ module Spree
       # one, so the requirement is skipped on every load, not just at creation
       # — a later capture webhook transitions the same row and would otherwise
       # fail source validation.
-      return skip_source_requirement(payment) if payment.present?
+      existing = own_payment
+      return skip_source_requirement(existing) if existing
 
       # Keyed on the gateway's own identifier alone. Never on the amount: a
       # session whose amount moved is still the same intent, and a second row
@@ -115,6 +135,16 @@ module Spree
       payment.metadata.merge!(metadata.stringify_keys) if metadata.present?
     end
 
+    # The provider's id for the capture when the payment settles as captured,
+    # written on its capture event so a late capture failure can find it.
+    # Called inside the settlement lock, so it must not perform provider I/O.
+    #
+    # @param payment [Spree::Payment] the payment being settled
+    # @return [String, nil]
+    def capture_reference_for_settlement(_payment)
+      nil
+    end
+
     # Fetches whatever settlement will need from the provider, so a caller
     # that settles inside a lock (the webhook path) holds it across no
     # provider I/O. Gateway session subclasses override; no-op by default.
@@ -149,10 +179,12 @@ module Spree
           # been cached on this instance before the lock (a concurrent
           # settlement could have completed it), but reload would discard
           # in-memory state like skip_source_requirement.
-          already_completed = settled_payment.completed? ||
-                              Spree::Payment.where(id: settled_payment.id, status: 'completed').exists?
+          # A requested payment waits on its provider's answer to a capture or
+          # void, so a redelivered authorization must not move it.
+          already_settled = settled_payment.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES) ||
+                            Spree::Payment.exists?(id: settled_payment.id, status: Spree::Payment::SETTLED_OR_WAITING_STATUSES)
 
-          settled_payment.confirm!(captured: captured) unless already_completed
+          settled_payment.confirm!(captured: captured, capture_reference: capture_reference_for_settlement(settled_payment)) unless already_settled
         end
 
         settled_payment

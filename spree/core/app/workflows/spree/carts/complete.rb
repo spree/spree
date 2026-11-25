@@ -124,7 +124,9 @@ module Spree
       end
 
       def guard_concurrent_completion
-        failure(cart, code: 'completion_in_progress') if cart.completion_claimed?
+        # Not completion_claimed?: that also holds a cart whose payment session
+        # settled, and completing such a cart is exactly what has to happen.
+        failure(cart, code: 'completion_in_progress') if cart.completion_attempt_claimed?
       end
 
       # A batch code this cart no longer holds no longer discounts it, so the

@@ -27,6 +27,7 @@ module Spree
         super
 
         halt!(cart) if other_cart.nil? || other_cart.id == cart.id
+        step :ensure_carts_unclaimed
         step :ensure_matching_currency
 
         # Veto point — before anything moves, so a rejection leaves both
@@ -34,6 +35,11 @@ module Spree
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          # Both rows stay locked until the merge commits, so a payment
+          # session settling on either cart (PaymentSession#settle_payment!
+          # runs under the owner's lock) waits for the merge or makes it
+          # refuse — it cannot land between the check and the destroy.
+          step :lock_unclaimed_carts
           step :move_line_items
           # Inside the transaction and before the absorbed lines are deleted,
           # so an extension can move what it keeps against them.
@@ -49,6 +55,44 @@ module Spree
       end
 
       private
+
+      # Neither cart may change while a completion attempt holds it or a
+      # gateway has taken money for it: merging would change the totals that
+      # money was charged for. The folded-in cart is destroyed, so it must
+      # also have no payment session the gateway may still settle — a
+      # session can be captured while still +pending+ here, and destroying
+      # it leaves the webhook nothing to record the payment against.
+      #
+      # A fast refusal before the validate hooks run; the answer that counts
+      # is +lock_unclaimed_carts+, read under the row locks.
+      def ensure_carts_unclaimed
+        return unless [cart, other_cart].any?(&:completion_claimed?) || other_cart.payment_session_open?
+
+        reject_claimed_carts
+      end
+
+      # Locks both carts in id order — the order every merge takes them in,
+      # so two merges over the same pair cannot deadlock — and checks them
+      # again from the locked rows. Uncached: the query cache could otherwise
+      # answer with the unlocked read +ensure_carts_unclaimed+ made.
+      def lock_unclaimed_carts
+        held = Spree::Cart.uncached do
+          locked = Spree::Cart.lock.where(id: [cart.id, other_cart.id]).order(:id).to_a
+          # A cart deleted since the merge began is not one to fold either.
+          locked.size < 2 || locked.any? { |locked_cart| claimed_or_unsafe_to_drain?(locked_cart) }
+        end
+
+        reject_claimed_carts if held
+      end
+
+      def claimed_or_unsafe_to_drain?(locked_cart)
+        locked_cart.completed_at.present? || locked_cart.completion_claimed? ||
+          (locked_cart.id == other_cart.id && locked_cart.payment_session_open?)
+      end
+
+      def reject_claimed_carts
+        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+      end
 
       def ensure_matching_currency
         return if other_cart.currency == cart.currency

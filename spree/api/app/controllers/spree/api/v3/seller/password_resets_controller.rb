@@ -50,7 +50,9 @@ module Spree
 
             # Always 202, whether or not anything matched — this endpoint must
             # not become a way to discover which addresses exist.
-            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
+            render json: Spree.api.seller_password_reset_acknowledgement_serializer.new(
+              { message: I18n.t('spree.api.password_reset_requested') }
+            ).to_h, status: :accepted
           end
 
           # PATCH /api/v3/seller/auth/password_resets/:id
@@ -65,9 +67,17 @@ module Spree
             # its password or sign it in.
             return render_account_deactivated if account_deactivated?(user)
 
-            unless user.update(password: params[:password], password_confirmation: params[:password_confirmation])
+            password = string_param(:password)
+            # Without this a reset link could clear the password, or sign in
+            # without setting one: the model only validates a password it is given.
+            if password.blank?
+              user.errors.add(:password, :blank)
               return render_errors(user.errors)
             end
+
+            # The confirmation goes in as sent: a malformed one has to fail to
+            # match, where a nil one would skip the check.
+            return render_errors(user.errors) unless user.update(password: password, password_confirmation: params[:password_confirmation])
 
             user.publish_event('seller_user.password_reset')
 

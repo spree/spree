@@ -315,6 +315,8 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
           stock_location.stock_levels.find_or_create_by(variant: variant).set_count_on_hand(10)
         end
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('Fulfillment'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data']).to be_an(Array)

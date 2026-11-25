@@ -3291,7 +3291,9 @@
           "view_at_gateway": "Xem tại {{gateway}}",
           "view_details": "Xem chi tiết",
           "failed_card_checks": "Kiểm tra thẻ không thành công",
-          "card_checks_unavailable": "Không thể kiểm tra thẻ"
+          "card_checks_unavailable": "Không thể kiểm tra thẻ",
+          "capture_requested": "Đã yêu cầu thu tiền",
+          "void_requested": "Đã yêu cầu hủy"
         },
         "priced_by": "Được định giá bởi {{name}}",
         "purchase_order": {
@@ -3356,15 +3358,27 @@
             "unavailable": "Không khả dụng",
             "not_checked": "Chưa được kiểm tra"
           },
+          "date": "Ngày",
           "captures": "Ảnh chụp",
           "captures_empty": "Vẫn chưa có gì bị bắt.",
-          "captured_at": "Đã chụp"
+          "refunds": "Hoàn tiền",
+          "refunds_empty": "Chưa có khoản hoàn tiền nào.",
+          "settlement_statuses": {
+            "requested": "Đã yêu cầu",
+            "completed": "Hoàn tất",
+            "failed": "Thất bại"
+          },
+          "failure_reason": "Lý do: {{reason}}"
         },
         "customer_edit": {
           "title": "Chỉnh sửa khách hàng",
           "customer_help": "Xóa khách hàng để biến đây thành một đơn đặt hàng của khách.",
           "confirm_detach": "Đơn hàng này sẽ không còn xuất hiện trong lịch sử đặt hàng hoặc tài khoản của khách hàng nữa. Loại bỏ khách hàng?",
-          "detach": "Xóa khách hàng"
+          "detach": "Xóa khách hàng",
+          "confirm_change": "Đơn hàng này sẽ được chuyển sang khách hàng mới.",
+          "confirm_change_to_guest": "Đơn hàng này sẽ trở thành đơn hàng của khách vãng lai và rời khỏi lịch sử đặt hàng của khách hàng.",
+          "confirm_change_releases_balance": "Tín dụng cửa hàng và thẻ quà tặng mà khách hàng trước đã áp dụng sẽ bị gỡ bỏ và hoàn lại cho họ, vì vậy số tiền phải trả sẽ tăng trở lại.",
+          "change": "Đổi khách hàng"
         }
       },
       "edit": {
@@ -4416,6 +4430,7 @@
             "stock_receipt": "Phiếu nhập kho",
             "stock_reservation": "Đặt kho hàng",
             "stock_transfer": "Chuyển kho",
+            "store": "Cửa hàng",
             "store_credit": "Lưu trữ tín dụng",
             "supplier": "Nhà cung cấp",
             "tax_exemption_certificate": "Giấy chứng nhận miễn thuế",
@@ -4781,6 +4796,9 @@
       "amount": "Số tiền",
       "api_key": "Khóa API",
       "api_key_description": "Tìm thấy trong bảng điều khiển EasyPost của bạn. Khóa kiểm tra và khóa trực tiếp hoạt động khác nhau — chính khóa đó sẽ quyết định chế độ.",
+      "merchant_account": "Tài khoản người bán",
+      "test_mode": "Chế độ thử nghiệm",
+      "live_url_prefix": "Tiền tố URL môi trường thật",
       "base_amount": "Số tiền cơ bản",
       "base_percent": "Phần trăm cơ sở",
       "company_orders_only": "Chỉ nhận đơn hàng của công ty",

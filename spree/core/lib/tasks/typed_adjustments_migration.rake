@@ -9,7 +9,8 @@
 #   - Order totals are never touched; a per-order reconciliation asserts the
 #     typed sums match the order's stored totals. Orders that do not reconcile
 #     are logged and marked recalculation-frozen (metadata flag), never
-#     force-balanced.
+#     force-balanced. `fee_total` is the exception: 5.x had no such total, so
+#     it is set to the sum of the fees created here.
 #   - Idempotent: orders with any typed rows already present are skipped.
 namespace :spree do
   desc 'Convert legacy spree_adjustments into typed TaxLine/Discount/Fee rows'
@@ -92,6 +93,8 @@ namespace :spree do
               stats[:fees_unknown_source] += 1
             end
           end
+
+          order.update_columns(fee_total: Spree::Fee.where(order_id: order.id).sum(:amount))
 
           # Reconciliation: typed sums must match the stored order totals the
           # customer was charged. discount_total compares against promotion rows;

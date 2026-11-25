@@ -45,6 +45,7 @@ import type {
   StockReceiptEvent,
   StockReservation,
   StockTransfer,
+  Store,
   StoreCredit,
   SupplierEvent,
   TaxIdentifier,
@@ -193,6 +194,8 @@ export interface WebhookEventMap {
   'order_group.deleted': OrderGroup
   'order_group.resend_confirmation_email': OrderGroup
   'order_group.updated': OrderGroup
+  'payment.capture_failed': Payment
+  'payment.capture_requested': Payment
   'payment.captured': Payment
   'payment.completed': Payment
   'payment.created': Payment
@@ -200,6 +203,8 @@ export interface WebhookEventMap {
   'payment.paid': Payment
   'payment.refunded': Payment
   'payment.updated': Payment
+  'payment.void_failed': Payment
+  'payment.void_requested': Payment
   'payment.voided': Payment
   'payment_session.canceled': PaymentSession
   'payment_session.completed': PaymentSession
@@ -252,6 +257,8 @@ export interface WebhookEventMap {
   'purchase_order.updated': PurchaseOrderEvent
   'refund.created': Refund
   'refund.deleted': Refund
+  'refund.failed': Refund
+  'refund.requested': Refund
   'refund.updated': Refund
   'return.approved': Return
   'return.canceled': Return
@@ -319,6 +326,7 @@ export interface WebhookEventMap {
   'stock_transfer.received': StockTransfer
   'stock_transfer.shipped': StockTransfer
   'stock_transfer.updated': StockTransfer
+  'store.updated': Store
   'store_credit.created': StoreCredit
   'store_credit.deleted': StoreCredit
   'store_credit.updated': StoreCredit

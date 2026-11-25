@@ -1,4 +1,4 @@
-import type { SetupCountry } from '@spree/admin-sdk'
+import type { Country } from '@spree/admin-sdk'
 // Barrel imports only. Deep imports here (`@spree/dashboard-ui/ui/select` and
 // friends) make Vite prebundle each subpath as its own dependency in an
 // installed app, which leaves Base UI's CommonJS shim unconverted and stops
@@ -71,7 +71,7 @@ export interface StoreSetupValues {
 export interface StoreSetupFieldsProps<Values extends StoreSetupValues> {
   form: UseFormReturn<Values>
   /** Countries the store may be set up in, with their own currency and languages. */
-  countries: SetupCountry[]
+  countries: Country[]
   /** Renders a retry affordance when the list could not be loaded. */
   countriesPending?: boolean
 }
@@ -93,13 +93,10 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
   const { t } = useTranslation()
   const countryName = useCountryDisplayName()
   const sortByName = useSortByCountryName()
-  const nameOf = useCallback(
-    (country: SetupCountry) => countryName({ iso: country.code }),
-    [countryName],
-  )
+  const nameOf = useCallback((country: Country) => countryName({ iso: country.iso }), [countryName])
   // Sorted by the name the merchant reads, which the API cannot know.
   const countries = useMemo(
-    () => sortByName(unsortedCountries, (country) => country.code),
+    () => sortByName(unsortedCountries, (country) => country.iso),
     [unsortedCountries, sortByName],
   )
   // The generic form's errors are keyed by the caller's value type; these four
@@ -116,7 +113,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
   const currencyName = useDisplayName('currency')
   const countryCode = watch('country_code')
   const selectedCountry = useMemo(
-    () => countries.find((country) => country.code === countryCode) ?? null,
+    () => countries.find((country) => country.iso === countryCode) ?? null,
     [countries, countryCode],
   )
 
@@ -135,7 +132,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
     (code: string) => {
       setValue('country_code', code, { shouldValidate: true })
 
-      const country = countries.find((candidate) => candidate.code === code)
+      const country = countries.find((candidate) => candidate.iso === code)
       setValue('locale', country?.locales[0] ?? 'en')
       setValue('currency', country?.currency ?? 'USD', { shouldValidate: true })
     },
@@ -159,7 +156,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
     if (!suggestedCountry) return
     if (countries.length === 0) return
     if (getValues('country_code')) return
-    if (!countries.some((country) => country.code === suggestedCountry)) return
+    if (!countries.some((country) => country.iso === suggestedCountry)) return
 
     handleCountryChange(suggestedCountry)
   }, [countries, suggestedCountry, handleCountryChange, getValues])
@@ -187,11 +184,9 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
             <Combobox
               items={countries}
               value={selectedCountry}
-              onValueChange={(country: SetupCountry | null) =>
-                handleCountryChange(country?.code ?? '')
-              }
-              itemToStringLabel={(country: SetupCountry | null) => (country ? nameOf(country) : '')}
-              itemToStringValue={(country: SetupCountry | null) => country?.code ?? ''}
+              onValueChange={(country: Country | null) => handleCountryChange(country?.iso ?? '')}
+              itemToStringLabel={(country: Country | null) => (country ? nameOf(country) : '')}
+              itemToStringValue={(country: Country | null) => country?.iso ?? ''}
               disabled={countriesPending}
             >
               <ComboboxButtonTrigger
@@ -201,7 +196,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
               >
                 {selectedCountry ? (
                   <>
-                    <CountryFlag iso={selectedCountry.code} />
+                    <CountryFlag iso={selectedCountry.iso} />
                     <span className="truncate">{nameOf(selectedCountry)}</span>
                   </>
                 ) : (
@@ -214,10 +209,10 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                 <ComboboxSearch placeholder={t('admin.fields.setup.country_code.placeholder')} />
                 <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                 <ComboboxList>
-                  {(country: SetupCountry) => (
-                    <ComboboxItem key={country.code} value={country}>
+                  {(country: Country) => (
+                    <ComboboxItem key={country.iso} value={country}>
                       <span className="flex items-center gap-2">
-                        <CountryFlag iso={country.code} />
+                        <CountryFlag iso={country.iso} />
                         {nameOf(country)}
                       </span>
                     </ComboboxItem>

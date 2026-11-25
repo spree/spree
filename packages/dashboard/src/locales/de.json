@@ -3292,7 +3292,9 @@
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
           "failed_card_checks": "Kartenprüfung fehlgeschlagen",
-          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar"
+          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar",
+          "capture_requested": "Erfassung angefordert",
+          "void_requested": "Stornierung angefordert"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3357,15 +3359,27 @@
             "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
+          "date": "Datum",
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
-          "captured_at": "Erfasst"
+          "refunds": "Erstattungen",
+          "refunds_empty": "Es wurde noch nichts erstattet.",
+          "settlement_statuses": {
+            "requested": "Angefordert",
+            "completed": "Abgeschlossen",
+            "failed": "Fehlgeschlagen"
+          },
+          "failure_reason": "Grund: {{reason}}"
         },
         "customer_edit": {
           "title": "Kunde bearbeiten",
           "customer_help": "Entfernen Sie den Kunden, um daraus eine Gastbestellung zu machen.",
           "confirm_detach": "Diese Bestellung erscheint nicht mehr im Bestellverlauf und Konto des Kunden. Kunde entfernen?",
-          "detach": "Kunde entfernen"
+          "detach": "Kunde entfernen",
+          "confirm_change": "Diese Bestellung wird dem neuen Kunden zugeordnet.",
+          "confirm_change_to_guest": "Diese Bestellung wird zur Gastbestellung und verschwindet aus dem Bestellverlauf des Kunden.",
+          "confirm_change_releases_balance": "Guthaben und Geschenkkarten des bisherigen Kunden werden entfernt und ihm zurückgegeben, daher steigt der offene Betrag wieder.",
+          "change": "Kunde ändern"
         }
       },
       "edit": {
@@ -4417,6 +4431,7 @@
             "stock_receipt": "Wareneingang",
             "stock_reservation": "Bestandsreservierung",
             "stock_transfer": "Bestandsübertragung",
+            "store": "Shop",
             "store_credit": "Guthaben",
             "supplier": "Lieferant",
             "tax_exemption_certificate": "Steuerbefreiungsbescheinigung",
@@ -4799,6 +4814,9 @@
       "amount": "Betrag",
       "api_key": "API-Schlüssel",
       "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
+      "merchant_account": "Händlerkonto",
+      "test_mode": "Testmodus",
+      "live_url_prefix": "Live-URL-Präfix",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "company_orders_only": "Nur für Firmenbestellungen",

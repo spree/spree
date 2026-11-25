@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { expect, type Page, test } from '@playwright/test'
 import {
   adminRequest,
@@ -8,9 +9,16 @@ import {
   saveCustomFieldInSheet,
   withCustomFieldDefinition,
 } from './helpers'
+import { API_GEM_DIR, runRailsBootstrap } from './rails'
 
 const GIFT_CARDS_PATH = (storeId: string) => `/${storeId}/loyalty/gift-cards`
 const CTA = /new gift card/i
+
+const railsEnv = {
+  ...process.env,
+  RAILS_ENV: 'test',
+  DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
+}
 
 async function createGiftCard(
   page: Page,
@@ -121,6 +129,40 @@ test.describe('gift cards', () => {
       timeout: 15_000,
     })
     await expect(page.getByRole('heading', { name: /new gift card/i })).toBeVisible()
+  })
+
+  // A card applied to a cart has part of its balance spent while it is
+  // still active, so its edit sheet stays open; the amount is then locked.
+  test('refuses to change the amount of a card that has been used', async ({ page }) => {
+    const creds = await login(page)
+    const giftCard = await adminRequest<{ id: string }>(page, creds, 'post', '/gift_cards', {
+      amount: '100.00',
+      currency: 'USD',
+      code: `E2EUSED${Date.now().toString().slice(-6)}`,
+    })
+    runRailsBootstrap(
+      `Spree::GiftCard.find_by_prefix_id!('${giftCard.id}').update_columns(amount_used: 44)
+      puts({ ok: true }.to_json)`,
+      railsEnv,
+    )
+
+    await page.goto(`${GIFT_CARDS_PATH(creds.store_id)}?edit=${giftCard.id}`)
+    await expect(page.locator('#amount')).toHaveValue(/^100(\.0+)?$/, { timeout: 15_000 })
+
+    await page.locator('#amount').fill('150.00')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(
+      page.getByText(/can't be changed once the gift card has been used/i).first(),
+    ).toBeVisible({ timeout: 15_000 })
+    const stored = await adminRequest<{ amount: string; amount_remaining: string }>(
+      page,
+      creds,
+      'get',
+      `/gift_cards/${giftCard.id}`,
+    )
+    expect(stored.amount).toBe('100.00')
+    expect(stored.amount_remaining).toBe('56.00')
   })
 
   test('saves a custom field with the gift card', async ({ page }) => {

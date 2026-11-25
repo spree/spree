@@ -43,11 +43,36 @@ RSpec.describe Spree::Payments::HandleWebhook do
       end
     end
 
+    context 'when the payment is waiting on its provider' do
+      before do
+        subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
+        order.payments.last.update_column(:status, 'requested')
+      end
+
+      it 'leaves it alone on a redelivered authorization' do
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(result).to be_success
+        expect(order.payments.reload.last).to be_requested
+        expect(order.payments.last.capture_events).to be_empty
+      end
+    end
+
     context 'with :captured action' do
       it 'fetches provider data before taking the order lock' do
         expect(payment_session).to receive(:prepare_for_settlement!).and_call_original
 
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+      end
+
+      it 'passes the metadata to the settlement' do
+        expect(payment_session).to receive(:settle_payment!).
+          with(captured: true, metadata: { 'psp_reference' => 'PSP123' }).and_call_original
+
+        subject.call(
+          payment_method: payment_method, action: :captured, payment_session: payment_session,
+          metadata: { 'psp_reference' => 'PSP123' }
+        )
       end
 
       it 'creates a payment record' do
@@ -210,6 +235,84 @@ RSpec.describe Spree::Payments::HandleWebhook do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
 
         expect(payment_session.reload.status).to eq('completed')
+      end
+    end
+
+    # SANDBOX-V2-1Y: the storefront's confirm settled the session on the cart,
+    # then the shopper emptied the cart from another tab before it completed.
+    # The webhook could never place the order, retried a failure that could
+    # not change, and the buyer stayed charged without one.
+    context 'when the shopper edits the cart after the gateway took the money' do
+      let(:cart) { create(:cart_ready_for_delivery, store: store) }
+      let(:cart_session) do
+        create(:bogus_payment_session, cart: cart, payment_method: payment_method, amount: cart.total)
+      end
+      let!(:line_item) { cart.line_items.first }
+
+      before do
+        # The synchronous confirm: payment settled, session completed, cart
+        # not yet completed.
+        cart_session.settle_payment!(captured: true)
+        cart_session.complete
+      end
+
+      it 'refuses the edit, so the webhook still places the order for what was paid' do
+        removal = Spree.cart_upsert_items_workflow.call(
+          cart: cart.reload,
+          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+        )
+
+        expect(removal).to be_failure
+        expect(removal.error.value[:code]).to eq('completion_in_progress')
+
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: cart_session.reload)
+
+        expect(result).to be_success
+        expect(cart.reload.completed_at).to be_present
+        expect(cart.order).to be_placed
+        expect(cart.order.line_items.sum(:quantity)).to eq(line_item.quantity)
+        expect(cart.order.payments.completed.count).to eq(1)
+      end
+    end
+
+    # The gateway's money arrived for a cart that cannot become an order —
+    # here it lost its email before the payment settled. Completion fails
+    # whatever the retry, so the settled payment must stay recorded on the
+    # cart instead of rolling back with the failed completion.
+    context 'when the cart cannot complete after the gateway took the money' do
+      let(:cart) { create(:cart_ready_for_delivery, store: store) }
+      let(:cart_session) do
+        create(:bogus_payment_session, cart: cart, payment_method: payment_method, amount: cart.total)
+      end
+
+      before { cart.update_column(:email, nil) }
+
+      it 'fails with the requirement the cart does not meet' do
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: cart_session)
+
+        expect(result).to be_failure
+        expect(result.error.code).to eq('validation_failed')
+        expect(result.error.value[:errors].pluck(:code)).to include('email_required')
+        expect(cart.reload.completed_at).to be_nil
+      end
+
+      it 'keeps the settled payment and completed session, fencing the cart' do
+        subject.call(payment_method: payment_method, action: :captured, payment_session: cart_session)
+
+        expect(cart.reload.payments.completed.count).to eq(1)
+        expect(cart_session.reload).to be_completed
+        expect(cart).to be_payment_session_settled
+      end
+
+      it 'places the order without a second payment once a delivery can complete it' do
+        subject.call(payment_method: payment_method, action: :captured, payment_session: cart_session)
+        cart.update_column(:email, 'buyer@example.com')
+
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: cart_session.reload)
+
+        expect(result).to be_success
+        expect(cart.reload.order).to be_placed
+        expect(cart.order.payments.count).to eq(1)
       end
     end
 

@@ -296,6 +296,46 @@ The webhook URL for your payment method is available via `payment_method.webhook
 | `:failed` | Payment failed. Marks the session as failed. |
 | `:canceled` | Payment was canceled. Marks the session as canceled. |
 
+Return `metadata:` beside the action to hand provider data to the session's
+`apply_settlement_metadata`. It crosses a background job, so keep it JSON-safe
+with string keys.
+
+### Providers that answer later
+
+If your provider accepts a capture, void or refund and reports the outcome
+later by webhook, answer those verbs with `requested: true`:
+
+```ruby app/models/my_gateway.rb
+def capture(amount, session_id, gateway_options)
+  result = MyProvider::Capture.create(payment_reference(gateway_options), amount)
+  Spree::PaymentResponse.new(true, 'Capture requested', {},
+                             requested: true, authorization: session_id, reference: result.id)
+end
+```
+
+Answer `requested?` only when the provider has accepted the request and will
+report its outcome by webhook. The payment or refund then waits as `requested`,
+and `parse_webhook_event` must return the outcome with the reference of the
+record it settles. Don't look the record up there: the outcome can arrive before
+Spree has written it, so Spree's job looks it up and waits for it.
+
+```ruby app/models/my_gateway.rb
+when 'capture.succeeded'
+  { action: :capture_succeeded, reference: data['id'] }
+when 'refund.failed'
+  { action: :refund_failed, reference: data['id'], metadata: { 'reason' => data['reason'] } }
+```
+
+The six actions are `:capture_succeeded`, `:capture_failed`, `:void_succeeded`,
+`:void_failed`, `:refund_succeeded` and `:refund_failed`. The default
+`modification_record(action, reference)` finds a capture event or refund by
+`transaction_id`, and a void's payment by its response code; override it if
+your provider names them otherwise. If your sessions settle as captured, override the session's
+`capture_reference_for_settlement(payment)` to return the provider's capture
+reference, so a capture failure reported later finds its capture event. See
+[Payments](/developer/core-concepts/payments#providers-that-answer-later) for
+what each outcome does.
+
 ## Step 5: Control Payment Method Visibility (Optional)
 
 Override visibility methods to control where and when your payment method appears:

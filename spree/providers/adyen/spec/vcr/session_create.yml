@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/checkout/return","channel":"Web","expiresAt":"2026-11-18T18:43:02Z","applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":11000,"currency":"USD"},"reference":"or_UkLWZg9DAJ-1","merchantOrderReference":"or_UkLWZg9DAJ","countryCode":"US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperEmail":"darron_welch@kuphal.ca","payable":false,"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","recurringProcessingModel":"CardOnFile","shopperInteraction":"Ecommerce","lineItems":[{"id":"li_UkLWZg9DAJ","description":"Product
+        55834","sku":"SKU-5","quantity":1,"amountIncludingTax":1000},{"id":"delivery","description":"Delivery","quantity":1,"amountIncludingTax":10000}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-dc6bfc8140dc
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:02 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '3461'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-da5f8a9db903cb652b36aaba6ae02fb3-79791341bf35877f-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-dc6bfc8140dc
+      Pspreference:
+      - GK6DKP9Q979WVLV5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=CB8827CA3EFE4ED0EFA4B1C5A7A62702; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=.dC.lsGEF5e.gNYAsfhEuisMPRhU9g9L0PX6lpC6agY-1795023782.2589638-1.0.1.1-5NVA6HyyahtcVXKNsda1heF_YlbNLdsCKA8LvjfJpCVfPi7xxdhyL9om.OfrNfPIckSRu1TT1j03AGEhMeEqkvPulvUyYGZZXVfc_VMnYMZ4jLMQokZU6KR3hJHGGLOO;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:02 GMT
+      - _cfuvid=95yP_aem7XNkQ2ZC7Asj1YgEFZX9ZXIn7sYw8pyV4dw-1795023782.2589638-1.0.1.1-ep87FSu7py2MrBQ73JOfcu4r__XlV2CcKSnSUKGDyto;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c66f1f23f8e7-WAW
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency":"USD","value":11000},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"channel":"Web","countryCode":"US","expiresAt":"2026-11-18T19:43:02+01:00","id":"CSE3E2186E25A9BBF3B5D326A","lineItems":[{"amountExcludingTax":0,"amountIncludingTax":1000,"description":"Product
+        55834","id":"li_UkLWZg9DAJ","quantity":1,"sku":"SKU-5","taxAmount":0,"taxPercentage":0},{"amountExcludingTax":0,"amountIncludingTax":10000,"description":"Delivery","id":"delivery","quantity":1,"taxAmount":0,"taxPercentage":0}],"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","merchantOrderReference":"or_UkLWZg9DAJ","payable":false,"recurringProcessingModel":"CardOnFile","reference":"or_UkLWZg9DAJ-1","returnUrl":"https:\/\/shop.example.com\/checkout\/return","shopperEmail":"darron_welch@kuphal.ca","shopperInteraction":"Ecommerce","shopperLocale":"en-US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:02 GMT
+recorded_with: VCR 6.4.1
