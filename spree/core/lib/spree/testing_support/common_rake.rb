@@ -46,8 +46,11 @@ namespace :common do
       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
     bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
-    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false " \
-           "--user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}")
+    # A failed step stops the task. Carrying on left a test app that looked
+    # built but had no Spree migrations or an unmigrated database.
+    install = "#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false " \
+              "--user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}"
+    system(install) || raise('Spree install generator failed')
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'

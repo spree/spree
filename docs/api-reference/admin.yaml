@@ -62064,7 +62064,27 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 264
+                  page: 1
+                  limit: 271
+                  count: 271
+                  pages: 1
+                  from: 1
+                  to: 271
+                  in: 271
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/WebhookEvent"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
 servers:
 - url: http://{defaultHost}
   variables:
