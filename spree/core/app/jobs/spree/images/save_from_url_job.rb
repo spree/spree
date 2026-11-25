@@ -107,9 +107,11 @@ module Spree
 
         response = fetch(external_url) do |fetched|
           # Every hop calls back, redirects included; their bodies are not the
-          # file. An error status is refused before its body is read, so a
-          # large error page is not mistaken for an oversized image.
-          next if redirect?(fetched)
+          # file, but are drained here within the limit, since Net::HTTP would
+          # otherwise read one whole into memory. An error status is refused
+          # before its body is read, so a large error page is not mistaken for
+          # an oversized image.
+          next read_within(fetched, max_size, keep: false) if redirect?(fetched)
 
           raise_fetch_failed(external_url, fetched) unless success?(fetched)
 
@@ -132,8 +134,13 @@ module Spree
           tempfile.rewind
 
           image.attachment.attach(io: tempfile, filename: filename)
-          image.external_url = external_url
-          image.save!
+          # Saved first so a non-image file fails validation here, rather than
+          # as a custom field with no owner; together, so a failed URL leaves
+          # no image behind for the retry to duplicate.
+          image.transaction do
+            image.save!
+            image.external_url = external_url
+          end
         ensure
           tempfile.close
           tempfile.unlink
@@ -179,13 +186,15 @@ module Spree
       # Reads the body as it arrives and stops at the limit, so an oversized
       # or endless response is refused mid-stream rather than held in memory
       # first; a declared length over the limit is refused before any of it.
-      def read_within(response, max_size)
+      def read_within(response, max_size, keep: true)
         raise_too_large(max_size) if response['Content-Length'].to_i > max_size
 
         buffer = +''
+        size = 0
         response.read_body do |chunk|
-          buffer << chunk
-          raise_too_large(max_size) if buffer.bytesize > max_size
+          size += chunk.bytesize
+          raise_too_large(max_size) if size > max_size
+          buffer << chunk if keep
         end
         buffer
       end
