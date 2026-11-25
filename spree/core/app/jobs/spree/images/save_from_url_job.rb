@@ -16,6 +16,26 @@ module Spree
       # `{ system:, external_id: }` and name itself.
       DEFAULT_EXTERNAL_SYSTEM = 'import'.freeze
 
+      # The URL answered, but not with the file: a 404, a 500, a rate limit.
+      class FetchFailed < StandardError; end
+
+      # Everything a remote host can fail with that is not a bug here: a
+      # refused, reset or slow connection, a bad certificate, a malformed or
+      # unsuccessful response. A host that is down now may be back in a
+      # minute, so the fetch is retried; once the attempts run out the media is
+      # simply not imported, as with a blocked address, rather than raised as
+      # an error nobody can fix.
+      FETCH_ERRORS = [
+        SocketError, Timeout::Error, OpenSSL::SSL::SSLError, SystemCallError, EOFError,
+        Net::HTTPBadResponse, Net::ProtocolError, FetchFailed
+      ].freeze
+
+      retry_on(*FETCH_ERRORS, wait: :polynomially_longer, attempts: Spree::Config.images_save_from_url_job_attempts.to_i) do |job, error|
+        Rails.logger.warn(
+          "[Spree::Images::SaveFromUrlJob] Gave up fetching #{job.arguments[2].to_s.strip}: #{error.class}: #{error.message}"
+        )
+      end
+
       # @param external_id [String, Hash, Array, nil] the identities the source
       #   systems know this media by — a bare id, a `{ system:, external_id: }`
       #   hash, or a list of them when several systems name the same asset.
@@ -92,6 +112,8 @@ module Spree
             open_timeout: 30
           }
         ) { |fetched| streamed_body = read_within(fetched, max_size) }
+
+        raise FetchFailed, "#{external_url} responded with HTTP #{response.code}" unless response.code.to_s.start_with?('2')
 
         # A fetch that did not stream (a test double, say) is read whole and
         # held to the same limit.

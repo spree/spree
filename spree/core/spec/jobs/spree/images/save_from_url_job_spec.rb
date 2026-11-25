@@ -126,6 +126,44 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
     end
 
+    context 'when the remote host cannot be reached' do
+      [
+        Errno::ECONNREFUSED.new('Failed to open TCP connection to 192.0.2.1:8080'),
+        Errno::ECONNRESET.new,
+        Net::OpenTimeout.new('execution expired'),
+        Net::ReadTimeout.new,
+        SocketError.new('getaddrinfo: Name or service not known'),
+        OpenSSL::SSL::SSLError.new('certificate verify failed')
+      ].each do |error|
+        it "retries the fetch on #{error.class} instead of raising" do
+          allow(SsrfFilter).to receive(:get).and_raise(error)
+
+          expect { subject }.to have_enqueued_job(described_class)
+          expect(Spree::Media.count).to eq(0)
+        end
+      end
+
+      it 'gives up quietly once the attempts are used up' do
+        allow(SsrfFilter).to receive(:get).and_raise(Errno::ECONNREFUSED)
+        allow(Rails.logger).to receive(:warn)
+        job = described_class.new(viewable_id, viewable_type, external_url, external_id, position)
+        job.executions = Spree::Config.images_save_from_url_job_attempts.to_i - 1
+
+        expect { job.perform_now }.not_to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+        expect(Rails.logger).to have_received(:warn).with(/Gave up fetching #{Regexp.escape(external_url)}: Errno::ECONNREFUSED/)
+      end
+    end
+
+    context 'when the URL responds with an error status' do
+      let(:response) { instance_double(Net::HTTPResponse, code: '503', body: 'Service Unavailable') }
+
+      it 'retries the fetch without attaching the error page' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+      end
+    end
+
     context 'when downloaded file exceeds max size' do
       let(:max_size) { 1024 }
       let(:response_body) { 'x' * (max_size + 1) }
