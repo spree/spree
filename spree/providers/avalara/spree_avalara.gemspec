@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'The official certified Avalara AvaTax extension for Spree Commerce'
+  s.summary     = 'The official Avalara AvaTax extension for Spree Commerce'
   s.description = 'The officially supported Avalara AvaTax extension for Spree Commerce using Avalara REST API v2 — ' \
                   'sales tax, VAT and GST calculation, exemptions, address validation and document filing'
   s.homepage    = 'https://spreecommerce.org'

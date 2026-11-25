@@ -15,10 +15,9 @@ Spree's `Spree::TaxProvider` interface on Avalara's official
 - [Setup](#setup)
 - [Upgrading from `spree_avatax_official`](#upgrading-from-spree_avatax_official)
 - [Development](#development)
+- [Contributing](#contributing)
 
 ## Introduction
-
-<img src="https://spreecommerce.org/wp-content/uploads/2019/11/AvalaraCertifiedBadge_Refunds.png" width="150" align="right"> <img src="https://spreecommerce.org/wp-content/uploads/2019/11/AvalaraCertifiedBadge_SalesTax.png" width="150" align="right">
 
 Avalara AvaTax is a cloud-based solution automating transaction tax calculations and the tax filing
 process. Avalara provides real-time tax calculation using tax content from more than 12,000 US taxing
@@ -185,4 +184,4 @@ Credentials and the account's own user name are filtered out of every cassette.
 This gem lives in the [Spree monorepo](https://github.com/spree/spree) under `spree/providers/avalara`.
 Please open issues and pull requests there.
 
-Copyright (c) 2026 [Spark Solutions Sp. z o.o.](https://sparksolutions.co), [Vendo Sp. z o.o.](https://getvendo.com), [Vendo Connect Inc.](https://getvendo.com), released under the [MIT license](LICENSE).
+Copyright (c) 2026-present [Vendo Sp. z o.o.](https://getvendo.com), [Vendo Connect Inc.](https://getvendo.com), released under the [MIT license](LICENSE).
