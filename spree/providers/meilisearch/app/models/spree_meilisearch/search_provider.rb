@@ -272,7 +272,10 @@ module SpreeMeilisearch
         # exactly what an empty result says — not an error worth reporting on
         # every listing of every new store.
         if e.code == 'index_not_found'
-          Rails.logger.info { "[Meilisearch] Index #{index_name} does not exist yet; returning no results. It is created on the first product write or by `rake spree:search:reindex`." }
+          Rails.logger.info do
+            "[Meilisearch] Index #{index_name} does not exist yet; returning no results. " \
+              'It is created on the first product write or by `rake spree:search:reindex`.'
+          end
           return nil
         end
 

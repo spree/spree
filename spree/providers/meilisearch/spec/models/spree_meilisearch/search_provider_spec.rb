@@ -309,7 +309,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     # been indexed for has none yet.
     context 'when the store has no index yet' do
       before do
-        error = ::Meilisearch::ApiError.new(
+        error = Meilisearch::ApiError.new(
           404, 'Not Found',
           { 'code' => 'index_not_found', 'message' => "Index `#{store.code}_products` not found." }
         )
@@ -334,11 +334,11 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
     context 'when Meilisearch API fails' do
       before do
-        allow(mock_index).to receive(:search).and_raise(::Meilisearch::ApiError.new(500, 'Internal Server Error', { 'code' => 'internal' }))
+        allow(mock_index).to receive(:search).and_raise(Meilisearch::ApiError.new(500, 'Internal Server Error', { 'code' => 'internal' }))
       end
 
       it 'reports the error and returns an empty result' do
-        expect(Rails.error).to receive(:report).with(an_instance_of(::Meilisearch::ApiError), hash_including(handled: true))
+        expect(Rails.error).to receive(:report).with(an_instance_of(Meilisearch::ApiError), hash_including(handled: true))
 
         result = provider.search_and_filter(scope: store.products, query: 'shirt')
         expect(result.total_count).to eq(0)
@@ -492,7 +492,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
     context 'when the store has no index yet' do
       let(:index_not_found) do
-        ::Meilisearch::ApiError.new(
+        Meilisearch::ApiError.new(
           404, 'Not Found',
           { 'code' => 'index_not_found', 'message' => "Inside `.queries[0]`: Index `#{store.code}_products` not found." }
         )
