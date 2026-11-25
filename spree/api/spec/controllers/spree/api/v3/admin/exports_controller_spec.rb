@@ -410,6 +410,13 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
           expect(response).to have_http_status(:forbidden)
           expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
         end
+
+        it "still refuses an export type the grant's scopes do not cover" do
+          post :create, params: { type: 'customers' }, as: :json
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_permission']).to eq('read_customers')
+        end
       end
     end
   end

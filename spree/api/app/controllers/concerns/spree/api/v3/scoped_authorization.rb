@@ -145,13 +145,23 @@ module Spree
           raise MissingScopedResource, self.class unless resource
 
           ability = current_ability
-          return unless ability.respond_to?(:permission_keys)
-
           required = "#{action_kind}_#{resource}"
           # Scope names outside the catalog (the exports/imports `:all`
           # fallback, host-registered types) defer to CanCanCan's `authorize!`
           # — the caller stays gated per subject, just not by key.
           return unless Spree.permissions.key?(required)
+
+          # A custom ability without catalog keys leaves the staffer's own
+          # authority to CanCanCan, but a delegated credential is still held
+          # to its grant: the person consented to part of their authority, and
+          # CanCanCan only ever sees the whole of it.
+          unless ability.respond_to?(:permission_keys)
+            granted = delegated_permission_keys
+            return if granted.nil? || granted.include?(required)
+
+            return render_missing_permission(required)
+          end
+
           return if staff_permission_keys.include?(required)
 
           Rails.logger.info do
