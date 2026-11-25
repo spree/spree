@@ -199,12 +199,13 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     context 'when the URL redirects to the file' do
       let(:response) { instance_double(Net::HTTPResponse, code: '200', body: nil) }
 
-      it 'skips the redirect body and attaches the final response' do
+      it 'discards the redirect body and attaches the final response' do
         redirect = double('redirect', code: '301')
-        expect(redirect).not_to receive(:read_body)
+        allow(redirect).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(redirect).to receive(:read_body).and_yield('Moved')
         final = double('response', code: '200')
         allow(final).to receive(:[]).with('Content-Length').and_return(nil)
-        allow(final).to receive(:read_body).and_yield('imagecontent')
+        allow(final).to receive(:read_body).and_yield(response_body)
         allow(SsrfFilter).to receive(:get) do |&block|
           block.call(redirect)
           block.call(final)
@@ -213,6 +214,39 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
         expect { subject }.to change(Spree::Media, :count).by(1)
         expect(image.attachment).to be_attached
+      end
+
+      it 'refuses a redirect body over the size limit instead of holding it in memory' do
+        allow(Spree::Config).to receive(:max_image_download_size).and_return(10)
+        redirect = double('redirect', code: '302')
+        allow(redirect).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(redirect).to receive(:read_body).and_yield('x' * 8).and_yield('x' * 8)
+        allow(SsrfFilter).to receive(:get) { |&block| block.call(redirect) }
+
+        expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
+        expect(Spree::Media.count).to eq(0)
+      end
+    end
+
+    context 'when the URL serves bytes that are not an image' do
+      let(:response_body) { 'not an image' }
+
+      it 'retries without writing the media or its external URL' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
+        expect(Spree::CustomField.count).to eq(0)
+      end
+    end
+
+    context 'when the external URL cannot be saved' do
+      before do
+        allow_any_instance_of(Spree::Media).to receive(:external_url=).
+          and_raise(ActiveRecord::RecordInvalid.new(Spree::Media.new))
+      end
+
+      it 'rolls the media back so the retry does not duplicate it' do
+        expect { subject }.to have_enqueued_job(described_class)
+        expect(Spree::Media.count).to eq(0)
       end
     end
 
