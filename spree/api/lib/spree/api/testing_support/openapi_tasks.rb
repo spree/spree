@@ -14,6 +14,9 @@ unless Rake::Task.task_defined?('spree:openapi:generate')
       task :generate do
         pattern = ENV.fetch('PATTERN', 'spec/integration/**/*_spec.rb')
         ENV['OPENAPI'] = 'true'
+        # Signed blob ids and file URLs in the examples are keyed on the app's
+        # secret, which `rails new` generates per dummy app.
+        ENV['SECRET_KEY_BASE'] = 'openapi-example-secret-key-base'
         ruby '-S', 'rspec', '--pattern', pattern, '--format', 'Rswag::Specs::SwaggerFormatter', '--order', 'defined'
       end
     end

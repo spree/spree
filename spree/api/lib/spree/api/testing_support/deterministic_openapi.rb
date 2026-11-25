@@ -37,6 +37,86 @@ if ENV['OPENAPI'] == 'true'
       # to match across machines.
       JWT_SECRET = 'openapi-example-signing-secret'
 
+      class << self
+        # The steps below rewrite every committed row and reset id sequences, so
+        # they must never reach a development or production database. Both the
+        # running environment and the database must say test: DATABASE_URL can
+        # point a test run at any database, and a database that records no
+        # environment is refused rather than trusted.
+        def ensure_test_database!
+          raise "OpenAPI generation runs only in the test environment, not #{Rails.env}" unless Rails.env.test?
+
+          recorded = recorded_environment
+          return if recorded == 'test'
+
+          raise "OpenAPI generation runs only against a test database; this one records #{recorded.inspect}"
+        end
+
+        # Freezes the clock for the whole run, not only inside examples. The
+        # default store, its market and its channel are created once, in a
+        # `before(:all)`, which runs ahead of every per-example hook, so their
+        # timestamps used to be the moment the run started.
+        def freeze_clock
+          Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(FROZEN_TIME)
+        end
+
+        # The same records stay in the test database from one run to the next,
+        # so on any run but the first they still carry the time the database was
+        # first used. Everything committed is stamped with the frozen instant.
+        def restamp_committed_records
+          connection = ActiveRecord::Base.connection
+
+          connection.tables.each do |table|
+            timestamps = connection.columns(table).map(&:name) & %w[created_at updated_at]
+            next if timestamps.empty?
+
+            arel_table = Arel::Table.new(table)
+            update = Arel::UpdateManager.new.table(arel_table).set(timestamps.map { |column| [arel_table[column], FROZEN_TIME] })
+            connection.update(update)
+          end
+        end
+
+        # A rolled-back transaction gives SQLite its ids back, so every example
+        # starts from the same primary keys. PostgreSQL sequences only ever
+        # advance, which made every prefixed id depend on how many records the
+        # earlier examples created and on how often the suite had run against
+        # the database. Setting each sequence back to the last committed row
+        # before an example gives both databases the same ids.
+        def rewind_primary_keys
+          connection = ActiveRecord::Base.connection
+          return unless connection.adapter_name.match?(/postg/i)
+
+          @rewind_sequences ||= rewind_sequences_statement(connection)
+          connection.execute(@rewind_sequences) if @rewind_sequences
+        end
+
+        private
+
+        # The environment Rails wrote into the database when it was set up.
+        def recorded_environment
+          connection = ActiveRecord::Base.connection
+          metadata_table = ActiveRecord::Base.internal_metadata_table_name
+          return unless connection.data_source_exists?(metadata_table)
+
+          metadata = Arel::Table.new(metadata_table)
+          connection.select_value(metadata.project(metadata[:value]).where(metadata[:key].eq('environment')))
+        end
+
+        # The last committed id is read when the statement runs, not when it is
+        # built, so rows committed later in the run keep their ids.
+        def rewind_sequences_statement(connection)
+          calls = connection.tables.filter_map do |table|
+            primary_key, sequence = connection.pk_and_sequence_for(table)
+            next unless sequence
+
+            last_id = "(SELECT MAX(#{connection.quote_column_name(primary_key)}) FROM #{connection.quote_table_name(table)})"
+            "setval(#{connection.quote(sequence.to_s)}, COALESCE(#{last_id}, 1), #{last_id} IS NOT NULL)"
+          end
+
+          "SELECT #{calls.join(', ')}" if calls.any?
+        end
+      end
+
       # SecureRandom bypasses the global PRNG (it reads from the OS), so seeding
       # alone leaves API keys, invitation tokens and JWT ids churning. These
       # counter-backed replacements produce values with the right shape and
@@ -112,8 +192,15 @@ if ENV['OPENAPI'] == 'true'
   SecureRandom.singleton_class.prepend(Spree::OpenAPIDeterminism::PredictableSecureRandom)
 
   RSpec.configure do |config|
+    config.before(:suite) do
+      Spree::OpenAPIDeterminism.ensure_test_database!
+      Spree::OpenAPIDeterminism.freeze_clock
+      Spree::OpenAPIDeterminism.restamp_committed_records
+    end
+
     config.before do
       travel_to(Spree::OpenAPIDeterminism::FROZEN_TIME)
+      Spree::OpenAPIDeterminism.rewind_primary_keys
     end
 
     # Reset before each example rather than once for the run, so a value shown

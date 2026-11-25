@@ -25,6 +25,9 @@ namespace :rswag do
 
       # OPENAPI env var prevents spec_helper from overriding --order defined with :random
       ENV['OPENAPI'] = 'true'
+      # Signed blob ids and file URLs in the examples are keyed on the app's
+      # secret, which `rails new` generates per dummy app.
+      ENV['SECRET_KEY_BASE'] = 'openapi-example-secret-key-base'
       t.rspec_opts = ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
     end
 

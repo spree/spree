@@ -495,7 +495,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 121
+                  name: Seller 122
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -568,8 +568,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 91
-                  slug: seller-91
+                  name: Seller 92
+                  slug: seller-92
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -869,8 +869,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 93
-                  slug: seller-93
+                  name: Seller 94
+                  slug: seller-94
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -4143,9 +4143,9 @@ paths:
                     name: Valgamaa
                   - abbr: '890'
                     name: Viimsi
-                  - abbr: '899'
-                    name: Viljandi
                   - abbr: '897'
+                    name: Viljandi
+                  - abbr: '899'
                     name: Viljandi
                   - abbr: '84'
                     name: Viljandimaa
@@ -4336,9 +4336,9 @@ paths:
                     name: Murcia
                   - abbr: MA
                     name: Málaga
-                  - abbr: NC
-                    name: Navarra
                   - abbr: NA
+                    name: Navarra
+                  - abbr: NC
                     name: Navarra
                   - abbr: OR
                     name: Ourense
@@ -7352,9 +7352,9 @@ paths:
                     name: Bomi
                   - abbr: BG
                     name: Bong
-                  - abbr: X1~
-                    name: Gbarpolu
                   - abbr: GP
+                    name: Gbarpolu
+                  - abbr: X1~
                     name: Gbarpolu
                   - abbr: GB
                     name: Grand Bassa
@@ -12976,7 +12976,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_129
+                  code: UPS_GROUND_130
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12999,7 +12999,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_130
+                  code: UPS_GROUND_131
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -13168,7 +13168,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_135
+                code: UPS_GROUND_136
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -13225,7 +13225,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_137
+                code: UPS_GROUND_138
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -15074,7 +15074,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--0468b7e2435909651c9d949339d3259311ccc43b
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -15082,7 +15082,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ef8f3640c3920e91b561dd50063ad9eba0171431
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--111b00954b4d07a7911957e0fb4ee4ded83ab0cc
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -15183,7 +15183,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 140
+                  delivery_method_name: UPS Ground 141
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15197,7 +15197,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 140
+                    name: UPS Ground 141
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -15306,7 +15306,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 141
+                delivery_method_name: UPS Ground 142
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15320,7 +15320,7 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 141
+                  name: UPS Ground 142
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -15404,7 +15404,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 142
+                delivery_method_name: UPS Ground 143
                 stock_location_name: Melony Block
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15418,7 +15418,7 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 142
+                  name: UPS Ground 143
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -15490,7 +15490,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 143
+                delivery_method_name: UPS Ground 144
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15504,7 +15504,7 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 143
+                  name: UPS Ground 144
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -15590,7 +15590,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 144
+                delivery_method_name: UPS Ground 145
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15604,7 +15604,7 @@ paths:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 144
+                  name: UPS Ground 145
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -15693,7 +15693,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 145
+                  delivery_method_name: UPS Ground 146
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15707,7 +15707,7 @@ paths:
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
                   - id: dr_EfhxLZ9ck8
-                    name: UPS Ground 145
+                    name: UPS Ground 146
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -15739,7 +15739,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 145
+                  delivery_method_name: UPS Ground 146
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15753,7 +15753,7 @@ paths:
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
                   - id: dr_VqXmZF31wY
-                    name: UPS Ground 145
+                    name: UPS Ground 146
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -19060,7 +19060,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 157
+                    delivery_method_name: UPS Ground 158
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -19074,7 +19074,7 @@ paths:
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 157
+                      name: UPS Ground 158
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -19257,7 +19257,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 158
+                  delivery_method_name: UPS Ground 159
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -19271,7 +19271,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 158
+                    name: UPS Ground 159
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -19454,7 +19454,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 161
+                  delivery_method_name: UPS Ground 162
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -19468,7 +19468,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 161
+                    name: UPS Ground 162
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -19641,7 +19641,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 162
+                  delivery_method_name: UPS Ground 163
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -19655,7 +19655,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 162
+                    name: UPS Ground 163
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -19835,7 +19835,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 164
+                  delivery_method_name: UPS Ground 165
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -19849,7 +19849,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 164
+                    name: UPS Ground 165
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -20006,7 +20006,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 165
+                  delivery_method_name: UPS Ground 166
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -20020,7 +20020,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 165
+                    name: UPS Ground 166
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21171,7 +21171,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--dfa61b3de1d7498ffe55a6fddbc96ae0b6e80ca6/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--5468350793518b4de9ba16fb26b1e41aae55044f/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -21259,7 +21259,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--3fc7ae502b4c568f8f8d49dbc6fa4038770b2792/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--e5df1f4dd0b0fc50f05a5eb7a7ea8419f0a34bd5/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -21339,7 +21339,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--35f1f4197f018e103aad2b11dcc6a3739000e655/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--c653d79010c7181ae7bb43a2b61882b444596f57/thinking-cat.jpg
                 effective_authorized_clicks: 5
                 effective_authorized_days: 7
               schema:
@@ -21395,7 +21395,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--c951b25342b7ec9c8dc5ff5868be008da1349948/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--7315d39877bf25b722f3db498187e585de07593d/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -22556,8 +22556,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 159
-                slug: seller-159
+                name: Seller 160
+                slug: seller-160
                 about: ''
                 about_html: ''
                 logo_url:
@@ -22647,7 +22647,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-161
+                slug: seller-162
                 about: ''
                 about_html: ''
                 logo_url:
@@ -24359,7 +24359,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 191
+                  name: Seller 192
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -28869,7 +28869,6 @@ components:
             - Asia/Magadan
             - Asia/Muscat
             - Asia/Novosibirsk
-            - Asia/Rangoon
             - Asia/Riyadh
             - Asia/Seoul
             - Asia/Shanghai
@@ -28884,6 +28883,7 @@ components:
             - Asia/Urumqi
             - Asia/Vladivostok
             - Asia/Yakutsk
+            - Asia/Yangon
             - Asia/Yekaterinburg
             - Asia/Yerevan
             - Atlantic/Azores
@@ -28911,7 +28911,7 @@ components:
             - Europe/Helsinki
             - Europe/Istanbul
             - Europe/Kaliningrad
-            - Europe/Kiev
+            - Europe/Kyiv
             - Europe/Lisbon
             - Europe/Ljubljana
             - Europe/London

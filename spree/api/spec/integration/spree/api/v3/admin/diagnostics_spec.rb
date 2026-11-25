@@ -33,8 +33,16 @@ RSpec.describe 'Admin Diagnostics API', type: :request, swagger_doc: 'api-refere
         let(:Authorization) { "Bearer #{admin_jwt_token}" }
         let(:packages) { '@spree/dashboard@6.0.4' }
 
-        # Keeps the documented example the same whichever machine generates it.
-        before { allow(Etc).to receive(:uname).and_return(sysname: 'Linux', release: '6.8.0', machine: 'x86_64') }
+        # Keeps the documented example the same whichever machine and database generate it.
+        before do
+          allow(Etc).to receive(:uname).and_return(sysname: 'Linux', release: '6.8.0', machine: 'x86_64')
+          stub_const('RUBY_PLATFORM', 'x86_64-linux')
+          stub_const('RUBY_VERSION', '4.0.10')
+          stub_const('Puma::Const::PUMA_VERSION', '8.1.3')
+          allow(Rails).to receive(:version).and_return('8.1.4.1')
+          allow(Spree::Diagnostics::Stack).to receive(:database).and_return('postgresql')
+          allow_any_instance_of(Spree::Diagnostics::Sections::Infrastructure).to receive(:database_version).and_return('18.6')
+        end
 
         schema '$ref' => '#/components/schemas/Diagnostics'
 
