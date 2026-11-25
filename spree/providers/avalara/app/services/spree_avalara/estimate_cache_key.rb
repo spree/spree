@@ -44,10 +44,13 @@ module SpreeAvalara
         integration: [integration.id, integration.updated_at.to_i, integration.preferred_company_code],
         tax_address: tax_address,
         market: owner.market&.id,
+        # Avalara applies the certificates it holds for this code, so a guest
+        # signing in on the same cart can change the answer.
+        customer: SpreeAvalara.customer_code(owner),
         tax_included: tax_inclusive,
         currency: owner.currency,
         identifier: tax_identifier && [tax_identifier.kind, tax_identifier.value],
-        exemptions: exemptions.map { |exemption| exemption_fingerprint(exemption) },
+        exemptions: exemptions.map(&:to_snapshot),
         items: items.map { |item| item_fingerprint(item) }
       }
     end
@@ -60,24 +63,21 @@ module SpreeAvalara
        address.country_code, address.zipcode]
     end
 
-    def exemption_fingerprint(exemption)
-      [exemption.reason_code, exemption.certificate_number, exemption.country_code, exemption.state_code]
-    end
-
-    # Ship-from belongs here because the origin jurisdiction moves the answer,
-    # and a re-allocated fulfillment changes it without touching the item.
+    # The tax code and origin are keyed as sent rather than by record id: editing
+    # a category's code or a location's address in place keeps the id.
     def item_fingerprint(item)
       [
         item.prefixed_id,
         item.respond_to?(:quantity) ? item.quantity : 1,
         (item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount).to_s,
-        item.respond_to?(:tax_category_id) ? item.tax_category_id : nil,
-        ship_from_id(item)
+        ItemPresenter.new(item: item, owner: owner, tax_included: tax_inclusive).tax_code,
+        origin(item)
       ]
     end
 
-    def ship_from_id(item)
-      SpreeAvalara.origin_location(owner, item: item)&.id
+    def origin(item)
+      location = SpreeAvalara.origin_location(owner, item: item)
+      location && [location.id, AddressPresenter.new(location).call]
     end
   end
 end

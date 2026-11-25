@@ -50,7 +50,7 @@ module SpreeAvalara
         # period it happened in rather than reopening the sale's.
         date: date_in_store_zone(Time.current),
         currencyCode: order.currency,
-        customerCode: customer_code,
+        customerCode: SpreeAvalara.customer_code(order),
         addresses: addresses,
         lines: lines
       }
@@ -154,10 +154,6 @@ module SpreeAvalara
       zone = Time.find_zone(order.store&.preferred_timezone) || Time.zone
 
       time.in_time_zone(zone).to_date.iso8601
-    end
-
-    def customer_code
-      order.customer&.prefixed_id.presence || order.email.presence || order.prefixed_id
     end
 
     def addresses

@@ -47,6 +47,19 @@ module SpreeAvalara
       payload
     end
 
+    # Public so the estimate cache key can be built from the same resolution.
+    #
+    # @return [String, nil]
+    def tax_code
+      case item
+      when Spree::LineItem then item.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
+      when Spree::ExchangeLineItem
+        item.new_variant&.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
+      when Spree::Fulfillment then delivery_tax_code.presence || FREIGHT_TAX_CODE
+      else default_tax_code
+      end
+    end
+
     private
 
     attr_reader :item, :owner, :tax_included, :exemptions
@@ -104,16 +117,6 @@ module SpreeAvalara
 
     def amount
       item.respond_to?(:taxable_basis) ? item.taxable_basis : item.amount
-    end
-
-    def tax_code
-      case item
-      when Spree::LineItem then item.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
-      when Spree::ExchangeLineItem
-        item.new_variant&.tax_category&.tax_code.presence || default_tax_code || DEFAULT_TAX_CODE
-      when Spree::Fulfillment then delivery_tax_code.presence || FREIGHT_TAX_CODE
-      else default_tax_code
-      end
     end
 
     # What a merchant reads when they open the transaction in Avalara. Without

@@ -36,7 +36,7 @@ module SpreeAvalara
         date: document_date,
         commit: commit,
         currencyCode: owner.currency,
-        customerCode: customer_code,
+        customerCode: SpreeAvalara.customer_code(owner),
         addresses: addresses,
         lines: lines
       }
@@ -85,12 +85,6 @@ module SpreeAvalara
       zone = Time.find_zone(owner.store&.preferred_timezone) || Time.zone
 
       (tax_date || Time.current).in_time_zone(zone).to_date.iso8601
-    end
-
-    # Avalara keys exemption certificates and reporting to this, so it has to be
-    # stable for the buyer rather than per order.
-    def customer_code
-      owner.customer&.prefixed_id.presence || owner.email.presence || owner.prefixed_id
     end
 
     # The bill-to address rides along for the record; tax follows the tax

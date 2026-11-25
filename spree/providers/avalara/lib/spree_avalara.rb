@@ -58,6 +58,15 @@ module SpreeAvalara
     Float(ENV.fetch('SPREE_AVALARA_READ_TIMEOUT', DEFAULT_READ_TIMEOUT))
   end
 
+  # Avalara keys exemption certificates and reporting to this, so it has to be
+  # stable for the buyer rather than per order.
+  #
+  # @param owner [Spree::Cart, Spree::Order]
+  # @return [String]
+  def self.customer_code(owner)
+    owner.customer&.prefixed_id.presence || owner.email.presence || owner.prefixed_id
+  end
+
   # Where a sale ships from, which decides the origin jurisdiction. Avalara
   # refuses a document with no origin at all, and a cart has no fulfillment
   # until delivery is proposed — every recalculation before that would fail — so

@@ -70,6 +70,35 @@ RSpec.describe SpreeAvalara::EstimateCacheKey do
       expect(key).not_to eq(before_change)
     end
 
+    it 'the tax code of the item tax category, edited in place' do
+      category = create(:tax_category, store: @default_store, tax_code: 'PC040100')
+      line_item.variant.update!(tax_category: category)
+      line_item.save!
+      before_change = key
+
+      category.update!(tax_code: 'PC040200')
+
+      expect(key).not_to eq(before_change)
+    end
+
+    it 'the address of the location it ships from, edited in place' do
+      location = create(:stock_location, store: @default_store, default: true, country_code: 'US', state_code: 'CA')
+      before_change = key
+
+      location.update!(zipcode: '94105')
+
+      expect(key).not_to eq(before_change)
+    end
+
+    # Avalara applies the certificates it holds for the customer code.
+    it 'the buyer signing in on the same cart' do
+      before_change = key
+
+      cart.update!(customer: create(:user))
+
+      expect(key).not_to eq(before_change)
+    end
+
     it 'the buyer registration' do
       identifier = build(:tax_identifier, kind: 'eu_vat', value: 'DE123456789')
 
@@ -80,6 +109,15 @@ RSpec.describe SpreeAvalara::EstimateCacheKey do
       exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-1')
 
       expect(key(exemptions: [exemption])).not_to eq(key)
+    end
+
+    it 'a line carved out of an exemption claim' do
+      exemption = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-1')
+      carved = Spree::TaxExemption.new(reason_code: 'RESALE', certificate_number: 'C-1',
+                                       item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: line_item.prefixed_id,
+                                                                                               exempt: false)])
+
+      expect(key(exemptions: [carved])).not_to eq(key(exemptions: [exemption]))
     end
 
     # Re-pointing the integration at production, or at another company, prices
