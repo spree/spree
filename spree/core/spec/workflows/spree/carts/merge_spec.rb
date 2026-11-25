@@ -152,7 +152,6 @@ RSpec.describe Spree::Carts::Merge do
       expect(result).to be_success
       expect(cart.reload.line_items.sum(:quantity)).to eq(3)
     end
-
   end
 
   # The merge takes the cart's lock first while the session is still
