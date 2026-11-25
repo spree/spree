@@ -33,9 +33,9 @@ RSpec.describe Spree::Api::V3::ErrorHandler, type: :controller do
     end)
 
     routes.draw do
-      post 'record_invalid' => 'anonymous#record_invalid'
-      post 'parameter_missing' => 'anonymous#parameter_missing'
-      post 'gateway_error' => 'anonymous#gateway_error'
+      post 'record_invalid' => 'spree/api/v3/store/base#record_invalid'
+      post 'parameter_missing' => 'spree/api/v3/store/base#parameter_missing'
+      post 'gateway_error' => 'spree/api/v3/store/base#gateway_error'
     end
     request.headers['X-Spree-Api-Key'] = api_key.token
     allow(Rails.error).to receive(:report)
