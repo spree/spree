@@ -184,8 +184,10 @@ module SpreeStripe
         send_request { |opts| Stripe::PaymentIntent.retrieve({ id: payment_intent_id, expand: ['payment_method'] }, opts) }
       end
 
-      def confirm_payment_intent(payment_intent_id)
-        send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, {}, opts) }
+      def confirm_payment_intent(payment_intent_id, payment_method_id: nil, off_session: false)
+        payload = { payment_method: payment_method_id, off_session: (true if off_session) }.compact
+
+        send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, payload, opts) }
       end
 
       def capture_payment_intent(payment_intent_id, stripe_amount)
@@ -358,8 +360,9 @@ module SpreeStripe
       end
 
       # An admin payment is saved with a card and no intent. Storefront
-      # payments already have one from the session.
-      def ensure_payment_intent_exists_for_payment(payment, money, payment_source = nil, gateway_options = {})
+      # payments already have one from the session. The intent is not confirmed
+      # here: the id is stored first, and the charge is a later confirm.
+      def ensure_payment_intent_exists_for_payment(payment, money, payment_source = nil)
         return payment if payment.response_code.present?
 
         payment_source ||= payment.source
@@ -369,9 +372,7 @@ module SpreeStripe
           SpreeStripe::Units.to_stripe(money || payment.amount, payment.currency),
           payment.owner,
           payment_method_id: payment_source.gateway_payment_profile_id,
-          off_session: true,
-          customer_profile_id: payment_source.gateway_customer_profile_id,
-          idempotency_key: gateway_options[:idempotency_key]
+          customer_profile_id: payment_source.gateway_customer_profile_id
         )
 
         payment.update_columns(response_code: response.authorization, updated_at: Time.current)
@@ -380,20 +381,17 @@ module SpreeStripe
 
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentResponse]
-      def create_payment_intent(stripe_amount, order, payment_method_id: nil, off_session: false,
-                                customer_profile_id: nil, idempotency_key: nil)
+      def create_payment_intent(stripe_amount, order, payment_method_id: nil, customer_profile_id: nil)
         payload = {
           amount: stripe_amount,
           currency: order.currency,
           customer: customer_profile_id,
           payment_method: payment_method_id,
-          confirm: (true if off_session),
-          off_session: (true if off_session),
           # Stripe knows only "charge now" or "authorize now, capture later",
           # so both on_dispatch and manual map to its manual capture.
           capture_method: (MANUAL_CAPTURE_METHOD unless capture_at_checkout?),
           statement_descriptor_suffix: statement_descriptor_suffix_for(order),
-          automatic_payment_methods: ({ enabled: true } unless off_session),
+          automatic_payment_methods: { enabled: true },
           transfer_group: order.number,
           metadata: { spree_order_id: order.id },
           shipping: shipping_payload(order.ship_address)
@@ -408,9 +406,7 @@ module SpreeStripe
 
         protect_from_error do
           response = protect_payment_method_from_error do
-            send_request do |opts|
-              Stripe::PaymentIntent.create(payload, opts.merge(idempotency_key: idempotency_key).compact)
-            end
+            send_request { |opts| Stripe::PaymentIntent.create(payload, opts) }
           end
 
           success(response.id, response)

@@ -88,7 +88,7 @@ module SpreeStripe
 
     # Called by core when a payment moves to pending. A storefront session already
     # confirmed the intent. An admin saved-card payment has none yet, so one is
-    # created off-session first.
+    # created and then confirmed off-session.
     #
     # @param money [Spree::Money]
     # @param payment_source [Spree::PaymentSource, Spree::CreditCard]
@@ -299,7 +299,7 @@ module SpreeStripe
 
       protect_from_error do
         # eg. payment created via admin
-        payment = ensure_payment_intent_exists_for_payment(payment, money, payment_source, gateway_options)
+        payment = ensure_payment_intent_exists_for_payment(payment, money, payment_source)
         return failure('Payment is missing a payment intent') if payment.response_code.blank?
 
         stripe_payment_intent = retrieve_payment_intent(payment.response_code)
@@ -308,7 +308,7 @@ module SpreeStripe
                      # already confirmed via the session flow
                      stripe_payment_intent
                    else
-                     confirm_payment_intent(stripe_payment_intent.id)
+                     confirm_payment_intent(stripe_payment_intent.id, **off_session_confirmation(payment, payment_source))
                    end
 
         success(response.id, response)
@@ -351,6 +351,16 @@ module SpreeStripe
       yield
     rescue Stripe::StripeError => e
       raise Spree::Core::GatewayError, e.message
+    end
+
+    # A saved card has no checkout session. Confirming it is the charge, and a
+    # decline keeps the intent id so the next attempt confirms that same intent.
+    # A session payment was confirmed by the shopper, so this sends nothing.
+    def off_session_confirmation(payment, payment_source)
+      profile_id = payment_source&.gateway_payment_profile_id
+      return {} if profile_id.blank? || payment.payment_session.present?
+
+      { payment_method_id: profile_id, off_session: true }
     end
   end
 end
