@@ -141,18 +141,52 @@ module Spree
       completing_at.present?
     end
 
+    # Whether this cart's contents and totals are fixed — mutations must wait
+    # until the purchase completes. True while a completion attempt holds the
+    # cart (see +completion_attempt_claimed?+), and while a gateway has
+    # accepted money for it through a payment session (see
+    # +payment_session_settled?+).
+    #
+    # @return [Boolean]
+    def completion_claimed?
+      completion_attempt_claimed? || payment_session_settled?
+    end
+
     # Whether a live completion attempt holds this cart — its totals are fixed
     # and money may be moving, so mutations must wait until it finishes or the
     # claim goes stale. A payment-covered draft or a divided checkout resumes
     # its existing result instead of editing the cart that supplied it.
     #
+    # Completion itself checks only this, not +completion_claimed?+: a cart
+    # whose payment session settled must still be completable — by the
+    # storefront's complete call or the gateway webhook — or the buyer is
+    # charged without an order.
+    #
     # @return [Boolean]
-    def completion_claimed?
+    def completion_attempt_claimed?
       return false if completing_at.blank?
       return true if completing_at > COMPLETING_CLAIM_TTL.ago || order_group.present?
       return false if order.nil?
 
       order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
+    end
+
+    # Whether a gateway has accepted money for this cart through a payment
+    # session that has not been placed yet: a session the gateway reported
+    # as accepted (processing or completed), or a live payment settled from
+    # one. Completing the cart — through the storefront or the gateway's
+    # webhook — places the order for exactly that money, so the cart must
+    # keep the contents and totals it was charged for. An emptied or edited
+    # cart can no longer complete, and the buyer stays charged without an
+    # order. Released when the session fails or is canceled, or its payment
+    # is voided.
+    #
+    # @return [Boolean]
+    def payment_session_settled?
+      return false unless persisted?
+
+      payment_sessions.exists?(status: %w[processing completed]) ||
+        payments.valid.where.not(status: 'checkout').exists?(response_code: payment_sessions.select(:external_id))
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)

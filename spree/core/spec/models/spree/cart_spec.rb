@@ -70,6 +70,61 @@ describe Spree::Cart, type: :model do
         expect(cart.reload).to be_completion_claimed
       end
     end
+
+    # The gateway took the buyer's money for this cart's contents; emptied or
+    # edited, the cart can no longer complete and the buyer stays charged
+    # without an order (SANDBOX-V2-1Y).
+    context 'when a payment session has settled' do
+      let(:payment_session) { create(:bogus_payment_session, cart: cart, amount: 10) }
+
+      it 'fences a cart whose session the gateway completed' do
+        payment_session.update_column(:status, 'completed')
+
+        expect(cart.reload).to be_payment_session_settled
+        expect(cart).to be_completion_claimed
+      end
+
+      it 'fences a cart whose session the gateway accepted and is processing' do
+        payment_session.update_column(:status, 'processing')
+
+        expect(cart.reload).to be_completion_claimed
+      end
+
+      it 'fences a cart holding a live payment settled from a session' do
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).to be_completion_claimed
+      end
+
+      it 'leaves completion itself free to place the order' do
+        payment_session.update_column(:status, 'completed')
+
+        expect(cart.reload).not_to be_completion_attempt_claimed
+      end
+
+      %w[pending failed canceled expired].each do |status|
+        it "does not fence a cart whose only session is #{status}" do
+          payment_session.update_column(:status, status)
+
+          expect(cart.reload).not_to be_completion_claimed
+        end
+      end
+
+      it 'releases the cart once the settled payment is voided' do
+        payment_session.update_column(:status, 'failed')
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'void')
+
+        expect(cart.reload).not_to be_completion_claimed
+      end
+
+      it 'does not fence a cart for an offline payment awaiting checkout' do
+        create(:payment, cart: cart, order: nil, amount: 10, status: 'checkout')
+
+        expect(cart.reload).not_to be_completion_claimed
+      end
+    end
   end
 
   describe '#checkout_steps' do

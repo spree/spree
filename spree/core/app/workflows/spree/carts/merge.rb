@@ -27,6 +27,7 @@ module Spree
         super
 
         halt!(cart) if other_cart.nil? || other_cart.id == cart.id
+        step :ensure_carts_unclaimed
         step :ensure_matching_currency
 
         # Veto point — before anything moves, so a rejection leaves both
@@ -49,6 +50,16 @@ module Spree
       end
 
       private
+
+      # Neither cart may change while a completion attempt holds it or a
+      # gateway has taken money for it: merging would change the totals that
+      # money was charged for, and folding in a paid cart would destroy it
+      # along with the payment session its gateway webhook settles.
+      def ensure_carts_unclaimed
+        return unless [cart, other_cart].any?(&:completion_claimed?)
+
+        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+      end
 
       def ensure_matching_currency
         return if other_cart.currency == cart.currency

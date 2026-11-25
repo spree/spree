@@ -40,6 +40,14 @@ module Spree
         super
         @warnings = []
 
+        # A cart a completion attempt holds, or one a gateway has already
+        # taken money for, must not change under the purchase it supplies —
+        # emptied, it can no longer complete and the buyer stays charged
+        # without an order. The Store API fences this under its cart lock;
+        # direct callers (the out-of-stock sweep on a cart read, the
+        # line-item removal job) have to be refused here.
+        step :guard_completion_claim
+
         step :resolve_items
         return success(cart) if resolved_items.empty?
 
@@ -50,6 +58,9 @@ module Spree
         external_step :resolve_prices
 
         ApplicationRecord.transaction do
+          # Again under the row lock: the external steps above can take a
+          # while, and the cart may have been claimed or paid since.
+          step :guard_completion_claim_in_lock
           step :apply_items
           step :handle_stock_reservations if cart.in_checkout?
           step :recalculate, with: -> { Spree.cart_recalculate_workflow } if recalculate?
@@ -69,6 +80,38 @@ module Spree
       private
 
       attr_reader :resolved_items
+
+      # Draft orders (the admin path, Spree::Orders::UpsertItems) carry no
+      # completion claim — only a cart does. Read from a fresh copy of the
+      # row: the caller's instance may predate the claim. Mirrors
+      # Spree::Carts::AddItem, with the same error code.
+      def guard_completion_claim
+        return unless guarded_cart?
+        return unless completion_holds?(Spree::Cart.find(cart.id))
+
+        reject_claimed_cart
+      end
+
+      def guard_completion_claim_in_lock
+        return unless guarded_cart?
+        return unless completion_holds?(Spree::Cart.lock.find(cart.id))
+
+        reject_claimed_cart
+      end
+
+      def guarded_cart?
+        cart.is_a?(Spree::Cart) && cart.persisted?
+      end
+
+      # A finished cart answers false to +completion_claimed?+ (finalize
+      # clears the claim) and is refused on its own.
+      def completion_holds?(fresh_cart)
+        fresh_cart.completed_at.present? || fresh_cart.completion_claimed?
+      end
+
+      def reject_claimed_cart
+        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+      end
 
       # The cart side recalculates here because nothing else will. The order
       # side overrides this: admin edits run items, fulfillments and coupons

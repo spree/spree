@@ -48,6 +48,29 @@ RSpec.describe Spree::Carts::Merge do
     end
   end
 
+  # Folding a paid cart in would destroy it with the payment session its
+  # gateway webhook settles; folding items into one would change the total
+  # its money was charged for.
+  describe 'a cart a gateway has taken money for' do
+    before do
+      cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency)
+      other_cart.line_items.create!(variant: variant, quantity: 2, currency: other_cart.currency)
+    end
+
+    %i[cart other_cart].each do |paid|
+      it "refuses the merge when the #{paid} has a settled payment session" do
+        create(:bogus_payment_session, cart: send(paid), amount: 10).update_column(:status, 'completed')
+
+        result = described_class.call(cart: cart, other_cart: other_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('completion_in_progress')
+        expect(other_cart.reload.line_items.sum(:quantity)).to eq(2)
+        expect(cart.reload.line_items.sum(:quantity)).to eq(1)
+      end
+    end
+  end
+
   describe 'hooks' do
     it 'lets a validate handler veto the merge before anything moves' do
       other_cart.line_items.create!(variant: variant, quantity: 2, currency: other_cart.currency)

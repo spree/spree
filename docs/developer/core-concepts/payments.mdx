@@ -256,6 +256,8 @@ sequenceDiagram
     After the customer completes payment, the frontend calls the Complete Payment Session endpoint. Spree verifies the payment status with the gateway, creates a `Payment` record, creates the appropriate payment source (Credit Card, wallet, etc.), and marks the session as completed.
 
     **This step does NOT complete the order** — it only handles payment processing. For wallet payments (Apple Pay, Google Pay), the gateway also patches the order's billing address with data from the wallet at this stage.
+
+    Once the gateway has accepted the payment, the cart is locked: changing its items, addresses, delivery, discount codes or gift cards answers `409` with `completion_in_progress` until the cart completes. The money was taken for exactly those contents, and the gateway's webhook places the order from them even if the frontend never calls Complete Order. A session that fails or is canceled releases the cart.
   </Step>
   <Step title="Complete Order">
     The frontend calls `POST /carts/:id/complete` to finalize the order. Spree checks the cart has everything it needs — addresses, fulfillments, payment — and turns it into an order.
