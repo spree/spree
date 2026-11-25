@@ -14,6 +14,20 @@ module Spree
       # skips a payment that is already completed.
       class SettlementFailed < StandardError; end
 
+      # Reported, not raised: the payment is settled on the cart, but the cart
+      # cannot become an order — see DETERMINISTIC_FAILURE_CODES.
+      class CompletionBlocked < StandardError; end
+
+      # Failures of Spree::Carts::Complete that no retry can change. The cart
+      # fails a checkout requirement (emptied, no delivery method selected),
+      # lost a batch coupon code it was priced with, or its tax engine
+      # refused the sale — and a cart a gateway took
+      # money for is fenced (Spree::Cart#payment_session_settled?), so nobody
+      # can change it into one that completes. Retrying only repeats the
+      # failure; the payment stays recorded on the cart and the failure is
+      # reported once for staff to resolve.
+      DETERMINISTIC_FAILURE_CODES = %w[validation_failed coupon_code_unavailable tax_calculation_refused].freeze
+
       retry_on SettlementFailed, wait: :polynomially_longer, attempts: 5
 
       # metadata defaults to {} so jobs enqueued before it was passed still run.
@@ -28,8 +42,44 @@ module Spree
           payment_session: payment_session,
           metadata: metadata
         )
+        return unless result&.failure?
+        return report_blocked_completion(payment_session, result) if completion_blocked?(result)
 
-        raise SettlementFailed, "Payment session #{payment_session.id}: #{result.error}" if result&.failure?
+        raise SettlementFailed, "Payment session #{payment_session.id}: #{result.error}"
+      end
+
+      private
+
+      def completion_blocked?(result)
+        result.error.try(:code).in?(DETERMINISTIC_FAILURE_CODES)
+      end
+
+      # Charged without an order is the outcome to make loud: reported as an
+      # unhandled error so the error tracker alerts on it, with what staff
+      # need to find the money (the payment session's gateway reference) and
+      # why the cart could not complete.
+      def report_blocked_completion(payment_session, result)
+        failure = result.error.value
+        error = CompletionBlocked.new(
+          "Payment session #{payment_session.id} settled, but its #{payment_session.cart_id ? 'cart' : 'order'} " \
+          "cannot be completed (#{failure[:code]}); the buyer was charged without an order"
+        )
+
+        Rails.error.report(
+          error,
+          handled: false,
+          severity: :error,
+          context: {
+            payment_session_id: payment_session.id,
+            payment_session_external_id: payment_session.external_id,
+            payment_id: payment_session.payment&.id,
+            cart_id: payment_session.cart_id,
+            order_id: payment_session.order_id,
+            code: failure[:code],
+            errors: failure[:errors] || failure[:message]
+          }.compact,
+          source: 'spree.payments.webhook'
+        )
       end
     end
   end

@@ -120,6 +120,89 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
       }.to have_enqueued_job(described_class)
     end
 
+    # A cart a gateway took money for is fenced, so a requirement it fails
+    # at completion stays failed: retrying only repeats it (SANDBOX-V2-1Y).
+    context 'when the cart cannot complete for a reason a retry cannot change' do
+      before do
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+        allow(Rails.error).to receive(:report)
+      end
+
+      def perform_job
+        described_class.perform_now(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      end
+
+      %w[validation_failed coupon_code_unavailable tax_calculation_refused].each do |code|
+        context "with #{code}" do
+          let(:failed) do
+            Spree::ServiceModule::Result.new(
+              false, order, Spree::ServiceModule::ResultError.new({ code: code, message: 'cannot complete' })
+            )
+          end
+
+          it 'does not retry' do
+            expect { perform_job }.not_to have_enqueued_job(described_class)
+          end
+
+          it 'reports it once as an unhandled error naming the session and the reason' do
+            perform_job
+
+            expect(Rails.error).to have_received(:report).once.with(
+              an_instance_of(described_class::CompletionBlocked),
+              hash_including(
+                handled: false,
+                severity: :error,
+                source: 'spree.payments.webhook',
+                context: hash_including(
+                  payment_session_id: payment_session.id,
+                  payment_session_external_id: payment_session.external_id,
+                  code: code
+                )
+              )
+            )
+          end
+        end
+      end
+
+      context 'with an unmet checkout requirement' do
+        let(:requirements) { [{ step: 'cart', field: 'line_items', code: 'line_items_required', message: 'Add an item' }] }
+        let(:failed) do
+          Spree::ServiceModule::Result.new(
+            false, order, Spree::ServiceModule::ResultError.new({ code: 'validation_failed', errors: requirements })
+          )
+        end
+
+        it 'reports which requirements the cart failed' do
+          perform_job
+
+          expect(Rails.error).to have_received(:report).with(
+            anything, hash_including(context: hash_including(errors: requirements))
+          )
+        end
+      end
+    end
+
+    %w[completion_in_progress payment_failed tax_provider_unavailable].each do |code|
+      it "keeps retrying a #{code} failure, which a later attempt can clear" do
+        failed = Spree::ServiceModule::Result.new(
+          false, order, Spree::ServiceModule::ResultError.new({ code: code, message: 'try again' })
+        )
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+
+        expect {
+          described_class.perform_now(
+            payment_method_id: payment_method.id,
+            action: 'captured',
+            payment_session_id: payment_session.id
+          )
+        }.to have_enqueued_job(described_class)
+      end
+    end
+
     it 'retries on ActiveRecord::Deadlocked' do
       expect(described_class.rescue_handlers).to include(
         have_attributes(first: 'ActiveRecord::Deadlocked')

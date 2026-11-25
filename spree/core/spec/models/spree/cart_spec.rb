@@ -111,12 +111,24 @@ describe Spree::Cart, type: :model do
         end
       end
 
-      it 'releases the cart once the settled payment is voided' do
-        payment_session.update_column(:status, 'failed')
-        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
-                         response_code: payment_session.external_id, amount: 10, status: 'void')
+      # A completed session never moves again, so the payment settled from it
+      # is what says whether the money is still held.
+      %w[void failed].each do |payment_status|
+        it "releases a cart whose completed session's payment is #{payment_status}" do
+          payment_session.update_column(:status, 'completed')
+          create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                           response_code: payment_session.external_id, amount: 10, status: payment_status)
 
-        expect(cart.reload).not_to be_completion_claimed
+          expect(cart.reload).not_to be_payment_session_settled
+          expect(cart).not_to be_completion_claimed
+        end
+      end
+
+      it 'keeps fencing a completed session when another payment without a response code failed' do
+        payment_session.update_column(:status, 'completed')
+        create(:payment, cart: cart, order: nil, amount: 10, status: 'failed', response_code: nil)
+
+        expect(cart.reload).to be_payment_session_settled
       end
 
       it 'does not fence a cart for an offline payment awaiting checkout' do

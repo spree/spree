@@ -178,14 +178,25 @@ module Spree
     # webhook — places the order for exactly that money, so the cart must
     # keep the contents and totals it was charged for. An emptied or edited
     # cart can no longer complete, and the buyer stays charged without an
-    # order. Released when the session fails or is canceled, or its payment
-    # is voided.
+    # order.
+    #
+    # Released when the money is no longer held: a session the gateway had
+    # not finished fails, is canceled or expires, or the payment settled from
+    # the session is voided or fails. Nothing releases it on a timer — a
+    # settled cart whose completion keeps failing (see
+    # Spree::Payments::HandleWebhookJob) stays fenced until staff resolve the
+    # payment, because unfencing it would let the buyer change what they
+    # were charged for.
     #
     # @return [Boolean]
     def payment_session_settled?
       return false unless persisted?
 
-      payment_sessions.exists?(status: %w[processing completed]) ||
+      # NULL response codes are left out: NOT IN over a NULL matches nothing.
+      released = payments.where(status: Spree::Payment::INVALID_STATUSES).where.not(response_code: nil)
+
+      payment_sessions.where(status: %w[processing completed]).
+        where.not(external_id: released.select(:response_code)).exists? ||
         payments.valid.where.not(status: 'checkout').exists?(response_code: payment_sessions.select(:external_id))
     end
 
