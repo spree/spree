@@ -270,21 +270,6 @@ class Spree::Base < ApplicationRecord
     type.to_s.safe_constantize.try(:prefixed_id_for, id)
   end
 
-  # Prefixed id for a raw key of `model`, or nil when the model has no prefix
-  # (where `prefixed_id_for` would answer a bare `_<sqid>`) or the key is not
-  # an integer Sqids can encode — a rejected `-1` must not turn a 422 into a 500.
-  #
-  # @param model [Class, nil]
-  # @param id [Object]
-  # @return [String, nil]
-  def self.api_prefixed_id(model, id)
-    return unless model.try(:_prefix_id_prefix).present? && id.is_a?(Integer)
-
-    model.prefixed_id_for(id)
-  rescue ArgumentError
-    nil
-  end
-
   # What a client reads for `value` held in `attribute` — the inverse of
   # {.api_type_resolver}. A foreign key becomes the prefixed id of the record
   # it points at, a column storing a class name becomes its short name, and
@@ -302,8 +287,11 @@ class Spree::Base < ApplicationRecord
     if attribute == model.inheritance_column
       model.base_class.api_type_for(value)
     elsif reference
-      target = reference.polymorphic? ? self[reference.foreign_type].to_s.safe_constantize : reference.klass
-      Spree::Base.api_prefixed_id(target, value)
+      if reference.polymorphic?
+        Spree::Base.polymorphic_prefixed_id(self[reference.foreign_type], value)
+      else
+        reference.klass.try(:prefixed_id_for, value)
+      end
     elsif model.api_type_resolver(attribute)
       Spree::Base.polymorphic_api_type(value)
     else

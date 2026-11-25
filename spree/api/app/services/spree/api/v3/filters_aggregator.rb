@@ -178,7 +178,7 @@ module Spree
               display_label = ov_translations[id] || label
 
               {
-                id: encode_prefixed_id(:optval, id),
+                id: Spree::OptionValue.prefixed_id_for(id),
                 name: name,
                 label: display_label,
                 position: position,
@@ -210,10 +210,6 @@ module Spree
             .each_with_object({}) do |ov, urls|
               urls[ov.id] = Rails.application.routes.url_helpers.cdn_image_url(ov.image)
             end
-        end
-
-        def encode_prefixed_id(prefix, id)
-          "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}"
         end
 
         # Returns the scope with all option type filters EXCEPT the given one applied.

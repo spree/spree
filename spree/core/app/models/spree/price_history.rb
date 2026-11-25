@@ -2,6 +2,8 @@
 
 module Spree
   class PriceHistory < Spree.base_class
+    has_prefix_id :pricehist
+
     belongs_to :price, class_name: 'Spree::Price'
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
 

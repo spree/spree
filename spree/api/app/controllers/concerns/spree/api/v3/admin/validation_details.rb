@@ -58,7 +58,7 @@ module Spree
           end
 
           def wire_error_value(record, attribute, key, value)
-            return Spree::Base.api_prefixed_id(value.class, value.id) if value.is_a?(ActiveRecord::Base)
+            return value.try(:prefixed_id) if value.is_a?(ActiveRecord::Base)
             return value unless key == :value && value.present? && record.respond_to?(:api_value_for)
 
             record.api_value_for(attribute, value)

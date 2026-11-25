@@ -6,19 +6,11 @@ module Spree
                  category_id: [:string, nullable: true]
 
         attribute :product_id do |product_category|
-          prefixed_id_for(Spree::Product, product_category.product_id)
+          Spree::Product.prefixed_id_for(product_category.product_id)
         end
 
         attribute :category_id do |product_category|
-          prefixed_id_for(Spree::Category, product_category.category_id)
-        end
-
-        private
-
-        def prefixed_id_for(klass, id)
-          return nil if id.nil?
-
-          "#{klass._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}"
+          Spree::Category.prefixed_id_for(product_category.category_id)
         end
       end
     end

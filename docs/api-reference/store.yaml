@@ -12610,7 +12610,7 @@ paths:
                 original_price:
                 seller_id:
                 prior_price:
-                  id: _AXs1igzRC6
+                  id: pricehist_AXs1igzRC6
                   currency: USD
                   amount: '9.99'
                   amount_in_cents: 999
