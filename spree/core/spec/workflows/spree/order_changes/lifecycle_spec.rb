@@ -114,7 +114,11 @@ RSpec.describe 'Spree::OrderChanges workflows' do
 
       expect(result).to be_failure
       expect(result.error.to_s).to include('locked')
-      expect(order_change.actions.reload).to be_empty
+
+      # Nor is it saved with the set when the set moves on.
+      Spree::OrderChanges::AddAction.call(order_change: order_change, kind: 'remove_item', line_item: line_item)
+      Spree::OrderChanges::Request.call(order_change: order_change)
+      expect(order_change.actions.reload.map(&:kind)).to eq(['remove_item'])
     end
 
     it 'refuses a set that was already submitted' do

@@ -31,8 +31,14 @@ module Spree
 
         failure(order_change, :order_change_not_pending) unless order_change.pending?
         step :build_action
-        run_hooks :validate
-        step :save_action
+        begin
+          run_hooks :validate
+          step :save_action
+        rescue Spree::Workflow::FailureSignal
+          # Off the collection, so a refused action is not saved with the set.
+          order_change.actions.delete(action)
+          raise
+        end
 
         success(action)
       end
@@ -60,11 +66,7 @@ module Spree
       end
 
       def save_action
-        return if action.save
-
-        # Off the collection, so a rejected action is not saved with the set.
-        order_change.actions.delete(action)
-        failure(action)
+        failure(action) unless action.save
       end
     end
   end

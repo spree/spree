@@ -89,10 +89,6 @@ module Spree
               Spree.api.admin_order_change_serializer
             end
 
-            def scope
-              @order.order_changes
-            end
-
             def collection_includes
               [:requested_by, :order, :return, :exchange, :claim,
                { actions: [:fulfillment, :delivery_method] }]
