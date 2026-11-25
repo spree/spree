@@ -39,7 +39,10 @@ if (release.draft || release.prerelease) {
   process.exit(0)
 }
 
-const payload = { ...thanks(contributorsOf(release), await discordIds()), embeds: [buildEmbed(release)] }
+const payload = {
+  ...thanks(contributorsOf(release), await discordIds()),
+  embeds: [buildEmbed(release)],
+}
 
 if (dryRun) {
   console.log(JSON.stringify(payload, null, 2))
@@ -56,7 +59,10 @@ async function fetchRelease(tag) {
   }
   const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'spree-discord-release' }
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
-  const res = await fetch(`https://api.github.com/repos/${REPO}/releases/tags/${encodeURIComponent(tag)}`, { headers })
+  const res = await fetch(
+    `https://api.github.com/repos/${REPO}/releases/tags/${encodeURIComponent(tag)}`,
+    { headers },
+  )
   if (!res.ok) throw new Error(`GitHub API ${res.status} for release ${tag}`)
   return res.json()
 }
@@ -82,7 +88,10 @@ async function post(payload) {
 
 export function buildEmbed(release) {
   // Notes are sometimes indented as a whole block; dedent every line.
-  const lines = (release.body || '').replace(/\r/g, '').split('\n').map((l) => l.trim())
+  const lines = (release.body || '')
+    .replace(/\r/g, '')
+    .split('\n')
+    .map((l) => l.trim())
   const sections = parseSections(lines)
 
   const titled = []
@@ -95,7 +104,10 @@ export function buildEmbed(release) {
     if (!bullets.length) continue
 
     if (/upgrad/i.test(heading)) {
-      upgrades.push({ name: clip(heading, 256), value: clip(bullets.map((b) => `• ${b}`).join('\n'), 1024) })
+      upgrades.push({
+        name: clip(heading, 256),
+        value: clip(bullets.map((b) => `• ${b}`).join('\n'), 1024),
+      })
       continue
     }
 
@@ -112,7 +124,8 @@ export function buildEmbed(release) {
     }
   }
 
-  if (highlights.length) titled.unshift({ name: '✨ Highlights', value: list(highlights), brief: '✨ Highlights' })
+  if (highlights.length)
+    titled.unshift({ name: '✨ Highlights', value: list(highlights), brief: '✨ Highlights' })
 
   // Upgrade notes and contributors always fit; the other sections fill what is left.
   const required = upgrades.slice(0, 3)
@@ -120,7 +133,11 @@ export function buildEmbed(release) {
   if (contributors.length) {
     required.push({
       name: `🙌 Thanks to ${contributors.length} community contributor${contributors.length > 1 ? 's' : ''}`,
-      value: joinFitting(contributors.map((c) => `[@${c}](https://github.com/${c})`), 1000, ', '),
+      value: joinFitting(
+        contributors.map((c) => `[@${c}](https://github.com/${c})`),
+        1000,
+        ', ',
+      ),
     })
   }
 
@@ -128,7 +145,9 @@ export function buildEmbed(release) {
     clip(intro(lines), 600),
     /npx spree upgrade/.test(release.body || '') && '```\nnpx spree upgrade\n```',
     `**[Full release notes →](${release.html_url})**`,
-  ].filter(Boolean).join('\n\n')
+  ]
+    .filter(Boolean)
+    .join('\n\n')
 
   const embed = {
     author: { name: REPO, url: `https://github.com/${REPO}` },
@@ -155,7 +174,10 @@ export function buildEmbed(release) {
   embed.fields.push(...required)
   const room = MAX_EMBED - size(embed) - embed.fields.reduce((n, f) => n + size(f), 0) - 20
   if (left.length && room > 20) {
-    embed.fields.splice(embed.fields.length - required.length, 0, { name: 'Also in this release', value: joinFitting(left, Math.min(reserve - 25, room)) })
+    embed.fields.splice(embed.fields.length - required.length, 0, {
+      name: 'Also in this release',
+      value: joinFitting(left, Math.min(reserve - 25, room)),
+    })
   }
 
   const image = (release.body || '').match(/<img[^>]+src="([^"]+)"/)?.[1]
@@ -204,7 +226,10 @@ function title(release, lines) {
 // Only change lines in the sections the post shows credit an author, so
 // "configured by @someone" in prose, a code block or Installation doesn't.
 function contributorsOf(release) {
-  const lines = (release.body || '').replace(/\r/g, '').split('\n').map((l) => l.trim())
+  const lines = (release.body || '')
+    .replace(/\r/g, '')
+    .split('\n')
+    .map((l) => l.trim())
   const bullets = parseSections(lines)
     .filter(({ heading }) => !SKIP.test(heading))
     .flatMap(({ body }) => body.filter((l) => /^[-*] /.test(l)))
@@ -251,7 +276,8 @@ function summary(bullet) {
     .replace(/ in$/, '')
     .trim()
   // A sentence ends before a capital letter, code or emphasis, never after e.g., i.e. or vs.
-  const sentence = text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`*_]| *$)/u)?.[0] ?? text
+  const sentence =
+    text.match(/^.+?(?<!\b(?:e\.g|i\.e|vs|etc))[.!?](?= +[\p{Lu}`*_]| *$)/u)?.[0] ?? text
   let short = sentence.replace(/[.]$/, '')
   const open = (text) => (text.match(/`/g) || []).length % 2
   if (short.length > MAX_SUMMARY) {
@@ -259,7 +285,11 @@ function summary(bullet) {
     short = `${short.slice(0, cut > 0 ? cut : MAX_SUMMARY - 3)}…`
   }
   // Never leave a code span open.
-  if (open(short)) short = `${short.replace(/…$/, '').slice(0, MAX_SUMMARY - 2).trimEnd()}\`…`
+  if (open(short))
+    short = `${short
+      .replace(/…$/, '')
+      .slice(0, MAX_SUMMARY - 2)
+      .trimEnd()}\`…`
   return short
 }
 
@@ -268,7 +298,8 @@ function joinFitting(items, max, separator = ' · ') {
   const shown = []
   for (const item of items) {
     const rest = items.length - shown.length - 1
-    if ([...shown, item].join(separator).length + (rest ? ` and ${rest} more`.length : 0) > max) break
+    if ([...shown, item].join(separator).length + (rest ? ` and ${rest} more`.length : 0) > max)
+      break
     shown.push(item)
   }
   const more = items.length - shown.length

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-seeds/1.json
+#
+# The second e2e store: its market writes a comma decimal (Dutch) and prices in
+# EUR, so this is where a price is misread if anything parses money by locale.
+# Deployed by global-setup.ts with that store's own key, after its defaults.
+version: 1
+
+# A second market in USD, so the store sells in a currency written with a
+# period as well as its own.
+markets:
+  - name: United States
+    currency: USD
+    default_locale: en
+    countries: [US]
+
+# The test gateway, hidden from the storefront. On this store because the
+# payment method specs install it on the default one, and a store holds each
+# provider once. The card payment charged through it is written in Ruby by
+# global-setup: what the issuer answered cannot be sent through the API.
+payment_methods:
+  - name: E2E Bogus Gateway
+    type: bogus
+    active: true
+    storefront_visible: false

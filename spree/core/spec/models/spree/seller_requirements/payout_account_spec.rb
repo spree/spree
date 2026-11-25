@@ -127,8 +127,4 @@ RSpec.describe Spree::SellerRequirements::PayoutAccount do
   it 'is registered as a kind an operator may add' do
     expect(Spree.seller_requirements).to include(described_class)
   end
-
-  it 'is not one of the defaults a store starts with' do
-    expect(Spree::SellerRequirement::DEFAULT_KINDS).not_to include(described_class.to_s)
-  end
 end

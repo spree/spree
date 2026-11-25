@@ -48,7 +48,7 @@ namespace :common do
     puts 'Running Spree install generator...'
     # A failed step stops the task. Carrying on left a test app that looked
     # built but had no Spree migrations or an unmigrated database.
-    install = "#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false " \
+    install = "#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false " \
               "--user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}"
     system(install) || raise('Spree install generator failed')
 
