@@ -126,6 +126,16 @@ RSpec.describe SpreeAvalara::Client do
       expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
     end
 
+    # Certificate verification stays on; a failed handshake is an outage like
+    # any other, so address validation falls back instead of failing checkout.
+    it 'reports a TLS failure the same way' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::SSLError.new('certificate verify failed'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /certificate verify failed/) { |error|
+        expect(error.status).to be_nil
+      }
+    end
+
     it 'never sleeps inside the request' do
       allow(client).to receive(:sleep)
       stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
@@ -279,10 +289,18 @@ RSpec.describe SpreeAvalara::Client do
     end
   end
 
-  # The SDK subscribes to Faraday notifications every time it is constructed, so
-  # a client per call leaks a subscriber per call.
   it 'builds the underlying SDK client once' do
     expect(client.send(:avatax_client)).to be(client.send(:avatax_client))
+  end
+
+  # Every checkout loads the integration afresh, so a listener per client would
+  # pile up for the life of the process.
+  it 'leaves no Faraday listener behind for each client built' do
+    listeners = -> { ActiveSupport::Notifications.notifier.listeners_for('request.faraday').size }
+
+    build = -> { described_class.new(account_number: '1', license_key: 'k', endpoint: client.endpoint, company_code: 'X') }
+
+    expect { 3.times { build.call.send(:avatax_client) } }.not_to(change { listeners.call })
   end
 
   describe '#void_transaction' do

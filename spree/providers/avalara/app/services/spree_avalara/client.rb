@@ -7,6 +7,17 @@ module SpreeAvalara
   # method. Nothing is patched here — error translation lives in this wrapper,
   # which is also what makes the SDK upgradable.
   class Client
+    # The SDK's constructor subscribes a listener to every Faraday notification
+    # and never removes it, so each client built (one per integration loaded)
+    # would stay in memory for the life of the process. This sets the same
+    # options without subscribing; the listener only logs, which is off anyway.
+    class SdkClient < ::AvaTax::Client
+      def initialize(options = {}) # rubocop:disable Lint/MissingSuper
+        options = ::AvaTax.options.merge(options)
+        ::AvaTax::Configuration::VALID_OPTIONS_KEYS.each { |key| send("#{key}=", options[key]) }
+      end
+    end
+
     # Nothing was answered, so these become a statusless RequestError and the
     # caller reports the engine as unavailable.
     #
@@ -15,7 +26,7 @@ module SpreeAvalara
     # a customer waits, and a timeout has already spent the whole read budget
     # before it even begins. Retrying belongs to the caller: the response says
     # 503, and the SDK retries that with backoff of its own.
-    TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError].freeze
+    TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError, Faraday::SSLError].freeze
 
     # Fields of Avalara's answers that identify the merchant's account rather
     # than the sale; the ping names the account number as the user name.
@@ -158,12 +169,8 @@ module SpreeAvalara
     # Every option the SDK reads is passed explicitly: its initializer merges the
     # process-wide `AvaTax.options` underneath, so an unset option silently
     # inherits whatever a host app configured globally.
-    #
-    # Memoized because the SDK subscribes to Faraday notifications on every
-    # instantiation — a client built per call leaks a subscriber per call for the
-    # life of the process.
     def avatax_client
-      @avatax_client ||= AvaTax::Client.new(
+      @avatax_client ||= SdkClient.new(
         username: account_number,
         password: license_key,
         endpoint: endpoint,
