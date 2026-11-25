@@ -439,8 +439,9 @@ module SpreeStripe
         SpreeStripe::StatementDescriptorSuffixPresenter.new(order_description: order.number).call
       end
 
+      # An intent nobody has tried to pay yet may carry no payment method.
       def payment_intent_type_in?(payment_intent, types)
-        payment_method = payment_intent.payment_method
+        payment_method = payment_intent.try(:payment_method)
         return false unless payment_method.respond_to?(:type)
 
         payment_method.type.in?(types)
