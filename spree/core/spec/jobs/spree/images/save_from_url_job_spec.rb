@@ -199,9 +199,10 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     context 'when the URL redirects to the file' do
       let(:response) { instance_double(Net::HTTPResponse, code: '200', body: nil) }
 
-      it 'skips the redirect body and attaches the final response' do
+      it 'discards the redirect body and attaches the final response' do
         redirect = double('redirect', code: '301')
-        expect(redirect).not_to receive(:read_body)
+        allow(redirect).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(redirect).to receive(:read_body).and_yield('Moved')
         final = double('response', code: '200')
         allow(final).to receive(:[]).with('Content-Length').and_return(nil)
         allow(final).to receive(:read_body).and_yield(response_body)
@@ -213,6 +214,17 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
         expect { subject }.to change(Spree::Media, :count).by(1)
         expect(image.attachment).to be_attached
+      end
+
+      it 'refuses a redirect body over the size limit instead of holding it in memory' do
+        allow(Spree::Config).to receive(:max_image_download_size).and_return(10)
+        redirect = double('redirect', code: '302')
+        allow(redirect).to receive(:[]).with('Content-Length').and_return(nil)
+        allow(redirect).to receive(:read_body).and_yield('x' * 8).and_yield('x' * 8)
+        allow(SsrfFilter).to receive(:get) { |&block| block.call(redirect) }
+
+        expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
+        expect(Spree::Media.count).to eq(0)
       end
     end
 
