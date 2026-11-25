@@ -135,10 +135,10 @@ RSpec.describe SpreeAvalara::ItemPresenter do
   end
 
   describe 'a fee' do
-    let(:fee) { create(:fee, cart: cart, order: nil, amount: 7.5) }
+    let(:fee) { create(:fee, cart: cart, order: nil, amount: '7.5'.to_d) }
 
     it 'is priced at its amount' do
-      expect(present(fee)[:amount]).to eq(7.5)
+      expect(present(fee)[:amount]).to eq('7.5'.to_d)
       expect(present(fee)[:quantity]).to eq(1)
     end
 

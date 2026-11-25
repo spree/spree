@@ -136,7 +136,7 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
   describe 'the document date' do
     # A merchant closing a sale late on the 31st means their 31st.
     it 'is read in the store timezone' do
-      @default_store.update!(preferred_timezone: 'Australia/Sydney')
+      allow(cart.store).to receive(:preferred_timezone).and_return('Australia/Sydney')
       late_utc = Time.utc(2026, 8, 31, 20, 0, 0)
 
       expect(present(tax_date: late_utc)[:date]).to eq('2026-09-01')

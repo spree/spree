@@ -450,13 +450,22 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect { provider.void(order) }.not_to raise_error
     end
 
-    # Cancelling an order must not depend on a tax service being reachable.
-    it 'does not fail closed the way estimate does' do
+    # A document that was never filed leaves the ledger where the caller wanted it.
+    it 'treats a document Avalara never filed as voided' do
       allow(client).to receive(:void_transaction).
         and_raise(SpreeAvalara::RequestError.new('Document not found.', status: 404,
                                                  details: { 'code' => 'EntityNotFoundError' }))
 
       expect { provider.void(order) }.not_to raise_error
+    end
+
+    # Raised as a provider error, which Spree::Orders::Cancel reports without
+    # undoing the cancellation.
+    it 'reports an outage as the engine being unavailable' do
+      allow(client).to receive(:void_transaction).
+        and_raise(SpreeAvalara::RequestError.new('Service Unavailable', status: 503))
+
+      expect { provider.void(order) }.to raise_error(Spree::Tax::ProviderUnavailable, 'Service Unavailable')
     end
   end
 

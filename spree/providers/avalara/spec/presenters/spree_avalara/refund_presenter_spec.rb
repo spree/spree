@@ -83,10 +83,10 @@ RSpec.describe SpreeAvalara::RefundPresenter do
     # A sale that carried its tax inside the price gives back gross money, and
     # only the part of it that is not tax is the credited amount.
     it 'takes the tax out of money refunded gross' do
-      gross = credited_line(quantity: 1, worth: 100, tax: 18.70)
+      gross = credited_line(quantity: 1, worth: 100, tax: '18.70'.to_d)
 
       expect(present(return_items: [gross]).call[:lines].sole).to include(
-        amount: -81.30, taxOverride: hash_including(taxAmount: -18.70)
+        amount: -'81.30'.to_d, taxOverride: hash_including(taxAmount: -'18.70'.to_d)
       )
     end
 
@@ -118,15 +118,15 @@ RSpec.describe SpreeAvalara::RefundPresenter do
 
     # Core divides a claim's refund by what was agreed per line, not by worth.
     it 'divides a claim by the refund agreed per line' do
-      claim_lines = [[line_item, 107.25], [second_line, 0]].map do |line, agreed|
+      claim_lines = [[line_item, '107.25'.to_d], [second_line, 0]].map do |line, agreed|
         instance_double(Spree::ClaimLineItem, line_item: line, credited_quantity: 1, credited_worth: 107.25.to_d,
                                               credited_tax_total: agreed.positive? ? 7.25.to_d : 0.to_d,
                                               refund_amount: agreed.to_d)
       end
 
-      lines = present(return_items: claim_lines, amount: 107.25).call[:lines]
+      lines = present(return_items: claim_lines, amount: '107.25'.to_d).call[:lines]
 
-      expect(lines.sole).to include(amount: -100, taxOverride: hash_including(taxAmount: -7.25))
+      expect(lines.sole).to include(amount: -100, taxOverride: hash_including(taxAmount: -'7.25'.to_d))
     end
 
     it 'credits each line its whole worth when the refund covers it' do
@@ -141,9 +141,9 @@ RSpec.describe SpreeAvalara::RefundPresenter do
         credited_line(line: line, quantity: 1, worth: 1, tax: 0)
       end
 
-      lines = present(return_items: pennies, amount: 1.03).call[:lines]
+      lines = present(return_items: pennies, amount: '1.03'.to_d).call[:lines]
 
-      expect(lines.sum { |line| line[:amount] }).to eq(-1.03)
+      expect(lines.sum { |line| line[:amount] }).to eq(-'1.03'.to_d)
     end
   end
 

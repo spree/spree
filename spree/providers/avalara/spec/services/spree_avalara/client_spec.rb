@@ -50,6 +50,9 @@ RSpec.describe SpreeAvalara::Client do
   describe 'timeouts' do
     around do |example|
       original = ENV.to_hash
+      # An exported override would otherwise fail the default-value examples.
+      ENV.delete('SPREE_AVALARA_OPEN_TIMEOUT')
+      ENV.delete('SPREE_AVALARA_READ_TIMEOUT')
       example.run
       ENV.replace(original)
     end
