@@ -351,6 +351,11 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
     # whatever its query breaks down by, so it is held to the grant's
     # per-member scopes, as POST /reporting/query is.
     context 'with a delegated credential granting reports and orders only' do
+      # An OAuth request carries the bearer token alone. The shared context
+      # also sends a full-scope secret key, which the key gate would check
+      # instead of the grant.
+      let(:headers) { { 'Authorization' => "Bearer #{admin_jwt_token}" } }
+
       before do
         allow(controller).to receive(:current_oauth_token).and_return(
           instance_double(Spree::OauthAccessToken, scopes: Doorkeeper::OAuth::Scopes.from_array(%w[read_reports read_orders]))
