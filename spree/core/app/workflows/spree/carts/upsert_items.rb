@@ -94,7 +94,9 @@ module Spree
 
       def guard_completion_claim_in_lock
         return unless guarded_cart?
-        return unless completion_holds?(Spree::Cart.lock.find(cart.id))
+        # Uncached: the query cache could answer the settlement queries with
+        # the unlocked read +guard_completion_claim+ made before the lock.
+        return unless Spree::Cart.uncached { completion_holds?(Spree::Cart.lock.find(cart.id)) }
 
         reject_claimed_cart
       end

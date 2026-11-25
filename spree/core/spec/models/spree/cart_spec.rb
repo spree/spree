@@ -124,6 +124,24 @@ describe Spree::Cart, type: :model do
         end
       end
 
+      it 'keeps fencing a completed session while any of its payments is still valid' do
+        payment_session.update_column(:status, 'completed')
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'void')
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'checkout')
+
+        expect(cart.reload).to be_payment_session_settled
+      end
+
+      it 'keeps fencing a cart whose failed session still has a valid settled payment' do
+        payment_session.update_column(:status, 'failed')
+        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).to be_payment_session_settled
+      end
+
       it 'keeps fencing a completed session when another payment without a response code failed' do
         payment_session.update_column(:status, 'completed')
         create(:payment, cart: cart, order: nil, amount: 10, status: 'failed', response_code: nil)

@@ -69,6 +69,39 @@ RSpec.describe Spree::Carts::Merge do
         expect(cart.reload.line_items.sum(:quantity)).to eq(1)
       end
     end
+
+    # The first check reads the carts unlocked; a session settling on the
+    # source cart after it (settle_payment! runs under the cart's lock) must
+    # still stop the merge, or the merge destroys the cart and the payment.
+    context 'when the source cart settles after the first check' do
+      let!(:payment_session) { create(:bogus_payment_session, cart: other_cart, amount: 10) }
+      let(:settled_payment) { Spree::Payment.find_by(response_code: payment_session.external_id) }
+
+      before do
+        settled = false
+        allow(other_cart).to receive(:completion_claimed?) do
+          unless settled
+            settled = true
+            payment_session.update_column(:status, 'completed')
+            create(:payment, cart: other_cart, order: nil, payment_method: payment_session.payment_method,
+                             response_code: payment_session.external_id, amount: 10, status: 'pending')
+          end
+          false
+        end
+      end
+
+      it 'refuses under the row locks and keeps the source cart and its payment' do
+        result = described_class.call(cart: cart, other_cart: other_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('completion_in_progress')
+        expect(Spree::Cart.exists?(other_cart.id)).to be(true)
+        expect(settled_payment).to be_present
+        expect(settled_payment.cart_id).to eq(other_cart.id)
+        expect(Spree::LineItem.where(cart_id: other_cart.id).sum(:quantity)).to eq(2)
+        expect(Spree::LineItem.where(cart_id: cart.id).sum(:quantity)).to eq(1)
+      end
+    end
   end
 
   describe 'hooks' do

@@ -180,9 +180,12 @@ module Spree
     # cart can no longer complete, and the buyer stays charged without an
     # order.
     #
-    # Released when the money is no longer held: a session the gateway had
-    # not finished fails, is canceled or expires, or the payment settled from
-    # the session is voided or fails. Nothing releases it on a timer — a
+    # Released when the money is no longer held: every payment recorded for
+    # an accepted session is voided or fails (an accepted session with no
+    # payment row holds the cart until it completes), and no valid payment
+    # past +checkout+ from any session remains — a failed, canceled or
+    # expired session does not release the cart while one does. A session
+    # still pending fences nothing. Nothing releases it on a timer — a
     # settled cart whose completion keeps failing (see
     # Spree::Payments::HandleWebhookJob) stays fenced until staff resolve the
     # payment, because unfencing it would let the buyer change what they
@@ -192,11 +195,16 @@ module Spree
     def payment_session_settled?
       return false unless persisted?
 
+      accepted = payment_sessions.where(status: %w[processing completed])
       # NULL response codes are left out: NOT IN over a NULL matches nothing.
-      released = payments.where(status: Spree::Payment::INVALID_STATUSES).where.not(response_code: nil)
+      voided = payments.where(status: Spree::Payment::INVALID_STATUSES).where.not(response_code: nil)
+      live = payments.valid.where.not(response_code: nil)
 
-      payment_sessions.where(status: %w[processing completed]).
-        where.not(external_id: released.select(:response_code)).exists? ||
+      # An accepted session holds the cart while it has no payment row, or
+      # while any payment settled from it is still valid — it releases only
+      # once every one of its payments is void or failed.
+      accepted.where.not(external_id: voided.select(:response_code)).exists? ||
+        accepted.exists?(external_id: live.select(:response_code)) ||
         payments.valid.where.not(status: 'checkout').exists?(response_code: payment_sessions.select(:external_id))
     end
 
