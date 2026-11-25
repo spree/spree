@@ -17,7 +17,7 @@ module Spree
         super
 
         @fulfillments = []
-        # Confirm re-reads the set under its lock, so its actions arrive
+        # A set confirmed in a later request arrives with its actions
         # unloaded; one query per association rather than one per action.
         ActiveRecord::Associations::Preloader.new(
           records: order_change.actions.to_a, associations: [:line_item, :variant, :fulfillment, :delivery_method, :discount]
