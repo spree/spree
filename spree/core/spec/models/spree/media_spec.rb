@@ -386,6 +386,60 @@ describe Spree::Media, type: :model do
       expect(asset).not_to be_valid
       expect(asset.errors[:poster]).to include('is not a file type we accept')
     end
+
+    # A poster sent as a signed id is attached only after save, where a refusal
+    # would be swallowed and the poster would silently never appear.
+    it 'refuses a poster signed id whose bytes are not an image' do
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(fake_webp.b), filename: 'poster.webp',
+                                                    content_type: 'image/webp', identify: false)
+      asset = create(:external_video_media)
+      asset.poster_signed_id = blob.signed_id
+
+      expect(asset.save).to be(false)
+      expect(asset.errors[:poster]).to include('is not a file type we accept')
+      expect(asset.reload.poster).not_to be_attached
+    end
+
+    # A zip archive is a real file type, so the bytes identify it outright —
+    # an image name must not talk it into being an image.
+    it 'refuses an archive named as an image' do
+      name = 'payload.txt'
+      body = 'hello'
+      crc = Zlib.crc32(body)
+      local = [0x04034b50, 20, 0, 0, 0, 0, crc, body.bytesize, body.bytesize, name.bytesize, 0].pack('Vv5V3v2')
+      local += name + body
+      central = [0x02014b50, 20, 20, 0, 0, 0, 0, crc, body.bytesize, body.bytesize,
+                 name.bytesize, 0, 0, 0, 0, 0, 0].pack('Vv6V3v5V2')
+      central += name
+      ending = [0x06054b50, 0, 0, 1, 1, central.bytesize, local.bytesize, 0].pack('Vv4V2v')
+
+      media = build(:media)
+      attach_bytes(media, local + central + ending, filename: 'photo.png', content_type: 'image/png')
+
+      expect(media).not_to be_valid
+      expect(media.errors[:attachment]).to include('is not a file type we accept')
+    end
+
+    # A file kept as a video was never checked as an image, and turning the row
+    # into one starts the image variant jobs on it.
+    it 'refuses turning a row into an image when its file is not one' do
+      media = create(:video_media)
+      media.attachment.blob.update_columns(content_type: 'image/webp', filename: 'photo.webp')
+      media.reload
+
+      expect(media.update(media_type: 'image')).to be(false)
+      expect(media.errors[:attachment]).to include('is not a file type we accept')
+    end
+
+    it 'accepts turning a row into an image when its file is one' do
+      media = create(:media)
+      media.update_column(:media_type, 'video')
+      media.reload
+
+      media.media_type = 'image'
+
+      expect(media).to be_valid
+    end
   end
 
   describe 'video' do

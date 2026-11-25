@@ -42,6 +42,11 @@ module Spree
     #
     # A container whose own marker happens to fall within the bytes read is
     # identified outright and never reaches the tie-break at all.
+    #
+    # The tie-break only ever names an office format. No image is stored in
+    # one of these containers, so an image extension never settles it: a zip
+    # named `photo.png` is refused, which matters wherever the file is then
+    # handed to an image processor that cannot read it.
     CONTAINER_CONTENT_TYPES = %w[application/zip application/x-ole-storage].freeze
 
     # Plain-text formats carry no signature at all, so the bytes can only prove
@@ -76,6 +81,19 @@ module Spree
       blobs_for(attachment).each_with_index do |blob, index|
         validate_blob(record, attribute, blob, permitted, pending[index])
       end
+    end
+
+    # Checks a blob that is about to be attached but is not on the record yet —
+    # a signed id kept aside until the record saves — against the same
+    # allowlist. Its bytes are already in storage, so they are read from there.
+    #
+    # @param record [ActiveRecord::Base] the record the allowlist resolves against
+    # @param blob [ActiveStorage::Blob]
+    # @return [Boolean]
+    def permitted_blob?(record, blob)
+      permitted = permitted_content_types(record)
+
+      permitted.empty? || permitted_bytes?(blob, nil, permitted)
     end
 
     private
@@ -129,7 +147,10 @@ module Spree
       return permitted_plain_text?(blob, head, permitted) if UNIDENTIFIED_CONTENT_TYPES.include?(detected)
       return false unless CONTAINER_CONTENT_TYPES.include?(detected)
 
-      permitted.include?(type_from_extension(blob))
+      extension_type = type_from_extension(blob)
+      return false if extension_type.nil? || extension_type.start_with?('image/')
+
+      permitted.include?(extension_type)
     end
 
     def permitted_plain_text?(blob, head, permitted)
@@ -170,11 +191,16 @@ module Spree
       nil
     end
 
+    # A positive-length read of an empty file returns nil rather than an empty
+    # string. It is turned back into an empty string here: nil would send the
+    # check to storage, which holds nothing yet, and an empty file would then
+    # pass as unreadable instead of being refused as no file at all.
+    #
     # @return [String, nil] the head of a file not yet uploaded, leaving the
     #   caller's IO rewound so the upload itself still sees the whole thing
     def pending_bytes(attachable)
       case attachable
-      when Pathname then attachable.open('rb') { |file| file.read(MAGIC_BYTES_LENGTH) }
+      when Pathname then attachable.open('rb') { |file| file.read(MAGIC_BYTES_LENGTH) || +'' }
       when Hash then read_head(attachable[:io])
       else read_head(attachable)
       end
@@ -188,7 +214,7 @@ module Spree
 
       begin
         io.rewind
-        io.read(MAGIC_BYTES_LENGTH)
+        io.read(MAGIC_BYTES_LENGTH) || +''
       ensure
         io.rewind
       end

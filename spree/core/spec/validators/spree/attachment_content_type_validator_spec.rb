@@ -121,6 +121,14 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
       expect(record.errors[:document]).to be_empty
     end
 
+    # The tie-break names office formats only: no image lives in a container,
+    # so an archive named as an image is refused even where images are allowed.
+    it 'rejects an archive named with an image extension' do
+      attach(docx_bytes, filename: 'scan.png', content_type: 'image/png').validate
+
+      expect(record.errors[:document]).to include('is not a file type we accept')
+    end
+
     # An office extension on a container is a tie-break, never a passport: the
     # bytes still have to be that container.
     it 'rejects a script named with a legacy Word extension' do
@@ -243,6 +251,14 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
       expect(record.errors[:document]).to be_empty
     ensure
       FileUtils.rm_f(path)
+    end
+
+    # An empty file reads as nil, not as an empty string. It must still be
+    # refused here, not sent to storage, where nothing has been uploaded yet.
+    it 'rejects an empty file' do
+      attach('', filename: 'scan.png', content_type: 'image/png').validate
+
+      expect(record.errors[:document]).to include('is not a file type we accept')
     end
 
     # Reading the head must not consume the file: whatever runs next still has
