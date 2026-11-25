@@ -25,6 +25,18 @@ module Spree
         self.class.model_class
       end
 
+      # The key scopes of the members the query groups or filters by — the
+      # same list the reporting endpoint checks (see
+      # Spree::Reporting::Query#required_key_scopes). A query that does not
+      # compile needs none here; validation refuses it.
+      #
+      # @return [Array<String>]
+      def required_key_scopes
+        reporting_query.required_key_scopes
+      rescue Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery, JSON::ParserError
+        []
+      end
+
       def csv_headers
         labels = Spree::Reporting::Schema.new(store: store)
         dimension_labels = reporting_query.dimensions.map { |d| labels.label_for(:dimensions, d[:dimension].name) }

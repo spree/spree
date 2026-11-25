@@ -345,5 +345,45 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         end
       end
     end
+
+    # An OAuth grant authenticates as the staff member who approved it, so the
+    # model's ability check sees their whole role. A report export reads
+    # whatever its query breaks down by, so it is held to the grant's
+    # per-member scopes, as POST /reporting/query is.
+    context 'with a delegated credential granting reports and orders only' do
+      before do
+        allow(controller).to receive(:current_oauth_token).and_return(
+          instance_double(Spree::OauthAccessToken, scopes: Doorkeeper::OAuth::Scopes.from_array(%w[read_reports read_orders]))
+        )
+      end
+
+      def report_params(dimensions)
+        { type: 'report', search_params: { query: { metrics: %w[total_sales], dimensions: dimensions } } }
+      end
+
+      it 'creates a report export over order data' do
+        post :create, params: report_params(%w[channel]), as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'refuses a report export broken down by customer' do
+        expect { post :create, params: report_params(%w[customer]), as: :json }.not_to change(Spree::Export, :count)
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+      end
+
+      it 'refuses to download a report export broken down by customer' do
+        export = create(:export, type: 'Spree::Exports::Report', store: store, user: admin_user,
+                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[customer] } }.to_json)
+        export.attachment.attach(io: StringIO.new("Customer,Total sales\n"), filename: 'report.csv', content_type: 'text/csv')
+
+        get :download, params: { id: export.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+      end
+    end
   end
 end
