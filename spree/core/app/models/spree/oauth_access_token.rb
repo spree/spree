@@ -9,6 +9,8 @@ module Spree
 
     self.table_name = 'spree_oauth_access_tokens'
 
+    has_prefix_id :oauthtok
+
     belongs_to :application,
                class_name: 'Spree::OauthApplication',
                optional: true

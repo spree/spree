@@ -49,11 +49,10 @@ module Spree
       super(resolved)
     end
 
-    # Returns the Stripe-style prefixed ID, or nil for unsaved records.
+    # Returns the Stripe-style prefixed ID, or nil for unsaved records and
+    # models without `has_prefix_id`.
     def prefixed_id
-      return nil unless id.present?
-
-      "#{self.class._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}"
+      self.class.prefixed_id_for(id)
     end
 
     # Use prefixed_id for URL params when available.
@@ -145,12 +144,19 @@ module Spree
       # Builds the prefixed id for a raw primary key without loading the row —
       # for serializing foreign keys (e.g. Order#cart_id) where fetching the
       # associated record just to re-encode its id would be wasted I/O.
+      #
+      # Answers nil when the model has no prefix, so no client ever sees a
+      # bare `_<sqid>`, and for a key Sqids cannot encode (not an integer,
+      # negative, or past its range).
       # @param id [Integer, String, nil]
       # @return [String, nil]
       def prefixed_id_for(id)
-        return nil if id.blank?
+        return nil if _prefix_id_prefix.blank?
 
-        "#{_prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id.to_i])}"
+        key = id.is_a?(Integer) ? id : Integer(id.to_s, 10, exception: false)
+        "#{_prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([key])}" if key
+      rescue ArgumentError
+        nil
       end
 
       def find_by_prefix_id!(prefixed_id)

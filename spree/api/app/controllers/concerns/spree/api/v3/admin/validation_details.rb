@@ -11,6 +11,13 @@ module Spree
         # beside it as the fallback for clients without their own translation
         # (integrations, scripts, and the dashboard's own last resort).
         #
+        # A validator records the rejected `value` as the model holds it: a raw
+        # primary key for a foreign key, a class name for a type column, the
+        # whole record when the validation names an association. An entry
+        # reports each of those the way a client writes that attribute — a
+        # prefixed id, a short type name — and leaves it out when there is no
+        # such form.
+        #
         # Store API responses keep the flat `{ attribute => [message] }` shape
         # — this override is deliberately not in the shared error handler.
         module ValidationDetails
@@ -19,28 +26,42 @@ module Spree
           # @param errors [ActiveModel::Errors]
           # @return [Hash{Symbol => Array<Hash>}] per-attribute error entries
           def format_validation_details(errors)
-            errors.messages.each_with_object({}) do |(attribute, messages), result|
-              # `details` and `messages` are populated in lockstep by
-              # ActiveModel, so the nth message describes the nth detail. A
-              # message added as a bare string has no symbol and reports a
-              # nil code, which the dashboard reads as "render the message".
-              details = errors.details[attribute] || []
-
-              result[wire_error_attribute(errors, attribute)] = messages.each_with_index.map do |message, index|
-                detail = details[index] || {}
-                code = detail[:error].is_a?(Symbol) ? detail[:error] : nil
+            errors.group_by_attribute.each_with_object({}) do |(attribute, attribute_errors), result|
+              result[wire_error_attribute(errors, attribute)] = attribute_errors.map do |error|
+                # A message added as a bare string has no symbol and reports a
+                # nil code, which the dashboard reads as "render the message".
+                code = error.raw_type.is_a?(Symbol) ? error.raw_type : nil
+                message = error.message
+                values = error.details.except(:error)
 
                 # Interpolation values first, so the keys below are the ones
                 # this formatter computed: a validation may itself carry a
                 # `code:` option, and it must not displace the Rails error.
-                detail.except(:error).merge(
+                wire_error_values(error, values).merge(
                   code: code,
                   message: message,
-                  specific: code.present? &&
-                            specific_message?(errors, attribute, code, message, detail.except(:error))
+                  specific: code.present? && specific_message?(errors, attribute, code, message, values)
                 )
               end
             end
+          end
+
+          def wire_error_values(error, values)
+            # An error copied up from a nested record keeps the record and the
+            # attribute it was raised on inside it.
+            error = error.inner_error while error.respond_to?(:inner_error)
+
+            values.each_with_object({}) do |(key, value), result|
+              wire_value = wire_error_value(error.base, error.attribute.to_s, key, value)
+              result[key] = wire_value unless wire_value.nil? && !value.nil?
+            end
+          end
+
+          def wire_error_value(record, attribute, key, value)
+            return value.try(:prefixed_id) if value.is_a?(ActiveRecord::Base)
+            return value unless key == :value && value.present? && record.respond_to?(:api_value_for)
+
+            record.api_value_for(attribute, value)
           end
 
           # Whether `message` says more than its `code` alone would.

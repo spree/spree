@@ -100,6 +100,7 @@ RSpec.describe Spree::Publishable, events: true do
 
     context 'when no serializer exists' do
       before do
+        publishable_class.has_prefix_id :noserial
         stub_const('Spree::NoSerializer', publishable_class)
       end
 
@@ -109,8 +110,8 @@ RSpec.describe Spree::Publishable, events: true do
 
         payload = instance.event_payload
 
-        expect(payload[:id]).to be_a(String)
-        expect(payload[:id]).to be_present
+        expect(payload[:id]).to eq(publishable_class.prefixed_id_for(1))
+        expect(payload[:id]).to start_with('noserial_')
         expect(payload[:created_at]).to eq(now.iso8601)
         expect(payload[:updated_at]).to eq(now.iso8601)
         expect(payload).not_to have_key(:name)

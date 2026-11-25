@@ -37671,7 +37671,7 @@ paths:
                   message: Custom field definition has already been taken
                   details:
                     custom_field_definition_id:
-                    - value: 1
+                    - value: cfdef_UkLWZg9DAJ
                       code: taken
                       message: has already been taken
                       specific: false

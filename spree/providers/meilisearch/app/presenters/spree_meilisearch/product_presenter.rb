@@ -197,7 +197,7 @@ module SpreeMeilisearch
     # Flat: one entry per collection with the product's ProductCollection.position.
     def collection_positions
       @collection_positions ||= product.product_collections.pluck(:collection_id, :position).each_with_object({}) do |(cid, pos), acc|
-        acc[prefixed_id_for(Spree::Collection, cid)] = pos
+        acc[Spree::Collection.prefixed_id_for(cid)] = pos
       end
     end
 
@@ -215,12 +215,6 @@ module SpreeMeilisearch
           end
         end
       end
-    end
-
-    # Encode a raw primary key into a model's prefixed id without loading the
-    # record (mirrors Spree::PrefixedId#prefixed_id).
-    def prefixed_id_for(klass, raw_id)
-      "#{klass._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([raw_id])}"
     end
 
     def option_filter_variants(currency)

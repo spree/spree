@@ -658,6 +658,19 @@ now returns `nil` for an ID with another model's prefix, the same as
 `find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
 really need to decode any prefix.
 
+## Price history and OAuth token IDs have a prefix
+
+Price history entries (a product's `prior_price`) and OAuth access tokens (the
+people connected to an OAuth application) had no prefix of their own, so the
+API reported their IDs as a bare `_` followed by the encoded part. They now
+use `pricehist_` and `oauthtok_`. The encoded part doesn't change. If you
+stored one of these IDs, replace its leading `_` with the prefix:
+`_AXs1igzRC6` becomes `pricehist_AXs1igzRC6`.
+
+A model without a prefix now has no prefixed ID at all: `prefixed_id` and
+`prefixed_id_for` return `nil` instead of a string starting with `_`. They also
+return `nil` for a key that can't be encoded, such as a negative number.
+
 ## Prices include tax per market, not per rate
 
 Whether a price includes tax is now the market's `tax_inclusive` setting ([Markets](/developer/core-concepts/markets#tax-behavior)). Before, each tax rate said so with `included_in_price`, and nothing read the market's flag.

@@ -25,7 +25,18 @@ RSpec.describe Spree::PrefixedId do
       cart = create(:cart)
 
       expect(Spree::Cart.prefixed_id_for(cart.id)).to eq(cart.prefixed_id)
+      expect(Spree::Cart.prefixed_id_for(cart.id.to_s)).to eq(cart.prefixed_id)
       expect(Spree::Cart.prefixed_id_for(nil)).to be_nil
+    end
+
+    it 'answers nil for a model without a prefix, never a bare `_<sqid>`' do
+      expect(Spree::RoleUser.prefixed_id_for(1)).to be_nil
+    end
+
+    it 'answers nil for a key it cannot encode' do
+      expect(Spree::Cart.prefixed_id_for(-1)).to be_nil
+      expect(Spree::Cart.prefixed_id_for(2**70)).to be_nil
+      expect(Spree::Cart.prefixed_id_for('abc')).to be_nil
     end
   end
 
@@ -38,6 +49,15 @@ RSpec.describe Spree::PrefixedId do
     it 'returns nil for unsaved records' do
       product = build(:product)
       expect(product.prefixed_id).to be_nil
+    end
+
+    it 'returns nil for a model without a prefix' do
+      expect(Spree::RoleUser.new(id: 1).prefixed_id).to be_nil
+    end
+
+    it 'gives the models the API serializes their own prefix' do
+      expect(Spree::OauthAccessToken.prefixed_id_for(1)).to start_with('oauthtok_')
+      expect(Spree::PriceHistory.prefixed_id_for(1)).to start_with('pricehist_')
     end
   end
 
