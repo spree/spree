@@ -103,4 +103,31 @@ describe Spree::DeliveryOriginGroup, type: :model do
       end
     end
   end
+
+  describe '#stock_locations' do
+    let(:group) { create(:delivery_origin_group, delivery_profile: profile, name: 'EU') }
+    let(:warehouse) { create(:stock_location, store: store) }
+    let(:shop) { create(:stock_location, store: store) }
+
+    it 'destroys only the join row, never the stock location itself' do
+      group.stock_locations = [warehouse, shop]
+
+      expect { group.stock_locations = [warehouse] }.
+        to change { group.delivery_origin_group_locations.reload.count }.from(2).to(1)
+
+      expect(shop.reload).to be_persisted
+      expect(shop.deleted_at).to be_nil
+      expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
+    end
+
+    it 'leaves the stock locations behind when the group is destroyed' do
+      group.stock_locations = [warehouse, shop]
+
+      expect { group.destroy! }.
+        to change { Spree::DeliveryOriginGroupLocation.where(delivery_origin_group_id: group.id).count }.from(2).to(0)
+
+      expect(Spree::StockLocation.where(id: [warehouse.id, shop.id]).count).to eq(2)
+      expect([warehouse, shop].map { |location| location.reload.deleted_at }).to all(be_nil)
+    end
+  end
 end

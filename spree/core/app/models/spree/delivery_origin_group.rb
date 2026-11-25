@@ -16,7 +16,8 @@ module Spree
 
     has_many :delivery_origin_group_locations, class_name: 'Spree::DeliveryOriginGroupLocation',
              dependent: :destroy, inverse_of: :delivery_origin_group
-    has_many :stock_locations, through: :delivery_origin_group_locations, class_name: 'Spree::StockLocation'
+    has_many :stock_locations, through: :delivery_origin_group_locations, class_name: 'Spree::StockLocation',
+             dependent: :destroy
     # The group contains its zones and methods — that is how the dashboard
     # nests them and how a merchant reads it — so deleting the group takes
     # them with it rather than asking for them to be emptied by hand first.
