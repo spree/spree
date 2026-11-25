@@ -14,6 +14,8 @@ RSpec.describe 'AvaTax API contract', :vcr do
   # not. The id is pinned rather than left to luck — a re-recording that lands on
   # a different one fails here loudly, which is the right place to notice.
   RECORDED_LINE_ITEM_ID = 1
+  # The second line of the multi-line recording, pinned the same way.
+  SECOND_RECORDED_LINE_ITEM_ID = 2
 
   def recorded_line_item(cart, **attributes)
     create(:line_item, { id: RECORDED_LINE_ITEM_ID, cart: cart, order: nil, price: 100 }.merge(attributes))
@@ -92,16 +94,24 @@ RSpec.describe 'AvaTax API contract', :vcr do
   end
 
   describe 'estimate' do
+    # Two taxed lines of different worth, so a dropped line or tax written onto
+    # the wrong line shows up as a wrong figure.
     it 'prices a US sale line by line', vcr: { cassette_name: 'estimate/us_multi_line' } do
-      cart = us_cart
+      cart = us_cart(state: 'NY', zipcode: '10001', city: 'New York')
+      second = create(:line_item, id: SECOND_RECORDED_LINE_ITEM_ID, cart: cart, order: nil, price: 40)
+      first = cart.line_items.find(RECORDED_LINE_ITEM_ID)
       allow(SpreeAvalara::Integration).to receive(:active_for).and_return(integration)
 
-      provider.estimate(cart)
+      provider.estimate(cart.reload)
 
       rows = cart.tax_lines.reload.where(provider_id: 'avalara')
-      expect(rows).to be_present
+      tax_on = ->(line) { rows.select { |row| row.line_item_id == line.id }.sum(&:amount) }
       expect(rows.map(&:taxability_reason)).to all(be_in(Spree::TaxLine.taxability_reasons))
       expect(rows.map(&:country_code)).to all(eq('US'))
+      # New York City's combined 8.875%, on each line's own amount.
+      expect(tax_on.call(first)).to eq('8.88'.to_d)
+      expect(tax_on.call(second)).to eq('3.55'.to_d)
+      expect(rows.sum(&:amount)).to eq('12.43'.to_d)
     end
 
     it 'records a customer exemption Avalara applied',
@@ -362,7 +372,7 @@ RSpec.describe 'AvaTax API contract', :vcr do
     # One unit of the two back, with the 8.88 of New York tax the sale charged on it.
     let(:return_items) do
       [instance_double(Spree::ReturnLineItem, line_item: line_item, credited_quantity: 1,
-                                              credited_worth: 108.88.to_d, credited_tax_total: 8.88.to_d)]
+                                              credited_worth: '108.88'.to_d, credited_tax_total: '8.88'.to_d)]
     end
 
     before do
