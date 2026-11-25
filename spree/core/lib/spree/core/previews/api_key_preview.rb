@@ -6,7 +6,7 @@ module Spree
     include Spree::PreviewData::LocaleParam
 
     def secret_key_created
-      Spree::ApiKeyMailer.secret_key_created(example_key, Spree::PreviewData.admin_user, ip_address: '203.0.113.42')
+      Spree::ApiKeyMailer.secret_key_created(example_key, Spree::PreviewData.admin_user)
     end
 
     private
@@ -20,6 +20,7 @@ module Spree
         token_prefix: 'sk_8Hd2kQpZ',
         scopes: %w[read_orders write_products],
         created_by: Spree::PreviewData.admin_user,
+        created_by_ip_address: '203.0.113.42',
         created_at: Time.current
       )
     end

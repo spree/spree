@@ -4,10 +4,13 @@ describe Spree::ApiKeyMailer, type: :mailer do
   let(:store) { @default_store }
   let(:creator) { create(:admin_user, first_name: 'Damian', last_name: 'Smith') }
   let(:admin_user) { create(:admin_user, email: 'owner@example.com', first_name: 'Alex') }
-  let(:api_key) { create(:api_key, :secret, store: store, name: 'Mac Mini', scopes: %w[read_orders], created_by: creator) }
+  let(:api_key) do
+    create(:api_key, :secret, store: store, name: 'Mac Mini', scopes: %w[read_orders],
+                              created_by: creator, created_by_ip_address: '203.0.113.7')
+  end
 
   describe '#secret_key_created' do
-    let(:message) { described_class.secret_key_created(api_key, admin_user, ip_address: '203.0.113.7') }
+    let(:message) { described_class.secret_key_created(api_key, admin_user) }
 
     it 'sends to the admin with the store in the subject' do
       expect(message.to).to eq(['owner@example.com'])
@@ -42,7 +45,7 @@ describe Spree::ApiKeyMailer, type: :mailer do
     end
 
     it 'still reads well without a creator or an IP address' do
-      api_key.update_columns(created_by_id: nil, created_by_type: nil)
+      api_key.update_columns(created_by_id: nil, created_by_type: nil, created_by_ip_address: nil)
 
       body = email_body(described_class.secret_key_created(api_key.reload, admin_user))
 

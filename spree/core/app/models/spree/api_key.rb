@@ -52,6 +52,10 @@ module Spree
     belongs_to :created_by, polymorphic: true, optional: true
     belongs_to :revoked_by, polymorphic: true, optional: true
 
+    # Personal data: where the creating request came from, set by the Admin
+    # API and named in the security notice sent to store admins.
+    encrypts :created_by_ip_address, support_unencrypted_data: true if ActiveRecord::Encryption.config.has_primary_key?
+
     validates :name, presence: true
     validates_store_uniqueness :name, soft_delete_column: :revoked_at
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
@@ -75,10 +79,6 @@ module Spree
 
     before_validation :generate_token, on: :create
     after_create_commit :notify_store_admins, if: -> { secret? && !skip_admin_notification }
-
-    # Where the creating request came from, set by the Admin API so the
-    # security notice sent to store admins can name it. Never persisted.
-    attr_accessor :request_ip
 
     # Set when a key is minted as part of setting up a store (the CLI's own
     # read-only key), which is not news to anyone. Never persisted.
@@ -190,7 +190,7 @@ module Spree
     # compromised account.
     def notify_store_admins
       store.users.merge(Spree::Role.admin).find_each do |admin_user|
-        Spree::ApiKeyMailer.secret_key_created(self, admin_user, ip_address: request_ip).deliver_later
+        Spree::ApiKeyMailer.secret_key_created(self, admin_user).deliver_later
       rescue StandardError => e
         # The key already exists; one admin's failed enqueue must neither
         # fail the request nor cost the other admins their notice.

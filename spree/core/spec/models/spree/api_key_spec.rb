@@ -192,28 +192,39 @@ RSpec.describe Spree::ApiKey, type: :model do
     end
   end
 
+  describe '#created_by_ip_address' do
+    it 'is encrypted at rest' do
+      key = create(:api_key, :secret, store: store, created_by_ip_address: '203.0.113.7')
+
+      # Read past the model, which would decrypt.
+      raw = described_class.connection.select_value("SELECT created_by_ip_address FROM #{described_class.table_name} WHERE id = #{key.id}")
+      expect(raw).not_to include('203.0.113.7')
+      expect(key.reload.created_by_ip_address).to eq('203.0.113.7')
+    end
+  end
+
   describe 'admin notification' do
     let!(:admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
     let!(:second_admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
 
     it 'emails every store admin when a secret key is created' do
       expect {
-        create(:api_key, :secret, store: store, request_ip: '203.0.113.7')
+        create(:api_key, :secret, store: store)
       }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).
-        with(an_instance_of(described_class), admin, ip_address: '203.0.113.7').
+        with(an_instance_of(described_class), admin).
         and have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).
-        with(an_instance_of(described_class), second_admin, ip_address: '203.0.113.7')
+        with(an_instance_of(described_class), second_admin)
     end
 
     it 'still notifies the other admins when one enqueue fails, reporting the error' do
       error = StandardError.new('queue down')
       allow(Spree::ApiKeyMailer).to receive(:secret_key_created).and_call_original
-      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).with(anything, admin, anything).and_raise(error)
+      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).with(anything, admin).and_raise(error)
       allow(Rails.error).to receive(:report)
 
       expect {
         create(:api_key, :secret, store: store)
-      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, second_admin, anything)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, second_admin)
       expect(Rails.error).to have_received(:report).with(error, source: 'spree.api_keys')
     end
 
