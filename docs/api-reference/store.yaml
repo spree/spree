@@ -2174,6 +2174,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -2879,6 +2880,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -5919,6 +5921,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -7231,6 +7234,7 @@ paths:
                       state_abbr: AL
                       pickup_ready_in_minutes:
                       pickup_instructions:
+                    pickup_location:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
@@ -7560,6 +7564,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -10821,6 +10826,7 @@ paths:
                     state_abbr: AL
                     pickup_ready_in_minutes:
                     pickup_instructions:
+                  pickup_location:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
@@ -14181,9 +14187,12 @@ components:
           type: string
           nullable: true
         owner:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/AddressOwner"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -14882,9 +14891,12 @@ components:
           type: boolean
           nullable: true
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_eq_billing_address:
           type: boolean
         discounts:
@@ -14904,25 +14916,37 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         payment_methods:
           type: array
           items:
             "$ref": "#/components/schemas/PaymentMethod"
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - market_id
@@ -15685,9 +15709,12 @@ components:
           items:
             "$ref": "#/components/schemas/State"
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - iso
       - iso3
@@ -16006,17 +16033,26 @@ components:
           items:
             "$ref": "#/components/schemas/Address"
         default_billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         default_shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         newsletter_subscriber:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/NewsletterSubscriber"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         customer_groups:
           type: array
           items:
@@ -16252,9 +16288,12 @@ components:
         unpriced:
           type: boolean
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         display_cost:
           type: string
           nullable: true
@@ -16981,9 +17020,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -17157,6 +17199,16 @@ components:
           "$ref": "#/components/schemas/DeliveryMethod"
         stock_location:
           "$ref": "#/components/schemas/StockLocation"
+        pickup_location:
+          anyOf:
+          - "$ref": "#/components/schemas/StockLocation"
+          - type: object
+            nullable: true
+            enum:
+            -
+          description: Where the customer collects a pickup — the counter chosen at
+            checkout, which can differ from the stock location it ships from. Null
+            unless the delivery is a pickup.
         delivery_rates:
           type: array
           items:
@@ -17197,6 +17249,7 @@ components:
       - deliveries
       - delivery_method
       - stock_location
+      - pickup_location
       - delivery_rates
       x-typelizer: true
     GiftCardBatch:
@@ -19865,13 +19918,19 @@ components:
           type: string
           nullable: true
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         orders:
           type: array
           items:
@@ -20522,21 +20581,33 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -21971,9 +22042,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -22008,9 +22082,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -23373,9 +23450,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -23396,9 +23476,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - product_id

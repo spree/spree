@@ -20245,8 +20245,10 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Deletes an unused gift card. Cards that have been redeemed or
-        partially redeemed cannot be deleted and return 422.
+        Deletes an unused gift card. A card applied to an open cart or
+        draft order is taken off it first, which voids its store credit
+        payment. Cards that have been redeemed or partially redeemed, or
+        that a checkout is completing with, cannot be deleted and return 422.
 
 
         **Required scope:** `write_gift_cards` (for API-key authentication).
@@ -20286,7 +20288,7 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: Gift card cannot be deleted
+                  message: Can't delete a used gift card
   "/api/v3/admin/imports":
     get:
       summary: List imports
@@ -47274,8 +47276,11 @@ paths:
         bearer_auth: []
       description: |-
         Sends a pending invitation to the seller's team again, with a fresh
-        acceptance link. Use it when the email never arrived; an invitation that
-        has expired is refused, so invite the person again instead.
+        acceptance link. The invitation's `expires_at` moves to 14 days after
+        the resend, but never past 30 days after the invitation was created.
+        Use it when the email never arrived. An invitation that has expired or
+        was already accepted is refused with 422, so invite the person again
+        instead; a revoked invitation is not found (404).
 
 
         **Required scope:** `write_sellers` (for API-key authentication).
@@ -47312,7 +47317,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
-          description: the invitation has expired
+          description: the invitation has expired or was already accepted
           content:
             application/json:
               example:
@@ -47320,6 +47325,16 @@ paths:
                   code: processing_error
                   message: This invitation has expired. Invite them again to send
                     a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/sellers/{id}/approve":
@@ -48682,15 +48697,15 @@ paths:
           content:
             application/json:
               example:
-                spree_version: 6.0.5
+                spree_version: 6.0.6
                 sections:
                 - key: platform
                   title: Spree
                   rows:
                   - label: Version
-                    value: 6.0.5
+                    value: 6.0.6
                   - label: Gems
-                    value: spree_api 6.0.5, spree_core 6.0.5
+                    value: spree_api 6.0.6, spree_core 6.0.6
                   - label: Other gems built on Spree
                     value: '0'
                 - key: runtime
@@ -48729,14 +48744,14 @@ paths:
                 generated_at: '2026-01-15T12:00:00.000Z'
                 markdown: |-
                   <details>
-                  <summary>Spree 6.0.5 diagnostics (2026-01-15T12:00:00Z)</summary>
+                  <summary>Spree 6.0.6 diagnostics (2026-01-15T12:00:00Z)</summary>
 
                   **Spree**
 
                   | | |
                   | --- | --- |
-                  | Version | 6.0.5 |
-                  | Gems | spree_api 6.0.5, spree_core 6.0.5 |
+                  | Version | 6.0.6 |
+                  | Gems | spree_api 6.0.6, spree_core 6.0.6 |
                   | Other gems built on Spree | 0 |
 
                   **Runtime**
@@ -48769,7 +48784,7 @@ paths:
                   None recorded.
 
                   </details>
-                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.0.5%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.0.5%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.0.5%2C%20spree_core%206.0.5%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.9%20%28arm64-darwin25%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.0.2%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20sqlite3%203.54.1%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
+                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.0.6%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.0.6%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.0.6%2C%20spree_core%206.0.6%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.9%20%28arm64-darwin25%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.0.2%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20sqlite3%203.54.1%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
                 issue_prefilled: true
               schema:
                 "$ref": "#/components/schemas/Diagnostics"
@@ -50638,7 +50653,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.5
+                current_version: 6.0.6
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -51715,7 +51730,14 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Issues a fresh token and dispatches the invitation email again.
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend, but never
+        past 30 days after the invitation was created. An invitation that has
+        expired or was already accepted is refused with 422 (as is one revoked
+        while the request was in flight), so invite the person again instead;
+        a revoked invitation is not found (404). An invitation that no longer
+        passes validation answers 422 `validation_error` with its errors.
+
 
         **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
@@ -51768,6 +51790,28 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+        '422':
+          description: the invitation has expired, was already accepted or failed
+            validation
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: the invitation was revoked
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invitation not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/permissions":
     get:
       summary: List the permission catalog
@@ -61127,9 +61171,12 @@ components:
           type: string
           nullable: true
         owner:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/AddressOwner"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -61214,9 +61261,12 @@ components:
           items:
             "$ref": "#/components/schemas/Session"
         inviter:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Actor"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         avatar_url:
           type: string
           nullable: true
@@ -61934,9 +61984,12 @@ components:
           type: boolean
           nullable: true
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_eq_billing_address:
           type: boolean
         items:
@@ -61944,17 +61997,26 @@ components:
           items:
             "$ref": "#/components/schemas/LineItem"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         completed_at:
           type: string
           nullable: true
@@ -62480,9 +62542,12 @@ components:
           type: string
           nullable: true
         quantity_rule:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/CatalogProductTerm"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         catalog_variants:
           type: array
           items:
@@ -64214,9 +64279,12 @@ components:
           items:
             "$ref": "#/components/schemas/State"
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - iso
       - iso3
@@ -64455,17 +64523,26 @@ components:
           items:
             "$ref": "#/components/schemas/Address"
         default_billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         default_shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         newsletter_subscriber:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/NewsletterSubscriber"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         customer_groups:
           type: array
           items:
@@ -64769,9 +64846,12 @@ components:
           description: 'Rate provider; null prices through the calculator. Built-in:
             internal, freight. Provider gems register more (e.g. easy_post).'
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/DeliveryMethodCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - name
@@ -64977,9 +65057,12 @@ components:
         unpriced:
           type: boolean
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         delivery_method:
           "$ref": "#/components/schemas/DeliveryMethod"
         metadata:
@@ -65742,9 +65825,12 @@ components:
           type: string
           nullable: true
         draft:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/EmailTemplateDraft"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - key
@@ -66043,9 +66129,12 @@ components:
         expires_at:
           type: string
         upload:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FileUploadTarget"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - signed_id
       - filename
@@ -69329,13 +69418,19 @@ components:
           type: string
           nullable: true
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         orders:
           type: array
           items:
@@ -69940,21 +70035,33 @@ components:
           items:
             "$ref": "#/components/schemas/Fulfillment"
         billing_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         shipping_address:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Address"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         gift_card:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/GiftCard"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         market:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Market"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         custom_fields:
           type: array
           items:
@@ -70118,9 +70225,12 @@ components:
           items:
             "$ref": "#/components/schemas/Claim"
         freight_summary:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/FreightSummary"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - market_id
@@ -71498,13 +71608,19 @@ components:
           items:
             type: string
         price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -71539,9 +71655,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         translations:
@@ -71571,9 +71690,12 @@ components:
           type: string
           nullable: true
         submission:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/ProductSubmission"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_name:
           type: string
           nullable: true
@@ -71795,9 +71917,12 @@ components:
         preferences:
           type: object
         calculator:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PromotionActionCalculator"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         line_items:
           type: array
           items:
@@ -79235,9 +79360,12 @@ components:
         price:
           "$ref": "#/components/schemas/Price"
         original_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/Price"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         seller_id:
           type: string
           nullable: true
@@ -79258,9 +79386,12 @@ components:
           items:
             "$ref": "#/components/schemas/CustomField"
         prior_price:
-          allOf:
+          anyOf:
           - "$ref": "#/components/schemas/PriceHistory"
-          nullable: true
+          - type: object
+            nullable: true
+            enum:
+            -
         external_references:
           type: object
         metadata:
@@ -85502,7 +85633,8 @@ components:
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: Captures part of the authorized amount. Defaults to all of
-            it, or to what the order still owes when that is less.
+            it, or to what the order still owes when that is less. A capture another
+            payment is waiting on its provider to confirm counts as paid.
     PaymentCreateParams:
       type: object
       properties:
