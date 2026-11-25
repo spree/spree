@@ -262,9 +262,19 @@ module Spree
         end
 
         context 'and payment is refunded' do
-          it 'is voided' do
+          it 'is refunded' do
             payment = create(:payment, order: order, amount: order_total, status: 'completed')
             create(:refund, payment: payment, amount: order_total)
+
+            updater.update_payment_state
+
+            expect(order.payment_state).to eq('refunded')
+          end
+        end
+
+        context 'and payment is voided' do
+          it 'is voided' do
+            create(:payment, order: order, amount: order_total, status: 'void')
 
             updater.update_payment_state
 

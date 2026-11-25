@@ -59,6 +59,8 @@ module Spree
       # Carts carry payment_total but no status columns — money still has to
       # be right while checkout is in flight, statuses only exist on orders.
       owner.update_statuses! if owner.is_a?(Spree::Order)
+      # A shared payment belongs to its group, so its children derive from their shares.
+      owner.orders.each(&:update_statuses!) if owner.is_a?(Spree::OrderGroup)
     end
 
     private

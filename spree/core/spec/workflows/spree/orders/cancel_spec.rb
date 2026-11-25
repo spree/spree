@@ -200,6 +200,7 @@ module Spree
         subject.call(order: order, canceler: user)
 
         expect(payment.reload).to be_void
+        expect(order.reload.payment_status).to eq('voided')
       end
 
       # Stripe and PayPal cannot void a drawn charge: they refund it or, when
@@ -221,6 +222,7 @@ module Spree
 
           expect(payment.reload).to be_completed
           expect(order.reload.payment_total).to eq(payment.amount)
+          expect(order.payment_status).to eq('paid')
         end
 
         it 'keeps the payment completed with the refund recorded when the money is given back' do
@@ -229,6 +231,7 @@ module Spree
           expect(payment.reload).to be_completed
           expect(payment.refunds.sum(:amount)).to eq(payment.amount)
           expect(order.reload.payment_total).to eq(0)
+          expect(order.payment_status).to eq('refunded')
         end
       end
     end
