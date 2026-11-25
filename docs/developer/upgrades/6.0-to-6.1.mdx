@@ -36,6 +36,7 @@ What shoppers see:
 - Words match in any order, and in other forms: "shirts blue" finds "Blue Shirt".
 - Product descriptions are searched, so a query can return more products than before.
 - Without a `sort`, results come back by relevance instead of in no particular order.
+- For a search, the filters endpoint returns a new `relevance` sort option, listed first, and returns it as `default_sort` instead of `manual`. A storefront that shows its own labels for sort options needs one for `relevance`.
 - With the `pg_trgm` extension enabled, a search that finds nothing falls back to the closest product names.
 
 Everything the previous search matched is still returned. Admin product search, MySQL and SQLite installations, and applications that set `Spree.search_provider` themselves (for example to Meilisearch) are not affected.

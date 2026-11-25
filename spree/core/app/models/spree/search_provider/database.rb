@@ -110,6 +110,7 @@ module Spree
         # A category/collection page defaults to the merchant's manual (position)
         # order when `sort` is omitted — matching the `default_sort: 'manual'` the
         # filters endpoint advertises.
+        sort = nil if sort == RELEVANCE_SORT
         sort = 'manual' if sort.blank? && grouping.present?
         return scope if sort.blank?
 

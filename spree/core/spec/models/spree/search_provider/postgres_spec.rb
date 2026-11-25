@@ -67,6 +67,18 @@ module Spree
         expect(search('jacket', sort: 'manual').products.to_a).to eq([jacket, pants])
       end
 
+      it 'ranks when the sort is relevance, inside a category too' do
+        category = create(:category)
+        [pants, jacket].each { |product| product.categories << category }
+
+        expect(search('jacket', sort: 'relevance').products.to_a).to eq([jacket, pants])
+        expect(search('jacket', sort: 'relevance', filters: { 'in_category' => category.prefixed_id }).products.to_a).to eq([jacket, pants])
+      end
+
+      it 'treats the relevance sort as no sort when there is no query' do
+        expect(search(nil, sort: 'relevance').products).to contain_exactly(shirt, pants, jacket)
+      end
+
       it 'falls back to the plain match for a very long query' do
         expect(search("shirt #{'blue ' * 50}").products).to be_empty
         expect(search("Blue Shirt#{' ' * 200}").products).to contain_exactly(shirt)
@@ -162,6 +174,27 @@ module Spree
     describe '#filters' do
       it 'counts the products the query matches' do
         expect(provider.filters(scope: scope, query: 'shirts').total_count).to eq(1)
+      end
+
+      it 'offers relevance first and as the default when there is a query' do
+        result = provider.filters(scope: scope, query: 'shirts')
+
+        expect(result.sort_options.first).to eq(id: 'relevance', label: nil)
+        expect(result.default_sort).to eq('relevance')
+      end
+
+      it 'keeps the collection sort as the default on a collection page' do
+        result = provider.filters(scope: scope, query: 'shirts', filters: { '_collection' => create(:collection, sort_order: 'manual') })
+
+        expect(result.sort_options.pluck(:id)).to include('relevance')
+        expect(result.default_sort).to eq('manual')
+      end
+
+      it 'does not offer relevance without a query' do
+        result = provider.filters(scope: scope)
+
+        expect(result.sort_options.pluck(:id)).not_to include('relevance')
+        expect(result.default_sort).to eq('manual')
       end
     end
 

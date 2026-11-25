@@ -66,6 +66,18 @@ module Spree
         super
       end
 
+      # A query that can be ranked adds the relevance sort option, and makes it
+      # the default wherever an omitted sort ranks: everywhere but a collection
+      # page, which sends its collection's own sort.
+      def filters(query: nil, filters: {}, **)
+        result = super
+        return result if query_words(query).empty?
+
+        result.sort_options = [{ id: RELEVANCE_SORT, label: nil }] + result.sort_options
+        result.default_sort = RELEVANCE_SORT unless filters.is_a?(Hash) && (filters['_collection'] || filters[:_collection])
+        result
+      end
+
       private
 
       def apply_search_and_filters(scope, query: nil, filters: {})
@@ -88,7 +100,7 @@ module Spree
       def apply_sort(scope, sort, grouping: nil)
         # 'manual' with no category or collection to order within has no order
         # of its own, so it ranks as well.
-        ranked = sort.blank? || (sort == 'manual' && grouping.nil?)
+        ranked = sort.blank? || sort == RELEVANCE_SORT || (sort == 'manual' && grouping.nil?)
         return super if !ranked || query_words(@ranked_query).empty?
 
         products = Spree::Product.arel_table

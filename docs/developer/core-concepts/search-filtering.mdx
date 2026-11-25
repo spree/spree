@@ -405,6 +405,8 @@ On PostgreSQL, search needs no setup and no extra service. A search matches prod
 
 When no `sort` is sent, results come back by relevance. An explicit `sort` is applied as usual.
 
+For a request with a search query, the [filters endpoint](#product-filters-faceted-search) lists `relevance` first in `sort_options` and returns it as `default_sort`, so a sort menu can show what the shopper is seeing and let them return to it with `sort=relevance`. On a collection page the default stays the collection's own sort, with `relevance` offered beside it. Without a search query `relevance` is not offered, and sending it has no effect.
+
 #### Languages
 
 Words are reduced to their base form using the language each text is written in: a German storefront finds "Schuhe" when the shopper types "Schuh". A product's own name and description are read in the store's default language, and a translation in its own language. Languages PostgreSQL has no rules for are matched without stemming: words match as written, and the last word still matches as you type it.

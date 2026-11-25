@@ -125,7 +125,7 @@
       ],
       "file": "app/models/spree/search_provider/postgres.rb",
       "fingerprint": "4a263818ed57f8c2a5bec152c05a541a0283b085219aede41e480904a7637a8d",
-      "line": 85,
+      "line": 97,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "location": {
         "type": "method",
