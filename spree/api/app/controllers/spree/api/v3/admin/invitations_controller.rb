@@ -8,6 +8,7 @@ module Spree
         # becomes a member of the staff list for this store.
         class InvitationsController < ResourceController
           include Spree::Api::V3::Admin::RoleGrantGuard
+          include Spree::Api::V3::InvitationResend
 
           # Staff management is the escalation path — its own scope pair,
           # grantable separately from store configuration (6.0-admin-rbac.md).
@@ -30,15 +31,13 @@ module Spree
           end
 
           # PATCH /api/v3/admin/invitations/:id/resend
-          # Issues a fresh token + email for an existing pending invitation.
-          # The model's `resend!` is responsible for resetting `expires_at`
-          # and dispatching the mailer.
+          # Issues a fresh token + email for an existing pending invitation, and
+          # starts its expiry window again.
           def resend
             @resource = find_resource
             authorize!(:update, @resource)
 
-            @resource.resend!
-            render json: serialize_resource(@resource)
+            render_invitation_resend(@resource) { |invitation| serialize_resource(invitation) }
           end
 
           protected

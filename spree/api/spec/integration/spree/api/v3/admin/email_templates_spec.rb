@@ -355,6 +355,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       response '200', 'records found' do
         before { create(:order, store: store) }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('EmailTemplateSampleRecord'))
+
         run_test! do |response|
           expect(JSON.parse(response.body)['data'].size).to eq(1)
         end

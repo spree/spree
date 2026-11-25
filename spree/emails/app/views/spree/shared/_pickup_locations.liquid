@@ -1,0 +1,18 @@
+{%- comment -%}
+  Where the buyer collects a pickup order: each location once.
+  Arguments: fulfillments.
+{%- endcomment -%}
+{%- assign shown = '' -%}
+{%- for fulfillment in fulfillments -%}
+  {%- if fulfillment.status == 'canceled' -%}{%- continue -%}{%- endif -%}
+  {%- if fulfillment.pickup_location == nil -%}{%- continue -%}{%- endif -%}
+  {%- assign key = fulfillment.pickup_location.id | prepend: '|' | append: '|' -%}
+  {%- if shown contains key -%}{%- continue -%}{%- endif -%}
+  {%- assign shown = shown | append: key -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'order_mailer.pickup_location' | t }}</mj-text>
+    {% render 'spree/shared/pickup_location', location: fulfillment.pickup_location %}
+  </mj-column>
+</mj-section>
+{%- endfor -%}

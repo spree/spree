@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import type { GiftCard, Order, Payment } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
@@ -15,6 +15,28 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { CustomerCombobox } from '../customers/customer-combobox'
+
+const INVALID_PAYMENT_STATUSES = ['failed', 'void', 'invalid']
+
+/**
+ * Whether moving an open order to `customerId` gives the previous customer's
+ * store credit or named gift card back to them, as the order update does.
+ */
+export function releasesPreviousCustomerBalance(
+  order: Pick<Order, 'completed_at' | 'customer_id'> & {
+    gift_card: Pick<GiftCard, 'customer_id'> | null
+    payments?: Pick<Payment, 'source_type' | 'status'>[]
+  },
+  customerId: string | null,
+): boolean {
+  if (order.completed_at || customerId === (order.customer_id ?? null)) return false
+  if (order.gift_card)
+    return !!order.gift_card.customer_id && order.gift_card.customer_id !== customerId
+  return !!order.payments?.some(
+    (payment) =>
+      payment.source_type === 'store_credit' && !INVALID_PAYMENT_STATUSES.includes(payment.status),
+  )
+}
 
 /**
  * Who the order belongs to: an existing customer, or a guest known only by
@@ -47,6 +69,30 @@ export function OrderCustomerForm({ order, onDone }: { order: Order; onDone: () 
         message: t('admin.orders.detail.customer_edit.confirm_detach'),
         variant: 'destructive',
         confirmLabel: t('admin.orders.detail.customer_edit.detach'),
+      }))
+    ) {
+      return
+    }
+
+    // An open order moving away from a customer is confirmed too, naming the
+    // store credit or gift card the move gives back.
+    const nextCustomerId = customerId ?? null
+    const movingOpenOrder =
+      !order.completed_at && !!order.customer_id && nextCustomerId !== order.customer_id
+    const releasesBalance = releasesPreviousCustomerBalance(order, nextCustomerId)
+    if (
+      (movingOpenOrder || releasesBalance) &&
+      !(await confirm({
+        message: [
+          customerId
+            ? t('admin.orders.detail.customer_edit.confirm_change')
+            : t('admin.orders.detail.customer_edit.confirm_change_to_guest'),
+          releasesBalance && t('admin.orders.detail.customer_edit.confirm_change_releases_balance'),
+        ]
+          .filter(Boolean)
+          .join(' '),
+        variant: 'destructive',
+        confirmLabel: t('admin.orders.detail.customer_edit.change'),
       }))
     ) {
       return

@@ -271,6 +271,36 @@ module Spree
       delivery_method&.digital? || false
     end
 
+    # How the goods reach the customer, read from the selected rate's
+    # delivery method the way the 6.0 upgrade backfill did, so it follows a
+    # later change of rate. With no rate selected, an offered rate says
+    # nothing about the choice: the column (only the backfill writes it)
+    # answers, else the kind every fulfillment had before the column.
+    #
+    # @return [String] shipping, digital, pickup or pickup_point
+    def fulfillment_type
+      provider_class = selected_delivery_rate&.delivery_method&.provider_class
+      return super.presence || (digital? ? 'digital' : 'shipping') if provider_class.nil?
+
+      if provider_class.digital? then 'digital'
+      elsif provider_class.pickup_point? then 'pickup_point'
+      elsif provider_class.pickup? then 'pickup'
+      else 'shipping'
+      end
+    end
+
+    # Where the customer collects a pickup: the counter they chose at
+    # checkout, else the origin when it is itself a pickup counter. Under the
+    # 'any' pickup stock policy the origin can be a warehouse that ships to
+    # the counter, which the customer cannot visit.
+    #
+    # @return [Spree::StockLocation, nil] nil unless this is a pickup
+    def pickup_location
+      return unless delivery_method&.pickup?
+
+      (order || cart)&.preferred_stock_location || (stock_location if stock_location&.pickup_enabled?)
+    end
+
     # @deprecated Use {#delivery_method}; removed in 6.3.
     def shipping_method
       Spree::Deprecation.warn('Spree::Fulfillment#shipping_method is deprecated and will be removed in Spree 6.3. Use #delivery_method instead.')

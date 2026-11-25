@@ -3085,7 +3085,11 @@
           "title": "Editar cliente",
           "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado.",
           "confirm_detach": "Este pedido dejará de aparecer en el historial de pedidos y la cuenta del cliente. ¿Quitar el cliente?",
-          "detach": "Quitar cliente"
+          "detach": "Quitar cliente",
+          "confirm_change": "Este pedido pasará al nuevo cliente.",
+          "confirm_change_to_guest": "Este pedido pasará a ser un pedido de invitado y dejará el historial de pedidos del cliente.",
+          "confirm_change_releases_balance": "El crédito de tienda y las tarjetas regalo que aplicó el cliente anterior se quitarán y se le devolverán, por lo que el importe pendiente vuelve a subir.",
+          "change": "Cambiar cliente"
         }
       },
       "edit": {

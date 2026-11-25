@@ -31,9 +31,7 @@ module Spree
           # Null until the parcel actually ships, which is most of its life.
           typelize fulfilled_at: [:string, nullable: true]
 
-          attribute :fulfillment_type do |fulfillment|
-            fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
-          end
+          attributes :fulfillment_type
 
           # How it travels and where it leaves from, as names rather than
           # expanded records: a seller reads them, never edits them here.

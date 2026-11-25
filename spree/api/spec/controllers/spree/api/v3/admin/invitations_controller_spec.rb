@@ -116,4 +116,67 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
       expect(json_response['data'].first).not_to have_key('acceptance_url')
     end
   end
+
+  describe 'PATCH #resend' do
+    let(:headers) { bearer_headers }
+    let!(:invitation) { create(:invitation, resource: store, role: staff_role, email: 'late@example.com') }
+
+    it 'sends the invitation again and starts its 14 days over' do
+      invitation.update_column(:expires_at, 1.hour.from_now)
+
+      freeze_time do
+        expect_any_instance_of(Spree::Invitation).to receive(:publish_event).with('invitation.resent')
+
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(invitation.reload.expires_at).to eq(14.days.from_now)
+        expect(json_response['expires_at']).to eq(invitation.expires_at.as_json)
+      end
+    end
+
+    it 'refuses an expired invitation with a reason instead of answering success' do
+      invitation.update_column(:expires_at, 1.hour.ago)
+      expect_any_instance_of(Spree::Invitation).not_to receive(:publish_event)
+
+      expect {
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+      }.not_to change { invitation.reload.attributes }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_expired'))
+    end
+
+    it 'refuses an accepted invitation with a reason' do
+      invitation.update_columns(status: 'accepted', accepted_at: Time.current)
+
+      patch :resend, params: { id: invitation.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.invitation_already_accepted'))
+    end
+
+    it 'gives an invitation with no expiry a fresh window instead of failing' do
+      invitation.update_column(:expires_at, nil)
+
+      freeze_time do
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(invitation.reload.expires_at).to eq(14.days.from_now)
+      end
+    end
+
+    it "answers 422 with the record's errors when it fails validation" do
+      invitation.update_column(:email, 'not-an-email')
+
+      expect {
+        patch :resend, params: { id: invitation.prefixed_id }, as: :json
+      }.not_to change { invitation.reload.attributes }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['details']).to have_key('email')
+    end
+  end
 end

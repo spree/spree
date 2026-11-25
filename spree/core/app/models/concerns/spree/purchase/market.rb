@@ -3,9 +3,9 @@ module Spree
     module Market
       extend ActiveSupport::Concern
 
+      # The including model declares `belongs_to :market` itself: an order
+      # reads a deleted market back, a cart does not.
       included do
-        belongs_to :market, class_name: 'Spree::Market'
-
         attr_accessor :skip_market_resolution
 
         before_validation :ensure_market_presence

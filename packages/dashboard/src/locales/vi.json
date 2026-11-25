@@ -3377,7 +3377,11 @@
           "title": "Chỉnh sửa khách hàng",
           "customer_help": "Xóa khách hàng để biến đây thành một đơn đặt hàng của khách.",
           "confirm_detach": "Đơn hàng này sẽ không còn xuất hiện trong lịch sử đặt hàng hoặc tài khoản của khách hàng nữa. Loại bỏ khách hàng?",
-          "detach": "Xóa khách hàng"
+          "detach": "Xóa khách hàng",
+          "confirm_change": "Đơn hàng này sẽ được chuyển sang khách hàng mới.",
+          "confirm_change_to_guest": "Đơn hàng này sẽ trở thành đơn hàng của khách vãng lai và rời khỏi lịch sử đặt hàng của khách hàng.",
+          "confirm_change_releases_balance": "Tín dụng cửa hàng và thẻ quà tặng mà khách hàng trước đã áp dụng sẽ bị gỡ bỏ và hoàn lại cho họ, vì vậy số tiền phải trả sẽ tăng trở lại.",
+          "change": "Đổi khách hàng"
         }
       },
       "edit": {

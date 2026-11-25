@@ -50,6 +50,34 @@ module Spree
 
         protected
 
+        # Paginates a list held in memory. The whole list is one page unless the
+        # caller asks for less: clients read these lists in full.
+        #
+        # @param entries [Array]
+        # @return [Array] the requested page
+        def paginate_whole(entries)
+          @pagy, page = pagy(:offset, entries, limit: [entries.size, 1].max)
+          page
+        end
+
+        # Metadata for collection responses
+        # @return [Hash] pagination metadata
+        def collection_meta(_collection)
+          return {} unless @pagy
+
+          {
+            page: @pagy.page,
+            limit: @pagy.limit,
+            count: @pagy.count,
+            pages: @pagy.pages,
+            from: @pagy.from,
+            to: @pagy.to,
+            in: @pagy.in,
+            previous: @pagy.previous,
+            next: @pagy.next
+          }
+        end
+
         # A request parameter, only when it arrived as a string. `token[]=x`
         # and `token[k]=x` parse to an Array and a Hash, which token lookups
         # and verifiers built for a string cannot read.

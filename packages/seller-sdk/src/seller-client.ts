@@ -12,6 +12,7 @@ import type {
   Account,
   AuthTokens,
   Balance,
+  BulkProductResult,
   Claim,
   Country,
   Delivery,
@@ -35,6 +36,7 @@ import type {
   Order,
   PackageType,
   Payout,
+  PayoutAccountLink,
   Policy,
   Product,
   ProductType,
@@ -1525,12 +1527,6 @@ export type SellerExportType = 'orders' | 'products'
 /** A country as the address form needs it. Name it from `iso` with `Intl.DisplayNames`. */
 export type SellerCountry = Country
 
-/** Where to send a seller to set up how they get paid. */
-export interface PayoutAccountLink {
-  /** Null when the provider hosts no onboarding of its own. */
-  url: string | null
-}
-
 /** What `/seller/onboarding` answers. */
 export interface OnboardingResponse {
   /** The seller's lifecycle status, e.g. `onboarding`, `ready_for_review`. */
@@ -1545,16 +1541,6 @@ export interface OnboardingResponse {
 }
 
 /** The fields a seller may set on their own product. */
-/**
- * What a bulk product action did. `skipped_count` is present only when the
- * action left something alone — a key on every response would tell a caller
- * that never skips anything that nothing was skipped.
- */
-export interface BulkProductResult {
-  product_count: number
-  skipped_count?: number
-}
-
 /** What `/seller/me` answers. */
 /**
  * One CanCanCan rule, in the shape the panels' `<Can>` reads. Identical to

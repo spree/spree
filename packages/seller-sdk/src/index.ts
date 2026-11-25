@@ -37,7 +37,6 @@ export type { SellerExtension } from './extensions'
 export { defineSellerExtension } from './extensions'
 export type {
   AccountUpdateParams,
-  BulkProductResult,
   DeliveryCalculatorType,
   DeliveryMethodCreateParams,
   DeliveryMethodRuleParams,

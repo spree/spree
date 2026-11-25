@@ -313,8 +313,13 @@ module Spree
           )
         end
 
+        # A missing parameter, a failed validation and an unparseable body are
+        # the request's fault, and the response already tells the client what
+        # to fix. They are not reported to the error tracker: that is the API
+        # working as designed, and reporting it buries real faults under every
+        # typo, rejected email or probe. Gateway and tax engine failures are
+        # still reported.
         def handle_parameter_missing(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
             code: ERROR_CODES[:parameter_missing],
             message: exception.message,
@@ -322,8 +327,8 @@ module Spree
           )
         end
 
+        # Not reported, like a missing parameter.
         def handle_record_invalid(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_validation_error(exception.record.errors)
         end
 
@@ -366,8 +371,8 @@ module Spree
           )
         end
 
+        # Not reported: a body that is not valid JSON is the client's mistake.
         def handle_parse_error(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           message = exception.respond_to?(:original_message) ? exception.original_message : exception.message
           render_error(
             code: ERROR_CODES[:invalid_request],

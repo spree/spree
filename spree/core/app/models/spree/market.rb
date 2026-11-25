@@ -33,7 +33,12 @@ module Spree
     def countries=(values)
       self.country_codes = Array(values).map { |country| country.respond_to?(:iso) ? country.iso : country.to_s }
     end
-    has_many :orders, class_name: 'Spree::Order', dependent: :nullify
+    # Placed orders keep their market when it is deleted: it is only soft
+    # deleted, and an order reads it back for its withdrawal period and return
+    # window. Draft orders are still being priced, so they are released and
+    # pick a live market on their next save, as carts do.
+    has_many :orders, class_name: 'Spree::Order', dependent: nil, inverse_of: :market
+    has_many :draft_orders, -> { drafts }, class_name: 'Spree::Order', dependent: :nullify, inverse_of: :market
 
     #
     # Preferences

@@ -13,9 +13,12 @@ module Spree
         # Rooted at `current_seller.invitations` throughout, so a seller can
         # neither see nor touch an invitation sent by anyone else.
         class InvitationsController < Seller::BaseController
+          include Spree::Api::V3::InvitationResend
+
           scoped_resource :seller_profile
 
-          before_action :set_invitation, only: [:destroy, :resend]
+          before_action :set_invitation, only: [:destroy]
+          before_action :set_resend_invitation, only: [:resend]
 
           # Pending only: an accepted invitation is a team member, and the
           # panel already lists those.
@@ -35,16 +38,7 @@ module Spree
           # the first one. The model refuses once the invitation has expired
           # or been accepted, and says so rather than silently doing nothing.
           def resend
-            if @invitation.expired?
-              return render_error(
-                code: ErrorHandler::ERROR_CODES[:processing_error],
-                message: I18n.t('spree.invitation_expired'),
-                status: :unprocessable_content
-              )
-            end
-
-            @invitation.resend!
-            render json: serialize(@invitation)
+            render_invitation_resend(@invitation) { |invitation| serialize(invitation) }
           end
 
           protected
@@ -57,6 +51,12 @@ module Spree
 
           def set_invitation
             @invitation = current_seller.invitations.pending.find_by_prefix_id!(params[:id])
+          end
+
+          # Any status, so an accepted invitation is refused with the reason
+          # rather than reported as missing.
+          def set_resend_invitation
+            @invitation = current_seller.invitations.find_by_prefix_id!(params[:id])
           end
 
           def serialize(invitation)

@@ -27,6 +27,12 @@ module Spree
 
     include Spree::PaymentSessionTransitions
 
+    # Statuses after which a session's intent can no longer take money:
+    # placement cancels the provider intent, and an expired session's intent
+    # is gone. A failed session is not one of them — a declined confirm can
+    # leave its intent payable (see +unused+).
+    RETIRED_STATUSES = %w[canceled expired].freeze
+
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
     # A declined confirm marks the session failed while its intent can still
@@ -55,6 +61,19 @@ module Spree
     #
     # @param metadata [Hash] gateway-specific metadata
     # @return [Spree::Payment] the payment record
+    # The payment settled from this session: its owner's payment under the
+    # session's payment method carrying the gateway's identifier, the row
+    # find_or_create_payment! creates. The +payment+ association matches the
+    # identifier alone, which gateways only keep unique per payment method,
+    # so it can return another method's or another owner's payment.
+    #
+    # @return [Spree::Payment, nil]
+    def own_payment
+      return unless persisted?
+
+      owner&.payments&.find_by(payment_method_id: payment_method_id, response_code: external_id)
+    end
+
     def find_or_create_payment!(metadata = {})
       # An unsaved session has no identity to key a payment to, and nothing
       # has settled against it.
@@ -64,7 +83,8 @@ module Spree
       # one, so the requirement is skipped on every load, not just at creation
       # — a later capture webhook transitions the same row and would otherwise
       # fail source validation.
-      return skip_source_requirement(payment) if payment.present?
+      existing = own_payment
+      return skip_source_requirement(existing) if existing
 
       # Keyed on the gateway's own identifier alone. Never on the amount: a
       # session whose amount moved is still the same intent, and a second row

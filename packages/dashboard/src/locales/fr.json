@@ -3379,7 +3379,11 @@
           "title": "Modifier le client",
           "customer_help": "Retirez le client pour en faire une commande invité.",
           "confirm_detach": "Cette commande n'apparaîtra plus dans l'historique des commandes ni dans le compte du client. Retirer le client ?",
-          "detach": "Retirer le client"
+          "detach": "Retirer le client",
+          "confirm_change": "Cette commande sera transférée au nouveau client.",
+          "confirm_change_to_guest": "Cette commande deviendra une commande invité et quittera l'historique des commandes du client.",
+          "confirm_change_releases_balance": "Le crédit boutique et les cartes cadeaux appliqués par le client précédent seront retirés et lui seront rendus : le montant dû augmente donc à nouveau.",
+          "change": "Changer de client"
         }
       },
       "edit": {

@@ -57,7 +57,7 @@ module Spree
           # Leaks a single boolean that is self-evident on a fresh install —
           # the login page uses it to offer the setup screen.
           def show
-            render json: { setup_required: setup_required? }
+            render json: Spree.api.admin_setup_status_serializer.new({ setup_required: setup_required? }).to_h
           end
 
           # GET /api/v3/admin/auth/setup/countries
@@ -68,7 +68,7 @@ module Spree
           def countries
             return render_setup_unavailable unless setup_required?
 
-            render json: { countries: Spree::Country.all.map { |country| country_payload(country) } }
+            render json: { countries: Spree::Country.all.map { |country| Spree.api.admin_country_serializer.new(country).to_h } }
           end
 
           # POST /api/v3/admin/auth/setup
@@ -178,22 +178,6 @@ module Spree
               status: :unprocessable_content,
               details: { locale: [message] }
             )
-          end
-
-          def country_payload(country)
-            {
-              code: country.iso,
-              currency: country.default_currency,
-              locales: offerable_locales(country)
-            }
-          end
-
-          # A country's official languages, as the locales Spree lists for them
-          # (Switzerland gives de, fr, it and rm) — content locales, whether
-          # or not Spree ships translations, since the storefront and dashboard
-          # carry their own. English stands in for a country with none listed.
-          def offerable_locales(country)
-            country.official_locales.filter_map { |language| Spree::Locales.for_language(language) }.uniq.presence || ['en']
           end
 
           # Token mismatch, spent token, and already-set-up all render the

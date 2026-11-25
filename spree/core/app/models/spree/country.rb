@@ -142,6 +142,15 @@ module Spree
       iso3166_country&.languages_official.presence || []
     end
 
+    # The official languages as the locales Spree lists for them (Switzerland
+    # gives de, fr, it and rm) — content locales, whether or not Spree ships
+    # translations, since the storefront and dashboard carry their own.
+    # English stands in for a country with none listed.
+    # @return [Array<String>]
+    def offerable_locales
+      official_locales.filter_map { |language| Spree::Locales.for_language(language) }.uniq.presence || ['en']
+    end
+
     # Countries are equal when they name the same place, so they can be
     # compared, deduplicated and used as hash keys.
     def ==(other)

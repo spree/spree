@@ -64,6 +64,48 @@ describe Spree::OrderGroupMailer, type: :mailer do
       described_class.confirm_email(group.id).message
     end
 
+    it 'says where to collect a parcel picked up from a seller' do
+      fulfillment = group.orders.first.fulfillments.first
+      fulfillment.stock_location.update!(name: 'Pickup counter', address1: '12 Market Street', pickup_enabled: true,
+                                         pickup_instructions: 'Ring the bell at the side door.')
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        expect(body).to include('Pickup location', 'Pickup counter', '12 Market Street', 'Ring the bell at the side door.')
+      end
+    end
+
+    it 'names the counter the customer chose for a parcel shipped to it from a warehouse' do
+      counter = create(:stock_location, name: 'Brooklyn counter', pickup_enabled: true, pickup_stock_policy: 'any')
+      group.orders.each { |order| order.update_columns(preferred_stock_location_id: counter.id) }
+      fulfillment = group.orders.first.fulfillments.first
+      fulfillment.stock_location.update!(name: 'Back warehouse', pickup_enabled: false)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        expect(body).to include('Pickup location', 'Brooklyn counter')
+        expect(body).not_to include('Back warehouse')
+      end
+    end
+
+    it 'names no pickup location for a pickup parcel that was canceled' do
+      fulfillment = group.orders.first.fulfillments.first
+      fulfillment.stock_location.update!(name: 'Pickup counter', pickup_enabled: true)
+      fulfillment.delivery_rates.destroy_all
+      fulfillment.add_delivery_method(create(:pickup_delivery_method), true)
+      fulfillment.update_columns(status: 'canceled')
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        expect(body).not_to include('Pickup location')
+      end
+    end
+
+    it 'names no pickup location when every parcel is shipped' do
+      parts_of(described_class.confirm_email(group)).each { |body| expect(body).not_to include('Pickup location') }
+    end
+
     it 'prefixes a re-send so the customer knows it is not a second purchase' do
       expect(described_class.confirm_email(group, true).subject).to include('[Resend]')
     end

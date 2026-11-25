@@ -16,6 +16,34 @@ module Spree
       # `{ system:, external_id: }` and name itself.
       DEFAULT_EXTERNAL_SYSTEM = 'import'.freeze
 
+      # The file could not be fetched for a reason on the other end of the
+      # wire: the host refused, reset or timed out the connection, its name did
+      # not resolve, its certificate was bad, or it answered with an error
+      # status (a 404, a 500, a rate limit). A host that is down now may be
+      # back in a minute, so the fetch is retried; once the attempts run out
+      # the media is simply not imported, as with a blocked address, rather
+      # than raised as an error nobody can fix.
+      class FetchFailed < StandardError; end
+
+      # What the remote host can fail with while it is being fetched. Only the
+      # fetch itself is guarded: the same classes raised while the download is
+      # written to disk or attached (a full disk is an Errno too) are this
+      # server's problem and propagate.
+      #
+      # SsrfFilter::UnresolvedHostname is an SsrfFilter::Error, but it means
+      # the name did not resolve right now, not that it points somewhere
+      # forbidden, so it is retried rather than discarded with the rest.
+      FETCH_ERRORS = [
+        SocketError, Timeout::Error, OpenSSL::SSL::SSLError, SystemCallError, EOFError,
+        Net::HTTPBadResponse, Net::ProtocolError, SsrfFilter::UnresolvedHostname
+      ].freeze
+
+      retry_on(FetchFailed, wait: :polynomially_longer, attempts: Spree::Config.images_save_from_url_job_attempts.to_i) do |job, error|
+        Rails.logger.warn(
+          "[Spree::Images::SaveFromUrlJob] Gave up fetching #{job.arguments[2].to_s.strip}: #{error.message}"
+        )
+      end
+
       # @param external_id [String, Hash, Array, nil] the identities the source
       #   systems know this media by — a bare id, a `{ system:, external_id: }`
       #   hash, or a list of them when several systems name the same asset.
@@ -77,24 +105,23 @@ module Spree
         max_size = Spree::Config.max_image_download_size
         streamed_body = nil
 
-        response = SsrfFilter.get(
-          external_url,
-          headers: {
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-            'Accept-Language' => 'en-US,en;q=0.9',
-            'Accept-Encoding' => 'gzip, deflate, br',
-            'Cache-Control' => 'no-cache',
-            'Pragma' => 'no-cache'
-          },
-          http_options: {
-            read_timeout: 60,
-            open_timeout: 30
-          }
-        ) { |fetched| streamed_body = read_within(fetched, max_size) }
+        response = fetch(external_url) do |fetched|
+          # Every hop calls back, redirects included; their bodies are not the
+          # file, but are drained here within the limit, since Net::HTTP would
+          # otherwise read one whole into memory. An error status is refused
+          # before its body is read, so a large error page is not mistaken for
+          # an oversized image.
+          next read_within(fetched, max_size, keep: false) if redirect?(fetched)
 
-        # A fetch that did not stream (a test double, say) is read whole and
-        # held to the same limit.
+          raise_fetch_failed(external_url, fetched) unless success?(fetched)
+
+          streamed_body = read_within(fetched, max_size)
+        end
+
+        # A fetch that did not stream (a test double, say) is checked here,
+        # then read whole and held to the same limit.
+        raise_fetch_failed(external_url, response) unless success?(response)
+
         body = streamed_body || response.body
         raise_too_large(max_size) if body.bytesize > max_size
 
@@ -107,24 +134,67 @@ module Spree
           tempfile.rewind
 
           image.attachment.attach(io: tempfile, filename: filename)
-          image.external_url = external_url
-          image.save!
+          # Saved first so a non-image file fails validation here, rather than
+          # as a custom field with no owner; together, so a failed URL leaves
+          # no image behind for the retry to duplicate.
+          image.transaction do
+            image.save!
+            image.external_url = external_url
+          end
         ensure
           tempfile.close
           tempfile.unlink
         end
       end
 
+      # Fetches the URL through the SSRF filter, turning anything the remote
+      # end fails with into FetchFailed so it is retried. Addresses the filter
+      # blocks still raise their own SsrfFilter::Error and are discarded.
+      def fetch(external_url, &)
+        SsrfFilter.get(
+          external_url,
+          headers: {
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Accept-Language' => 'en-US,en;q=0.9',
+            'Accept-Encoding' => 'gzip, deflate, br',
+            'Cache-Control' => 'no-cache',
+            'Pragma' => 'no-cache'
+          },
+          http_options: {
+            read_timeout: 60,
+            open_timeout: 30
+          },
+          &
+        )
+      rescue *FETCH_ERRORS => e
+        raise FetchFailed, "#{e.class}: #{e.message}"
+      end
+
+      def success?(response)
+        response.code.to_s.start_with?('2')
+      end
+
+      def redirect?(response)
+        response.code.to_s.start_with?('3')
+      end
+
+      def raise_fetch_failed(external_url, response)
+        raise FetchFailed, "#{external_url} responded with HTTP #{response.code}"
+      end
+
       # Reads the body as it arrives and stops at the limit, so an oversized
       # or endless response is refused mid-stream rather than held in memory
       # first; a declared length over the limit is refused before any of it.
-      def read_within(response, max_size)
+      def read_within(response, max_size, keep: true)
         raise_too_large(max_size) if response['Content-Length'].to_i > max_size
 
         buffer = +''
+        size = 0
         response.read_body do |chunk|
-          buffer << chunk
-          raise_too_large(max_size) if buffer.bytesize > max_size
+          size += chunk.bytesize
+          raise_too_large(max_size) if size > max_size
+          buffer << chunk if keep
         end
         buffer
       end

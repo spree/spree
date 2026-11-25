@@ -15,13 +15,16 @@ module Spree
           # `invite` action on the seller is the lifecycle step that opens a
           # pending seller for its first owner.
           class InvitationsController < Admin::BaseController
+            include Spree::Api::V3::InvitationResend
+
             scoped_resource :sellers
 
             before_action :set_seller
             # Every write hands out or withdraws a way onto the team, so it
             # needs the same right as changing the seller.
             before_action :authorize_seller_update, only: [:create, :destroy, :resend]
-            before_action :set_invitation, only: [:destroy, :resend]
+            before_action :set_invitation, only: [:destroy]
+            before_action :set_resend_invitation, only: [:resend]
 
             request_params 'SellerInvitationCreateParams', action: :create do |body|
               body.attribute :email, :string, required: true, example: 'teammate@example.com'
@@ -65,18 +68,9 @@ module Spree
             end
 
             # Sends the email again. The model refuses once the invitation has
-            # expired, and says so rather than silently doing nothing.
+            # expired, been accepted or been revoked, and says which.
             def resend
-              if @invitation.expired?
-                return render_error(
-                  code: ErrorHandler::ERROR_CODES[:processing_error],
-                  message: I18n.t('spree.invitation_expired'),
-                  status: :unprocessable_content
-                )
-              end
-
-              @invitation.resend!
-              render json: serialize(@invitation)
+              render_invitation_resend(@invitation) { |invitation| serialize(invitation) }
             end
 
             protected
@@ -98,6 +92,12 @@ module Spree
 
             def set_invitation
               @invitation = @seller.invitations.pending.find_by_prefix_id!(params[:id])
+            end
+
+            # Any status, so an accepted invitation is refused with the reason
+            # rather than reported as missing.
+            def set_resend_invitation
+              @invitation = @seller.invitations.find_by_prefix_id!(params[:id])
             end
 
             def serialize(invitation)

@@ -78,6 +78,17 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
       expect(a_request(:patch, %r{/sessions/})).not_to have_been_made
     end
 
+    it 'leaves the open session as it was when Adyen refuses the new one' do
+      stub_session_create(id: 'CSFIRST000000001')
+      first = create_session
+      stub_request(:post, sessions_url).
+        to_return(adyen_json({ 'errorCode' => '702', 'message' => 'Invalid field' }, status: 422))
+
+      expect { create_session('return_url' => return_url, 'channel' => 'Android') }.to raise_error(Spree::Core::GatewayError)
+
+      expect(first.reload.status).to eq('pending')
+    end
+
     it 'refuses a cart with a completed Adyen session' do
       stub_session_create
       create_session.update_column(:status, 'completed')

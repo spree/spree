@@ -1,6 +1,9 @@
 // This file is auto-generated from Spree's preference declarations by `rake typelizer:generate`. Do not edit directly.
 import type DeliveryMethodRule from './generated/DeliveryMethodRule'
 
+/** The JSON Schema of a type's `preferences`, as a `types` endpoint lists it. */
+export type { PreferenceSchema } from '@spree/sdk-core'
+
 /** `Resource` with its `preferences` typed by its `type`, one member per entry of `Map`. */
 type Narrowed<Resource, Map> = {
   [Type in keyof Map]: Omit<Resource, 'type' | 'preferences'> & {

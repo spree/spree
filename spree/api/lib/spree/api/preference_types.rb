@@ -35,6 +35,13 @@ module Spree
       # from its generated index, so that index re-exports these types too.
       INDEX_EXPORT = "export type * from '../preferences'\n".freeze
 
+      # A serializer of a `types` list names `PreferenceSchema`, which Typelizer
+      # imports from the generated index like any other type.
+      SCHEMA_EXPORT = <<~TS.freeze
+        /** The JSON Schema of a type's `preferences`, as a `types` endpoint lists it. */
+        export type { PreferenceSchema } from '@spree/sdk-core'
+      TS
+
       # @param root [Pathname] the monorepo root
       # @return [void]
       def write!(root)
@@ -63,6 +70,7 @@ module Spree
         imports = resources.map { |family| "import type #{family} from './generated/#{family}'\n" }.join
         parts = families.flat_map { |family, members| family_parts(family, members, resources.include?(family)) }
         parts.unshift(NARROWED) if resources.any?
+        parts.unshift(SCHEMA_EXPORT)
         parts.unshift(imports) if imports.present?
 
         HEADER + parts.join("\n")

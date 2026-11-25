@@ -360,6 +360,72 @@ module Spree
       end
     end
 
+    # Emptying a cart the gateway already took money for left it unable to
+    # complete, so the payment webhook could never place the order and the
+    # buyer stayed charged without one (SANDBOX-V2-1Y).
+    describe 'a cart whose contents are fixed' do
+      let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 2) }
+      let(:removal) { [{ variant_id: variant.prefixed_id, quantity: 0 }] }
+
+      shared_examples 'refusing the change' do
+        it 'refuses with completion_in_progress and leaves the lines alone' do
+          result = nil
+
+          expect { result = described_class.call(cart: cart, items: removal) }.
+            not_to(change { cart.reload.line_items.pluck(:id, :quantity) })
+
+          expect(result).to be_failure
+          expect(result.error.value[:code]).to eq('completion_in_progress')
+          expect(result.error.value[:message]).to eq(I18n.t('spree.cart_completion_in_progress'))
+        end
+      end
+
+      context 'when a payment session has settled' do
+        before do
+          create(:bogus_payment_session, cart: cart, amount: 10).update_column(:status, 'completed')
+        end
+
+        include_examples 'refusing the change'
+
+        it 'refuses a quantity change too' do
+          result = described_class.call(cart: cart, items: [{ variant_id: variant.prefixed_id, quantity: 5 }])
+
+          expect(result).to be_failure
+          expect(line_item.reload.quantity).to eq(2)
+        end
+      end
+
+      context 'while a completion claim is live' do
+        before { cart.update_column(:completing_at, Time.current) }
+
+        include_examples 'refusing the change'
+      end
+
+      context 'when the session settles after the first check' do
+        before do
+          # Stands in for the gateway's confirm settling the session while the
+          # availability and pricing steps were running.
+          allow_any_instance_of(described_class).to receive(:resolve_prices).and_wrap_original do |original, *args|
+            create(:bogus_payment_session, cart: cart, amount: 10).update_column(:status, 'completed')
+            original.call(*args)
+          end
+        end
+
+        include_examples 'refusing the change'
+      end
+
+      context 'when the only session is still pending' do
+        before { create(:bogus_payment_session, cart: cart, amount: 10) }
+
+        it 'applies the change' do
+          result = described_class.call(cart: cart, items: removal)
+
+          expect(result).to be_success
+          expect(cart.reload.items).to be_empty
+        end
+      end
+    end
+
     # The reason this is a batch workflow rather than a loop over AddItem:
     # the money math runs once no matter how many items arrive.
     it 'recalculates the cart once for the whole batch' do

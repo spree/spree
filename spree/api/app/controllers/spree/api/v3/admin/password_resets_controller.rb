@@ -49,7 +49,9 @@ module Spree
             end
 
             # Always return 202 to prevent email enumeration
-            render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
+            render json: Spree.api.admin_password_reset_acknowledgement_serializer.new(
+              { message: I18n.t('spree.api.password_reset_requested') }
+            ).to_h, status: :accepted
           end
 
           # PATCH /api/v3/admin/password_resets/:id

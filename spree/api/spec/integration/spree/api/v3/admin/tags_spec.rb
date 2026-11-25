@@ -33,6 +33,8 @@ RSpec.describe 'Admin Tags API', type: :request, swagger_doc: 'api-reference/adm
           user.save!
         end
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('Tag'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data']).to be_an(Array)

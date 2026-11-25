@@ -8,7 +8,11 @@ module Spree
                  tracking: [:string, nullable: true], tracking_url: [:string, nullable: true],
                  fulfilled_at: [:string, nullable: true], delivered_at: [:string, nullable: true], unpriced: :boolean,
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
-                 selected_delivery_rate_id: [:string, nullable: true]
+                 selected_delivery_rate_id: [:string, nullable: true],
+                 pickup_location: { nullable: true,
+                                    comment: 'Where the customer collects a pickup — the counter chosen at checkout, ' \
+                                             'which can differ from the stock location it ships from. ' \
+                                             'Null unless the delivery is a pickup.' }
 
         # +tracking+ and +tracking_url+ summarize the primary delivery; every
         # consignment is listed under +deliveries+.
@@ -29,11 +33,7 @@ module Spree
 
         attributes :status
 
-        # Column-backed since 6.0; the fallback covers rows created before the
-        # fulfillment_type backfill ran.
-        attribute :fulfillment_type do |fulfillment|
-          fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
-        end
+        attributes :fulfillment_type
 
         attributes fulfilled_at: :iso8601, delivered_at: :iso8601
 
@@ -60,6 +60,7 @@ module Spree
         many :deliveries, resource: proc { Spree.api.delivery_serializer }
         one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
+        one :pickup_location, resource: proc { Spree.api.stock_location_serializer }
         many :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
         many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
 

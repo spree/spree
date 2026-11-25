@@ -3369,7 +3369,11 @@
           "title": "编辑客户",
           "customer_help": "清除客户即可将此订单改为访客订单。",
           "confirm_detach": "此订单将不再显示在客户的订单历史和账户中。要移除客户吗？",
-          "detach": "移除客户"
+          "detach": "移除客户",
+          "confirm_change": "此订单将转给新客户。",
+          "confirm_change_to_guest": "此订单将变为访客订单，并从客户的订单历史中移除。",
+          "confirm_change_releases_balance": "上一位客户使用的商店余额和礼品卡将从订单中移除并退还给该客户，因此应付金额会重新增加。",
+          "change": "更换客户"
         }
       },
       "edit": {

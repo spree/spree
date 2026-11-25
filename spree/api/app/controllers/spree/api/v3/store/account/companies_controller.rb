@@ -16,13 +16,7 @@ module Spree
                             merge(Spree::Company.where(store_id: current_store.id)).
                             includes(company: :parent)
 
-              render json: {
-                'data' => memberships.map do |membership|
-                  Spree.api.company_membership_serializer.new(membership, params: serializer_params).to_h.merge(
-                    'company' => Spree.api.company_serializer.new(membership.company, params: serializer_params).to_h
-                  )
-                end
-              }
+              render json: { 'data' => serialize_collection(memberships) }
             end
 
             protected
@@ -33,6 +27,12 @@ module Spree
 
             def serializer_class
               Spree.api.company_membership_serializer
+            end
+
+            # A membership is listed here to choose a company to buy for, so
+            # each one always comes with its node.
+            def serializer_params
+              super.merge(expand: expand_list | ['company'])
             end
           end
         end

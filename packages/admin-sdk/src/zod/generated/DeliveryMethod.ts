@@ -20,7 +20,7 @@ export const DeliveryMethodSchema = z.object({
   available_to_sellers: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-  deleted_at: z.string(),
+  deleted_at: z.string().nullable(),
   markup_flat: z.string().nullable(),
   markup_percent: z.string().nullable(),
   seller_id: z.string().nullable(),

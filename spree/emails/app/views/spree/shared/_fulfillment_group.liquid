@@ -1,6 +1,7 @@
 {%- comment -%}
   One real parcel of a purchase: the goods it carries and what it cost to
-  deliver. A purchase arriving in one parcel is not numbered.
+  deliver, and where to collect it when it is a pickup. A purchase
+  arriving in one parcel is not numbered.
   Arguments: group, position, count.
 {%- endcomment -%}
 <mj-section padding="48px 0 0">
@@ -21,5 +22,9 @@
       {%- endif -%}
       {% render 'spree/shared/summary_row', label: 'shipping', translate: true, sub: group.name, value: cost %}
     </mj-table>
+    {%- if group.pickup_location -%}
+      <mj-text mj-class="section-heading" padding="24px 0 16px">{{ 'order_mailer.pickup_location' | t }}</mj-text>
+      {% render 'spree/shared/pickup_location', location: group.pickup_location %}
+    {%- endif -%}
   </mj-column>
 </mj-section>

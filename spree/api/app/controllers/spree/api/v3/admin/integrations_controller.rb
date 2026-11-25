@@ -35,7 +35,7 @@ module Spree
           def types
             authorize! :create, model_class
 
-            render json: { data: Spree::Integration.discovery_entries }
+            render json: { data: serialize_types(Spree::Integration.discovery_entries, Spree.api.admin_integration_type_definition_serializer) }
           end
 
           # POST /api/v3/admin/integrations/:id/test
@@ -45,7 +45,9 @@ module Spree
             authorize_resource!(@resource, :update)
 
             connected = @resource.can_connect?
-            render json: { connected: connected, error_message: connected ? nil : @resource.connection_error_message }
+            render json: Spree.api.admin_integration_connection_result_serializer.new(
+              { connected: connected, error_message: connected ? nil : @resource.connection_error_message }
+            ).to_h
           end
 
           protected

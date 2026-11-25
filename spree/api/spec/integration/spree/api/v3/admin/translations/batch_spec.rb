@@ -38,6 +38,8 @@ RSpec.describe 'Admin Translations Batch API', type: :request, swagger_doc: 'api
           }
         end
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('ResourceTranslations'))
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data.size).to eq(2)

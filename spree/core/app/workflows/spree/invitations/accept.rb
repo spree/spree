@@ -42,7 +42,13 @@ module Spree
       # role back once that has committed.
       def lock_invitation
         current = Spree::Invitation.lock.find_by(id: invitation.id)
-        failure(invitation, :invitation_not_acceptable) if current.nil? || current.accepted?
+        failure(invitation, :invitation_not_acceptable) unless still_acceptable?(current)
+      end
+
+      # A resend that committed after the caller loaded the invitation rotated
+      # its token, so the link the caller presented no longer works.
+      def still_acceptable?(current)
+        current.present? && !current.accepted? && current.token == invitation.token
       end
 
       def grant_role
