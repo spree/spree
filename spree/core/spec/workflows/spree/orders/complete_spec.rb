@@ -150,6 +150,22 @@ module Spree
         expect(credit.amount_authorized).to eq(0)
       end
 
+      it 'moves what a partial capture leaves straight onto the remainder, with no moment it is free' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+        payment.capture_events.create!(amount: BigDecimal('6'), status: 'completed')
+        expect(credit.reload.capture(BigDecimal('6'), payment.response_code, 'USD')).to be_present
+
+        remainder = payment.reload.split_uncaptured_amount
+
+        expect(remainder.store_credit_held?).to be(true)
+        expect(credit.reload.amount_authorized).to eq(4)
+        expect(credit.amount_remaining).to eq(0)
+      end
+
       it 'releases what is left of a partly captured held payment when its remainder is voided' do
         store_credit_method.update!(capture_method: 'on_dispatch')
         draft = draft_with_total(BigDecimal('10'))

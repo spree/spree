@@ -446,6 +446,7 @@ module Spree
 
       self.status = 'void'
       clear_attribute_changes(%i[status])
+      release_store_credit_hold!
       true
     end
 
@@ -602,29 +603,19 @@ module Spree
     #   captured or when the order can take no more
     def split_uncaptured_amount
       return if uncaptured_amount <= 0
+      return split_off_remainder unless store_credit? && source.is_a?(Spree::StoreCredit)
 
-      release_uncaptured_store_credit!
-      remainder = owner.payments.new(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        status: 'pending',
-        capture_on_dispatch: true
-      )
-      # The order may now take less than the authorization left over, when its
-      # total came down after the payment was authorized.
-      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
-      if remainder.amount.positive?
-        remainder.save!
-        carry_splits_to(remainder)
-      else
-        remainder = nil
+      # Store credit makes no network call, so the leftover authorization
+      # moves to the remainder under one lock on the credit: no other order
+      # can hold it between its release and the remainder's hold, and the
+      # remainder's authorize finds the hold rather than authorizing again.
+      source.with_lock do
+        moved = release_uncaptured_store_credit!
+        remainder = split_off_remainder(response_code: (source.generate_authorization_code if moved))
+        raise ActiveRecord::RecordInvalid, source if moved && remainder && !remainder.hold_store_credit!
+
+        remainder
       end
-      # Bang: a silent failure here would leave this payment at its full amount
-      # beside a remainder that also exists, so the group would hold more money
-      # than the customer was ever charged.
-      update!(amount: captured_amount)
-      remainder
     end
 
     # Hands each order's still-uncaptured share over to the remainder payment.
@@ -753,10 +744,37 @@ module Spree
 
     private
 
+    def split_off_remainder(response_code: nil)
+      remainder = owner.payments.new(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        status: 'pending',
+        capture_on_dispatch: true,
+        response_code: response_code
+      )
+      # The order may now take less than the authorization left over, when its
+      # total came down after the payment was authorized.
+      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
+      if remainder.amount.positive?
+        remainder.save!
+        carry_splits_to(remainder)
+      else
+        remainder = nil
+      end
+      # Bang: a silent failure here would leave this payment at its full amount
+      # beside a remainder that also exists, so the group would hold more money
+      # than the customer was ever charged.
+      update!(amount: captured_amount)
+      remainder
+    end
+
     # A partial capture of store credit leaves the rest authorized under this
     # payment's code, which nothing can capture or void any more: the credit
     # voids by code, and a void would take off the whole original amount. The
-    # rest goes back to the credit here, so the remainder authorizes it afresh.
+    # rest goes back to the credit here, for the remainder to hold.
+    #
+    # @return [Boolean] whether anything was given back
     def release_uncaptured_store_credit!
       return unless store_credit? && source.is_a?(Spree::StoreCredit) && response_code.present?
 
