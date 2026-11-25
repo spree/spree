@@ -223,12 +223,25 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
       end
 
       it 'keeps retrying while a reservation under a long store TTL could still hold the stock' do
-        store.update!(preferred_stock_reservation_ttl_minutes: 120)
+        allow(Spree::StockReservation).to receive(:ttl_for).and_return(120.minutes)
         payment_session
 
         travel 90.minutes do
           expect { perform_job }.to have_enqueued_job(described_class)
         end
+        expect(Rails.error).not_to have_received(:report)
+      end
+
+      # The session waited pending for longer than a reservation lives, then
+      # settled: the window starts at settlement, not at the pending wait.
+      it 'measures the window from settlement, not from a long pending wait' do
+        payment_session.update_column(:updated_at, 2.hours.ago)
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) do
+          Spree::PaymentSession.where(id: payment_session.id).update_all(status: 'completed', updated_at: Time.current)
+          failed
+        end
+
+        expect { perform_job }.to have_enqueued_job(described_class)
         expect(Rails.error).not_to have_received(:report)
       end
 

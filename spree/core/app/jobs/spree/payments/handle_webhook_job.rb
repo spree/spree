@@ -95,10 +95,13 @@ module Spree
       end
 
       # Measured from when the payment was settled, which a replay of the
-      # webhook does not move.
+      # webhook does not move. The workflow settles the session through
+      # update_all, so it is read again rather than trusted from memory,
+      # where it still carries the time it was last pending.
       def stock_retry_deadline(payment_session)
-        settled_at = [payment_session.payment&.created_at, payment_session.updated_at].compact.min
-        settled_at + Spree::StockReservation.ttl_for(payment_session.cart || payment_session.order) + STOCK_GRACE
+        session = Spree::PaymentSession.find(payment_session.id)
+        settled_at = session.payment&.created_at || session.updated_at
+        settled_at + Spree::StockReservation.ttl_for(session.cart || session.order) + STOCK_GRACE
       end
 
       def requirement_codes(result)
