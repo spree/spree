@@ -1,44 +1,41 @@
 require 'spec_helper'
 
-# Raises each kind of failure the error handler rescues, so what it reports to
-# the error tracker can be checked one failure at a time.
-class Spree::Api::V3::Store::ErrorHandlerProbeController < Spree::Api::V3::Store::BaseController
-  def record_invalid
-    probe = Spree::Api::V3::Store::ErrorHandlerProbe.new
-    probe.validate
-    raise ActiveRecord::RecordInvalid, probe
-  end
-
-  def parameter_missing
-    params.require(:missing)
-  end
-
-  def gateway_error
-    raise Spree::Core::GatewayError, 'The gateway is down'
-  end
-end
-
-class Spree::Api::V3::Store::ErrorHandlerProbe
-  include ActiveModel::Model
-
-  attr_accessor :name
-
-  validates :name, presence: true
-end
-
 RSpec.describe Spree::Api::V3::ErrorHandler, type: :controller do
   render_views
 
-  controller(Spree::Api::V3::Store::ErrorHandlerProbeController) do
+  # Raises each kind of failure the error handler rescues, so what it reports
+  # to the error tracker can be checked one failure at a time.
+  controller(Spree::Api::V3::Store::BaseController) do
+    def record_invalid
+      probe = ErrorHandlerProbe.new
+      probe.validate
+      raise ActiveRecord::RecordInvalid, probe
+    end
+
+    def parameter_missing
+      params.require(:missing)
+    end
+
+    def gateway_error
+      raise Spree::Core::GatewayError, 'The gateway is down'
+    end
   end
 
   include_context 'API v3 Store'
 
   before do
+    stub_const('ErrorHandlerProbe', Class.new do
+      include ActiveModel::Model
+
+      attr_accessor :name
+
+      validates :name, presence: true
+    end)
+
     routes.draw do
-      post 'record_invalid' => 'spree/api/v3/store/error_handler_probe#record_invalid'
-      post 'parameter_missing' => 'spree/api/v3/store/error_handler_probe#parameter_missing'
-      post 'gateway_error' => 'spree/api/v3/store/error_handler_probe#gateway_error'
+      post 'record_invalid' => 'anonymous#record_invalid'
+      post 'parameter_missing' => 'anonymous#parameter_missing'
+      post 'gateway_error' => 'anonymous#gateway_error'
     end
     request.headers['X-Spree-Api-Key'] = api_key.token
     allow(Rails.error).to receive(:report)
