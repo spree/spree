@@ -87,6 +87,14 @@ RSpec.describe SpreePaypalCheckout::Gateway::PaymentSessions do
       expect(earlier.reload).to be_canceled
     end
 
+    it 'leaves the open sessions as they were when PayPal refuses the new order' do
+      earlier = session_for(cart, external_id: 'EARLIERORDER12345')
+      allow(gateway).to receive(:create_paypal_order).and_raise(Spree::Core::GatewayError, 'refused')
+
+      expect { payment_session }.to raise_error(Spree::Core::GatewayError, 'refused')
+      expect(earlier.reload.status).to eq('pending')
+    end
+
     it 'turns PayPal being unreachable while replacing a session into a gateway error' do
       session_for(cart, external_id: 'EARLIERORDER12345', external_data: { 'attempt' => 1 })
       allow(gateway).to receive(:paypal_order).and_raise(Faraday::ConnectionFailed, 'refused')
