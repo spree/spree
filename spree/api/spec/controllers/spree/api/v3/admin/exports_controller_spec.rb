@@ -392,7 +392,10 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
       it 'refuses to download a report export whose query no longer resolves' do
         export = create(:export, type: 'Spree::Exports::Report', store: store, user: admin_user,
-                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[removed_dimension] } }.to_json)
+                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[channel] } }.to_json)
+        # Stored before an extension removed the dimension: written past
+        # validation, which refuses such a query on create.
+        export.update_column(:search_params, { query: { metrics: %w[total_sales], dimensions: %w[removed_dimension] } }.to_json)
         export.attachment.attach(io: StringIO.new("Removed,Total sales\n"), filename: 'report.csv', content_type: 'text/csv')
 
         get :download, params: { id: export.prefixed_id }, as: :json
