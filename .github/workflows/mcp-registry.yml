@@ -1,0 +1,72 @@
+name: MCP Registry
+
+# Publishes the store's MCP server entry (.github/mcp-registry/server.json) to
+# the official MCP Registry with the version of each Spree release, so the
+# registry and the catalogs that copy it (Glama, GitHub's MCP list) always show
+# the latest release. The version in the file is a placeholder; the release
+# tag sets it.
+#
+# Signs in with GitHub OIDC, so it needs no token or secret: the registry
+# accepts this repository for the io.github.spree namespace.
+# https://modelcontextprotocol.io/registry/github-actions
+#
+# A release created with the workflow's token starts no workflow, so
+# scripts/release/publish-on-merge.mjs starts this one for patch releases, as it
+# does discord-release.yml. Releases published by a person start it themselves.
+# Prereleases, drafts, @spree/cli and create-spree-app releases are skipped.
+run-name: Publish ${{ github.event.release.tag_name || inputs.tag }} to the MCP Registry
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, e.g. v6.0.6
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to the MCP Registry
+    if: >-
+      startsWith(github.event.release.tag_name || inputs.tag, 'v') &&
+      !github.event.release.prerelease
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # Read the entry from the default branch, never from the release tag.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: .github/mcp-registry/server.json
+          sparse-checkout-cone-mode: false
+
+      - name: Set the version from the tag
+        env:
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::notice::$TAG is not a final release, so nothing is published."
+            echo "SKIP=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          jq --arg v "${TAG#v}" '.version = $v' .github/mcp-registry/server.json > server.json
+          jq -r '"\(.name) \(.version)"' server.json
+
+      - name: Install mcp-publisher
+        if: env.SKIP != '1'
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+
+      - name: Sign in with GitHub OIDC
+        if: env.SKIP != '1'
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish
+        if: env.SKIP != '1'
+        run: ./mcp-publisher publish server.json
