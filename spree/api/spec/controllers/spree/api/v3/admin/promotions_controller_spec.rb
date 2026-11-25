@@ -58,6 +58,25 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       expect(json_response['actions'].first['calculator']).to include('type')
     end
 
+    # PostgreSQL moves an updated row to the end of its unordered results,
+    # which reordered the ids and the expanded rows on the next read.
+    it 'keeps rules and actions in creation order after the first one is updated' do
+      actions = [promotion.actions.first, promotion.actions.create!(type: 'Spree::Promotion::Actions::FreeShipping')]
+      rules = [
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder'),
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal')
+      ]
+      actions.first.touch
+      rules.first.touch
+
+      get :show, params: { id: promotion.prefixed_id, expand: 'rules,actions' }, as: :json
+
+      expect(json_response['action_ids']).to eq(actions.map(&:prefixed_id))
+      expect(json_response['rule_ids']).to eq(rules.map(&:prefixed_id))
+      expect(json_response['actions'].pluck('id')).to eq(json_response['action_ids'])
+      expect(json_response['rules'].pluck('id')).to eq(json_response['rule_ids'])
+    end
+
     # A promotion is readable under `read_promotions`; the customers a rule
     # targets are another resource's records and stay behind `read_customers`.
     context 'with a customer rule' do

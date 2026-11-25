@@ -1178,4 +1178,28 @@ describe Spree::Promotion, type: :model do
       expect(promotion).not_to be_persisted
     end
   end
+
+  describe 'rules and actions' do
+    let(:promotion) { create(:promotion) }
+
+    # PostgreSQL returns unordered rows in heap order, and an update moves the
+    # row to the end of it.
+    it 'keeps creation order after the first row is updated' do
+      actions = [
+        promotion.actions.create!(type: 'Spree::Promotion::Actions::FreeShipping'),
+        promotion.actions.create!(type: 'Spree::Promotion::Actions::CreateLineItems')
+      ]
+      rules = [
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder'),
+        promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal')
+      ]
+
+      actions.first.touch
+      rules.first.touch
+      promotion.reload
+
+      expect(promotion.actions.to_a).to eq(actions)
+      expect(promotion.rules.to_a).to eq(rules)
+    end
+  end
 end

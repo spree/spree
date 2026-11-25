@@ -39,6 +39,19 @@ describe Spree::Customer, type: :model do
     let(:lockable) { customer }
   end
 
+  describe '#addresses' do
+    let(:customer) { create(:customer) }
+
+    # Equal sort keys come back from PostgreSQL in either order.
+    it 'lists addresses saved in the same instant in creation order' do
+      addresses = create_list(:address, 2, owner: customer)
+      saved_at = Time.current
+      addresses.reverse_each { |address| address.update_column(:updated_at, saved_at) }
+
+      expect(customer.addresses.to_a).to eq(addresses)
+    end
+  end
+
   describe 'use_billing' do
     let(:customer) { create(:customer) }
     let(:address) { create(:address, owner: customer) }

@@ -30,9 +30,13 @@ module Spree
     # Associations
     #
     belongs_to :promotion_category, optional: true
-    has_many :promotion_rules, autosave: true, dependent: :destroy
+    # Rules and actions are ordered so they read in creation order:
+    # PostgreSQL moves an updated row within unordered results.
+    has_many :promotion_rules, -> { order(:id) }, class_name: 'Spree::PromotionRule', autosave: true,
+                                                  dependent: :destroy, inverse_of: :promotion
     alias rules promotion_rules
-    has_many :promotion_actions, autosave: true, dependent: :destroy
+    has_many :promotion_actions, -> { order(:id) }, class_name: 'Spree::PromotionAction', autosave: true,
+                                                    dependent: :destroy, inverse_of: :promotion
     alias actions promotion_actions
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
