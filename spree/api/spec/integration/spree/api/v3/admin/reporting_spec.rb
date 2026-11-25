@@ -41,6 +41,57 @@ RSpec.describe 'Admin Reporting API', type: :request, swagger_doc: 'api-referenc
 
         before { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
 
+        metric_value = {
+          type: :object,
+          properties: {
+            value: { description: 'A decimal string for a money metric, a number for a count' },
+            display: { type: :string, description: 'The value formatted with its currency. Money metrics only.' },
+            previous: { description: 'The value in the period compared against. Present when the query asks for a comparison.' },
+            growth: {
+              type: :string, nullable: true,
+              description: 'Percentage change from the previous period; null when that period has nothing to compare with'
+            }
+          },
+          required: %w[value]
+        }
+        time_range = { type: :object, properties: { since: { type: :string }, until: { type: :string } }, required: %w[since until] }
+
+        schema type: :object,
+               properties: {
+                 meta: {
+                   type: :object,
+                   properties: {
+                     currency: { type: :string, example: 'USD' },
+                     time_range: time_range,
+                     previous_time_range: time_range.merge(nullable: true),
+                     metrics: { type: :array, items: { type: :string } },
+                     dimensions: {
+                       type: :array,
+                       items: { type: :object, properties: { name: { type: :string }, grain: { type: :string } }, required: %w[name] }
+                     }
+                   },
+                   required: %w[currency time_range metrics dimensions]
+                 },
+                 totals: { type: :object, description: 'Keyed by metric', additionalProperties: metric_value },
+                 rows: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       dimensions: {
+                         type: :object,
+                         description: 'Keyed by dimension: the value itself for a time bucket or a status, ' \
+                                      'and `{ id, label, meta }` for a record such as a product or a customer',
+                         additionalProperties: true
+                       },
+                       metrics: { type: :object, description: 'Keyed by metric', additionalProperties: metric_value }
+                     },
+                     required: %w[dimensions metrics]
+                   }
+                 }
+               },
+               required: %w[meta totals rows]
+
         run_test! do |response|
           expect(JSON.parse(response.body)).to have_key('rows')
         end

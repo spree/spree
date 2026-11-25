@@ -21,6 +21,14 @@ RSpec.describe Spree::Api::V3::Store::CompanyInvitationsController, type: :contr
       expect(json_response).not_to have_key('token')
     end
 
+    it 'leaves the company out unless it is expanded' do
+      get :show, params: { token: invitation.token }, as: :json
+      expect(json_response).not_to have_key('company')
+
+      get :show, params: { token: invitation.token, expand: 'company' }, as: :json
+      expect(json_response['company']).to include('id' => company.prefixed_id, 'name' => 'Acme Industrial')
+    end
+
     it '404s an expired token' do
       invitation.update!(expires_at: 1.day.ago)
 

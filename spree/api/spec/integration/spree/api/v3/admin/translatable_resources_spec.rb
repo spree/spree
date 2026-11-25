@@ -23,6 +23,8 @@ RSpec.describe 'Admin Translatable Resources API', type: :request, swagger_doc: 
       response '200', 'translatable resources found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('TranslatableResource'))
+
         run_test! do |response|
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)

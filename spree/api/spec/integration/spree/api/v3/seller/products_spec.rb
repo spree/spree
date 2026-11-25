@@ -303,6 +303,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let!(:draft) { create(:product, store: store, seller: seller, status: 'draft') }
         let(:body) { { ids: [draft.prefixed_id] } }
 
+        schema '$ref' => '#/components/schemas/BulkProductResult'
+
         run_test! do |response|
           expect(JSON.parse(response.body)['product_count']).to eq(1)
         end
@@ -330,6 +332,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
+
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['product_count']).to eq(1)
@@ -360,6 +364,8 @@ RSpec.describe 'Seller Products API', type: :request, swagger_doc: 'api-referenc
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
         let(:'X-Spree-Seller-Id') { seller.prefixed_id }
         let(:body) { { ids: [product.prefixed_id] } }
+
+        schema '$ref' => '#/components/schemas/BulkProductResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['product_count']).to eq(1)

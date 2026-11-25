@@ -1494,6 +1494,8 @@ These Store API fields keep working in 6.0 and are marked `@deprecated` in the S
 | Price `amount_in_cents`, `compare_at_amount_in_cents`, and price history `amount_in_cents` | `amount`, `compare_at_amount` ([Money](#money)) |
 | A cart requirement's `field` `shipping_method` | Match its `code`, `delivery_method_required`; the field becomes `delivery_method` |
 | The `Discount` type for `cart.discounts` and `order.discounts` | `AppliedPromotion` |
+| Company invitation lookup `company_name` | Send `expand=company` and read `company.name` |
+| Company invitation lookup `store_name` | The `name` from `GET /api/v3/store/store` |
 | A number passed to `carts.storeCredits.apply()` | A decimal string ([store credit](#store-credit-amounts-are-decimal-strings)) |
 | Every `display_*` money field (`display_total`, `display_price`, `display_amount`, …) | Format the amount beside it with its currency, with `formatMoney` ([Money](#money)) |
 | Country `name` | `new Intl.DisplayNames([language], { type: 'region' }).of(iso)` ([Locale codes](#locale-codes-come-from-a-fixed-list)) |

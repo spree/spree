@@ -317,6 +317,7 @@ RSpec.configure do |config|
   config.openapi_format = :yaml
 
   config.extend Spree::Api::TestingSupport::AdminOperation, type: :request
+  config.extend Spree::Api::TestingSupport::ResponseSchema, type: :request
   config.extend Spree::Api::TestingSupport::AgentTools, type: :request
   config.extend Spree::Api::TestingSupport::SdkMethod, type: :request
 

@@ -133,6 +133,8 @@ RSpec.describe 'Seller Onboarding API', type: :request, swagger_doc: 'api-refere
         let(:panel) { Spree::Sellers::PanelUrl.call(store: store) }
         let(:body) { { refresh_url: "#{panel}/onboarding", return_url: "#{panel}/onboarding?done=1" } }
 
+        schema '$ref' => '#/components/schemas/PayoutAccountLink'
+
         run_test! do |response|
           expect(JSON.parse(response.body)).to have_key('url')
         end

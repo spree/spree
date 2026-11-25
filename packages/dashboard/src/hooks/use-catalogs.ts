@@ -4,6 +4,7 @@ import type {
   CatalogAssignParams,
   CatalogCreateParams,
   CatalogUpdateParams,
+  ProductMembershipResult,
 } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -171,7 +172,7 @@ export function useSaveCatalog(catalogId: string) {
  * explicit act that turns a pricing-only overlay into a restrictive catalog.
  */
 export function useImportCatalogPriceListProducts(catalogId: string) {
-  return useResourceMutation<{ added_count: number }, Error, void>({
+  return useResourceMutation<ProductMembershipResult, Error, void>({
     mutationFn: () => adminClient.catalogs.importProducts(catalogId),
     invalidate: [
       ['catalogs', catalogId],

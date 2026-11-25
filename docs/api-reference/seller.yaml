@@ -434,6 +434,8 @@ paths:
               example:
                 message: If an account exists for that email, password reset instructions
                   have been sent.
+              schema:
+                "$ref": "#/components/schemas/PasswordResetAcknowledgement"
       requestBody:
         content:
           application/json:
@@ -15761,6 +15763,15 @@ paths:
                     unpriced: false
                   deliveries: []
                   labels: []
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Fulfillment"
+                required:
+                - data
       requestBody:
         content:
           application/json:
@@ -18467,6 +18478,8 @@ paths:
             application/json:
               example:
                 url:
+              schema:
+                "$ref": "#/components/schemas/PayoutAccountLink"
       requestBody:
         content:
           application/json:
@@ -22401,6 +22414,8 @@ paths:
             application/json:
               example:
                 product_count: 1
+              schema:
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -22446,6 +22461,8 @@ paths:
             application/json:
               example:
                 product_count: 1
+              schema:
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -22492,6 +22509,8 @@ paths:
             application/json:
               example:
                 product_count: 1
+              schema:
+                "$ref": "#/components/schemas/BulkProductResult"
       requestBody:
         content:
           application/json:
@@ -23791,6 +23810,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxIdentifier"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Add a tax registration
       tags:
@@ -23838,6 +23869,8 @@ paths:
                 value: DE100000008
                 validation_status:
                 validated_at:
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
         '422':
           description: the number is not valid for its regime
           content:
@@ -23903,6 +23936,8 @@ paths:
                 value: DE100000016
                 validation_status:
                 validated_at:
+              schema:
+                "$ref": "#/components/schemas/TaxIdentifier"
       requestBody:
         content:
           application/json:
@@ -25617,6 +25652,18 @@ components:
       - payable
       - paid
       - balance
+      x-typelizer: true
+    BulkProductResult:
+      type: object
+      properties:
+        product_count:
+          type: number
+          description: Products the action applied to
+        skipped_count:
+          type: number
+          description: Present only when something was skipped
+      required:
+      - product_count
       x-typelizer: true
     ClaimLineItem:
       type: object
@@ -27631,6 +27678,14 @@ components:
       - volume
       - editable
       x-typelizer: true
+    PasswordResetAcknowledgement:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+      x-typelizer: true
     PaymentSplit:
       type: object
       properties:
@@ -27841,6 +27896,17 @@ components:
       - claimed_amount
       - net_captured_amount
       - refundable_amount
+      x-typelizer: true
+    PayoutAccountLink:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+          description: Null when the provider hosts no page to set the account up
+            on
+      required:
+      - url
       x-typelizer: true
     Payout:
       type: object

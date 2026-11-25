@@ -29,6 +29,11 @@ module Spree
           }
         end
 
+        # A list that is not paginated
+        def list(items)
+          { type: :object, properties: { data: { type: :array, items: items } }, required: %w[data] }
+        end
+
         # Error response schema
         def error_response
           ref('ErrorResponse')
@@ -173,6 +178,45 @@ module Spree
               user: { '$ref' => '#/components/schemas/AdminUser' }
             },
             required: %w[token user]
+          }
+
+          # Written by hand: the payload is computed, so its serializer declares
+          # no types to generate from.
+          schemas[:ResourceTranslations] = {
+            type: :object,
+            description: "A record's translatable fields and their value in each locale",
+            properties: {
+              resource_id: { type: :string, example: 'prod_UkLWZg9DAJ' },
+              resource_type: { type: :string, example: 'product' },
+              translations: {
+                type: :object,
+                description: 'Keyed by locale. Each entry holds every field\'s translation, null where there is none, ' \
+                             'and `translated_field_count`.',
+                additionalProperties: { type: :object, additionalProperties: true },
+                example: { de: { name: 'Espressomaschine', description: nil, translated_field_count: 1 } }
+              },
+              fields: {
+                type: :array,
+                description: 'The translatable fields and their value in the default locale. Present when reading a record.',
+                items: {
+                  type: :object,
+                  properties: {
+                    key: { type: :string, example: 'name' },
+                    type: { type: :string, example: 'string', description: 'How the field is edited: `string` or `html`' },
+                    source: { type: :string, nullable: true, example: 'Espresso Machine' }
+                  },
+                  required: %w[key type source]
+                }
+              },
+              default_locale: { type: :string, example: 'en', description: 'Absent on nested `children`' },
+              supported_locales: { type: :array, items: { type: :string }, example: %w[en de], description: 'Absent on nested `children`' },
+              children: {
+                type: :array,
+                description: 'Nested translatable records, such as the option values of an option type',
+                items: { '$ref' => '#/components/schemas/ResourceTranslations' }
+              }
+            },
+            required: %w[resource_id resource_type translations]
           }
 
           begin

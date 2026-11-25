@@ -58,6 +58,8 @@ RSpec.describe 'Store Delivery Methods API', type: :request, swagger_doc: 'api-r
 
         before { create(:stock_location, name: 'Downtown', pickup_enabled: true) }
 
+        schema SwaggerSchemaHelpers.list(SwaggerSchemaHelpers.ref('StockLocation'))
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].map { |row| row['name'] }).to include('Downtown')

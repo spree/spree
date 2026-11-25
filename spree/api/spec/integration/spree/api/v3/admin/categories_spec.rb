@@ -248,6 +248,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:category_id) { category.prefixed_id }
         let(:body) { { product_ids: [product.prefixed_id] } }
 
+        schema '$ref' => '#/components/schemas/ProductMembershipResult'
+
         run_test! do |response|
           expect(JSON.parse(response.body)['added_count']).to eq(1)
         end
@@ -278,6 +280,8 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:body) { { product_ids: [product.prefixed_id] } }
 
         before { create(:product_category, category: category, product: product, position: 1) }
+
+        schema '$ref' => '#/components/schemas/ProductMembershipResult'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['removed_count']).to eq(1)

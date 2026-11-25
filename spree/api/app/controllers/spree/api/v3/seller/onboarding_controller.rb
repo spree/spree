@@ -65,7 +65,7 @@ module Spree
             # A null link rather than an empty response: the panel has to tell
             # "this provider hosts nothing" from "the request failed", and a
             # 204 makes the client infer that from an absence.
-            render json: { url: url.presence }
+            render json: Spree.api.seller_payout_account_link_serializer.new({ url: url.presence }).to_h
           rescue Spree::Core::GatewayError => e
             render_service_error(e.message)
           end
