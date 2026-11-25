@@ -5,8 +5,13 @@ RSpec.describe Spree::Uploads do
   let(:other_store) { create(:store) }
   let(:category) { create(:category, store: store) }
 
+  # Real image bytes: an image attachment checks what the file is, not what
+  # it claims to be.
   def create_blob(store_id: nil)
-    ActiveStorage::Blob.create_and_upload!(io: StringIO.new('bytes'), filename: 'file.png', content_type: 'image/png').tap do |blob|
+    ActiveStorage::Blob.create_and_upload!(
+      io: File.open(Spree::Core::Engine.root.join('spec/fixtures/thinking-cat.jpg')),
+      filename: 'file.jpg', content_type: 'image/jpeg'
+    ).tap do |blob|
       blob.update_column(:store_id, store_id)
     end
   end
