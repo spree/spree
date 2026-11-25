@@ -14,7 +14,42 @@ module Spree
       # skips a payment that is already completed.
       class SettlementFailed < StandardError; end
 
+      # Reported, not raised: the payment is settled on the cart, but the cart
+      # cannot become an order — see DETERMINISTIC_FAILURE_CODES.
+      class CompletionBlocked < StandardError; end
+
+      # Failures of Spree::Carts::Complete that no retry can change. The cart
+      # fails a checkout requirement (emptied, no delivery method selected;
+      # out of stock alone is retried, see RECOVERABLE_REQUIREMENT_CODES),
+      # lost a batch coupon code it was priced with, or its tax engine
+      # refused the sale — and a cart a gateway took
+      # money for is fenced (Spree::Cart#payment_session_settled?), so nobody
+      # can change it into one that completes. Retrying only repeats the
+      # failure; the payment stays recorded on the cart and the failure is
+      # reported once for staff to resolve.
+      DETERMINISTIC_FAILURE_CODES = %w[validation_failed coupon_code_unavailable tax_calculation_refused].freeze
+
+      # Checkout requirements a paid cart can meet later without being
+      # changed: stock held by another cart's reservation comes back when
+      # that reservation expires or the item is restocked.
+      RECOVERABLE_REQUIREMENT_CODES = %w[out_of_stock].freeze
+
+      # The cart failed only requirements in RECOVERABLE_REQUIREMENT_CODES.
+      # Retried until every reservation that could be holding the stock has
+      # expired: the store's reservation TTL
+      # (Spree::Store#preferred_stock_reservation_ttl_minutes, unbounded)
+      # plus STOCK_GRACE after settlement. Past that, it is reported like a
+      # blocked completion.
+      class StockUnavailable < StandardError; end
+
+      STOCK_RETRY_WAIT = 5.minutes
+      # Leaves the expiry job time to release reservations past their TTL.
+      STOCK_GRACE = 10.minutes
+
       retry_on SettlementFailed, wait: :polynomially_longer, attempts: 5
+      # Bounded by #stock_retry_deadline, not an attempt count: a store's
+      # reservation TTL can outlast any fixed number of attempts.
+      retry_on StockUnavailable, wait: STOCK_RETRY_WAIT, attempts: :unlimited
 
       # metadata defaults to {} so jobs enqueued before it was passed still run.
       def perform(payment_method_id:, action:, payment_session_id:, metadata: {})
@@ -28,8 +63,79 @@ module Spree
           payment_session: payment_session,
           metadata: metadata
         )
+        return unless result&.failure?
 
-        raise SettlementFailed, "Payment session #{payment_session.id}: #{result.error}" if result&.failure?
+        if awaiting_stock?(result) && Time.current < stock_retry_deadline(payment_session)
+          raise StockUnavailable,
+                "Payment session #{payment_session.id} settled, but its cart is out of stock (#{result.error}); " \
+                'the buyer was charged without an order'
+        end
+        return report_blocked_completion(payment_session, result) if completion_blocked?(result)
+
+        raise SettlementFailed, "Payment session #{payment_session.id}: #{result.error}"
+      end
+
+      private
+
+      # A workflow can fail with a bare message rather than a coded
+      # ResultError; that reads as a retryable settlement failure.
+      def failure_code(result)
+        result.error.code if result.error.respond_to?(:code)
+      end
+
+      def completion_blocked?(result)
+        failure_code(result).in?(DETERMINISTIC_FAILURE_CODES)
+      end
+
+      def awaiting_stock?(result)
+        return false unless failure_code(result) == 'validation_failed'
+
+        codes = requirement_codes(result)
+        codes.any? && (codes - RECOVERABLE_REQUIREMENT_CODES).empty?
+      end
+
+      # Measured from when the payment was settled, which a replay of the
+      # webhook does not move. The workflow settles the session through
+      # update_all, so it is read again rather than trusted from memory,
+      # where it still carries the time it was last pending.
+      def stock_retry_deadline(payment_session)
+        session = Spree::PaymentSession.find(payment_session.id)
+        settled_at = session.own_payment&.created_at || session.updated_at
+        settled_at + Spree::StockReservation.ttl_for(session.cart || session.order) + STOCK_GRACE
+      end
+
+      def requirement_codes(result)
+        requirements = result.error.value.is_a?(Hash) ? Array(result.error.value[:errors]) : []
+        requirements.filter_map { |requirement| requirement[:code]&.to_s if requirement.is_a?(Hash) }
+      end
+
+      # Charged without an order is the outcome to make loud: reported as an
+      # unhandled error so the error tracker alerts on it, with what staff
+      # need to find the money (the payment session's gateway reference) and
+      # why the cart could not complete.
+      def report_blocked_completion(payment_session, result)
+        code = failure_code(result)
+        failure = result.error.value.is_a?(Hash) ? result.error.value : {}
+        error = CompletionBlocked.new(
+          "Payment session #{payment_session.id} settled, but its #{payment_session.cart_id ? 'cart' : 'order'} " \
+          "cannot be completed (#{code}); the buyer was charged without an order"
+        )
+
+        Rails.error.report(
+          error,
+          handled: false,
+          severity: :error,
+          context: {
+            payment_session_id: payment_session.id,
+            payment_session_external_id: payment_session.external_id,
+            payment_id: payment_session.own_payment&.id,
+            cart_id: payment_session.cart_id,
+            order_id: payment_session.order_id,
+            code: code,
+            errors: failure[:errors] || failure[:message]
+          }.compact,
+          source: 'spree.payments.webhook'
+        )
       end
     end
   end

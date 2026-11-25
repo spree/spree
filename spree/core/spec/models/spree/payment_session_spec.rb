@@ -277,6 +277,22 @@ RSpec.describe Spree::PaymentSession, type: :model do
     end
   end
 
+  describe '#own_payment' do
+    it 'finds the payment settled from the session' do
+      payment = payment_session.find_or_create_payment!
+
+      expect(payment_session.own_payment).to eq(payment)
+    end
+
+    it 'ignores a payment under another method carrying the same identifier' do
+      other_method = create(:credit_card_payment_method, store: store)
+      create(:payment, order: order, payment_method: other_method,
+                       response_code: payment_session.external_id, amount: 10)
+
+      expect(payment_session.own_payment).to be_nil
+    end
+  end
+
   describe '#find_or_create_payment!' do
     it 'creates a payment record for the order' do
       payment = payment_session.find_or_create_payment!
@@ -298,6 +314,18 @@ RSpec.describe Spree::PaymentSession, type: :model do
       payment = payment_session.find_or_create_payment!
 
       expect(payment.id).to eq(existing.id)
+    end
+
+    # Gateways keep identifiers unique per payment method only.
+    it 'does not settle onto another payment method\'s payment with the same identifier' do
+      other_method = create(:credit_card_payment_method, store: store)
+      other = create(:payment, order: order, payment_method: other_method,
+                               response_code: payment_session.external_id, amount: 10)
+
+      payment = payment_session.find_or_create_payment!
+
+      expect(payment.id).not_to eq(other.id)
+      expect(payment.payment_method).to eq(payment_method)
     end
 
     it 'returns the associated payment via has_one' do

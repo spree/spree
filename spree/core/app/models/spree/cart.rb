@@ -141,18 +141,91 @@ module Spree
       completing_at.present?
     end
 
+    # Whether this cart's contents and totals are fixed — mutations must wait
+    # until the purchase completes. True while a completion attempt holds the
+    # cart (see +completion_attempt_claimed?+), and while a gateway has
+    # accepted money for it through a payment session (see
+    # +payment_session_settled?+).
+    #
+    # @return [Boolean]
+    def completion_claimed?
+      completion_attempt_claimed? || payment_session_settled?
+    end
+
     # Whether a live completion attempt holds this cart — its totals are fixed
     # and money may be moving, so mutations must wait until it finishes or the
     # claim goes stale. A payment-covered draft or a divided checkout resumes
     # its existing result instead of editing the cart that supplied it.
     #
+    # Completion itself checks only this, not +completion_claimed?+: a cart
+    # whose payment session settled must still be completable — by the
+    # storefront's complete call or the gateway webhook — or the buyer is
+    # charged without an order.
+    #
     # @return [Boolean]
-    def completion_claimed?
+    def completion_attempt_claimed?
       return false if completing_at.blank?
       return true if completing_at > COMPLETING_CLAIM_TTL.ago || order_group.present?
       return false if order.nil?
 
       order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
+    end
+
+    # Whether a gateway has accepted money for this cart through a payment
+    # session that has not been placed yet: a session the gateway reported
+    # as accepted (processing or completed), or a live payment settled from
+    # one. Completing the cart — through the storefront or the gateway's
+    # webhook — places the order for exactly that money, so the cart must
+    # keep the contents and totals it was charged for. An emptied or edited
+    # cart can no longer complete, and the buyer stays charged without an
+    # order.
+    #
+    # Released when the money is no longer held: the payment recorded for an
+    # accepted session is voided or fails (an accepted session with no
+    # payment row holds the cart until it completes), and no valid payment
+    # past +checkout+ from any session remains — a failed, canceled or
+    # expired session does not release the cart while one does. A session
+    # still pending fences nothing. Nothing releases it on a timer — a
+    # settled cart whose completion keeps failing (see
+    # Spree::Payments::HandleWebhookJob) stays fenced until staff resolve the
+    # payment, because unfencing it would let the buyer change what they
+    # were charged for.
+    #
+    # A session and a payment belong together when the payment's
+    # +response_code+ is the session's +external_id+ under the same payment
+    # method: identifiers are only unique per payment method, so a void
+    # payment under another method must not release a session's claim.
+    #
+    # @return [Boolean]
+    def payment_session_settled?
+      return false unless persisted?
+
+      accepted = payment_sessions.where(status: %w[processing completed])
+      voided = payments.where(status: Spree::Payment::INVALID_STATUSES).where(session_payment_match)
+      live = payments.valid.where(session_payment_match)
+
+      # An accepted session holds the cart while it has no void or failed
+      # payment, or while a payment settled from it is still valid.
+      accepted.where.not(voided.arel.exists).exists? ||
+        accepted.where(live.arel.exists).exists? ||
+        payments.valid.where.not(status: 'checkout').where(payment_sessions.where(session_payment_match).arel.exists).exists?
+    end
+
+    # Whether a payment session on this cart may still take money, or
+    # already has: any session not canceled or expired. The gateway can
+    # capture a session while it is still +pending+ here, before its webhook
+    # lands, so only a retired session is safe to discard with the cart.
+    #
+    # Narrower in effect than +completion_claimed?+ on purpose: a pending
+    # session does not fix the cart's contents, but destroying the cart
+    # would take the session with it and leave the webhook nothing to
+    # settle (see Spree::Carts::Merge).
+    #
+    # @return [Boolean]
+    def payment_session_open?
+      return false unless persisted?
+
+      payment_sessions.where.not(status: Spree::PaymentSession::RETIRED_STATUSES).exists?
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)
@@ -349,5 +422,18 @@ module Spree
       self
     end
 
+    private
+
+    # Correlates a payment with the payment session it was settled from, for
+    # the EXISTS subqueries in +payment_session_settled?+.
+    def session_payment_match
+      payments_table = Spree::Payment.arel_table
+      sessions_table = Spree::PaymentSession.arel_table
+
+      same_identifier = payments_table[:response_code].eq(sessions_table[:external_id])
+      same_method = payments_table[:payment_method_id].eq(sessions_table[:payment_method_id])
+
+      same_identifier.and(same_method)
+    end
   end
 end
