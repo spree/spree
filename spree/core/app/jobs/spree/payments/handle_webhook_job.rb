@@ -51,7 +51,7 @@ module Spree
       private
 
       def completion_blocked?(result)
-        result.error.try(:code).in?(DETERMINISTIC_FAILURE_CODES)
+        result.error.code.in?(DETERMINISTIC_FAILURE_CODES)
       end
 
       # Charged without an order is the outcome to make loud: reported as an
@@ -59,10 +59,11 @@ module Spree
       # need to find the money (the payment session's gateway reference) and
       # why the cart could not complete.
       def report_blocked_completion(payment_session, result)
-        failure = result.error.value
+        code = result.error.code
+        failure = result.error.value.is_a?(Hash) ? result.error.value : {}
         error = CompletionBlocked.new(
           "Payment session #{payment_session.id} settled, but its #{payment_session.cart_id ? 'cart' : 'order'} " \
-          "cannot be completed (#{failure[:code]}); the buyer was charged without an order"
+          "cannot be completed (#{code}); the buyer was charged without an order"
         )
 
         Rails.error.report(
@@ -75,7 +76,7 @@ module Spree
             payment_id: payment_session.payment&.id,
             cart_id: payment_session.cart_id,
             order_id: payment_session.order_id,
-            code: failure[:code],
+            code: code,
             errors: failure[:errors] || failure[:message]
           }.compact,
           source: 'spree.payments.webhook'

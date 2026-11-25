@@ -124,14 +124,25 @@ describe Spree::Cart, type: :model do
         end
       end
 
-      it 'keeps fencing a completed session while any of its payments is still valid' do
+      # Response codes are unique per payment method only, so the same
+      # identifier under another method is a different payment.
+      it 'keeps fencing a completed session when a payment under another method with its identifier is void' do
         payment_session.update_column(:status, 'completed')
-        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
+        other_method = create(:credit_card_payment_method, store: store)
+        create(:payment, cart: cart, order: nil, payment_method: other_method,
                          response_code: payment_session.external_id, amount: 10, status: 'void')
-        create(:payment, cart: cart, order: nil, payment_method: payment_session.payment_method,
-                         response_code: payment_session.external_id, amount: 10, status: 'checkout')
 
         expect(cart.reload).to be_payment_session_settled
+        expect(cart).to be_completion_claimed
+      end
+
+      it 'does not fence a failed session for a live payment under another method with its identifier' do
+        payment_session.update_column(:status, 'failed')
+        other_method = create(:credit_card_payment_method, store: store)
+        create(:payment, cart: cart, order: nil, payment_method: other_method,
+                         response_code: payment_session.external_id, amount: 10, status: 'pending')
+
+        expect(cart.reload).not_to be_payment_session_settled
       end
 
       it 'keeps fencing a cart whose failed session still has a valid settled payment' do

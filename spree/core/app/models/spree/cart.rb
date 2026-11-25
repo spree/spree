@@ -180,8 +180,8 @@ module Spree
     # cart can no longer complete, and the buyer stays charged without an
     # order.
     #
-    # Released when the money is no longer held: every payment recorded for
-    # an accepted session is voided or fails (an accepted session with no
+    # Released when the money is no longer held: the payment recorded for an
+    # accepted session is voided or fails (an accepted session with no
     # payment row holds the cart until it completes), and no valid payment
     # past +checkout+ from any session remains — a failed, canceled or
     # expired session does not release the cart while one does. A session
@@ -191,21 +191,24 @@ module Spree
     # payment, because unfencing it would let the buyer change what they
     # were charged for.
     #
+    # A session and a payment belong together when the payment's
+    # +response_code+ is the session's +external_id+ under the same payment
+    # method: identifiers are only unique per payment method, so a void
+    # payment under another method must not release a session's claim.
+    #
     # @return [Boolean]
     def payment_session_settled?
       return false unless persisted?
 
       accepted = payment_sessions.where(status: %w[processing completed])
-      # NULL response codes are left out: NOT IN over a NULL matches nothing.
-      voided = payments.where(status: Spree::Payment::INVALID_STATUSES).where.not(response_code: nil)
-      live = payments.valid.where.not(response_code: nil)
+      voided = payments.where(status: Spree::Payment::INVALID_STATUSES).where(session_payment_match)
+      live = payments.valid.where(session_payment_match)
 
-      # An accepted session holds the cart while it has no payment row, or
-      # while any payment settled from it is still valid — it releases only
-      # once every one of its payments is void or failed.
-      accepted.where.not(external_id: voided.select(:response_code)).exists? ||
-        accepted.exists?(external_id: live.select(:response_code)) ||
-        payments.valid.where.not(status: 'checkout').exists?(response_code: payment_sessions.select(:external_id))
+      # An accepted session holds the cart while it has no void or failed
+      # payment, or while a payment settled from it is still valid.
+      accepted.where.not(voided.arel.exists).exists? ||
+        accepted.where(live.arel.exists).exists? ||
+        payments.valid.where.not(status: 'checkout').where(payment_sessions.where(session_payment_match).arel.exists).exists?
     end
 
     # Whether a payment session on this cart may still take money, or
@@ -419,5 +422,18 @@ module Spree
       self
     end
 
+    private
+
+    # Correlates a payment with the payment session it was settled from, for
+    # the EXISTS subqueries in +payment_session_settled?+.
+    def session_payment_match
+      payments_table = Spree::Payment.arel_table
+      sessions_table = Spree::PaymentSession.arel_table
+
+      same_identifier = payments_table[:response_code].eq(sessions_table[:external_id])
+      same_method = payments_table[:payment_method_id].eq(sessions_table[:payment_method_id])
+
+      same_identifier.and(same_method)
+    end
   end
 end
