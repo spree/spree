@@ -69,6 +69,37 @@ describe Spree::Base do
     end
   end
 
+  describe '#api_value_for' do
+    let(:custom_field) { Spree::CustomField.new(resource_type: 'Spree::Product') }
+
+    it 'reports a foreign key as the prefixed id of the record it points at' do
+      expect(custom_field.api_value_for(:custom_field_definition_id, 5)).to eq(Spree::CustomFieldDefinition.prefixed_id_for(5))
+    end
+
+    it 'reports both halves of a polymorphic reference the way the API writes them' do
+      expect(custom_field.api_value_for(:resource_id, 5)).to eq(Spree::Product.prefixed_id_for(5))
+      expect(custom_field.api_value_for(:resource_type, 'Spree::Product')).to eq('product')
+    end
+
+    it 'reports an STI type by its short name' do
+      rule = Spree::Promotion::Rules::Currency.new
+
+      expect(rule.api_value_for(:type, 'Spree::Promotion::Rules::Currency')).to eq('currency')
+    end
+
+    it 'reports a column the model declares through api_type_resolver by its short name' do
+      expect(Spree::CustomFieldDefinition.new.api_value_for(:resource_type, 'Spree::Product')).to eq('product')
+    end
+
+    it 'answers nil for a key with no prefixed form' do
+      expect(custom_field.api_value_for(:custom_field_definition_id, -1)).to be_nil
+    end
+
+    it 'returns any other value unchanged' do
+      expect(custom_field.api_value_for(:value, 'wool')).to eq('wool')
+    end
+  end
+
   describe '.json_api_type' do
     # Backwards-compatible alias retained for extensions that still call
     # the old name; must delegate so subclass overrides (e.g.
