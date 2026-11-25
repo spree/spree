@@ -1179,7 +1179,7 @@ describe Spree::Promotion, type: :model do
     end
   end
 
-  describe '#ordered_rules and #ordered_actions' do
+  describe 'rules and actions' do
     let(:promotion) { create(:promotion) }
 
     # PostgreSQL returns unordered rows in heap order, and an update moves the
@@ -1198,15 +1198,8 @@ describe Spree::Promotion, type: :model do
       rules.first.touch
       promotion.reload
 
-      expect(promotion.ordered_actions).to eq(actions)
-      expect(promotion.ordered_rules).to eq(rules)
-    end
-
-    it 'keeps unsaved rows after the saved ones' do
-      saved = promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
-      unsaved = promotion.rules.build(type: 'Spree::Promotion::Rules::ItemTotal')
-
-      expect(promotion.ordered_rules).to eq([saved, unsaved])
+      expect(promotion.actions.to_a).to eq(actions)
+      expect(promotion.rules.to_a).to eq(rules)
     end
   end
 end

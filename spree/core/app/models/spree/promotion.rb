@@ -30,9 +30,11 @@ module Spree
     # Associations
     #
     belongs_to :promotion_category, optional: true
-    has_many :promotion_rules, autosave: true, dependent: :destroy
+    # Ordered so readers list rows in creation order: PostgreSQL moves an
+    # updated row within unordered results.
+    has_many :promotion_rules, -> { order(:id) }, autosave: true, dependent: :destroy, inverse_of: :promotion
     alias rules promotion_rules
-    has_many :promotion_actions, autosave: true, dependent: :destroy
+    has_many :promotion_actions, -> { order(:id) }, autosave: true, dependent: :destroy, inverse_of: :promotion
     alias actions promotion_actions
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
@@ -150,21 +152,6 @@ module Spree
     # Mirrors `rules=` for promotion actions.
     def actions=(rows)
       assign_typed_association(:promotion_actions, rows)
-    end
-
-    # The rules, oldest first. The association carries no order, and
-    # PostgreSQL moves a row in its unordered results once it is updated.
-    #
-    # @return [Array<Spree::PromotionRule>]
-    def ordered_rules
-      in_creation_order(promotion_rules)
-    end
-
-    # Mirrors `ordered_rules` for promotion actions.
-    #
-    # @return [Array<Spree::PromotionAction>]
-    def ordered_actions
-      in_creation_order(promotion_actions)
     end
 
     def pending_rules_or_actions?
@@ -389,13 +376,6 @@ module Spree
 
     def apply_pending_rules_and_actions
       flush_pending_typed_associations(:promotion_rules, :promotion_actions)
-    end
-
-    # Sorted in memory, so a preloaded association costs no query. Unsaved
-    # rows have no id yet and keep their place at the end.
-    def in_creation_order(rows)
-      saved, unsaved = rows.partition(&:id)
-      saved.sort_by(&:id) + unsaved
     end
 
     # Runs before the promotion's actions are destroyed, since the carts'
