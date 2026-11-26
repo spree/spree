@@ -18,6 +18,13 @@ de:
         not_received: Sie haben Ihr Paket noch nicht erhalten?
         subject: Ihr Paket wurde zugestellt
         track_information: 'Sendungsverfolgung: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hallo %{name},
+        delivery_method: 'Versandart: %{delivery_method}'
+        fulfillment_summary: Sendungsübersicht für Bestellung
+        instructions: Ihre Bestellung %{number} wurde versandt
+        subject: Versandbestätigung
+        track_information: 'Sendungsverfolgung: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hallo,

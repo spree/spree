@@ -17,6 +17,13 @@ km:
         not_received: មិនទាន់ទទួលបានកញ្ចប់របស់អ្នកទេឬ?
         subject: កញ្ចប់របស់អ្នកត្រូវបានដឹកជញ្ជូនដល់ហើយ
         track_information: 'ព័ត៌មានតាមដាន: %{tracking}'
+      fulfilled_email:
+        dear_customer: ជូនចំពោះ %{name},
+        delivery_method: 'វិធីដឹកជញ្ជូន: %{delivery_method}'
+        fulfillment_summary: សេចក្តីសង្ខេបនៃការដឹកជញ្ជូនសម្រាប់ការបញ្ជាទិញ
+        instructions: ការបញ្ជាទិញ %{number} របស់អ្នកត្រូវបានផ្ញើចេញហើយ
+        subject: ការជូនដំណឹងអំពីការដឹកជញ្ជូន
+        track_information: 'ព័ត៌មានតាមដាន: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: សួស្តី,

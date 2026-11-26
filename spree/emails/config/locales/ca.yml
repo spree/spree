@@ -17,6 +17,13 @@ ca:
         not_received: Encara no has rebut el paquet?
         subject: El teu paquet s'ha lliurat
         track_information: 'Informació de seguiment: %{tracking}'
+      fulfilled_email:
+        dear_customer: Benvolgut/da %{name},
+        delivery_method: 'Mètode d''enviament: %{delivery_method}'
+        fulfillment_summary: Resum de l'enviament de la comanda
+        instructions: La teva comanda %{number} s'ha enviat
+        subject: Avís d'enviament
+        track_information: 'Informació de seguiment: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hola,

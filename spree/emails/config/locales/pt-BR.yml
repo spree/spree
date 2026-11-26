@@ -17,6 +17,13 @@ pt-BR:
         not_received: Ainda não recebeu seu pacote?
         subject: Seu pacote foi entregue
         track_information: 'Informações de rastreamento: %{tracking}'
+      fulfilled_email:
+        dear_customer: Olá %{name},
+        delivery_method: 'Forma de entrega: %{delivery_method}'
+        fulfillment_summary: Resumo do envio do pedido
+        instructions: Seu pedido %{number} foi enviado
+        subject: Aviso de envio
+        track_information: 'Informações de rastreamento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         ignore_disclaimer: Se você não solicitou isso, ignore este e-mail.

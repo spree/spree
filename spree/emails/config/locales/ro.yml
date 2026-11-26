@@ -17,6 +17,13 @@ ro:
         not_received: Nu ai primit încă coletul?
         subject: Coletul tău a fost livrat
         track_information: 'Informații de urmărire: %{tracking}'
+      fulfilled_email:
+        dear_customer: Dragă %{name},
+        delivery_method: 'Metodă de livrare: %{delivery_method}'
+        fulfillment_summary: Rezumatul expedierii pentru comanda
+        instructions: Comanda ta %{number} a fost expediată
+        subject: Notificare de expediere
+        track_information: 'Informații de urmărire: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bună,

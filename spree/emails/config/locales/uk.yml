@@ -18,6 +18,13 @@ uk:
         not_received: Ще не отримали посилку?
         subject: Вашу посилку доставлено
         track_information: 'Інформація для відстеження: %{tracking}'
+      fulfilled_email:
+        dear_customer: Шановний(а) %{name},
+        delivery_method: 'Спосіб доставки: %{delivery_method}'
+        fulfillment_summary: Відомості про відправлення за замовленням
+        instructions: Ваше замовлення %{number} відправлено
+        subject: Сповіщення про відправлення
+        track_information: 'Інформація для відстеження: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Вітаємо,

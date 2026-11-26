@@ -17,6 +17,13 @@ da:
         not_received: Har du ikke modtaget din pakke endnu?
         subject: Din pakke er blevet leveret
         track_information: 'Sporingsinformation: %{tracking}'
+      fulfilled_email:
+        dear_customer: Kære %{name},
+        delivery_method: 'Leveringsmetode: %{delivery_method}'
+        fulfillment_summary: Oversigt over forsendelsen for ordre
+        instructions: Din ordre %{number} er afsendt
+        subject: Forsendelsesbekræftelse
+        track_information: 'Sporingsinformation: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,

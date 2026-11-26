@@ -18,6 +18,13 @@ zh-CN:
         not_received: 还没有收到包裹？
         subject: 您的包裹已送达
         track_information: 物流追踪信息：%{tracking}
+      fulfilled_email:
+        dear_customer: 亲爱的 %{name}，
+        delivery_method: 配送方式：%{delivery_method}
+        fulfillment_summary: 订单发货摘要
+        instructions: 您的订单 %{number} 已发货
+        subject: 发货通知
+        track_information: 物流追踪信息：%{tracking}
     newsletter_mailer:
       email_confirmation:
         dear_customer: 您好，

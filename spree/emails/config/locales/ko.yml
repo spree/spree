@@ -18,6 +18,13 @@ ko:
         not_received: 아직 소포를 받지 못하셨나요?
         subject: 소포 배송이 완료되었습니다
         track_information: '배송 추적 정보: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name}님,"
+        delivery_method: '배송 방법: %{delivery_method}'
+        fulfillment_summary: 주문 발송 요약
+        instructions: 주문 %{number}이(가) 발송되었습니다
+        subject: 발송 안내
+        track_information: '배송 추적 정보: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: 안녕하세요,

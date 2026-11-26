@@ -18,6 +18,13 @@ sv:
         not_received: Har du inte fått ditt paket än?
         subject: Ditt paket har levererats
         track_information: 'Spårningsinformation: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hej %{name},
+        delivery_method: 'Leveranssätt: %{delivery_method}'
+        fulfillment_summary: Sammanfattning av försändelsen för beställning
+        instructions: Din beställning %{number} har skickats
+        subject: Leveransavisering
+        track_information: 'Spårningsinformation: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,

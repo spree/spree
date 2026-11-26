@@ -18,6 +18,13 @@ zh-TW:
         not_received: 還沒收到包裹嗎？
         subject: 您的包裹已送達
         track_information: 物流追蹤資訊：%{tracking}
+      fulfilled_email:
+        dear_customer: 親愛的 %{name}，
+        delivery_method: 配送方式：%{delivery_method}
+        fulfillment_summary: 訂單出貨摘要
+        instructions: 您的訂單 %{number} 已出貨
+        subject: 出貨通知
+        track_information: 物流追蹤資訊：%{tracking}
     newsletter_mailer:
       email_confirmation:
         dear_customer: 您好，

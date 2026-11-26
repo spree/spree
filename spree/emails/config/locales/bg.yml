@@ -17,6 +17,13 @@ bg:
         not_received: Все още не сте получили пратката си?
         subject: Вашата пратка е доставена
         track_information: 'Информация за проследяване: %{tracking}'
+      fulfilled_email:
+        dear_customer: Уважаеми(а) %{name},
+        delivery_method: 'Метод на доставка: %{delivery_method}'
+        fulfillment_summary: Обобщение на пратката за поръчка
+        instructions: Вашата поръчка %{number} е изпратена
+        subject: Известие за изпращане
+        track_information: 'Информация за проследяване: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Здравейте,

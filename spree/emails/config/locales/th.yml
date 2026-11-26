@@ -17,6 +17,13 @@ th:
         not_received: ยังไม่ได้รับพัสดุใช่ไหม?
         subject: พัสดุของคุณจัดส่งถึงแล้ว
         track_information: 'ข้อมูลการติดตามพัสดุ: %{tracking}'
+      fulfilled_email:
+        dear_customer: เรียน %{name}
+        delivery_method: 'วิธีการจัดส่ง: %{delivery_method}'
+        fulfillment_summary: สรุปการจัดส่งสำหรับคำสั่งซื้อ
+        instructions: คำสั่งซื้อ %{number} ของคุณจัดส่งแล้ว
+        subject: แจ้งการจัดส่ง
+        track_information: 'ข้อมูลการติดตามพัสดุ: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: สวัสดี,

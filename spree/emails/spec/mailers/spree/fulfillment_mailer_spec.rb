@@ -110,6 +110,15 @@ describe Spree::FulfillmentMailer, type: :mailer do
   context 'fulfilled_email' do
     let(:fulfilled_email) { described_class.fulfilled_email(fulfillment) }
 
+    context 'when the order is in German' do
+      before { order.update_column(:locale, 'de') }
+
+      it 'sends the shipped translation' do
+        expect(fulfilled_email.subject).to include('Versandbestätigung')
+        expect(fulfilled_email).to have_body_text("Ihre Bestellung #{order.number} wurde versandt")
+      end
+    end
+
     specify do
       expect(fulfilled_email).to have_body_text(order.number)
     end

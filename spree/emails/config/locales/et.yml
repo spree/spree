@@ -17,6 +17,13 @@ et:
         not_received: Te pole veel oma pakki kätte saanud?
         subject: Teie pakk on kohale toimetatud
         track_information: 'Jälgimisteave: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hea %{name},
+        delivery_method: 'Tarneviis: %{delivery_method}'
+        fulfillment_summary: Saadetise kokkuvõte tellimusele
+        instructions: Teie tellimus %{number} on teele saadetud
+        subject: Saatmise teade
+        track_information: 'Jälgimisteave: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Tere,

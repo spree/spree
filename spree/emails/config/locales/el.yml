@@ -17,6 +17,13 @@ el:
         not_received: Δεν έχετε λάβει ακόμα το δέμα σας;
         subject: Το δέμα σας παραδόθηκε
         track_information: 'Πληροφορίες παρακολούθησης: %{tracking}'
+      fulfilled_email:
+        dear_customer: Αγαπητέ/ή %{name},
+        delivery_method: 'Τρόπος αποστολής: %{delivery_method}'
+        fulfillment_summary: Σύνοψη αποστολής για την παραγγελία
+        instructions: Η παραγγελία σας %{number} απεστάλη
+        subject: Ειδοποίηση αποστολής
+        track_information: 'Πληροφορίες παρακολούθησης: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Γεια,

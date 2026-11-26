@@ -17,6 +17,13 @@ ku:
         not_received: Hîn pakêta te negihîştiye?
         subject: Pakêta te hate radestkirin
         track_information: 'Agahiyên şopandinê: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name}ê hêja,"
+        delivery_method: 'Rêbaza radestkirinê: %{delivery_method}'
+        fulfillment_summary: Kurteya şandinê ya siparîşê
+        instructions: Siparîşa te %{number} hate şandin
+        subject: Agahdariya şandinê
+        track_information: 'Agahiyên şopandinê: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Silav,

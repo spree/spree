@@ -17,6 +17,13 @@ fi:
         not_received: Etkö ole vielä saanut pakettiasi?
         subject: Pakettisi on toimitettu
         track_information: 'Seurantatiedot: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hei %{name},
+        delivery_method: 'Toimitustapa: %{delivery_method}'
+        fulfillment_summary: Lähetyksen yhteenveto tilaukselle
+        instructions: Tilauksesi %{number} on lähetetty
+        subject: Lähetysilmoitus
+        track_information: 'Seurantatiedot: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hei,

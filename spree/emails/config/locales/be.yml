@@ -17,6 +17,13 @@ be:
         not_received: Яшчэ не атрымалі пасылку?
         subject: Ваша пасылка дастаўлена
         track_information: 'Інфармацыя для адсочвання: %{tracking}'
+      fulfilled_email:
+        dear_customer: Шаноўны(ая) %{name},
+        delivery_method: 'Спосаб дастаўкі: %{delivery_method}'
+        fulfillment_summary: Звесткі пра адпраўку для замовы
+        instructions: Ваша замова %{number} адпраўлена
+        subject: Апавяшчэнне аб адпраўцы
+        track_information: 'Інфармацыя для адсочвання: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Прывітанне,

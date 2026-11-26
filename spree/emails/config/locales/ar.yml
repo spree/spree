@@ -18,6 +18,13 @@ ar:
         not_received: لم يصلك طردك بعد؟
         subject: تم تسليم طردك
         track_information: 'معلومات التتبع: %{tracking}'
+      fulfilled_email:
+        dear_customer: عزيزي %{name}،
+        delivery_method: 'طريقة التوصيل: %{delivery_method}'
+        fulfillment_summary: ملخص الشحنة للطلب
+        instructions: تم شحن طلبك %{number}
+        subject: إشعار الشحن
+        track_information: 'معلومات التتبع: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: مرحبًا،

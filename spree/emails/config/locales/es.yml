@@ -18,6 +18,13 @@ es:
         not_received: "¿Todavía no has recibido tu paquete?"
         subject: Tu paquete ha sido entregado
         track_information: 'Información de seguimiento: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hola %{name},
+        delivery_method: 'Método de envío: %{delivery_method}'
+        fulfillment_summary: Resumen del envío del pedido
+        instructions: Tu pedido %{number} ha sido enviado
+        subject: Aviso de envío
+        track_information: 'Información de seguimiento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: 'Hola:'

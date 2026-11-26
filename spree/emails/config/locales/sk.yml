@@ -17,6 +17,13 @@ sk:
         not_received: Ešte ste zásielku nedostali?
         subject: Vaša zásielka bola doručená
         track_information: 'Informácie o sledovaní: %{tracking}'
+      fulfilled_email:
+        dear_customer: Vážený zákazník %{name},
+        delivery_method: 'Spôsob doručenia: %{delivery_method}'
+        fulfillment_summary: Súhrn zásielky k objednávke
+        instructions: Vaša objednávka %{number} bola odoslaná
+        subject: Oznámenie o odoslaní
+        track_information: 'Informácie o sledovaní: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Ahoj,

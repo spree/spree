@@ -17,6 +17,13 @@ lv:
         not_received: Vēl neesat saņēmis sūtījumu?
         subject: Jūsu sūtījums ir piegādāts
         track_information: 'Izsekošanas informācija: %{tracking}'
+      fulfilled_email:
+        dear_customer: Cien. %{name},
+        delivery_method: 'Piegādes veids: %{delivery_method}'
+        fulfillment_summary: Pasūtījuma sūtījuma kopsavilkums
+        instructions: Jūsu pasūtījums %{number} ir nosūtīts
+        subject: Paziņojums par nosūtīšanu
+        track_information: 'Izsekošanas informācija: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Sveiki,

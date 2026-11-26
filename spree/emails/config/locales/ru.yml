@@ -18,6 +18,13 @@ ru:
         not_received: Ещё не получили посылку?
         subject: Ваша посылка доставлена
         track_information: 'Информация для отслеживания: %{tracking}'
+      fulfilled_email:
+        dear_customer: Уважаемый(ая) %{name},
+        delivery_method: 'Способ доставки: %{delivery_method}'
+        fulfillment_summary: Сведения об отправке по заказу
+        instructions: Ваш заказ %{number} отправлен
+        subject: Уведомление об отправке
+        track_information: 'Информация для отслеживания: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Здравствуйте,

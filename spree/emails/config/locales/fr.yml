@@ -18,6 +18,13 @@ fr:
         not_received: Vous n'avez pas encore reçu votre colis ?
         subject: Votre colis a été livré
         track_information: 'Informations de suivi : %{tracking}'
+      fulfilled_email:
+        dear_customer: Bonjour %{name},
+        delivery_method: 'Mode de livraison : %{delivery_method}'
+        fulfillment_summary: Récapitulatif de l'expédition pour la commande
+        instructions: Votre commande %{number} a été expédiée
+        subject: Avis d'expédition
+        track_information: 'Informations de suivi : %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bonjour,

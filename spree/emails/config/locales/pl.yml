@@ -18,6 +18,13 @@ pl:
         not_received: Nie otrzymałeś jeszcze paczki?
         subject: Twoja paczka została dostarczona
         track_information: 'Informacje o śledzeniu: %{tracking}'
+      fulfilled_email:
+        dear_customer: Witaj %{name},
+        delivery_method: 'Metoda dostawy: %{delivery_method}'
+        fulfillment_summary: Podsumowanie przesyłki dla zamówienia
+        instructions: Twoje zamówienie %{number} zostało wysłane
+        subject: Powiadomienie o wysyłce
+        track_information: 'Informacje o śledzeniu: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Cześć,

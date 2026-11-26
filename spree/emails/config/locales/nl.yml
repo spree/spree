@@ -18,6 +18,13 @@ nl:
         not_received: Heb je je pakket nog niet ontvangen?
         subject: Je pakket is bezorgd
         track_information: 'Trackinginformatie: %{tracking}'
+      fulfilled_email:
+        dear_customer: Beste %{name},
+        delivery_method: 'Verzendmethode: %{delivery_method}'
+        fulfillment_summary: Overzicht van de zending voor bestelling
+        instructions: Je bestelling %{number} is verzonden
+        subject: Verzendbevestiging
+        track_information: 'Trackinginformatie: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hoi,

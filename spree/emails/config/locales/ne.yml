@@ -17,6 +17,13 @@ ne:
         not_received: अझै आफ्नो प्याकेज प्राप्त गर्नुभएको छैन?
         subject: तपाईंको प्याकेज डेलिभर भएको छ
         track_information: 'ट्र्याकिङ जानकारी: %{tracking}'
+      fulfilled_email:
+        dear_customer: प्रिय %{name},
+        delivery_method: 'डेलिभरी विधि: %{delivery_method}'
+        fulfillment_summary: अर्डरको ढुवानी सारांश
+        instructions: तपाईंको अर्डर %{number} पठाइएको छ
+        subject: ढुवानी सूचना
+        track_information: 'ट्र्याकिङ जानकारी: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: नमस्ते,

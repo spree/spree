@@ -18,6 +18,13 @@ ja:
         not_received: まだ荷物が届いていませんか？
         subject: お荷物の配達が完了しました
         track_information: '追跡情報: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name} 様"
+        delivery_method: '配送方法: %{delivery_method}'
+        fulfillment_summary: ご注文の発送内容
+        instructions: ご注文 %{number} を発送しました
+        subject: 発送のお知らせ
+        track_information: '追跡情報: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: こんにちは、

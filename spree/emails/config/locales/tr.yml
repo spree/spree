@@ -18,6 +18,13 @@ tr:
         not_received: Paketinizi henüz almadınız mı?
         subject: Paketiniz teslim edildi
         track_information: 'Takip bilgisi: %{tracking}'
+      fulfilled_email:
+        dear_customer: Sayın %{name},
+        delivery_method: 'Teslimat yöntemi: %{delivery_method}'
+        fulfillment_summary: Siparişin gönderi özeti
+        instructions: "%{number} numaralı siparişiniz kargoya verildi"
+        subject: Kargo bildirimi
+        track_information: 'Takip bilgisi: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Merhaba,

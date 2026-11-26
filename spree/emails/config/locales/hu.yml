@@ -17,6 +17,13 @@ hu:
         not_received: Még nem kapta meg a csomagját?
         subject: Csomagját kézbesítettük
         track_information: 'Nyomkövetési információ: %{tracking}'
+      fulfilled_email:
+        dear_customer: Kedves %{name}!
+        delivery_method: 'Szállítási mód: %{delivery_method}'
+        fulfillment_summary: A szállítmány összesítője a rendeléshez
+        instructions: A(z) %{number} számú rendelését feladtuk
+        subject: Szállítási értesítő
+        track_information: 'Nyomkövetési információ: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Üdv,
