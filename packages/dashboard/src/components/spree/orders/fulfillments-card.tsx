@@ -422,6 +422,7 @@ const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
 const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 // Collected in store or downloaded: the customer gets no delivered email.
+// Mirrors FulfillmentEmailSubscriber::NO_DELIVERED_EMAIL_TYPES in spree_emails.
 const NO_DELIVERED_EMAIL = ['pickup', 'digital']
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
@@ -609,6 +610,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         <FulfillmentDeliveries
           orderId={orderId}
           fulfillmentId={fulfillment.id}
+          sendsDeliveredEmail={!NO_DELIVERED_EMAIL.includes(fulfillment.fulfillment_type)}
           deliveries={deliveries}
           onEdit={(delivery) => {
             setEditingDelivery(delivery)
@@ -738,9 +740,9 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         />
       )}
 
-      {deliverable && (
+      {markDeliveredOpen && (
         <FulfillmentMarkDeliveredDialog
-          fulfillment={fulfillment}
+          checkboxId={`mark-delivered-notify-${fulfillment.id}`}
           open={markDeliveredOpen}
           onOpenChange={setMarkDeliveredOpen}
           pending={markDelivered.isPending}

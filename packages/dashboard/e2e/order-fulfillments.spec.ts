@@ -1,5 +1,11 @@
 import { expect, type Page, test } from '@playwright/test'
-import { addNewOrderItem, createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import {
+  addNewOrderItem,
+  adminRequest,
+  createPlacedOrder,
+  FIXTURE_PROMO_PRODUCT,
+  login,
+} from './helpers'
 
 const NEW_ORDER_PATH = (storeId: string) => `/${storeId}/orders/new`
 
@@ -127,6 +133,14 @@ test.describe('order fulfillments', () => {
     const dialog = page.getByRole('dialog')
     const notify = dialog.getByRole('checkbox', { name: /email the customer/i })
     await expect(notify).toBeChecked()
+
+    // Backing out forgets the choice: the next attempt asks afresh.
+    await notify.click()
+    await dialog.getByRole('button', { name: /^cancel$/i }).click()
+    await expect(dialog).toBeHidden()
+    await card.getByRole('button', { name: /^mark as delivered$/i }).click()
+    await expect(notify).toBeChecked()
+
     await notify.click()
     await expect(notify).not.toBeChecked()
 
@@ -139,5 +153,47 @@ test.describe('order fulfillments', () => {
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(card.getByRole('button', { name: /^mark as delivered$/i })).toHaveCount(0)
     await expect(card.getByText(/^delivered$/i).first()).toBeVisible()
+  })
+
+  // The last consignment to arrive completes the parcel, so it asks too.
+  test('asks before the last tracked consignment marks the parcel delivered', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken)
+    const { data } = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/fulfillments`,
+    )
+    const tracking = `1Z${Date.now()}`
+    await adminRequest(
+      page,
+      creds,
+      'post',
+      `/orders/${order.id}/fulfillments/${data[0].id}/deliveries`,
+      { tracking_number: tracking },
+    )
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    // The consignment's own menu sits on its row, beside the tracking number.
+    const card = fulfillmentsCard(page)
+    await card
+      .getByText(tracking, { exact: true })
+      .locator('xpath=ancestor::div[2]')
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+    await page.getByRole('menuitem', { name: /^mark arrived$/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('checkbox', { name: /email the customer/i })).toBeChecked()
+
+    const request = page.waitForRequest(
+      (req) => req.method() === 'PATCH' && /\/deliveries\/[^/]+\/mark_delivered$/.test(req.url()),
+    )
+    await dialog.getByRole('button', { name: /^mark as delivered$/i }).click()
+    expect((await request).postDataJSON()).toMatchObject({ notify_customer: true })
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /^mark as delivered$/i })).toHaveCount(0)
   })
 })

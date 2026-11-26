@@ -1,4 +1,3 @@
-import type { Fulfillment } from '@spree/admin-sdk'
 import {
   Button,
   Checkbox,
@@ -13,14 +12,15 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+/** Mounted only while open, so the box starts ticked every time. */
 export function FulfillmentMarkDeliveredDialog({
-  fulfillment,
+  checkboxId,
   open,
   onOpenChange,
   onConfirm,
   pending,
 }: {
-  fulfillment: Fulfillment
+  checkboxId: string
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: (notifyCustomer: boolean) => void
@@ -28,16 +28,9 @@ export function FulfillmentMarkDeliveredDialog({
 }) {
   const { t } = useTranslation()
   const [notifyCustomer, setNotifyCustomer] = useState(true)
-  const checkboxId = `mark-delivered-notify-${fulfillment.id}`
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (next) setNotifyCustomer(true)
-        onOpenChange(next)
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.fulfillments.mark_delivered_title')}</DialogTitle>
