@@ -345,5 +345,87 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         end
       end
     end
+
+    # An OAuth grant authenticates as the staff member who approved it, so the
+    # model's ability check sees their whole role. A report export reads
+    # whatever its query breaks down by, so it is held to the grant's
+    # per-member scopes, as POST /reporting/query is.
+    context 'with a delegated credential granting reports and orders only' do
+      # An OAuth request carries the bearer token alone. The shared context
+      # also sends a full-scope secret key, which the key gate would check
+      # instead of the grant.
+      let(:headers) { { 'Authorization' => "Bearer #{admin_jwt_token}" } }
+
+      before do
+        allow(controller).to receive(:current_oauth_token).and_return(
+          instance_double(Spree::OauthAccessToken, scopes: Doorkeeper::OAuth::Scopes.from_array(%w[read_reports read_orders]))
+        )
+      end
+
+      def report_params(dimensions)
+        { type: 'report', search_params: { query: { metrics: %w[total_sales], dimensions: dimensions } } }
+      end
+
+      it 'creates a report export over order data' do
+        post :create, params: report_params(%w[channel]), as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'refuses a report export broken down by customer' do
+        expect { post :create, params: report_params(%w[customer]), as: :json }.not_to change(Spree::Export, :count)
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+      end
+
+      it 'refuses to download a report export broken down by customer' do
+        export = create(:export, type: 'Spree::Exports::Report', store: store, user: admin_user,
+                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[customer] } }.to_json)
+        export.attachment.attach(io: StringIO.new("Customer,Total sales\n"), filename: 'report.csv', content_type: 'text/csv')
+
+        get :download, params: { id: export.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+      end
+
+      it 'refuses to download a report export whose query no longer resolves' do
+        export = create(:export, type: 'Spree::Exports::Report', store: store, user: admin_user,
+                                 search_params: { query: { metrics: %w[total_sales], dimensions: %w[channel] } }.to_json)
+        # Stored before an extension removed the dimension: written past
+        # validation, which refuses such a query on create.
+        export.update_column(:search_params, { query: { metrics: %w[total_sales], dimensions: %w[removed_dimension] } }.to_json)
+        export.attachment.attach(io: StringIO.new("Removed,Total sales\n"), filename: 'report.csv', content_type: 'text/csv')
+
+        get :download, params: { id: export.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      # A host app's ability class need not expose catalog keys; the grant
+      # still narrows what the token may read.
+      context 'when the ability class exposes no permission keys' do
+        before do
+          allow_any_instance_of(Spree.ability_class).to receive(:respond_to?).and_wrap_original do |original, name, *args|
+            name.to_sym == :permission_keys ? false : original.call(name, *args)
+          end
+        end
+
+        it 'still refuses a report export broken down by customer' do
+          post :create, params: report_params(%w[customer]), as: :json
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_scopes']).to eq(%w[read_customers])
+        end
+
+        it "still refuses an export type the grant's scopes do not cover" do
+          post :create, params: { type: 'customers' }, as: :json
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_permission']).to eq('read_customers')
+        end
+      end
+    end
   end
 end

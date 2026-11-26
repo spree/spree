@@ -63,4 +63,24 @@ RSpec.describe Spree::Exports::Report, type: :model do
     expect(rows.last.first).to eq('Total')
     expect(rows.last.last.to_i).to eq(1)
   end
+
+  describe '#required_key_scopes' do
+    it 'names the key scopes of the members the query breaks down by' do
+      export = described_class.new(store: store, user: admin,
+                                   search_params: { query: { 'metrics' => %w[total_sales], 'dimensions' => %w[customer] } })
+
+      expect(export.required_key_scopes).to include('read_customers')
+    end
+
+    it 'is nil when the stored query no longer compiles, so callers refuse it' do
+      export = described_class.new(store: store, user: admin,
+                                   search_params: { query: { 'metrics' => %w[total_sales], 'dimensions' => %w[removed_dimension] } })
+
+      expect(export.required_key_scopes).to be_nil
+    end
+
+    it 'asks nothing extra of exports whose rows do not depend on a query' do
+      expect(Spree::Exports::Products.new(store: store).required_key_scopes).to eq([])
+    end
+  end
 end

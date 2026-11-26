@@ -108,6 +108,16 @@ module Spree
       attachment.present? && attachment.attached?
     end
 
+    # Catalog keys a delegated credential must hold, beyond the export type's
+    # own read scope, to create or download this export. Only exports whose
+    # rows depend on what they were asked for (a report) need any; nil means
+    # they could not be worked out, and the export must be refused.
+    #
+    # @return [Array<String>, nil]
+    def required_key_scopes
+      []
+    end
+
     def generate_async
       Spree::Exports::GenerateJob.perform_later(id)
     end

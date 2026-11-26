@@ -40,9 +40,19 @@ module Spree
           # signed-URL endpoint because the SPA's Vite proxy only forwards
           # `/api/*`. A cross-origin redirect to `/rails/active_storage/...`
           # strips the Authorization header and the download fails silently.
+          # POST /api/v3/admin/exports
+          def create
+            @resource = build_resource
+            authorize_resource!(@resource, :create)
+            return if render_missing_member_scopes(@resource)
+
+            save_and_render(@resource, status: :created)
+          end
+
           def download
             @resource = find_resource
             authorize_resource!(@resource, :show)
+            return if render_missing_member_scopes(@resource)
 
             unless @resource.done?
               return render_error(
@@ -145,6 +155,45 @@ module Spree
           end
 
           private
+
+          # A report export reads whatever its query groups or filters by, so
+          # it is held to the per-member scopes the reporting endpoint checks
+          # (customers, products, promotions…), not just `read_reports`. The
+          # export model checks the requesting user's ability; an OAuth grant
+          # authenticates as the staff member who approved it, so without
+          # this a grant for `read_reports` alone could export, or download,
+          # a report broken down by customer — names, emails and spend.
+          #
+          # @return [Boolean] whether the request was refused
+          def render_missing_member_scopes(export)
+            required = export.required_key_scopes
+
+            if required.nil?
+              # A new export's query that does not compile is the model's to
+              # refuse, with a validation error naming the problem. A stored
+              # one whose members can no longer be resolved fails closed:
+              # what it reads cannot be checked against this credential.
+              return false if export.new_record?
+
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+                message: 'This report export can no longer be checked against your permissions',
+                status: :forbidden
+              )
+              return true
+            end
+
+            missing = required.reject { |scope| holds_permission?(scope) }
+            return false if missing.empty?
+
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: "Missing permission: #{missing.join(', ')}",
+              status: :forbidden,
+              details: { required_scopes: missing }
+            )
+            true
+          end
 
           def export_class
             action_name == 'create' ? resolve_export_type(params[:type]) : find_resource.class
