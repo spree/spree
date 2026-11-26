@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRequestFn, type RequestCompleteEvent, SpreeError } from '../src/request'
 
 function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
@@ -136,5 +136,73 @@ describe('onRequestComplete', () => {
     const fetchFn = vi.fn().mockResolvedValue(jsonResponse({ ok: true }))
 
     await expect(buildRequest(fetchFn)('GET', '/products')).resolves.toEqual({ ok: true })
+  })
+})
+
+describe('Retry-After', () => {
+  function buildRetryingRequest(fetchFn: typeof fetch) {
+    return createRequestFn(
+      {
+        baseUrl: 'https://api.test.com',
+        fetchFn,
+        retryConfig: {
+          maxRetries: 1,
+          retryOnStatus: [503],
+          baseDelay: 1000,
+          maxDelay: 10000,
+          retryOnNetworkError: true,
+        },
+      },
+      '/api/v3/store',
+      { headerName: 'X-Spree-Api-Key', headerValue: 'pk_test' },
+    )
+  }
+
+  async function attemptsAfter(retryAfter: string, milliseconds: number[]): Promise<number[]> {
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ error: { code: 'busy', message: 'Busy' } }, 503, {
+          'Retry-After': retryAfter,
+        }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: [] }))
+    const request = buildRetryingRequest(fetchFn)('GET', '/products')
+
+    const attempts: number[] = []
+    let elapsed = 0
+    for (const time of milliseconds) {
+      await vi.advanceTimersByTimeAsync(time - elapsed)
+      elapsed = time
+      attempts.push(fetchFn.mock.calls.length)
+    }
+    await request
+    return attempts
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers({ now: new Date('2026-01-01T00:00:00Z') })
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+
+  it('waits the number of seconds the header gives', async () => {
+    expect(await attemptsAfter('3', [0, 2999, 3000])).toEqual([1, 1, 2])
+  })
+
+  it('waits until the HTTP date the header gives', async () => {
+    expect(await attemptsAfter('Thu, 01 Jan 2026 00:00:03 GMT', [0, 2999, 3000])).toEqual([1, 1, 2])
+  })
+
+  it('retries at once when the HTTP date has passed', async () => {
+    expect(await attemptsAfter('Wed, 31 Dec 2025 23:59:00 GMT', [0])).toEqual([2])
+  })
+
+  it('falls back to the backoff delay when the header cannot be read', async () => {
+    expect(await attemptsAfter('soon', [0, 999, 1000])).toEqual([1, 1, 2])
   })
 })
