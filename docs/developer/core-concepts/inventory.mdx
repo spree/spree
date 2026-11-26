@@ -108,7 +108,7 @@ curl 'https://api.mystore.com/api/v3/admin/stock_locations' \
 
 </CodeGroup>
 
-Deleting a stock location keeps its history. Its stock levels go with it, but its stock movements stay in the ledger under its name, and transfers and purchase orders that name it stay readable. A transfer already on its way from a deleted location can still be received at its destination. Nothing can be received into a deleted location, and cancelling a transfer in transit from one writes its units off rather than restocking them.
+Deleting a stock location keeps its history. Its stock levels go with it, but its stock movements stay in the ledger under its name, and transfers and purchase orders that name it stay readable. A transfer already on its way from a deleted location can still be received at its destination. Nothing can be received into a deleted location. To cancel a transfer still in transit from one, pass `on_in_transit: 'write_off'`: its outstanding units are written off, and units already received stay where they landed. `restock` is refused, since the source has no shelf left to return them to.
 
 ## Reading and adjusting stock
 

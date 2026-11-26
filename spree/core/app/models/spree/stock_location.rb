@@ -329,12 +329,15 @@ module Spree
     end
 
     # In bulk, as the hard delete it replaces was: a location can hold a level
-    # for every variant in the catalog. The variants are touched first, while
-    # the levels still reach them, so cached availability drops this shelf.
+    # for every variant in the catalog. The variant ids are read while the
+    # levels still reach them; the levels are then hidden before the variants
+    # are touched, the same level-then-variant lock order stock writes take,
+    # and cached availability drops this shelf.
     def soft_delete_stock_levels
       deleted_at = Time.current
-      variants.update_all(updated_at: deleted_at)
+      variant_ids = stock_levels.pluck(:variant_id)
       stock_levels.update_all(deleted_at: deleted_at, updated_at: deleted_at)
+      Spree::Variant.where(id: variant_ids).update_all(updated_at: deleted_at)
     end
 
     def conditional_touch_records
