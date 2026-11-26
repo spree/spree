@@ -108,14 +108,19 @@ export function ReturnReceiveDialog({
           {lines.map((line) => (
             <div key={line.id} className="flex flex-col gap-3">
               <div className="flex items-baseline justify-between gap-3">
-                <span className="font-medium text-base">{line.label}</span>
+                <span id={`return-line-${line.id}`} className="font-medium text-base">
+                  {line.label}
+                </span>
                 <span className="shrink-0 text-muted-foreground text-sm">
                   {t('admin.pages.orders.detail.returns.units_to_receive', {
                     count: line.quantity,
                   })}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <fieldset
+                aria-labelledby={`return-line-${line.id}`}
+                className="grid min-w-0 grid-cols-2 gap-3"
+              >
                 {parts.map(({ part, label }) => (
                   <Field key={part}>
                     <FieldLabel htmlFor={`${part}-${line.id}`}>{label}</FieldLabel>
@@ -129,7 +134,7 @@ export function ReturnReceiveDialog({
                     />
                   </Field>
                 ))}
-              </div>
+              </fieldset>
             </div>
           ))}
         </DialogBody>

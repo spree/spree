@@ -194,6 +194,7 @@ RSpec.describe 'Spree::Returns workflows' do
 
       it 'receives the rest of a partly received return later' do
         Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: line, quantity: 1 }])
+        on_hand_after_first = stock_level.reload.count_on_hand
 
         result = Spree::Returns::Receive.call(
           return_record: return_record.reload,
@@ -206,7 +207,7 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(line.received_quantity).to eq(3)
         expect(line.resellable_quantity).to eq(1)
         expect(return_record.reload.refund_total).to eq(75)
-        expect(stock_level.reload.count_on_hand).to eq(stock_level.count_on_hand)
+        expect(stock_level.reload.count_on_hand).to eq(on_hand_after_first)
       end
 
       it 'receives only what is still outstanding when no items are named' do
