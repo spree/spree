@@ -189,8 +189,10 @@ module Spree
     # about a new one — a key nobody recognizes is the first sign of a
     # compromised account.
     def notify_store_admins
+      notice = Spree::ApiKeyMailer.notice_for(self)
+
       store.users.merge(Spree::Role.admin).find_each do |admin_user|
-        Spree::ApiKeyMailer.secret_key_created(self, admin_user).deliver_later
+        Spree::ApiKeyMailer.secret_key_created(store, notice, admin_user).deliver_later
       rescue StandardError => e
         # The key already exists; one admin's failed enqueue must neither
         # fail the request nor cost the other admins their notice.

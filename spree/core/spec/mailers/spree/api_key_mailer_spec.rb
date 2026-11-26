@@ -10,7 +10,7 @@ describe Spree::ApiKeyMailer, type: :mailer do
   end
 
   describe '#secret_key_created' do
-    let(:message) { described_class.secret_key_created(api_key, admin_user) }
+    let(:message) { described_class.secret_key_created(store, described_class.notice_for(api_key), admin_user) }
 
     it 'sends to the admin with the store in the subject' do
       expect(message.to).to eq(['owner@example.com'])
@@ -41,13 +41,13 @@ describe Spree::ApiKeyMailer, type: :mailer do
       la_store = create(:store, preferred_timezone: 'America/Los_Angeles')
       key = create(:api_key, :secret, store: la_store, name: 'LA key', created_at: Time.utc(2026, 11, 23, 1, 30))
 
-      expect(email_body(described_class.secret_key_created(key, admin_user))).to include('2026-11-22 17:30 PST')
+      expect(email_body(described_class.secret_key_created(la_store, described_class.notice_for(key), admin_user))).to include('2026-11-22 17:30 PST')
     end
 
     it 'still reads well without a creator or an IP address' do
       api_key.update_columns(created_by_id: nil, created_by_type: nil, created_by_ip_address: nil)
 
-      body = email_body(described_class.secret_key_created(api_key.reload, admin_user))
+      body = email_body(described_class.secret_key_created(store, described_class.notice_for(api_key.reload), admin_user))
 
       expect(body).to include('A new Admin API key named &quot;Mac Mini&quot; was created')
       expect(body).not_to include('IP address')

@@ -6,7 +6,8 @@ module Spree
     include Spree::PreviewData::LocaleParam
 
     def secret_key_created
-      Spree::ApiKeyMailer.secret_key_created(example_key, Spree::PreviewData.admin_user)
+      key = example_key
+      Spree::ApiKeyMailer.secret_key_created(key.store, Spree::ApiKeyMailer.notice_for(key), Spree::PreviewData.admin_user)
     end
 
     private

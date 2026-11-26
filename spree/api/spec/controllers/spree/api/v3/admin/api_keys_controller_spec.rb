@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
 
       expect {
         post :create, params: { name: 'notified', key_type: 'secret', scopes: ['write_api_keys'] }, as: :json
-      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, admin_user)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(store, anything, admin_user)
 
       expect(Spree::ApiKey.find_by_prefix_id!(json_response['id']).created_by_ip_address).to eq('203.0.113.7')
     end
