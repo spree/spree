@@ -4,8 +4,10 @@ import {
   formatMoney,
   isPositiveMoney,
   postSaleItemRow,
+  returnAwaitsGoods,
   returnOwesNothing,
   returnRefundSummary,
+  unitsToReceive,
   useMoneyLocale,
 } from '@spree/dashboard-core'
 import {
@@ -123,7 +125,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                             {t('orders.post_sale.approve')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'approved' && (
+                        {returnAwaitsGoods(returnRecord) && (
                           <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
                             {t('orders.post_sale.returns.receive')}
                           </DropdownMenuItem>
@@ -214,8 +216,12 @@ function ReturnLineBadges({ line }: { line: ReturnLineItem }) {
           })}
         </Badge>
       )}
-      {!line.resellable && (
-        <Badge variant="outline">{t('orders.post_sale.returns.not_resellable')}</Badge>
+      {line.received_quantity > line.resellable_quantity && (
+        <Badge variant="outline">
+          {t('orders.post_sale.returns.not_resellable_count', {
+            count: line.received_quantity - line.resellable_quantity,
+          })}
+        </Badge>
       )}
     </>
   )
@@ -237,11 +243,13 @@ function ReceiveDialog({
 
   return (
     <ReturnReceiveDialog
-      lines={(returnRecord.return_line_items ?? []).map((line) => ({
-        id: line.id,
-        label: lineLabel(line.name, line.variant, line.variant_id),
-        quantity: line.quantity,
-      }))}
+      lines={(returnRecord.return_line_items ?? [])
+        .filter((line) => unitsToReceive(line) > 0)
+        .map((line) => ({
+          id: line.id,
+          label: lineLabel(line.name, line.variant, line.variant_id),
+          quantity: unitsToReceive(line),
+        }))}
       onClose={() => onOpenChange(false)}
       pending={receive.isPending}
       onSubmit={(items) => {

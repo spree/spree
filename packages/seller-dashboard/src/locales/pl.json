@@ -133,7 +133,7 @@
             "memo": "Notatka",
             "reason": "Powód",
             "receive_title": "Przyjmij zwrócone pozycje",
-            "received_quantity": "Przyjęto",
+            "units_to_receive": "Do przyjęcia: {{count}}",
             "refund_amount": "Kwota",
             "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwrot na",
@@ -144,7 +144,8 @@
             "refund_title": "Zwrot pieniędzy za zwrot",
             "complete_title": "Zakończ zwrot",
             "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
-            "resellable": "Do ponownej sprzedaży"
+            "resellable": "Do ponownej sprzedaży",
+            "not_resellable": "Nie do ponownej sprzedaży"
           }
         }
       }
@@ -524,8 +525,8 @@
         "cancel_title": "Anulować ten zwrot?",
         "create": "Nowy zwrot",
         "empty": "Z tego zamówienia nic nie wróciło.",
-        "not_resellable": "Nie do ponownej sprzedaży",
         "partially_received": "Przyjęto {{received}} z {{quantity}}",
+        "not_resellable_count": "Nie do ponownej sprzedaży: {{count}}",
         "receive": "Przyjmij",
         "refund": "Zwrot pieniędzy",
         "refund_total": "Łączny zwrot: {{amount}}",

@@ -175,7 +175,9 @@ RSpec.describe 'Admin Exchanges API', type: :request, swagger_doc: 'api-referenc
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Records the goods that came back on an approved exchange. Omit `items` to receive everything as requested and resellable.'
+      description 'Records the goods that came back on an approved exchange, or on a received one with units still to come. ' \
+                  'Omit `items` to receive every unit still to come as resellable; ' \
+                  'name a line twice to receive part of it as resellable and part not.'
       admin_scope :write, :orders
 
       admin_sdk_example 'order-exchanges/receive'

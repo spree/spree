@@ -6,6 +6,7 @@ export const ReturnLineItemSchema = z.object({
   id: z.string(),
   quantity: z.number(),
   received_quantity: z.number(),
+  resellable_quantity: z.number(),
   resellable: z.boolean(),
   pre_tax_amount: z.string().nullable(),
   display_pre_tax_amount: z.string().nullable(),

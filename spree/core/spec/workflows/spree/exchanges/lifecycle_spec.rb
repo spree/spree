@@ -108,6 +108,18 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(stock_level.reload.count_on_hand).to eq(stock_level.count_on_hand)
       expect(line.reload.resellable).to be(false)
     end
+
+    it 'receives a line in parts, restocking only what can be resold' do
+      line = exchange.exchange_line_items.first
+      line.update!(quantity: 2)
+      stock_level = exchange.stock_location.stock_level_or_create(line.original_variant)
+
+      Spree::Exchanges::Receive.call(exchange: exchange, items: [{ exchange_line_item: line, quantity: 1, resellable: false }])
+
+      expect { Spree::Exchanges::Receive.call(exchange: exchange.reload) }.
+        to change { stock_level.reload.count_on_hand }.by(1)
+      expect([line.reload.received_quantity, line.resellable_quantity]).to eq([2, 1])
+    end
   end
 
   describe Spree::Exchanges::Fulfill do

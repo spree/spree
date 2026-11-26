@@ -7,6 +7,7 @@ module Spree
   # the tax on it beside that, both for the announced quantity.
   class ReturnLineItem < Spree.base_class
     include Spree::PostSale::TaxedLine
+    include Spree::PostSale::ReceivedLine
 
     has_prefix_id :rli
 

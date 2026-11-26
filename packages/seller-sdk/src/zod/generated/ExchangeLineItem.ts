@@ -6,6 +6,7 @@ export const ExchangeLineItemSchema = z.object({
   id: z.string(),
   quantity: z.number(),
   received_quantity: z.number(),
+  resellable_quantity: z.number(),
   resellable: z.boolean(),
   original_price: z.string(),
   new_variant_price: z.string(),

@@ -138,8 +138,9 @@
         "detail": {
           "returns": {
             "receive_title": "返品された品目を受け取る",
-            "received_quantity": "受け取り済み",
+            "units_to_receive": "受け取り待ち: {{count}}",
             "resellable": "再販できる",
+            "not_resellable": "再販できない",
             "actions": {
               "receive": "品目を受け取る",
               "refund": "返金",
@@ -522,8 +523,8 @@
         "cancel_title": "この返品をキャンセルしますか？",
         "create": "新しい返品",
         "empty": "この注文から返品された商品はありません。",
-        "not_resellable": "再販できない",
         "partially_received": "{{quantity}} 点中 {{received}} 点を受け取り済み",
+        "not_resellable_count": "再販できない: {{count}}",
         "receive": "受け取る",
         "refund": "返金",
         "refund_total": "返金合計: {{amount}}",

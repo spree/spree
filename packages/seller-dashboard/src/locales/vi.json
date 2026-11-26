@@ -138,8 +138,9 @@
         "detail": {
           "returns": {
             "receive_title": "Nhận hàng trả lại",
-            "received_quantity": "Đã nhận",
+            "units_to_receive": "Cần nhận: {{count}}",
             "resellable": "Có thể bán lại",
+            "not_resellable": "Không thể bán lại",
             "actions": {
               "receive": "Nhận vật phẩm",
               "refund": "Hoàn tiền",
@@ -522,8 +523,8 @@
         "cancel_title": "Hủy việc trả lại hàng này?",
         "create": "Sự trở lại mới",
         "empty": "Không có gì trở lại từ đơn đặt hàng này.",
-        "not_resellable": "Không thể bán lại",
         "partially_received": "Đã nhận được {{received}} trong tổng số {{quantity}}",
+        "not_resellable_count": "Không thể bán lại: {{count}}",
         "receive": "Nhận",
         "refund": "Hoàn tiền",
         "refund_total": "Tổng số tiền hoàn lại: {{amount}}",

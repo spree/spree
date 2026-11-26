@@ -96,7 +96,7 @@ await adminClient.orders.returns.approve('or_xxx', 'ret_xxx')
 await adminClient.orders.returns.receive('or_xxx', 'ret_xxx', {
   items: [
     { return_line_item_id: 'rli_1', quantity: 2, resellable: true },
-    { return_line_item_id: 'rli_2', quantity: 1, resellable: false },
+    { return_line_item_id: 'rli_1', quantity: 1, resellable: false },
   ],
 })
 
@@ -118,7 +118,9 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
-Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing. Refunding a return that is owed nothing completes it with no money moved and no refund email; an amount of zero is refused on any return the customer is still owed money on.
+Name a line twice to receive part of it as resellable and part not, as in the example above. Each line reports `received_quantity`, the units that have arrived, and `resellable_quantity`, the ones among them that went back into stock. A return stays open for receiving until every unit has arrived: receive it again when the rest of the parcel turns up, and each receipt adds to the ones before. The refund covers every unit received so far.
+
+Leave `items` out to receive every unit still to come as resellable. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing. Refunding a return that is owed nothing completes it with no money moved and no refund email; an amount of zero is refused on any return the customer is still owed money on.
 
 ### Tax on returns
 

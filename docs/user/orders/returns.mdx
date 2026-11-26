@@ -56,14 +56,15 @@ A return moves through five statuses. The **Actions** button on the return offer
 |---|---|
 | **Requested** | The customer has asked to send goods back. Nothing has moved yet. **Actions** offers **Approve** and **Cancel**. |
 | **Approved** | You have agreed to take the goods back and are waiting for them. **Actions** offers **Receive items** and **Cancel**. |
-| **Received** | The goods have been counted in. Resellable units are back in stock. **Actions** offers **Refund** only. |
+| **Received** | The goods have been counted in. Resellable units are back in stock. **Actions** offers **Refund**, and **Receive items** while some units have still to arrive. |
 | **Refunded** | The money has gone back to the customer. The return is finished and has no **Actions** button. |
 | **Canceled** | The return was called off before any money moved. The units can go on a new return. |
 
 1. On the order's **Returns** card, click **Actions** on the return and choose **Approve**. The status changes to **Approved** straight away.
-2. When the parcel arrives, click **Actions** and choose **Receive items**. The **Receive returned items** dialog opens with the **Received** box filled in with the full quantity on the return.
-3. Change **Received** to the number of units that actually arrived. Leave **Resellable** switched on if they can go back on sale. The switch covers every unit on that line.
-4. Click **Receive items**. The return reads **Received**, the line shows how many arrived against how many were expected (for example **2 of 3 received**), and the **Refund total** drops to the value of what arrived. The resellable units are added back to stock at the return's warehouse.
+2. When the parcel arrives, click **Actions** and choose **Receive items**. The **Receive returned items** dialog opens with each line's units still to arrive filled in under **Resellable**, and **Not resellable** at 0.
+3. Enter how many units of each line can go back on sale under **Resellable**, and how many cannot, such as damaged ones, under **Not resellable**. Units you leave out of both stay outstanding.
+4. Click **Receive items**. The return reads **Received**, the line shows how many arrived against how many were expected (for example **2 of 3 received**) and how many are not resellable, and the **Refund total** covers what arrived. The resellable units are added back to stock at the return's warehouse.
+5. If the rest arrives later, click **Actions** and choose **Receive items** again. The dialog offers only the units still to arrive, and the refund grows to cover them.
 
 Count what is in front of you rather than what the customer said they sent. The figure you enter is what the refund amount is worked out from.
 

@@ -167,6 +167,75 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result).to be_failure
     end
 
+    context 'when a line comes back in parts' do
+      let(:stock_level) { return_record.stock_location.stock_level_or_create(line.variant) }
+
+      before { line.update!(quantity: 3, pre_tax_amount: 75) }
+
+      it 'records part of a line as resellable and the rest as not, restocking only the resellable part' do
+        expect do
+          result = Spree::Returns::Receive.call(
+            return_record: return_record,
+            items: [
+              { return_line_item: line, quantity: 2, resellable: true },
+              { return_line_item: line, quantity: 1, resellable: false }
+            ]
+          )
+          expect(result).to be_success
+        end.to change { stock_level.reload.count_on_hand }.by(2).
+          and change { Spree::StockMovement.where(stock_level: stock_level).count }.by(1)
+
+        line.reload
+        expect(line.received_quantity).to eq(3)
+        expect(line.resellable_quantity).to eq(2)
+        expect(line.resellable).to be(false)
+        expect(return_record.reload.refund_total).to eq(75)
+      end
+
+      it 'receives the rest of a partly received return later' do
+        Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: line, quantity: 1 }])
+
+        result = Spree::Returns::Receive.call(
+          return_record: return_record.reload,
+          items: [{ return_line_item: line, quantity: 2, resellable: false }]
+        )
+
+        expect(result).to be_success
+        expect(result.value).to be_received
+        line.reload
+        expect(line.received_quantity).to eq(3)
+        expect(line.resellable_quantity).to eq(1)
+        expect(return_record.reload.refund_total).to eq(75)
+        expect(stock_level.reload.count_on_hand).to eq(stock_level.count_on_hand)
+      end
+
+      it 'receives only what is still outstanding when no items are named' do
+        Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: line, quantity: 1 }])
+
+        expect { Spree::Returns::Receive.call(return_record: return_record.reload) }.
+          to change { stock_level.reload.count_on_hand }.by(2)
+        expect(line.reload.received_quantity).to eq(3)
+      end
+
+      it 'refuses to receive more than is still outstanding' do
+        Spree::Returns::Receive.call(return_record: return_record, items: [{ return_line_item: line, quantity: 2 }])
+
+        result = Spree::Returns::Receive.call(
+          return_record: return_record.reload,
+          items: [{ return_line_item: line, quantity: 1 }, { return_line_item: line, quantity: 1, resellable: false }]
+        )
+
+        expect(result).to be_failure
+        expect(line.reload.received_quantity).to eq(2)
+      end
+
+      it 'refuses a return whose every unit has been received' do
+        Spree::Returns::Receive.call(return_record: return_record)
+
+        expect(Spree::Returns::Receive.call(return_record: return_record.reload)).to be_failure
+      end
+    end
+
     it 'refuses a return that has not been approved' do
       requested = create(:return, store: store)
 
