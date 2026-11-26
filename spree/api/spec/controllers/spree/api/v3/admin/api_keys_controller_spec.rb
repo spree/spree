@@ -98,12 +98,13 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
       expect(json_response['scopes']).to eq(['read_orders'])
     end
 
-    it "leaves out the creator's IP address without read_api_keys" do
+    it "blanks the creator's IP address without read_api_keys" do
       caller_key.update_column(:created_by_ip_address, '203.0.113.7')
 
       get :current, as: :json
 
-      expect(json_response).not_to have_key('created_by_ip_address')
+      expect(response.body.scan('"created_by_ip_address"').size).to eq(1)
+      expect(json_response['created_by_ip_address']).to be_nil
     end
 
     it "includes the creator's IP address with read_api_keys" do
