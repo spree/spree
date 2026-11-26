@@ -80,11 +80,17 @@ module Spree
             end
 
             def default_billing_flag
-              params[:is_default_billing].to_b
+              default_flag(:is_default_billing)
             end
 
             def default_shipping_flag
-              params[:is_default_shipping].to_b
+              default_flag(:is_default_shipping)
+            end
+
+            # true claims the slot, false gives it up, and leaving the flag out
+            # keeps the slot where it is — so silence must stay nil, not false.
+            def default_flag(name)
+              ActiveModel::Type::Boolean.new.cast(params[name]) if params.key?(name)
             end
           end
         end
