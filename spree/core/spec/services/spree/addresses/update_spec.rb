@@ -143,6 +143,14 @@ RSpec.describe Spree::Addresses::Update do
             it 'takes that address' do
               expect(result.value.id).to eq same_address.id
             end
+
+            it 'keeps the defaults that address already held when the request names none' do
+              user.update!(bill_address: same_address, ship_address: same_address)
+
+              expect(result.value.id).to eq same_address.id
+              expect(user.reload.bill_address_id).to eq(same_address.id)
+              expect(user.ship_address_id).to eq(same_address.id)
+            end
           end
 
           context 'when its soft deleted' do
@@ -195,6 +203,19 @@ RSpec.describe Spree::Addresses::Update do
 
               expect(user.reload.ship_address).to eq(value)
               expect(user.bill_address).to eq(other_address)
+            end
+          end
+
+          context 'when the request gives up the default billing the old address held' do
+            let(:result) { subject.call(address: address, address_params: new_address_params, order: order, default_billing: false) }
+
+            before { user.update!(bill_address: address, ship_address: address) }
+
+            it 'clears the default billing and carries the default shipping over' do
+              expect(result).to be_success
+
+              expect(user.reload.bill_address_id).to be_nil
+              expect(user.ship_address).to eq(value)
             end
           end
         end

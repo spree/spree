@@ -4,6 +4,8 @@ module Spree
       module Admin
         module Customers
           class AddressesController < BaseController
+            include Spree::Api::V3::AddressDefaultFlags
+
             request_params :customer_address do |body|
               body.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
               body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
@@ -80,17 +82,11 @@ module Spree
             end
 
             def default_billing_flag
-              default_flag(:is_default_billing)
+              flag_param(:is_default_billing)
             end
 
             def default_shipping_flag
-              default_flag(:is_default_shipping)
-            end
-
-            # true claims the slot, false gives it up, and leaving the flag out
-            # keeps the slot where it is — so silence must stay nil, not false.
-            def default_flag(name)
-              ActiveModel::Type::Boolean.new.cast(params[name]) if params.key?(name)
+              flag_param(:is_default_shipping)
             end
           end
         end

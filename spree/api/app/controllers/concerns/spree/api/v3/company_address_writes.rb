@@ -10,6 +10,7 @@ module Spree
       # address itself is written.
       module CompanyAddressWrites
         extend ActiveSupport::Concern
+        include AddressDefaultFlags
 
         protected
 
@@ -22,16 +23,6 @@ module Spree
         # @return [Hash] default keywords for Spree::Addresses::Create / Update
         def default_flags
           { default_billing: flag_param(:default_billing), default_shipping: flag_param(:default_shipping) }
-        end
-
-        # Each flag has three meanings and they are all different: true claims
-        # the slot, false gives it up, and saying nothing leaves it alone.
-        #
-        # @return [Boolean, nil] nil when the client said nothing about it
-        def flag_param(name)
-          return nil unless params.key?(name)
-
-          ActiveModel::Type::Boolean.new.cast(params[name])
         end
       end
     end
