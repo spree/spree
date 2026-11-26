@@ -39,6 +39,7 @@ module Spree
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
     include Spree::Purchase::DeprecatedAliases
+    include Spree::Purchase::Warnings
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -49,9 +50,6 @@ module Spree
     # 2026-03-16 "Consolidate metadata").
     attribute :metadata, default: -> { {} }
     attribute :accept_marketing, :boolean, default: false
-
-    # Transient warnings populated by remove_out_of_stock_items!
-    attribute :warnings, default: -> { [] }
 
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
                   :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
@@ -404,10 +402,6 @@ module Spree
     def remove_unavailable_coupon_code!
       return self unless coupon_code_unavailable?
 
-      # The lock refuses unsaved attributes and reloads the cart, so this
-      # request's warnings are set aside and put back.
-      existing_warnings = warnings
-      clear_attribute_changes([:warnings])
       removed = with_lock do
         # Checked under the lock, as the completion claim itself is: a
         # completing cart's code sits on its draft order while the payment
@@ -417,7 +411,6 @@ module Spree
         Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
         true
       end
-      self.warnings = existing_warnings
       self.warnings |= [{ code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }] if removed
       self
     end

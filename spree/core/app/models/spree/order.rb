@@ -49,6 +49,7 @@ module Spree
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
     include Spree::Purchase::DeprecatedAliases
+    include Spree::Purchase::Warnings
     has_spree_number prefix: 'R'
 
     include Spree::NumberIdentifier
@@ -76,10 +77,6 @@ module Spree
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
                   :payment_total,       :amount_due,           :fee_total,
                   :commission_amount_total, :commission_tax_total, :commission_total
-
-
-    # Transient warnings populated by remove_out_of_stock_items! and ensure_available_delivery_rates
-    attribute :warnings, default: -> { [] }
 
     # Removes out-of-stock/discontinued items and populates warnings.
     # Returns self (reloaded if items were removed) with warnings set.

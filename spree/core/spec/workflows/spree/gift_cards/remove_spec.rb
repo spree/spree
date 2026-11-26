@@ -43,6 +43,14 @@ RSpec.describe Spree::GiftCards::Remove do
       subject
     end
 
+    it 'does nothing when the card was detached after the order was loaded' do
+      order.gift_card
+      described_class.call(order: Spree::Order.find(order.id))
+
+      expect(order).not_to receive(:recalculate_totals!)
+      expect(subject).to be_success
+    end
+
     context 'for a completed order' do
       before { order.update_column(:completed_at, Time.current) }
 

@@ -34,6 +34,20 @@ RSpec.describe 'draft order item services' do
     expect(order.line_items.sole.quantity).to eq(2)
   end
 
+  it 'keeps a gift card through a quantity change and resizes it to the new total' do
+    create(:store_credit_payment_method)
+    Spree::Orders::AddItem.call(order: order, variant: create(:variant, price: 20), quantity: 3)
+    gift_card = create(:gift_card, amount: 100, store: order.store)
+    order.apply_gift_card(gift_card)
+    expect(order.reload.gift_card_total).to eq(60)
+
+    expect(Spree::Orders::UpdateItem.call(order: order, line_item: order.line_items.sole, quantity: 1)).to be_success
+
+    expect(order.reload.gift_card).to eq(gift_card)
+    expect(order.gift_card_total).to eq(20)
+    expect(gift_card.reload.amount_used).to eq(20)
+  end
+
   # A line's unit price can depend on how many of it are being bought, so a
   # quantity edit on a draft is a pricing question and not only an arithmetic
   # one (docs/plans/6.0-volume-pricing.md).

@@ -16,10 +16,10 @@ module Spree
         run_hooks :validate
 
         order.with_lock do
-          # Re-checked inside the lock: the nil check above runs before it, so
-          # a concurrent remove can detach the card in between and leave every
-          # step below dereferencing nil.
-          @gift_card = order.reload.gift_card
+          # Re-checked inside the lock, whose reload gives a fresh read: the nil
+          # check above runs before it, so a concurrent remove can detach the
+          # card in between and leave every step below dereferencing nil.
+          @gift_card = order.gift_card
           next if @gift_card.nil?
 
           step :void_payments
