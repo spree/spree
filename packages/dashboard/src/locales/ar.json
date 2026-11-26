@@ -38,7 +38,7 @@
       "create_sheet_description": "اختر نوع المفتاح، ثم اختر النطاقات التي يمكنه استخدامها.",
       "create_sheet_title": "قم بإنشاء مفتاح API",
       "created_by": "بواسطة {{actor}}",
-      "created_from_ip": "من {{ip}}",
+      "created_from_ip": "من عنوان IP {{ip}}",
       "delete_confirm": {
         "message": "يؤدي هذا إلى إزالة المفتاح بشكل دائم. تفضل الإلغاء إذا كان بإمكانك استعادة الوصول لاحقًا.",
         "title": "هل تريد حذف المفتاح؟"

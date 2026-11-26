@@ -38,7 +38,7 @@
       "create_sheet_description": "キーの種類を選び、使えるスコープを選んでください。",
       "create_sheet_title": "API キーを作成",
       "created_by": "{{actor}}による",
-      "created_from_ip": "{{ip}} から",
+      "created_from_ip": "IP {{ip}} から",
       "delete_confirm": {
         "message": "キーを完全に削除します。後でアクセスを戻すかもしれないなら、取り消しを選んでください。",
         "title": "キーを削除しますか？"

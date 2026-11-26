@@ -55,15 +55,16 @@ test.describe('api keys', () => {
     const name = `IP key ${Date.now()}`
     await createSecretKey(page, name)
 
-    // Hidden until asked for, then shown, then hidden again.
+    // Only the first part shows until asked for, then all of it, then masked again.
     const row = page.locator('tbody tr').filter({ hasText: name })
-    await expect(row.getByText('from ••••••••', { exact: true })).toBeVisible({ timeout: 15_000 })
+    const masked = /^from IP [0-9a-f]*[.:]\*{8}$/i
+    await expect(row.getByText(masked)).toBeVisible({ timeout: 15_000 })
 
     await row.getByRole('button', { name: /^show$/i }).click()
-    await expect(row.getByText(/^from [^•\s]+$/)).toBeVisible()
+    await expect(row.getByText(/^from IP [^*\s]+$/)).toBeVisible()
 
     await row.getByRole('button', { name: /^hide$/i }).click()
-    await expect(row.getByText('from ••••••••', { exact: true })).toBeVisible()
+    await expect(row.getByText(masked)).toBeVisible()
   })
 
   // Renames a key this test created rather than a seeded one, so the fixtures

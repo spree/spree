@@ -393,16 +393,20 @@ export function ScopeList({
   )
 }
 
-const MASKED_IP = '••••••••'
+/** Keeps the first part of an IPv4 or IPv6 address: `196.********`. */
+function maskIp(ip: string) {
+  const [, head = '', separator = '.'] = ip.match(/^([^.:]*)([.:])/) ?? []
+  return `${head}${separator}********`
+}
 
-/** Where a key was created from, hidden until the admin asks to see it. */
+/** Where a key was created from, mostly hidden until the admin asks to see it. */
 function CreatedFromIp({ ip }: { ip: string }) {
   const { t } = useTranslation()
   const [revealed, setRevealed] = useState(false)
 
   return (
     <div className="flex items-center gap-1 text-xs">
-      <span>{t('admin.api_keys.created_from_ip', { ip: revealed ? ip : MASKED_IP })}</span>
+      <span>{t('admin.api_keys.created_from_ip', { ip: revealed ? ip : maskIp(ip) })}</span>
       <Button
         type="button"
         size="icon-xs"

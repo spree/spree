@@ -38,7 +38,7 @@
       "create_sheet_description": "Choose a key type, then pick the scopes it can use.",
       "create_sheet_title": "Create API key",
       "created_by": "by {{actor}}",
-      "created_from_ip": "from {{ip}}",
+      "created_from_ip": "from IP {{ip}}",
       "delete_confirm": {
         "message": "This permanently removes the key. Prefer revoke if you might restore access later.",
         "title": "Delete key?"
