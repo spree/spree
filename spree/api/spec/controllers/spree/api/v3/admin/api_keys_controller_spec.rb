@@ -105,6 +105,10 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
 
       expect(response.body.scan('"created_by_ip_address"').size).to eq(1)
       expect(json_response['created_by_ip_address']).to be_nil
+
+      openapi = YAML.load_file(Rails.root.join('../../../../docs/api-reference/admin.yaml'))
+      errors = JSONSchemer.openapi(openapi).schema('ApiKey').validate(json_response).pluck('error')
+      expect(errors).to be_empty
     end
 
     it "includes the creator's IP address with read_api_keys" do
