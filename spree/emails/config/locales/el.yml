@@ -8,6 +8,15 @@ el:
         greeting: Γεια σου %{name},
         ignore_notice: Αν δεν ζητήσατε επαναφορά κωδικού πρόσβασης, μπορείτε με ασφάλεια να αγνοήσετε αυτό το email. Ο κωδικός πρόσβασής σας δεν θα αλλάξει.
         instructions: Λάβαμε ένα αίτημα για επαναφορά του κωδικού πρόσβασής σας. Κάντε κλικ στο παρακάτω κουμπί για να επιλέξετε νέο κωδικό πρόσβασης.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Αγαπητέ/ή %{name},
+        instructions: Η παραγγελία σας %{number} παραδόθηκε.
+        items_heading: Προϊόντα σε αυτή την παράδοση
+        let_us_know: Ενημερώστε μας
+        not_received: Δεν έχετε λάβει ακόμα το δέμα σας;
+        subject: Η παραγγελία σας παραδόθηκε
+        track_information: "Πληροφορίες παρακολούθησης: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Γεια,

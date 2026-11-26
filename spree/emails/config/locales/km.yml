@@ -8,6 +8,15 @@ km:
         greeting: សួស្តី %{name},
         ignore_notice: ប្រសិនបើអ្នកមិនបានស្នើសុំការកំណត់ពាក្យសម្ងាត់ឡើងវិញ អ្នកអាចមិនអើពើនឹងអ៊ីមែលនេះដោយសុវត្ថិភាព។ ពាក្យសម្ងាត់របស់អ្នកនឹងមិនត្រូវបានផ្លាស់ប្តូរទេ។
         instructions: យើងបានទទួលសំណើដើម្បីកំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញ។ ចុចប៊ូតុងខាងក្រោមដើម្បីជ្រើសរើសពាក្យសម្ងាត់ថ្មី។
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: ជូនចំពោះ %{name},
+        instructions: ការបញ្ជាទិញ %{number} របស់អ្នកត្រូវបានដឹកជញ្ជូនដល់ហើយ។
+        items_heading: ទំនិញក្នុងការដឹកជញ្ជូននេះ
+        let_us_know: ប្រាប់យើង
+        not_received: មិនទាន់ទទួលបានកញ្ចប់របស់អ្នកទេឬ?
+        subject: ការបញ្ជាទិញរបស់អ្នកត្រូវបានដឹកជញ្ជូនដល់ហើយ
+        track_information: "ព័ត៌មានតាមដាន: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: សួស្តី,

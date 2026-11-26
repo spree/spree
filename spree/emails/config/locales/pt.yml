@@ -9,6 +9,15 @@ pt:
         ignore_notice: Se não solicitou uma reposição de palavra-passe, pode ignorar este e-mail em segurança. A sua palavra-passe não será alterada.
         instructions: Recebemos um pedido para repor a sua palavra-passe. Clique no botão abaixo para escolher uma nova palavra-passe.
         subject: Instruções para redefinição de palavra-passe
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Caro(a) %{name},
+        instructions: A sua encomenda %{number} foi entregue.
+        items_heading: Artigos desta entrega
+        let_us_know: Informe-nos
+        not_received: Ainda não recebeu a sua encomenda?
+        subject: A sua encomenda foi entregue
+        track_information: "Informação de seguimento: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Olá,

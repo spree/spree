@@ -9,6 +9,15 @@ fr:
         ignore_notice: Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail en toute sécurité. Votre mot de passe ne sera pas modifié.
         instructions: Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.
         subject: Instructions de réinitialisation du mot de passe
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Bonjour %{name},
+        instructions: Votre commande %{number} a été livrée.
+        items_heading: Articles de cette livraison
+        let_us_know: Prévenez-nous
+        not_received: Vous n'avez pas encore reçu votre colis ?
+        subject: Votre commande a été livrée
+        track_information: "Informations de suivi : %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bonjour,

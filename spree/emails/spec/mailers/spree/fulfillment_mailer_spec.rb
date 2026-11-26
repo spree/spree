@@ -193,6 +193,15 @@ describe Spree::FulfillmentMailer, type: :mailer do
       expect(delivered_email).not_to have_body_text(I18n.t('spree.order_mailer.total'))
     end
 
+    context 'when the order is in German' do
+      before { order.update_column(:locale, 'de') }
+
+      it 'sends the shipped translation' do
+        expect(delivered_email.subject).to include('Ihre Bestellung wurde zugestellt')
+        expect(delivered_email).to have_body_text("Ihre Bestellung #{order.number} wurde zugestellt.")
+      end
+    end
+
     it 'accepts a fulfillment id' do
       expect(described_class.delivered_email(fulfillment.id).to).to eq(['test@example.com'])
     end

@@ -8,6 +8,15 @@ bg:
         greeting: Здравейте, %{name},
         ignore_notice: Ако не сте поискали нулиране на паролата, можете спокойно да игнорирате този имейл. Паролата ви няма да бъде променена.
         instructions: Получихме заявка за нулиране на паролата ви. Натиснете бутона по-долу, за да изберете нова парола.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Уважаеми(а) %{name},
+        instructions: Вашата поръчка %{number} е доставена.
+        items_heading: Артикули в тази доставка
+        let_us_know: Уведомете ни
+        not_received: Все още не сте получили пратката си?
+        subject: Вашата поръчка е доставена
+        track_information: "Информация за проследяване: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Здравейте,

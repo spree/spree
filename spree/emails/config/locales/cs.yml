@@ -9,6 +9,15 @@ cs:
         ignore_notice: Pokud jste o obnovení hesla nežádali, můžete tento e-mail bez obav ignorovat. Vaše heslo nebude změněno.
         instructions: Obdrželi jsme žádost o obnovení vašeho hesla. Kliknutím na tlačítko níže si zvolte nové heslo.
         subject: Pokyny k obnovení hesla
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Vážený zákazníku %{name},
+        instructions: Vaše objednávka %{number} byla doručena.
+        items_heading: Položky v této zásilce
+        let_us_know: Dejte nám vědět
+        not_received: Ještě jste zásilku neobdrželi?
+        subject: Vaše objednávka byla doručena
+        track_information: "Informace o sledování: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Dobrý den,

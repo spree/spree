@@ -9,6 +9,15 @@ zh-CN:
         ignore_notice: 如果您没有请求重置密码，可以放心忽略此邮件。您的密码不会被更改。
         instructions: 我们收到了重置您密码的请求。请点击下方按钮设置新密码。
         subject: 密码重置说明
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: 亲爱的 %{name}，
+        instructions: 您的订单 %{number} 已送达。
+        items_heading: 本次配送的商品
+        let_us_know: 告诉我们
+        not_received: 还没有收到包裹？
+        subject: 您的订单已送达
+        track_information: 物流追踪信息：%{tracking}
     newsletter_mailer:
       email_confirmation:
         dear_customer: 您好，

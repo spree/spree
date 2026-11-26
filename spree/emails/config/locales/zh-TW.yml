@@ -9,6 +9,15 @@ zh-TW:
         ignore_notice: 若您並未要求重設密碼，可放心忽略此電子郵件。您的密碼不會被變更。
         instructions: 我們收到了重設您密碼的要求。請點選下方按鈕設定新密碼。
         subject: 密碼重設說明
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: 親愛的 %{name}，
+        instructions: 您的訂單 %{number} 已送達。
+        items_heading: 本次配送的商品
+        let_us_know: 告訴我們
+        not_received: 還沒收到包裹嗎？
+        subject: 您的訂單已送達
+        track_information: 物流追蹤資訊：%{tracking}
     newsletter_mailer:
       email_confirmation:
         dear_customer: 您好，

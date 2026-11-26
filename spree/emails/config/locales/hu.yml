@@ -8,6 +8,15 @@ hu:
         greeting: Üdv %{name}!
         ignore_notice: Ha nem kért jelszó-visszaállítást, nyugodtan figyelmen kívül hagyhatja ezt az e-mailt. A jelszava nem fog megváltozni.
         instructions: Kérést kaptunk a jelszava visszaállítására. Kattintson az alábbi gombra egy új jelszó kiválasztásához.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Kedves %{name}!
+        instructions: A(z) %{number} számú rendelését kézbesítettük.
+        items_heading: A szállítmány tételei
+        let_us_know: Jelezze nekünk
+        not_received: Még nem kapta meg a csomagját?
+        subject: Rendelését kézbesítettük
+        track_information: "Nyomkövetési információ: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Üdv,

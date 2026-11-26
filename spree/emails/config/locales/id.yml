@@ -8,6 +8,15 @@ id:
         greeting: Hai %{name},
         ignore_notice: Jika Anda tidak meminta pengaturan ulang kata sandi, Anda dapat mengabaikan email ini dengan aman. Kata sandi Anda tidak akan diubah.
         instructions: Kami menerima permintaan untuk mengatur ulang kata sandi Anda. Klik tombol di bawah ini untuk memilih kata sandi baru.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Halo %{name},
+        instructions: Pesanan Anda %{number} telah terkirim.
+        items_heading: Barang dalam pengiriman ini
+        let_us_know: Beri tahu kami
+        not_received: Belum menerima paket Anda?
+        subject: Pesanan Anda telah terkirim
+        track_information: "Informasi pelacakan: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hai,

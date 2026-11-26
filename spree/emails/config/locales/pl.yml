@@ -9,6 +9,15 @@ pl:
         ignore_notice: Jeśli nie prosiłeś o zresetowanie hasła, możesz bezpiecznie zignorować tę wiadomość. Twoje hasło nie zostanie zmienione.
         instructions: Otrzymaliśmy prośbę o zresetowanie Twojego hasła. Kliknij poniższy przycisk, aby wybrać nowe hasło.
         subject: Instrukcje resetowania hasła
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Witaj %{name},
+        instructions: Twoje zamówienie %{number} zostało dostarczone.
+        items_heading: Produkty w tej dostawie
+        let_us_know: Daj nam znać
+        not_received: Nie otrzymałeś jeszcze paczki?
+        subject: Twoje zamówienie zostało dostarczone
+        track_information: "Informacje o śledzeniu: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Cześć,

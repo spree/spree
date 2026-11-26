@@ -8,6 +8,15 @@ et:
         greeting: Tere %{name},
         ignore_notice: Kui te ei taotlenud parooli lähtestamist, võite selle e-kirja rahulikult eirata. Teie parooli ei muudeta.
         instructions: Saime teie parooli lähtestamise taotluse. Uue parooli valimiseks klõpsake allolevat nuppu.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Hea %{name},
+        instructions: Teie tellimus %{number} on kohale toimetatud.
+        items_heading: Selle saadetise tooted
+        let_us_know: Andke meile teada
+        not_received: Te pole veel oma pakki kätte saanud?
+        subject: Teie tellimus on kohale toimetatud
+        track_information: "Jälgimisteave: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Tere,

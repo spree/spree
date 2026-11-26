@@ -8,6 +8,15 @@ th:
         greeting: สวัสดีคุณ %{name},
         ignore_notice: หากคุณไม่ได้ร้องขอการตั้งรหัสผ่านใหม่ คุณสามารถละเว้นอีเมลนี้ได้อย่างปลอดภัย รหัสผ่านของคุณจะไม่ถูกเปลี่ยนแปลง
         instructions: เราได้รับคำขอตั้งรหัสผ่านใหม่ของคุณ คลิกที่ปุ่มด้านล่างเพื่อเลือกรหัสผ่านใหม่
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: เรียน %{name}
+        instructions: คำสั่งซื้อ %{number} ของคุณจัดส่งถึงแล้ว
+        items_heading: สินค้าในการจัดส่งนี้
+        let_us_know: แจ้งให้เราทราบ
+        not_received: ยังไม่ได้รับพัสดุใช่ไหม?
+        subject: คำสั่งซื้อของคุณจัดส่งถึงแล้ว
+        track_information: "ข้อมูลการติดตามพัสดุ: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: สวัสดี,

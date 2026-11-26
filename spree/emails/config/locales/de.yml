@@ -9,6 +9,15 @@ de:
         ignore_notice: Falls Sie kein Zurücksetzen des Passworts angefordert haben, können Sie diese E-Mail bedenkenlos ignorieren. Ihr Passwort wird nicht geändert.
         instructions: Wir haben eine Anfrage zum Zurücksetzen Ihres Passworts erhalten. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu wählen.
         subject: Anweisungen zum Zurücksetzen des Passworts
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Hallo %{name},
+        instructions: Ihre Bestellung %{number} wurde zugestellt.
+        items_heading: Artikel in dieser Lieferung
+        let_us_know: Geben Sie uns Bescheid
+        not_received: Sie haben Ihr Paket noch nicht erhalten?
+        subject: Ihre Bestellung wurde zugestellt
+        track_information: "Sendungsverfolgung: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hallo,

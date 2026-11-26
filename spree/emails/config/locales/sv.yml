@@ -9,6 +9,15 @@ sv:
         ignore_notice: Om du inte begärde en lösenordsåterställning kan du bortse från detta e-postmeddelande. Ditt lösenord ändras inte.
         instructions: Vi har fått en begäran om att återställa ditt lösenord. Klicka på knappen nedan för att välja ett nytt lösenord.
         subject: Instruktioner för återställning av lösenord
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Hej %{name},
+        instructions: Din beställning %{number} har levererats.
+        items_heading: Artiklar i den här leveransen
+        let_us_know: Hör av dig
+        not_received: Har du inte fått ditt paket än?
+        subject: Din beställning har levererats
+        track_information: "Spårningsinformation: %{tracking}"
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,
