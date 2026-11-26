@@ -64,6 +64,16 @@ function calculateDelay(attempt: number, config: Required<RetryConfig>): number 
   return Math.min(exponentialDelay + jitter, config.maxDelay)
 }
 
+// Retry-After is either a number of seconds or an HTTP date (RFC 9110).
+// Answers undefined when the value is neither, so the caller backs off instead.
+function retryAfterDelay(retryAfter: string | null): number | undefined {
+  if (!retryAfter) return undefined
+
+  const seconds = Number(retryAfter)
+  const delay = Number.isNaN(seconds) ? Date.parse(retryAfter) - Date.now() : seconds * 1000
+  return Number.isNaN(delay) ? undefined : Math.max(delay, 0)
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -288,10 +298,11 @@ export function createRequestFn(
             shouldRetryOnStatus(method, response.status, config.retryConfig, hasIdempotencyKey)
           ) {
             report(response, undefined)
-            const retryAfter = response.headers.get('Retry-After')
-            const delay = retryAfter
-              ? Math.min(parseInt(retryAfter, 10) * 1000, config.retryConfig.maxDelay)
-              : calculateDelay(attempt, config.retryConfig)
+            const retryAfter = retryAfterDelay(response.headers.get('Retry-After'))
+            const delay =
+              retryAfter === undefined
+                ? calculateDelay(attempt, config.retryConfig)
+                : Math.min(retryAfter, config.retryConfig.maxDelay)
             await sleep(delay)
             continue
           }
