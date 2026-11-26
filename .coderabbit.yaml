@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# Without this, the file replaces every setting made in the CodeRabbit web app
+# with the defaults instead of only overriding the keys below.
+inheritance: true
+
+reviews:
+  # Inline comments for critical and major findings only. Minor, trivial and
+  # informational findings are folded into the review summary.
+  profile: quiet
