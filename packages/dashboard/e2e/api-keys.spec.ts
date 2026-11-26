@@ -47,6 +47,18 @@ test.describe('api keys', () => {
     await expect(page.getByText(name)).toBeVisible()
   })
 
+  // Admins reviewing a key they don't recognize need to see where it came from.
+  test('shows the IP address a key was created from', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, API_KEYS_PATH(creds.store_id), CTA)
+
+    const name = `IP key ${Date.now()}`
+    await createSecretKey(page, name)
+
+    const row = page.locator('tbody tr').filter({ hasText: name })
+    await expect(row.getByText(/^from (127\.0\.0\.1|::1)$/)).toBeVisible({ timeout: 15_000 })
+  })
+
   // Renames a key this test created rather than a seeded one, so the fixtures
   // other specs read stay as they were seeded.
   test('renames a key through the edit sheet', async ({ page }) => {

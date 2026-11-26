@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 export { EmailAddressSchema, type EmailAddress } from './EmailAddress';
 export { EmailAmountLineSchema, type EmailAmountLine } from './EmailAmountLine';
+export { EmailApiKeySchema, type EmailApiKey } from './EmailApiKey';
 export { EmailAppliedPromotionSchema, type EmailAppliedPromotion } from './EmailAppliedPromotion';
 export { EmailCustomerSchema, type EmailCustomer } from './EmailCustomer';
 export { EmailCustomerGroupSchema, type EmailCustomerGroup } from './EmailCustomerGroup';

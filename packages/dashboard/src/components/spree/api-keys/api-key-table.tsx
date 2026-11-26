@@ -277,6 +277,11 @@ function ApiKeyRow({
             {t('admin.api_keys.created_by', { actor: apiKey.created_by_label })}
           </div>
         )}
+        {apiKey.created_by_ip_address && (
+          <div className="text-xs">
+            {t('admin.api_keys.created_from_ip', { ip: apiKey.created_by_ip_address })}
+          </div>
+        )}
       </TableCell>
       <TableCell className="text-right">
         <RowActions

@@ -38,6 +38,7 @@
       "create_sheet_description": "Wybierz typ klucza, a następnie zakresy, których może używać.",
       "create_sheet_title": "Utwórz klucz API",
       "created_by": "przez {{actor}}",
+      "created_from_ip": "z {{ip}}",
       "delete_confirm": {
         "message": "Spowoduje to trwałe usunięcie klucza. Jeśli możesz chcieć przywrócić dostęp później, lepiej unieważnij klucz.",
         "title": "Usunąć klucz?"

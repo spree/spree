@@ -38,6 +38,7 @@
       "create_sheet_description": "Chọn loại khóa, sau đó chọn phạm vi có thể sử dụng.",
       "create_sheet_title": "Tạo khóa API",
       "created_by": "bởi {{actor}}",
+      "created_from_ip": "từ {{ip}}",
       "delete_confirm": {
         "message": "Điều này vĩnh viễn loại bỏ chìa khóa. Ưu tiên thu hồi nếu bạn có thể khôi phục quyền truy cập sau này.",
         "title": "Xóa chìa khóa?"

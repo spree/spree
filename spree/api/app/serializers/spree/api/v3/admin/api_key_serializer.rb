@@ -21,9 +21,10 @@ module Spree
                    created_by_email: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    created_by_label: [:string, nullable: true],
+                   created_by_ip_address: [:string, nullable: true],
                    channel_id: [:string, nullable: true]
 
-          attributes :name, :key_type, :token_prefix, :scopes,
+          attributes :name, :key_type, :token_prefix, :scopes, :created_by_ip_address,
                      created_at: :iso8601, updated_at: :iso8601,
                      revoked_at: :iso8601, last_used_at: :iso8601
 

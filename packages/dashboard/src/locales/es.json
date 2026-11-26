@@ -5374,6 +5374,7 @@
       "create_sheet_description": "Elegí un tipo de clave y después los alcances que puede usar.",
       "create_sheet_title": "Crear clave de API",
       "created_by": "por {{actor}}",
+      "created_from_ip": "desde {{ip}}",
       "delete_confirm": {
         "message": "Esto elimina la clave de forma permanente. Preferí revocar si podrías restaurar el acceso después.",
         "title": "¿Eliminar clave?"
