@@ -268,6 +268,30 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.item_not_on_document'))
     end
 
+    # The units left the source when the van went; the source closing down
+    # while they are on the road does not strand them.
+    it 'lands everything after the source location is deleted' do
+      source.destroy
+
+      result = receive
+
+      expect(result).to be_success
+      expect(transfer.reload).to be_received
+      expect(destination_on_hand).to eq(10)
+      expect(destination_incoming).to eq(0)
+      expect(transfer.stock_movements.map(&:kind)).to contain_exactly('shipped', 'received')
+    end
+
+    it 'refuses a delivery to a deleted destination' do
+      destination.destroy
+
+      result = receive
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.destination_location_deleted'))
+      expect(destination.stock_levels.reload).to be_empty
+    end
+
     it 'refuses a transfer that is not on the road' do
       draft = create(:stock_transfer, store: store)
 
@@ -387,6 +411,30 @@ describe 'stock transfer lifecycle', type: :model do
       expect(destination_incoming).to eq(0)
       expect(transfer.reload.close_reason).to eq('stolen')
       expect(transfer.stock_movements.received).to be_empty
+    end
+
+    it 'refuses to put the units back on a deleted source' do
+      Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer)
+      source.destroy
+
+      result = Spree::StockTransfers::Cancel.call(stock_transfer: transfer.reload, on_in_transit: 'restock')
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.source_location_deleted'))
+      expect(transfer.reload).to be_in_transit
+    end
+
+    # The destination's levels went with it, so there is no incoming count
+    # left to withdraw — and none to invent.
+    it 'writes the units off after the destination is deleted' do
+      Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer)
+      destination.destroy
+
+      result = Spree::StockTransfers::Cancel.call(stock_transfer: transfer.reload, on_in_transit: 'write_off')
+
+      expect(result).to be_success
+      expect(transfer.reload).to be_canceled
+      expect(destination.stock_levels.reload).to be_empty
     end
 
     # Anything the destination already counted in is on its shelf and stays.

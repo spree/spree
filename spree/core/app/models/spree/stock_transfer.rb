@@ -42,8 +42,11 @@ module Spree
     has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :over_received, :canceled,
                default: :draft
 
-    belongs_to :source_location, class_name: 'Spree::StockLocation'
-    belongs_to :destination_location, class_name: 'Spree::StockLocation'
+    # `with_deleted`: deleting a warehouse must not strand a trip to or from
+    # it. The units on the road still need receiving, and a closed transfer is
+    # still a record of where they went.
+    belongs_to :source_location, -> { with_deleted }, class_name: 'Spree::StockLocation', inverse_of: false
+    belongs_to :destination_location, -> { with_deleted }, class_name: 'Spree::StockLocation', inverse_of: false
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :items, class_name: 'Spree::StockTransferItem',

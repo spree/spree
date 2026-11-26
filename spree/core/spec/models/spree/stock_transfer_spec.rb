@@ -130,6 +130,21 @@ module Spree
       end
     end
 
+    describe 'locations' do
+      # A transfer is a record of a trip; deleting a warehouse at either end
+      # must not leave it unreadable or invalid.
+      it 'still reads a deleted source and destination' do
+        stock_transfer
+        source_location.destroy
+        destination_location.destroy
+
+        reloaded = described_class.find(stock_transfer.id)
+        expect(reloaded.source_location).to eq(source_location)
+        expect(reloaded.destination_location).to eq(destination_location)
+        expect(reloaded).to be_valid
+      end
+    end
+
     describe '#editable?' do
       it 'is true only while the box can still be repacked' do
         expect(create(:stock_transfer, store: store)).to be_editable

@@ -253,6 +253,16 @@ describe 'purchase order lifecycle', type: :model do
       expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.item_not_on_document'))
     end
 
+    it 'refuses a delivery to a deleted destination' do
+      destination.destroy
+
+      result = receive
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.destination_location_deleted'))
+      expect(destination.stock_levels.reload).to be_empty
+    end
+
     it 'refuses an order that has not been placed' do
       draft = create(:purchase_order, store: store)
 

@@ -51,9 +51,11 @@ module Spree
       def ensure_cancelable
         failure(stock_transfer, I18n.t('spree.stock_transfer.errors.already_closed')) if stock_transfer.closed?
         return unless stock_transfer.in_flight?
-        return if IN_TRANSIT_RESOLUTIONS.include?(on_in_transit)
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.in_transit_resolution_required')) unless IN_TRANSIT_RESOLUTIONS.include?(on_in_transit)
+        # A deleted source has no shelf left to put the units back on.
+        return unless on_in_transit == 'restock' && stock_transfer.source_location.deleted?
 
-        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.in_transit_resolution_required'))
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.source_location_deleted'))
       end
 
       # Whether the units come back or are written off, the destination is no

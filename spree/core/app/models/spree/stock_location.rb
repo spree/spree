@@ -21,7 +21,10 @@ module Spree
 
     has_many :fulfillments, class_name: 'Spree::Fulfillment'
     has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :stock_location_id, deprecated: true
-    has_many :stock_levels, class_name: 'Spree::StockLevel', dependent: :delete_all, inverse_of: :stock_location
+    # Not `dependent: :delete_all`: the levels are soft-deleted with it by
+    # `soft_delete_stock_levels`, never removed, because the stock movements
+    # written at them outlive the shelf.
+    has_many :stock_levels, class_name: 'Spree::StockLevel', dependent: nil, inverse_of: :stock_location
     has_many :variants, through: :stock_levels
     has_many :stock_movements, through: :stock_levels
 
@@ -64,6 +67,7 @@ module Spree
     after_create :create_stock_levels, if: :propagate_all_variants?
     after_save :ensure_one_default
     after_update :conditional_touch_records
+    after_destroy :soft_delete_stock_levels
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
@@ -322,6 +326,13 @@ module Spree
       siblings = self.class.owned_by(store_id: store_id, seller_id: seller_id).where.not(id: id)
       siblings.where(default: true).update_all(default: false)
       siblings.update_all(updated_at: Time.current)
+    end
+
+    # In one statement, as the hard delete it replaces was: a location can
+    # hold a level for every variant in the catalog.
+    def soft_delete_stock_levels
+      deleted_at = Time.current
+      stock_levels.update_all(deleted_at: deleted_at, updated_at: deleted_at)
     end
 
     def conditional_touch_records

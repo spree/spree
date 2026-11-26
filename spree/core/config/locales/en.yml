@@ -1296,6 +1296,7 @@ en:
       errors:
         already_closed: This purchase order has already been received or cancelled
         already_receiving: A delivery has already been booked against this purchase order, so it cannot go back to draft
+        destination_location_deleted: The destination warehouse has been deleted — cancel the purchase order instead
         invalid_receipt_quantity: The quantities for %{variant} cannot be negative
         item_not_on_document: One of the lines does not belong to this purchase order
         must_have_variant: You must add at least one variant
@@ -1794,6 +1795,7 @@ en:
     stock_transfer:
       errors:
         already_closed: This transfer has already been completed or cancelled
+        destination_location_deleted: The destination warehouse has been deleted — cancel the transfer instead
         in_transit_resolution_required: Choose whether the units come back to the source warehouse or are written off
         invalid_receipt_quantity: The quantities for %{variant} cannot be negative
         item_not_on_document: One of the lines does not belong to this transfer
@@ -1809,6 +1811,7 @@ en:
         only_draft_can_be_deleted: Only a draft transfer can be deleted — cancel it instead
         repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
         same_location: cannot be the same as the destination location
+        source_location_deleted: The source warehouse has been deleted — write the units off instead
         variants_unavailable: Some variants are not available on %{stock}
     store: Store
     store_credit:

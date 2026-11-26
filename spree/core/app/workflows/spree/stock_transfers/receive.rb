@@ -43,10 +43,12 @@ module Spree
         'stock_transfer'
       end
 
+      # A deleted destination has no shelf left to count the units onto.
       def ensure_receivable
-        return if stock_transfer.in_flight?
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_in_transit')) unless stock_transfer.in_flight?
+        return unless stock_transfer.destination_location.deleted?
 
-        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_in_transit'))
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.destination_location_deleted'))
       end
 
       def line_belongs?(line)
