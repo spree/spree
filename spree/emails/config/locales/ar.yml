@@ -12,11 +12,11 @@ ar:
     fulfillment_mailer:
       delivered_email:
         dear_customer: عزيزي %{name}،
-        instructions: تم تسليم طلبك %{number}.
+        instructions: تم تسليم طرد من طلبك %{number}.
         items_heading: المنتجات في هذا التسليم
         let_us_know: أخبرنا
         not_received: لم يصلك طردك بعد؟
-        subject: تم تسليم طلبك
+        subject: تم تسليم طردك
         track_information: "معلومات التتبع: %{tracking}"
     newsletter_mailer:
       email_confirmation:

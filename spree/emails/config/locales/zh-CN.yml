@@ -12,11 +12,11 @@ zh-CN:
     fulfillment_mailer:
       delivered_email:
         dear_customer: 亲爱的 %{name}，
-        instructions: 您的订单 %{number} 已送达。
+        instructions: 您的订单 %{number} 中的一个包裹已送达。
         items_heading: 本次配送的商品
         let_us_know: 告诉我们
         not_received: 还没有收到包裹？
-        subject: 您的订单已送达
+        subject: 您的包裹已送达
         track_information: 物流追踪信息：%{tracking}
     newsletter_mailer:
       email_confirmation:

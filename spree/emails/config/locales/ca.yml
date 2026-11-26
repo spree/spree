@@ -11,11 +11,11 @@ ca:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Benvolgut/da %{name},
-        instructions: La teva comanda %{number} s'ha lliurat.
+        instructions: S'ha lliurat un paquet de la teva comanda %{number}.
         items_heading: Articles d'aquest lliurament
         let_us_know: Fes-nos-ho saber
         not_received: Encara no has rebut el paquet?
-        subject: La teva comanda s'ha lliurat
+        subject: El teu paquet s'ha lliurat
         track_information: "Informació de seguiment: %{tracking}"
     newsletter_mailer:
       email_confirmation:

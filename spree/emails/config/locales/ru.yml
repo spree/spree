@@ -12,11 +12,11 @@ ru:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Уважаемый(ая) %{name},
-        instructions: Ваш заказ %{number} доставлен.
+        instructions: Посылка из вашего заказа %{number} доставлена.
         items_heading: Товары в этой доставке
         let_us_know: Сообщите нам
         not_received: Ещё не получили посылку?
-        subject: Ваш заказ доставлен
+        subject: Ваша посылка доставлена
         track_information: "Информация для отслеживания: %{tracking}"
     newsletter_mailer:
       email_confirmation:

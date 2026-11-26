@@ -11,11 +11,11 @@ da:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Kære %{name},
-        instructions: Din ordre %{number} er blevet leveret.
+        instructions: En pakke fra din ordre %{number} er blevet leveret.
         items_heading: Varer i denne levering
         let_us_know: Giv os besked
         not_received: Har du ikke modtaget din pakke endnu?
-        subject: Din ordre er blevet leveret
+        subject: Din pakke er blevet leveret
         track_information: "Sporingsinformation: %{tracking}"
     newsletter_mailer:
       email_confirmation:

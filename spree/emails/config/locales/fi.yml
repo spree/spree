@@ -11,11 +11,11 @@ fi:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Hei %{name},
-        instructions: Tilauksesi %{number} on toimitettu.
+        instructions: Paketti tilauksestasi %{number} on toimitettu.
         items_heading: Tämän toimituksen tuotteet
         let_us_know: Kerro meille
         not_received: Etkö ole vielä saanut pakettiasi?
-        subject: Tilauksesi on toimitettu
+        subject: Pakettisi on toimitettu
         track_information: "Seurantatiedot: %{tracking}"
     newsletter_mailer:
       email_confirmation:

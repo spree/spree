@@ -11,11 +11,11 @@ th:
     fulfillment_mailer:
       delivered_email:
         dear_customer: เรียน %{name}
-        instructions: คำสั่งซื้อ %{number} ของคุณจัดส่งถึงแล้ว
+        instructions: พัสดุจากคำสั่งซื้อ %{number} ของคุณจัดส่งถึงแล้ว
         items_heading: สินค้าในการจัดส่งนี้
         let_us_know: แจ้งให้เราทราบ
         not_received: ยังไม่ได้รับพัสดุใช่ไหม?
-        subject: คำสั่งซื้อของคุณจัดส่งถึงแล้ว
+        subject: พัสดุของคุณจัดส่งถึงแล้ว
         track_information: "ข้อมูลการติดตามพัสดุ: %{tracking}"
     newsletter_mailer:
       email_confirmation:

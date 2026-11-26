@@ -12,11 +12,11 @@ uk:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Шановний(а) %{name},
-        instructions: Ваше замовлення %{number} доставлено.
+        instructions: Посилку з вашого замовлення %{number} доставлено.
         items_heading: Товари в цій доставці
         let_us_know: Повідомте нам
         not_received: Ще не отримали посилку?
-        subject: Ваше замовлення доставлено
+        subject: Вашу посилку доставлено
         track_information: "Інформація для відстеження: %{tracking}"
     newsletter_mailer:
       email_confirmation:

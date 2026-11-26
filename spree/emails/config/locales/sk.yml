@@ -11,11 +11,11 @@ sk:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Vážený zákazník %{name},
-        instructions: Vaša objednávka %{number} bola doručená.
+        instructions: Zásielka z vašej objednávky %{number} bola doručená.
         items_heading: Položky v tejto zásielke
         let_us_know: Dajte nám vedieť
         not_received: Ešte ste zásielku nedostali?
-        subject: Vaša objednávka bola doručená
+        subject: Vaša zásielka bola doručená
         track_information: "Informácie o sledovaní: %{tracking}"
     newsletter_mailer:
       email_confirmation:

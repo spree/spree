@@ -11,11 +11,11 @@ fa:
     fulfillment_mailer:
       delivered_email:
         dear_customer: "%{name} عزیز،"
-        instructions: سفارش %{number} شما تحویل داده شد.
+        instructions: یک بسته از سفارش %{number} شما تحویل داده شد.
         items_heading: اقلام این تحویل
         let_us_know: به ما اطلاع دهید
         not_received: هنوز بسته خود را دریافت نکرده‌اید؟
-        subject: سفارش شما تحویل داده شد
+        subject: بسته شما تحویل داده شد
         track_information: "اطلاعات رهگیری: %{tracking}"
     newsletter_mailer:
       email_confirmation:

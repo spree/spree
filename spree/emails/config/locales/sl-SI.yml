@@ -11,11 +11,11 @@ sl-SI:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Spoštovani %{name},
-        instructions: Vaše naročilo %{number} je bilo dostavljeno.
+        instructions: Paket iz vašega naročila %{number} je bil dostavljen.
         items_heading: Izdelki v tej dostavi
         let_us_know: Sporočite nam
         not_received: Paketa še niste prejeli?
-        subject: Vaše naročilo je bilo dostavljeno
+        subject: Vaš paket je bil dostavljen
         track_information: "Podatki za sledenje: %{tracking}"
     newsletter_mailer:
       email_confirmation:

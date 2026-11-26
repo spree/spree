@@ -32,9 +32,9 @@ function useFulfillmentMutation<TParams>(
 
   return useMutation({
     mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
-    },
+    // Pending until the order refetches, so a second click never acts on the
+    // stale order (Mark arrived counts the consignments still open).
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) }),
     onError: (error) => {
       if (!toastValidationErrors && error instanceof SpreeError && error.status === 422) return
       toastManager.add({

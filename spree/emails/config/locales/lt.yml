@@ -11,11 +11,11 @@ lt:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Gerb. %{name},
-        instructions: Jūsų užsakymas %{number} pristatytas.
+        instructions: Siuntinys iš jūsų užsakymo %{number} pristatytas.
         items_heading: Šios siuntos prekės
         let_us_know: Praneškite mums
         not_received: Dar negavote siuntinio?
-        subject: Jūsų užsakymas pristatytas
+        subject: Jūsų siuntinys pristatytas
         track_information: "Sekimo informacija: %{tracking}"
     newsletter_mailer:
       email_confirmation:

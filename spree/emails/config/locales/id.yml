@@ -11,11 +11,11 @@ id:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Halo %{name},
-        instructions: Pesanan Anda %{number} telah terkirim.
+        instructions: Sebuah paket dari pesanan Anda %{number} telah terkirim.
         items_heading: Barang dalam pengiriman ini
         let_us_know: Beri tahu kami
         not_received: Belum menerima paket Anda?
-        subject: Pesanan Anda telah terkirim
+        subject: Paket Anda telah terkirim
         track_information: "Informasi pelacakan: %{tracking}"
     newsletter_mailer:
       email_confirmation:

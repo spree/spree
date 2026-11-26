@@ -45,11 +45,11 @@ en:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Dear %{name},
-        instructions: Your order %{number} has been delivered.
+        instructions: A package from your order %{number} has been delivered.
         items_heading: Items in this delivery
         let_us_know: Let us know
         not_received: Haven't received your package?
-        subject: Your order has been delivered
+        subject: Your package has been delivered
         track_information: 'Tracking Information: %{tracking}'
       fulfilled_email:
         dear_customer: Dear %{name},

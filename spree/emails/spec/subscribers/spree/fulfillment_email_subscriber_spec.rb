@@ -132,7 +132,7 @@ RSpec.describe Spree::FulfillmentEmailSubscriber do
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.to).to eq([order.email])
-      expect(mail.subject).to include('Your order has been delivered')
+      expect(mail.subject).to include('Your package has been delivered')
     end
 
     it 'stays quiet when staff ask it to' do

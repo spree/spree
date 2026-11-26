@@ -11,11 +11,11 @@ ne:
     fulfillment_mailer:
       delivered_email:
         dear_customer: प्रिय %{name},
-        instructions: तपाईंको अर्डर %{number} डेलिभर भएको छ।
+        instructions: तपाईंको अर्डर %{number} को एउटा प्याकेज डेलिभर भएको छ।
         items_heading: यस डेलिभरीका सामानहरू
         let_us_know: हामीलाई जानकारी दिनुहोस्
         not_received: अझै आफ्नो प्याकेज प्राप्त गर्नुभएको छैन?
-        subject: तपाईंको अर्डर डेलिभर भएको छ
+        subject: तपाईंको प्याकेज डेलिभर भएको छ
         track_information: "ट्र्याकिङ जानकारी: %{tracking}"
     newsletter_mailer:
       email_confirmation:

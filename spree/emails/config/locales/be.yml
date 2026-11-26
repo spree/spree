@@ -11,11 +11,11 @@ be:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Шаноўны(ая) %{name},
-        instructions: Ваша замова %{number} дастаўлена.
+        instructions: Пасылка з вашай замовы %{number} дастаўлена.
         items_heading: Тавары ў гэтай дастаўцы
         let_us_know: Паведаміце нам
         not_received: Яшчэ не атрымалі пасылку?
-        subject: Ваша замова дастаўлена
+        subject: Ваша пасылка дастаўлена
         track_information: "Інфармацыя для адсочвання: %{tracking}"
     newsletter_mailer:
       email_confirmation:

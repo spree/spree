@@ -12,11 +12,11 @@ fr:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Bonjour %{name},
-        instructions: Votre commande %{number} a été livrée.
+        instructions: Un colis de votre commande %{number} a été livré.
         items_heading: Articles de cette livraison
         let_us_know: Prévenez-nous
         not_received: Vous n'avez pas encore reçu votre colis ?
-        subject: Votre commande a été livrée
+        subject: Votre colis a été livré
         track_information: "Informations de suivi : %{tracking}"
     newsletter_mailer:
       email_confirmation:

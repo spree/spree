@@ -11,11 +11,11 @@ hu:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Kedves %{name}!
-        instructions: A(z) %{number} számú rendelését kézbesítettük.
+        instructions: Kézbesítettünk egy csomagot a(z) %{number} számú rendeléséből.
         items_heading: A szállítmány tételei
         let_us_know: Jelezze nekünk
         not_received: Még nem kapta meg a csomagját?
-        subject: Rendelését kézbesítettük
+        subject: Csomagját kézbesítettük
         track_information: "Nyomkövetési információ: %{tracking}"
     newsletter_mailer:
       email_confirmation:

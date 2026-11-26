@@ -11,11 +11,11 @@ lv:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Cien. %{name},
-        instructions: Jūsu pasūtījums %{number} ir piegādāts.
+        instructions: Sūtījums no jūsu pasūtījuma %{number} ir piegādāts.
         items_heading: Šīs piegādes preces
         let_us_know: Paziņojiet mums
         not_received: Vēl neesat saņēmis sūtījumu?
-        subject: Jūsu pasūtījums ir piegādāts
+        subject: Jūsu sūtījums ir piegādāts
         track_information: "Izsekošanas informācija: %{tracking}"
     newsletter_mailer:
       email_confirmation:

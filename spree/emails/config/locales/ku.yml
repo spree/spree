@@ -11,11 +11,11 @@ ku:
     fulfillment_mailer:
       delivered_email:
         dear_customer: "%{name}ê hêja,"
-        instructions: Siparîşa te %{number} hate radestkirin.
+        instructions: Pakêtek ji siparîşa te %{number} hate radestkirin.
         items_heading: Berhemên di vê radestkirinê de
         let_us_know: Ji me re bêje
         not_received: Hîn pakêta te negihîştiye?
-        subject: Siparîşa te hate radestkirin
+        subject: Pakêta te hate radestkirin
         track_information: "Agahiyên şopandinê: %{tracking}"
     newsletter_mailer:
       email_confirmation:

@@ -11,11 +11,11 @@ vi:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Xin chào %{name},
-        instructions: Đơn hàng %{number} của bạn đã được giao.
+        instructions: Một kiện hàng từ đơn hàng %{number} của bạn đã được giao.
         items_heading: Sản phẩm trong lần giao này
         let_us_know: Hãy cho chúng tôi biết
         not_received: Bạn chưa nhận được kiện hàng?
-        subject: Đơn hàng của bạn đã được giao
+        subject: Kiện hàng của bạn đã được giao
         track_information: "Thông tin theo dõi: %{tracking}"
     newsletter_mailer:
       email_confirmation:

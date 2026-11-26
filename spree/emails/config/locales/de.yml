@@ -12,11 +12,11 @@ de:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Hallo %{name},
-        instructions: Ihre Bestellung %{number} wurde zugestellt.
+        instructions: Ein Paket aus Ihrer Bestellung %{number} wurde zugestellt.
         items_heading: Artikel in dieser Lieferung
         let_us_know: Geben Sie uns Bescheid
         not_received: Sie haben Ihr Paket noch nicht erhalten?
-        subject: Ihre Bestellung wurde zugestellt
+        subject: Ihr Paket wurde zugestellt
         track_information: "Sendungsverfolgung: %{tracking}"
     newsletter_mailer:
       email_confirmation:

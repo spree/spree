@@ -12,11 +12,11 @@ ja:
     fulfillment_mailer:
       delivered_email:
         dear_customer: "%{name} 様"
-        instructions: ご注文 %{number} の配達が完了しました。
+        instructions: ご注文 %{number} のお荷物の配達が完了しました。
         items_heading: 今回の配達の商品
         let_us_know: お知らせください
         not_received: まだ荷物が届いていませんか？
-        subject: ご注文の配達が完了しました
+        subject: お荷物の配達が完了しました
         track_information: "追跡情報: %{tracking}"
     newsletter_mailer:
       email_confirmation:

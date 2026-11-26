@@ -12,11 +12,11 @@ cs:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Vážený zákazníku %{name},
-        instructions: Vaše objednávka %{number} byla doručena.
+        instructions: Zásilka z vaší objednávky %{number} byla doručena.
         items_heading: Položky v této zásilce
         let_us_know: Dejte nám vědět
         not_received: Ještě jste zásilku neobdrželi?
-        subject: Vaše objednávka byla doručena
+        subject: Vaše zásilka byla doručena
         track_information: "Informace o sledování: %{tracking}"
     newsletter_mailer:
       email_confirmation:

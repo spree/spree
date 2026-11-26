@@ -11,11 +11,11 @@ el:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Αγαπητέ/ή %{name},
-        instructions: Η παραγγελία σας %{number} παραδόθηκε.
+        instructions: Ένα δέμα από την παραγγελία σας %{number} παραδόθηκε.
         items_heading: Προϊόντα σε αυτή την παράδοση
         let_us_know: Ενημερώστε μας
         not_received: Δεν έχετε λάβει ακόμα το δέμα σας;
-        subject: Η παραγγελία σας παραδόθηκε
+        subject: Το δέμα σας παραδόθηκε
         track_information: "Πληροφορίες παρακολούθησης: %{tracking}"
     newsletter_mailer:
       email_confirmation:

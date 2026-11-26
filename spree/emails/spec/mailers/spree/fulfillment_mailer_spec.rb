@@ -175,17 +175,15 @@ describe Spree::FulfillmentMailer, type: :mailer do
   context 'delivered_email' do
     let(:delivered_email) { described_class.delivered_email(fulfillment) }
 
-    before { store.update!(customer_support_email: 'help@example.com') }
-
-    it 'tells the customer the order arrived' do
-      expect(delivered_email.subject).to include('Your order has been delivered', order.number)
+    it 'tells the customer a package from the order arrived' do
+      expect(delivered_email.subject).to include('Your package has been delivered', order.number)
       expect(delivered_email).to have_body_text("Dear #{order.name}")
-      expect(delivered_email).to have_body_text("Your order #{order.number} has been delivered.")
+      expect(delivered_email).to have_body_text("A package from your order #{order.number} has been delivered.")
     end
 
     it 'links the tracking page and asks to hear about a missing parcel' do
       expect(delivered_email).to have_body_text("href=\"#{fulfillment.tracking_url}\"")
-      expect(delivered_email).to have_body_text('href="mailto:help@example.com"')
+      expect(delivered_email).to have_body_text("href=\"mailto:#{store.customer_support_email}\"")
     end
 
     it 'lists the items in the delivery without order totals' do
@@ -197,8 +195,8 @@ describe Spree::FulfillmentMailer, type: :mailer do
       before { order.update_column(:locale, 'de') }
 
       it 'sends the shipped translation' do
-        expect(delivered_email.subject).to include('Ihre Bestellung wurde zugestellt')
-        expect(delivered_email).to have_body_text("Ihre Bestellung #{order.number} wurde zugestellt.")
+        expect(delivered_email.subject).to include('Ihr Paket wurde zugestellt')
+        expect(delivered_email).to have_body_text("Ein Paket aus Ihrer Bestellung #{order.number} wurde zugestellt.")
       end
     end
 

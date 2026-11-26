@@ -11,11 +11,11 @@ et:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Hea %{name},
-        instructions: Teie tellimus %{number} on kohale toimetatud.
+        instructions: Pakk teie tellimusest %{number} on kohale toimetatud.
         items_heading: Selle saadetise tooted
         let_us_know: Andke meile teada
         not_received: Te pole veel oma pakki kätte saanud?
-        subject: Teie tellimus on kohale toimetatud
+        subject: Teie pakk on kohale toimetatud
         track_information: "Jälgimisteave: %{tracking}"
     newsletter_mailer:
       email_confirmation:
