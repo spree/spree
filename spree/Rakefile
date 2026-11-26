@@ -12,6 +12,7 @@ SPREE_OPTIONAL_GEMS = %w(emails dashboard mcp opentelemetry).freeze
 # Provider gems sit one directory deeper and their gem name doesn't match the
 # directory, so they carry the path explicitly.
 SPREE_PROVIDER_GEMS = {
+  'spree_avalara' => 'providers/avalara',
   'spree_easypost' => 'providers/easypost',
   'spree_meilisearch' => 'providers/meilisearch',
   'spree_stripe' => 'providers/stripe',

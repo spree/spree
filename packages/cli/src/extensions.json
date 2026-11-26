@@ -11,10 +11,11 @@
     },
     "adyen": { "label": "Adyen", "gem": "spree_adyen", "release": "spree" },
     "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo" },
-    "avatax_official": {
+    "avalara": {
       "label": "Avalara AvaTax",
-      "gem": "spree_avatax_official",
-      "aliases": ["avatax"]
+      "gem": "spree_avalara",
+      "aliases": ["avatax", "avatax_official", "spree_avatax_official"],
+      "release": "spree"
     },
     "meilisearch": { "label": "Meilisearch", "gem": "spree_meilisearch", "release": "spree" },
     "easypost": { "label": "EasyPost", "gem": "spree_easypost", "release": "spree" }

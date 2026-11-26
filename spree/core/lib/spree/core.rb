@@ -331,7 +331,7 @@ module Spree
   # {Spree::Purchase::Taxation#tax_provider}, which is what call sites actually
   # use. Defaults to {Spree::TaxProvider::Internal}.
   #
-  #   Spree.default_tax_provider = SpreeTaxAvalara::TaxProvider
+  #   Spree.default_tax_provider = SpreeAvalara::TaxProvider
   #
   # Returns the class rather than an instance: callers that want one say `.new`,
   # and the ones that only need to name it (market selection constantizing its

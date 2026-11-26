@@ -12,9 +12,18 @@ Avalara AvaTax works out sales tax, VAT and GST for each sale in real time. With
 
 Add the gem to your Spree application and restart the server:
 
-```bash
-bundle add spree_avalara
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree add avatax
 ```
+
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_avalara', '>= 6.0.0'
+```
+
+</CodeGroup>
 
 The gem adds no database tables, so there are no migrations to run. If you are moving from the 5.x extension (`spree_avatax_official`), see [Upgrading from Spree 5](#upgrading-from-spree-5).
 
