@@ -12,11 +12,11 @@ pt:
     fulfillment_mailer:
       delivered_email:
         dear_customer: Caro(a) %{name},
-        instructions: Uma embalagem da sua encomenda %{number} foi entregue.
+        instructions: Um pacote da sua encomenda %{number} foi entregue.
         items_heading: Artigos desta entrega
         let_us_know: Informe-nos
-        not_received: Ainda não recebeu a sua encomenda?
-        subject: A sua encomenda foi entregue
+        not_received: Ainda não recebeu o seu pacote?
+        subject: O seu pacote foi entregue
         track_information: "Informação de seguimento: %{tracking}"
     newsletter_mailer:
       email_confirmation:
