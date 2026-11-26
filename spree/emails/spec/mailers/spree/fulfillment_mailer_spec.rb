@@ -171,4 +171,30 @@ describe Spree::FulfillmentMailer, type: :mailer do
       end
     end
   end
+
+  context 'delivered_email' do
+    let(:delivered_email) { described_class.delivered_email(fulfillment) }
+
+    before { store.update!(customer_support_email: 'help@example.com') }
+
+    it 'tells the customer the order arrived' do
+      expect(delivered_email.subject).to include('Your order has been delivered', order.number)
+      expect(delivered_email).to have_body_text("Dear #{order.name}")
+      expect(delivered_email).to have_body_text("Your order #{order.number} has been delivered.")
+    end
+
+    it 'links the tracking page and asks to hear about a missing parcel' do
+      expect(delivered_email).to have_body_text("href=\"#{fulfillment.tracking_url}\"")
+      expect(delivered_email).to have_body_text('href="mailto:help@example.com"')
+    end
+
+    it 'lists the items in the delivery without order totals' do
+      expect(delivered_email).to have_body_text(order.line_items.first.name)
+      expect(delivered_email).not_to have_body_text(I18n.t('spree.order_mailer.total'))
+    end
+
+    it 'accepts a fulfillment id' do
+      expect(described_class.delivered_email(fulfillment.id).to).to eq(['test@example.com'])
+    end
+  end
 end

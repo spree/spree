@@ -45,6 +45,7 @@ describe 'rendered emails', type: :mailer do
       'purchase confirmation' => Spree::OrderGroupMailer.confirm_email(order_group),
       'new purchase notification' => Spree::OrderGroupMailer.store_owner_notification_email(order_group),
       'fulfillment' => Spree::FulfillmentMailer.fulfilled_email(create(:shipped_order, store: store).fulfillments.first),
+      'delivery' => Spree::FulfillmentMailer.delivered_email(create(:shipped_order, store: store).fulfillments.first),
       'files ready' => Spree::DigitalAssetMailer.files_ready_email(order_with_downloads),
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),

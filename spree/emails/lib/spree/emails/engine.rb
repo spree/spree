@@ -24,6 +24,7 @@ module Spree
           'spree/order_mailer/payment_link_email' => 'Spree::Emails::Samples::PaymentLink',
           'spree/order_group_mailer/confirm_email' => 'Spree::Emails::Samples::OrderGroup',
           'spree/fulfillment_mailer/fulfilled_email' => 'Spree::Emails::Samples::Fulfillment',
+          'spree/fulfillment_mailer/delivered_email' => 'Spree::Emails::Samples::Fulfillment',
           'spree/return_mailer/refunded_email' => 'Spree::Emails::Samples::Return',
           'spree/digital_asset_mailer/files_ready_email' => 'Spree::Emails::Samples::Downloads',
           'spree/customer_mailer/password_reset_email' => 'Spree::Emails::Samples::PasswordReset',
