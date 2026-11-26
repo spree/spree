@@ -142,6 +142,25 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(result.value).to be_fulfilled
     end
 
+    # A receipt for a unit still due can land between pricing the
+    # replacements and settling them. Settling on the old count would restock
+    # that unit with no replacement sent, on an exchange that can no longer
+    # receive it.
+    it 'refuses to settle when a receipt changed the received counts mid-fulfillment' do
+      line = exchange.exchange_line_items.first
+      line.new_variant.stock_levels.first&.set_count_on_hand(10)
+      Spree.hooks.register('exchanges.fulfill.validate') do |_flow|
+        Spree::ExchangeLineItem.where(id: line.id).update_all(received_quantity: line.received_quantity.to_i + 1)
+      end
+
+      result = Spree::Exchanges::Fulfill.call(exchange: exchange)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('changed while this exchange was being fulfilled')
+      expect(exchange.reload).to be_received
+      expect(exchange.order.fulfillments.reload.flat_map(&:variants)).not_to include(line.new_variant)
+    end
+
     # An unallocated replacement looks exactly like a fulfillment created before
     # typed movements, so dispatch ships it without writing anything and the
     # goods leave the shelf untouched.

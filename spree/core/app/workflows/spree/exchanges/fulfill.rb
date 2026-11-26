@@ -36,6 +36,7 @@ module Spree
         run_hooks :validate
 
         ApplicationRecord.transaction do
+          step :lock_received_counts
           step :build_replacement_fulfillments
           run_hooks :before_settle
           step :issue_store_credit if credit_due? && internal_refund?
@@ -87,6 +88,27 @@ module Spree
 
       def ensure_received
         failure(exchange, :not_received) unless exchange.received?
+      end
+
+      # A received exchange can take another receipt while units are still
+      # due, and a receipt locks the exchange. Taking the same lock here, and
+      # finding the counts this fulfillment priced unchanged, means no unit
+      # lands after the replacements were decided — one that did would be
+      # restocked with nothing sent for it, and the fulfilled exchange could
+      # no longer receive it.
+      def lock_received_counts
+        priced = received_lines.to_h { |line| [line.id, line.received_quantity.to_i] }
+        exchange.lock!
+        failure(exchange, :not_received) unless exchange.received?
+
+        current = exchange.exchange_line_items.reload.each_with_object({}) do |line, counts|
+          counts[line.id] = line.received_quantity.to_i if line.received_quantity.to_i.positive?
+        end
+        return if current == priced
+
+        exchange.errors.add(:base, :received_during_fulfillment,
+                            message: I18n.t('spree.errors.messages.received_during_fulfillment'))
+        failure(exchange)
       end
 
       # Rewrites both halves' rows for the units that arrived, before any money
