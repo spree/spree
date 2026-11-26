@@ -220,10 +220,10 @@ RSpec.describe Spree::ApiKey, type: :model do
     # runs cannot suppress the notice.
     it 'still sends the notice when the key is deleted before the job runs' do
       deliveries = ActionMailer::Base.deliveries
+      create(:api_key, :secret, store: store, name: 'Short-lived').destroy!
+      expect(deliveries).to be_empty
 
-      perform_enqueued_jobs do
-        create(:api_key, :secret, store: store, name: 'Short-lived').tap(&:destroy!)
-      end
+      perform_enqueued_jobs
 
       expect(deliveries.size).to eq(2)
       expect(email_body(deliveries.last)).to include('Short-lived')
