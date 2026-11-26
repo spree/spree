@@ -448,6 +448,21 @@ zh-TW:
         subject: 密碼重設說明
     all: 所有
     amount: 金額
+    api_key_mailer:
+      secret_key_created:
+        action: 檢視 API 金鑰
+        created_at_label: 建立時間
+        created_by_label: 建立者
+        greeting: "%{name}，您好："
+        heading: "%{store_name} 中的新 Admin API 金鑰"
+        ip_address_label: IP 位址
+        key_label: 金鑰
+        message: "%{creator_name} 在 %{store_name} 中建立了名為「%{key_name}」的新 Admin API 金鑰。"
+        message_without_creator: "%{store_name} 中建立了名為「%{key_name}」的新 Admin API 金鑰。"
+        name_label: 名稱
+        scopes_label: 權限
+        subject: "%{store_name} 中建立了新的 Admin API 金鑰"
+        warning: 如果您不認得此金鑰，請立即撤銷，並向建立者確認。其帳戶可能已遭盜用。
     api_key_no_current_key: 沒有任何 API 金鑰對此請求進行驗證
     api_key_scopes_immutable: 在金鑰建立後無法變更；請建立一把含有所需範圍的新金鑰並撤銷此金鑰
     approver: 審核者

@@ -426,6 +426,21 @@ tr:
         subject: Parola Sıfırlama Talimatları
     all: Tümü
     amount: Miktar
+    api_key_mailer:
+      secret_key_created:
+        action: API anahtarlarını incele
+        created_at_label: Oluşturulma
+        created_by_label: Oluşturan
+        greeting: Merhaba %{name},
+        heading: "%{store_name} mağazasında yeni Admin API anahtarı"
+        ip_address_label: IP adresi
+        key_label: Anahtar
+        message: '%{creator_name}, %{store_name} mağazasında "%{key_name}" adlı yeni bir Admin API anahtarı oluşturdu.'
+        message_without_creator: '%{store_name} mağazasında "%{key_name}" adlı yeni bir Admin API anahtarı oluşturuldu.'
+        name_label: Ad
+        scopes_label: İzinler
+        subject: "%{store_name} mağazasında yeni Admin API anahtarı oluşturuldu"
+        warning: Bu anahtarı tanımıyorsanız hemen iptal edin ve oluşturan kişiyle görüşün. Hesabı ele geçirilmiş olabilir.
     api_key_no_current_key: Bu isteğin kimliğini doğrulayan bir API anahtarı yok
     api_key_scopes_immutable: anahtar oluşturulduktan sonra değiştirilemez; ihtiyacınız olan kapsamlarla yeni bir anahtar oluşturun ve bunu iptal edin
     availability: uygunluk

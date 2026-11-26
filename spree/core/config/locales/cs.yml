@@ -469,6 +469,21 @@ cs:
         subject: Pokyny k obnovení hesla
     all: Vše
     amount: Množství
+    api_key_mailer:
+      secret_key_created:
+        action: Zkontrolovat klíče API
+        created_at_label: Vytvořeno
+        created_by_label: Vytvořil
+        greeting: Dobrý den, %{name},
+        heading: Nový klíč Admin API v %{store_name}
+        ip_address_label: IP adresa
+        key_label: Klíč
+        message: '%{creator_name} vytvořil nový klíč Admin API s názvem "%{key_name}" v %{store_name}.'
+        message_without_creator: V %{store_name} byl vytvořen nový klíč Admin API s názvem "%{key_name}".
+        name_label: Název
+        scopes_label: Oprávnění
+        subject: V %{store_name} byl vytvořen nový klíč Admin API
+        warning: Pokud tento klíč nepoznáváte, ihned ho zrušte a ověřte to u osoby, která ho vytvořila. Její účet mohl být napaden.
     api_key_no_current_key: Tento požadavek neověřil žádný API klíč
     api_key_scopes_immutable: nelze změnit po vytvoření klíče; vytvořte nový klíč s potřebnými oprávněními a tento zrušte
     approver: schvalovatel

@@ -387,6 +387,21 @@ ca:
     adjustments_deleted: Ajustaments eliminats
     all: Tots
     amount: Quantia
+    api_key_mailer:
+      secret_key_created:
+        action: Revisa les claus API
+        created_at_label: Creada el
+        created_by_label: Creada per
+        greeting: Hola %{name},
+        heading: Nova clau Admin API a %{store_name}
+        ip_address_label: Adreça IP
+        key_label: Clau
+        message: '%{creator_name} ha creat una nova clau Admin API anomenada "%{key_name}" a %{store_name}.'
+        message_without_creator: S'ha creat una nova clau Admin API anomenada "%{key_name}" a %{store_name}.
+        name_label: Nom
+        scopes_label: Permisos
+        subject: S'ha creat una nova clau Admin API a %{store_name}
+        warning: Si no reconeixes aquesta clau, revoca-la ara i consulta-ho amb la persona que la va crear. És possible que el seu compte estigui compromès.
     api_key_no_current_key: Cap clau API ha autenticat aquesta sol·licitud
     api_key_scopes_immutable: no es pot canviar després de crear la clau; creeu una clau nova amb els abasts que necessiteu i revoqueu aquesta
     availability: disponibilitat

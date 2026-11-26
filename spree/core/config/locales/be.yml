@@ -469,6 +469,21 @@ be:
     adjustments_deleted: Карэкціроўкі выдалены
     all: усе
     amount: Сума
+    api_key_mailer:
+      secret_key_created:
+        action: Праверыць ключы API
+        created_at_label: Створаны
+        created_by_label: Стварыў
+        greeting: Вітаем, %{name},
+        heading: Новы ключ Admin API у %{store_name}
+        ip_address_label: IP-адрас
+        key_label: Ключ
+        message: '%{creator_name} стварыў новы ключ Admin API з назвай "%{key_name}" у %{store_name}.'
+        message_without_creator: У %{store_name} створаны новы ключ Admin API з назвай "%{key_name}".
+        name_label: Назва
+        scopes_label: Дазволы
+        subject: У %{store_name} створаны новы ключ Admin API
+        warning: Калі вы не пазнаеце гэты ключ, адклікайце яго зараз і звяжыцеся з чалавекам, які яго стварыў. Яго ўліковы запіс мог быць узламаны.
     api_key_no_current_key: Ні адзін API-ключ не аўтэнтыфікаваў гэты запыт
     api_key_scopes_immutable: немагчыма змяніць пасля стварэння ключа; стварыце новы ключ з патрэбнымі вобласцямі і адкліч гэты
     approver: Пацвердзіў(ла)

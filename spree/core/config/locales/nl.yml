@@ -441,6 +441,21 @@ nl:
         subject: Instructies voor het opnieuw instellen van het wachtwoord
     all: Alle
     amount: Bedrag
+    api_key_mailer:
+      secret_key_created:
+        action: API-sleutels bekijken
+        created_at_label: Aangemaakt op
+        created_by_label: Aangemaakt door
+        greeting: Hallo %{name},
+        heading: Nieuwe Admin API-sleutel in %{store_name}
+        ip_address_label: IP-adres
+        key_label: Sleutel
+        message: '%{creator_name} heeft een nieuwe Admin API-sleutel met de naam "%{key_name}" aangemaakt in %{store_name}.'
+        message_without_creator: Er is een nieuwe Admin API-sleutel met de naam "%{key_name}" aangemaakt in %{store_name}.
+        name_label: Naam
+        scopes_label: Rechten
+        subject: Nieuwe Admin API-sleutel aangemaakt in %{store_name}
+        warning: Herkent u deze sleutel niet? Trek hem dan nu in en vraag het na bij degene die hem heeft aangemaakt. Diens account is mogelijk gehackt.
     api_key_no_current_key: Geen API-sleutel heeft dit verzoek geauthenticeerd
     api_key_scopes_immutable: kan niet worden gewijzigd nadat de sleutel is aangemaakt; maak een nieuwe sleutel aan met de scopes die je nodig hebt en trek deze in
     approver: Door

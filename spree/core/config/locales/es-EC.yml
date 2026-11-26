@@ -101,6 +101,21 @@ es-EC:
     adjustment_labels:
       tax_rates:
         including_tax: "%{name}%{amount} (incluido en el precio)"
+    api_key_mailer:
+      secret_key_created:
+        action: Revisar claves API
+        created_at_label: Creada el
+        created_by_label: Creada por
+        greeting: Hola %{name},
+        heading: Nueva clave Admin API en %{store_name}
+        ip_address_label: Dirección IP
+        key_label: Clave
+        message: '%{creator_name} creó una nueva clave Admin API llamada "%{key_name}" en %{store_name}.'
+        message_without_creator: Se creó una nueva clave Admin API llamada "%{key_name}" en %{store_name}.
+        name_label: Nombre
+        scopes_label: Permisos
+        subject: Nueva clave Admin API creada en %{store_name}
+        warning: Si no reconoces esta clave, revócala ahora y consúltalo con la persona que la creó. Es posible que su cuenta esté comprometida.
     api_key_scopes_immutable: no se pueden cambiar después de crear la clave; cree una nueva clave con los alcances que necesite y revoque esta
     backorderable: Devuelto
     cannot_be_destroyed: El pedido no se puede eliminar.

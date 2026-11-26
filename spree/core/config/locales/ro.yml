@@ -411,6 +411,21 @@ ro:
     adjustments_deleted: Ajustări șterse
     all: Toate
     amount: Suma
+    api_key_mailer:
+      secret_key_created:
+        action: Verifică cheile API
+        created_at_label: Creată la
+        created_by_label: Creată de
+        greeting: Bună, %{name},
+        heading: Cheie Admin API nouă în %{store_name}
+        ip_address_label: Adresă IP
+        key_label: Cheie
+        message: '%{creator_name} a creat o cheie Admin API nouă numită "%{key_name}" în %{store_name}.'
+        message_without_creator: A fost creată o cheie Admin API nouă numită "%{key_name}" în %{store_name}.
+        name_label: Nume
+        scopes_label: Permisiuni
+        subject: Cheie Admin API nouă creată în %{store_name}
+        warning: Dacă nu recunoști această cheie, revoc-o acum și verifică cu persoana care a creat-o. Contul acesteia ar putea fi compromis.
     api_key_no_current_key: Nicio cheie API nu a autentificat această solicitare
     api_key_scopes_immutable: nu poate fi modificat după crearea cheii; creați o cheie nouă cu domeniile de care aveți nevoie și revocați-o pe aceasta
     availability: disponibilitate

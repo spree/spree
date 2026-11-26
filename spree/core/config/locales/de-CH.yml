@@ -147,6 +147,21 @@ de-CH:
     adjustment_labels:
       tax_rates:
         including_tax: "%{name}%{amount} (im Preis enthalten)"
+    api_key_mailer:
+      secret_key_created:
+        action: API-Schlüssel prüfen
+        created_at_label: Erstellt am
+        created_by_label: Erstellt von
+        greeting: Hallo %{name},
+        heading: Neuer Admin-API-Schlüssel in %{store_name}
+        ip_address_label: IP-Adresse
+        key_label: Schlüssel
+        message: '%{creator_name} hat in %{store_name} einen neuen Admin-API-Schlüssel namens "%{key_name}" erstellt.'
+        message_without_creator: In %{store_name} wurde ein neuer Admin-API-Schlüssel namens "%{key_name}" erstellt.
+        name_label: Name
+        scopes_label: Berechtigungen
+        subject: Neuer Admin-API-Schlüssel in %{store_name} erstellt
+        warning: Wenn Sie diesen Schlüssel nicht kennen, widerrufen Sie ihn sofort und sprechen Sie mit der Person, die ihn erstellt hat. Ihr Konto könnte kompromittiert sein.
     api_key_no_current_key: Diese Anfrage wurde mit keinem API-Schlüssel authentifiziert
     api_key_scopes_immutable: kann nach Erstellung des Schlüssels nicht mehr geändert werden; erstellen Sie einen neuen Schlüssel mit den gewünschten Scopes und widerrufen Sie diesen
     calculator: Kalkulator
