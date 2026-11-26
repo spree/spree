@@ -39062,6 +39062,8 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   delivery_profile_id: fp_UkLWZg9DAJ
+                  market_availability: all
+                  market_ids: []
                   seller_name:
                   product_type_id:
                   tax_category_id: taxcat_UkLWZg9DAJ
@@ -39206,6 +39208,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id:
@@ -39341,6 +39345,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -39462,6 +39468,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -39659,6 +39667,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -40362,6 +40372,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -40490,6 +40502,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -40612,6 +40626,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -40731,6 +40747,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -40862,6 +40880,8 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivery_profile_id: fp_UkLWZg9DAJ
+                market_availability: all
+                market_ids: []
                 seller_name:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
@@ -60007,7 +60027,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 disabled_at:
-                secret_key: 507fa8041773b106ae4242f7458a20bdbf22bcda1eaaafaafe5199e035271094
+                secret_key: f44b508d518f47b9d42ae8a67ba913f7f7c4ee25be2e4dda1fbc06370fe29854
                 last_delivery_at:
                 recent_delivery_count: 0
                 recent_failure_count: 0
@@ -73917,6 +73937,16 @@ components:
         delivery_profile_id:
           type: string
           nullable: true
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+        market_ids:
+          type: array
+          items:
+            type: string
         submission:
           anyOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -73985,6 +74015,8 @@ components:
       - created_at
       - updated_at
       - delivery_profile_id
+      - market_availability
+      - market_ids
       - seller_name
       - product_type_id
       - tax_category_id
@@ -88795,6 +88827,21 @@ components:
             asset), and attaches to the default variant unless `variant_id` is given.
             An `id` updates that asset in place, so replaying the list does not duplicate
             it; removal uses the nested digital assets endpoint.
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+          description: 'Which markets may see and buy the product: `all` (the default),
+            `all_except` the markets in `market_ids`, or `only` those markets. A product
+            a market excludes is hidden there everywhere, including its own URL.'
+        market_ids:
+          type: array
+          items:
+            type: string
+          description: The markets `market_availability` names (`mkt_...`). Required
+            unless the mode is `all`.
         product_publications:
           type: array
           items:
@@ -89101,6 +89148,21 @@ components:
             asset), and attaches to the default variant unless `variant_id` is given.
             An `id` updates that asset in place, so replaying the list does not duplicate
             it; removal uses the nested digital assets endpoint.
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+          description: 'Which markets may see and buy the product: `all` (the default),
+            `all_except` the markets in `market_ids`, or `only` those markets. A product
+            a market excludes is hidden there everywhere, including its own URL.'
+        market_ids:
+          type: array
+          items:
+            type: string
+          description: The markets `market_availability` names (`mkt_...`). Required
+            unless the mode is `all`.
         product_publications:
           type: array
           items:
