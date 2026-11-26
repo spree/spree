@@ -105,6 +105,7 @@ module Spree
           def build_resource
             scope.new(permitted_params).tap do |key|
               key.created_by = current_actor
+              key.created_by_ip_address = request.remote_ip
             end
           end
 

@@ -235,6 +235,11 @@ export interface MintKeyOptions {
    * creates in one transaction, so a failure never leaves neither.
    */
   replace?: boolean
+  /**
+   * Send no "new Admin API key" email to store admins. Only for the key the
+   * CLI mints while setting up a project, which is not news to anyone.
+   */
+  skipAdminNotification?: boolean
 }
 
 /**
@@ -249,6 +254,7 @@ export async function mintApiKey(projectDir: string, options: MintKeyOptions): P
       KEY_TYPE: options.keyType,
       ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),
       ...(options.replace ? { REPLACE: 'true' } : {}),
+      ...(options.skipAdminNotification ? { SKIP_ADMIN_NOTIFICATION: 'true' } : {}),
     })
   } catch (error) {
     // Surface what the task actually said. Blaming a stopped stack for every
@@ -298,6 +304,7 @@ export async function mintProjectCredentials(
     keyType: 'secret',
     scopes: ['read_all'],
     replace: true,
+    skipAdminNotification: true,
   })
 
   const credentials: ProjectCredentials = {

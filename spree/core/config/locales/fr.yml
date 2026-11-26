@@ -449,6 +449,21 @@ fr:
         subject: Instructions de réinitialisation du mot de passe
     all: Tous
     amount: Montant
+    api_key_mailer:
+      secret_key_created:
+        action: Vérifier les clés API
+        created_at_label: Créée le
+        created_by_label: Créée par
+        greeting: Bonjour %{name},
+        heading: Nouvelle clé Admin API dans %{store_name}
+        ip_address_label: Adresse IP
+        key_label: Clé
+        message: "%{creator_name} a créé une nouvelle clé Admin API nommée « %{key_name} » dans %{store_name}."
+        message_without_creator: Une nouvelle clé Admin API nommée « %{key_name} » a été créée dans %{store_name}.
+        name_label: Nom
+        scopes_label: Autorisations
+        subject: Nouvelle clé Admin API créée dans %{store_name}
+        warning: Si vous ne reconnaissez pas cette clé, révoquez-la maintenant et vérifiez auprès de la personne qui l'a créée. Son compte a peut-être été compromis.
     api_key_no_current_key: Aucune clé API n'a authentifié cette requête
     api_key_scopes_immutable: ne peut pas être modifié après la création de la clé ; créez une nouvelle clé avec les portées dont vous avez besoin et révoquez celle-ci
     approver: Approbateur

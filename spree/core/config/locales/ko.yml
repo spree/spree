@@ -307,6 +307,21 @@ ko:
         subject: 비밀번호 재설정 안내
     all: 전체
     amount: 액수
+    api_key_mailer:
+      secret_key_created:
+        action: API 키 검토
+        created_at_label: 생성 일시
+        created_by_label: 생성자
+        greeting: "%{name}님, 안녕하세요."
+        heading: "%{store_name}의 새 Admin API 키"
+        ip_address_label: IP 주소
+        key_label: 키
+        message: '%{creator_name}님이 %{store_name}에서 "%{key_name}"(이)라는 새 Admin API 키를 만들었습니다.'
+        message_without_creator: '%{store_name}에서 "%{key_name}"(이)라는 새 Admin API 키가 생성되었습니다.'
+        name_label: 이름
+        scopes_label: 권한
+        subject: "%{store_name}에서 새 Admin API 키가 생성되었습니다"
+        warning: 이 키를 알아보지 못하겠다면 지금 바로 해지하고 키를 만든 사람에게 확인하세요. 해당 계정이 도용되었을 수 있습니다.
     api_key_no_current_key: 이 요청을 인증한 API 키가 없습니다
     api_key_scopes_immutable: 은(는) 키 생성 후 변경할 수 없습니다. 필요한 스코프로 새 키를 생성하고 이 키를 폐기하세요
     availability: 재고 상태

@@ -433,6 +433,21 @@ zh-CN:
         subject: 密码重置说明
     all: 全部
     amount: 金额
+    api_key_mailer:
+      secret_key_created:
+        action: 查看 API 密钥
+        created_at_label: 创建时间
+        created_by_label: 创建者
+        greeting: "%{name}，您好："
+        heading: "%{store_name} 中的新 Admin API 密钥"
+        ip_address_label: IP 地址
+        key_label: 密钥
+        message: "%{creator_name} 在 %{store_name} 中创建了名为“%{key_name}”的新 Admin API 密钥。"
+        message_without_creator: "%{store_name} 中创建了名为“%{key_name}”的新 Admin API 密钥。"
+        name_label: 名称
+        scopes_label: 权限
+        subject: "%{store_name} 中创建了新的 Admin API 密钥"
+        warning: 如果您不认识此密钥，请立即撤销，并向创建者核实。其账户可能已被盗用。
     api_key_no_current_key: 没有 API 密钥对此请求进行身份验证
     api_key_scopes_immutable: 在密钥创建后无法更改；请创建一个拥有所需权限范围的新密钥并吊销此密钥
     approver: 核准者

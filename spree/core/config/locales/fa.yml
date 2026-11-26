@@ -376,6 +376,21 @@ fa:
     adjustments_deleted: تعدیل‌ها حذف شدند
     all: همه
     amount: مقدار
+    api_key_mailer:
+      secret_key_created:
+        action: بررسی کلیدهای API
+        created_at_label: تاریخ ایجاد
+        created_by_label: ایجادکننده
+        greeting: سلام %{name}،
+        heading: کلید Admin API جدید در %{store_name}
+        ip_address_label: نشانی IP
+        key_label: کلید
+        message: '%{creator_name} یک کلید Admin API جدید با نام "%{key_name}" در %{store_name} ایجاد کرد.'
+        message_without_creator: یک کلید Admin API جدید با نام "%{key_name}" در %{store_name} ایجاد شد.
+        name_label: نام
+        scopes_label: مجوزها
+        subject: کلید Admin API جدید در %{store_name} ایجاد شد
+        warning: اگر این کلید را نمی‌شناسید، همین حالا آن را لغو کنید و با فردی که آن را ایجاد کرده تماس بگیرید. ممکن است حساب او به خطر افتاده باشد.
     api_key_no_current_key: هیچ کلید API این درخواست را احراز هویت نکرد
     api_key_scopes_immutable: پس از ایجاد کلید قابل تغییر نیست؛ کلید جدیدی با دامنه‌های مورد نیاز خود بسازید و این کلید را باطل کنید
     approver: تأییدکننده

@@ -412,6 +412,21 @@ ja:
         subject: パスワード再設定の手順
     all: 全て
     amount: 金額
+    api_key_mailer:
+      secret_key_created:
+        action: APIキーを確認
+        created_at_label: 作成日時
+        created_by_label: 作成者
+        greeting: "%{name} 様"
+        heading: "%{store_name} の新しい Admin API キー"
+        ip_address_label: IPアドレス
+        key_label: キー
+        message: '%{creator_name} が %{store_name} で "%{key_name}" という名前の新しい Admin API キーを作成しました。'
+        message_without_creator: '%{store_name} で "%{key_name}" という名前の新しい Admin API キーが作成されました。'
+        name_label: 名前
+        scopes_label: 権限
+        subject: "%{store_name} で新しい Admin API キーが作成されました"
+        warning: このキーに心当たりがない場合は、すぐに無効化し、作成者に確認してください。アカウントが不正に利用されている可能性があります。
     api_key_no_current_key: このリクエストを認証したAPIキーがありません
     api_key_scopes_immutable: はキーの作成後に変更できません。必要なスコープを設定した新しいキーを作成し、このキーを無効化してください
     availability: 在庫状況

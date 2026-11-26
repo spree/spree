@@ -437,6 +437,21 @@ vi:
     adjustments_deleted: Đã xóa điều chỉnh
     all: Tất cả
     amount: Giá trị
+    api_key_mailer:
+      secret_key_created:
+        action: Xem lại khóa API
+        created_at_label: Tạo lúc
+        created_by_label: Người tạo
+        greeting: Xin chào %{name},
+        heading: Khóa Admin API mới trong %{store_name}
+        ip_address_label: Địa chỉ IP
+        key_label: Khóa
+        message: '%{creator_name} đã tạo khóa Admin API mới có tên "%{key_name}" trong %{store_name}.'
+        message_without_creator: Một khóa Admin API mới có tên "%{key_name}" đã được tạo trong %{store_name}.
+        name_label: Tên
+        scopes_label: Quyền
+        subject: Đã tạo khóa Admin API mới trong %{store_name}
+        warning: Nếu bạn không nhận ra khóa này, hãy thu hồi ngay và kiểm tra với người đã tạo nó. Tài khoản của họ có thể đã bị xâm phạm.
     api_key_no_current_key: Không có khóa API nào xác thực yêu cầu này
     api_key_scopes_immutable: không thể thay đổi sau khi khóa được tạo; hãy tạo một khóa mới với các phạm vi bạn cần và thu hồi khóa này
     approver: Người xác nhận

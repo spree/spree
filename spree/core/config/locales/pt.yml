@@ -337,6 +337,21 @@ pt:
         instructions: Recebemos um pedido para redefinir a palavra-passe da sua conta de administrador da %{store_name}. Clique no botão abaixo para escolher uma nova palavra-passe.
         subject: Instruções para redefinição de palavra-passe
     amount: Montante
+    api_key_mailer:
+      secret_key_created:
+        action: Rever chaves de API
+        created_at_label: Criada em
+        created_by_label: Criada por
+        greeting: Olá %{name},
+        heading: Nova chave Admin API em %{store_name}
+        ip_address_label: Endereço IP
+        key_label: Chave
+        message: '%{creator_name} criou uma nova chave Admin API chamada "%{key_name}" em %{store_name}.'
+        message_without_creator: Foi criada uma nova chave Admin API chamada "%{key_name}" em %{store_name}.
+        name_label: Nome
+        scopes_label: Permissões
+        subject: Nova chave Admin API criada em %{store_name}
+        warning: Se não reconhece esta chave, revogue-a agora e confirme com a pessoa que a criou. A conta dessa pessoa pode ter sido comprometida.
     api_key_no_current_key: Nenhuma chave de API autenticou este pedido
     api_key_scopes_immutable: não pode ser alterado depois de a chave ser criada; crie uma nova chave com os âmbitos de que necessita e revogue esta
     availability: disponibilidade

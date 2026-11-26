@@ -433,6 +433,21 @@ ar:
         subject: تعليمات إعادة تعيين كلمة المرور
     all: الكل
     amount: المبلغ
+    api_key_mailer:
+      secret_key_created:
+        action: مراجعة مفاتيح API
+        created_at_label: تاريخ الإنشاء
+        created_by_label: أنشأه
+        greeting: مرحبًا %{name}،
+        heading: مفتاح Admin API جديد في %{store_name}
+        ip_address_label: عنوان IP
+        key_label: المفتاح
+        message: أنشأ %{creator_name} مفتاح Admin API جديدًا باسم "%{key_name}" في %{store_name}.
+        message_without_creator: تم إنشاء مفتاح Admin API جديد باسم "%{key_name}" في %{store_name}.
+        name_label: الاسم
+        scopes_label: الصلاحيات
+        subject: تم إنشاء مفتاح Admin API جديد في %{store_name}
+        warning: إذا لم تتعرف على هذا المفتاح، فقم بإلغائه الآن وتحقق مع الشخص الذي أنشأه. قد يكون حسابه قد تعرض للاختراق.
     api_key_no_current_key: لم يقم أي مفتاح API بمصادقة هذا الطلب
     api_key_scopes_immutable: لا يمكن تغييرها بعد إنشاء المفتاح؛ أنشئ مفتاحًا جديدًا بالنطاقات التي تحتاجها وقم بإلغاء هذا المفتاح
     authorized: مُصرَّح

@@ -8,7 +8,8 @@ namespace :spree do
       print key.plaintext_token
     end
 
-    desc 'Create an API key (REPLACE=true revokes active keys of the same name first)'
+    desc 'Create an API key (REPLACE=true revokes active keys of the same name first, ' \
+         'SKIP_ADMIN_NOTIFICATION=true sends no email to store admins)'
     task create_api_key: :environment do
       name = ENV.fetch('NAME')
       key_type = ENV.fetch('KEY_TYPE')
@@ -20,7 +21,8 @@ namespace :spree do
       # with the old key revoked and no replacement.
       key = Spree::ApiKey.transaction do
         store.api_keys.active.where(name: name).find_each(&:revoke!) if ENV['REPLACE'] == 'true'
-        store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
+        store.api_keys.create!(name: name, key_type: key_type, scopes: scopes,
+                               skip_admin_notification: ENV['SKIP_ADMIN_NOTIFICATION'] == 'true')
       end
       print key.plaintext_token
     end

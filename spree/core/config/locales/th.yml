@@ -406,6 +406,21 @@ th:
     adjustments_deleted: ลบรายการปรับปรุงแล้ว
     all: ทั้งหมด
     amount: รวม
+    api_key_mailer:
+      secret_key_created:
+        action: ตรวจสอบคีย์ API
+        created_at_label: สร้างเมื่อ
+        created_by_label: สร้างโดย
+        greeting: สวัสดี %{name}
+        heading: คีย์ Admin API ใหม่ใน %{store_name}
+        ip_address_label: ที่อยู่ IP
+        key_label: คีย์
+        message: '%{creator_name} ได้สร้างคีย์ Admin API ใหม่ชื่อ "%{key_name}" ใน %{store_name}'
+        message_without_creator: มีการสร้างคีย์ Admin API ใหม่ชื่อ "%{key_name}" ใน %{store_name}
+        name_label: ชื่อ
+        scopes_label: สิทธิ์
+        subject: มีการสร้างคีย์ Admin API ใหม่ใน %{store_name}
+        warning: หากคุณไม่รู้จักคีย์นี้ ให้เพิกถอนทันทีและตรวจสอบกับผู้ที่สร้างคีย์ บัญชีของผู้นั้นอาจถูกบุกรุก
     api_key_no_current_key: ไม่มี API key ที่ยืนยันตัวตนสำหรับคำขอนี้
     api_key_scopes_immutable: ไม่สามารถเปลี่ยนแปลงได้หลังจากสร้างคีย์แล้ว กรุณาสร้างคีย์ใหม่ด้วยขอบเขตที่คุณต้องการและเพิกถอนคีย์นี้
     availability: ความพร้อมจำหน่าย

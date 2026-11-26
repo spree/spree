@@ -52,6 +52,10 @@ module Spree
     belongs_to :created_by, polymorphic: true, optional: true
     belongs_to :revoked_by, polymorphic: true, optional: true
 
+    # Personal data: where the creating request came from, set by the Admin
+    # API and named in the security notice sent to store admins.
+    encrypts :created_by_ip_address, support_unencrypted_data: true if ActiveRecord::Encryption.config.has_primary_key?
+
     validates :name, presence: true
     validates_store_uniqueness :name, soft_delete_column: :revoked_at
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
@@ -74,6 +78,11 @@ module Spree
     validate :channel_immutable, if: -> { persisted? && channel_id_changed? }
 
     before_validation :generate_token, on: :create
+    after_create_commit :notify_store_admins, if: -> { secret? && !skip_admin_notification }
+
+    # Set when a key is minted as part of setting up a store (the CLI's own
+    # read-only key), which is not news to anyone. Never persisted.
+    attr_accessor :skip_admin_notification
 
     scope :active, -> { where(revoked_at: nil) }
     scope :revoked, -> { where.not(revoked_at: nil) }
@@ -173,6 +182,21 @@ module Spree
         errors.add(:channel, :api_key_channel_publishable_only, message: I18n.t('spree.api_key_channel_publishable_only'))
       elsif channel && channel.store_id != store_id
         errors.add(:channel, :api_key_channel_must_belong_to_store, message: I18n.t('spree.api_key_channel_must_belong_to_store'))
+      end
+    end
+
+    # A secret key can do anything its scopes allow, so every admin hears
+    # about a new one — a key nobody recognizes is the first sign of a
+    # compromised account.
+    def notify_store_admins
+      notice = Spree::ApiKeyMailer.notice_for(self)
+
+      store.users.merge(Spree::Role.admin).find_each do |admin_user|
+        Spree::ApiKeyMailer.secret_key_created(store, notice, admin_user).deliver_later
+      rescue StandardError => e
+        # The key already exists; one admin's failed enqueue must neither
+        # fail the request nor cost the other admins their notice.
+        Rails.error.report(e, source: 'spree.api_keys')
       end
     end
 

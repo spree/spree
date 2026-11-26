@@ -678,6 +678,21 @@ en:
     api_key_channel_immutable: cannot be changed after the key is created; create a new key bound to the channel you need and revoke this one
     api_key_channel_must_belong_to_store: must belong to the same store as the key
     api_key_channel_publishable_only: can only be set on publishable keys
+    api_key_mailer:
+      secret_key_created:
+        action: Review API keys
+        created_at_label: Created at
+        created_by_label: Created by
+        greeting: Hi %{name},
+        heading: New Admin API key in %{store_name}
+        ip_address_label: IP address
+        key_label: Key
+        message: '%{creator_name} created a new Admin API key named "%{key_name}" in %{store_name}.'
+        message_without_creator: A new Admin API key named "%{key_name}" was created in %{store_name}.
+        name_label: Name
+        scopes_label: Permissions
+        subject: New Admin API key created in %{store_name}
+        warning: If you don't recognize this key, revoke it now and check with the person who created it. Their account may have been compromised.
     api_key_no_current_key: No API key authenticated this request
     api_key_scopes_immutable: cannot be changed after the key is created; create a new key with the scopes you need and revoke this one
     apply_gift_card_on_completed_order_error: You can't apply a gift card after the order was placed

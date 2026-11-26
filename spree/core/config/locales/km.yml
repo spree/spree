@@ -414,6 +414,21 @@ km:
     adjustments_deleted: ការកែតម្រូវត្រូវបានលុប
     all: ទាំងអស់
     amount: តម្លៃ
+    api_key_mailer:
+      secret_key_created:
+        action: ពិនិត្យ API keys
+        created_at_label: បានបង្កើតនៅ
+        created_by_label: បានបង្កើតដោយ
+        greeting: សួស្តី %{name},
+        heading: Admin API key ថ្មីនៅក្នុង %{store_name}
+        ip_address_label: អាសយដ្ឋាន IP
+        key_label: Key
+        message: '%{creator_name} បានបង្កើត Admin API key ថ្មីឈ្មោះ "%{key_name}" នៅក្នុង %{store_name}។'
+        message_without_creator: Admin API key ថ្មីឈ្មោះ "%{key_name}" ត្រូវបានបង្កើតនៅក្នុង %{store_name}។
+        name_label: ឈ្មោះ
+        scopes_label: សិទ្ធិ
+        subject: Admin API key ថ្មីត្រូវបានបង្កើតនៅក្នុង %{store_name}
+        warning: ប្រសិនបើអ្នកមិនស្គាល់ key នេះទេ សូមដកហូតវាឥឡូវនេះ ហើយសួរអ្នកដែលបានបង្កើតវា។ គណនីរបស់គាត់ប្រហែលជាត្រូវបានលួចចូល។
     api_key_no_current_key: គ្មាន API key ណាបានផ្ទៀងផ្ទាត់សំណើនេះទេ
     api_key_scopes_immutable: មិនអាចផ្លាស់ប្តូរបានទេបន្ទាប់ពី key ត្រូវបានបង្កើត។ សូមបង្កើត key ថ្មីជាមួយ scopes ដែលអ្នកត្រូវការ ហើយដកហូត key នេះ
     approver: បញ្ជាក់ដោយ

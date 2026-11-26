@@ -449,6 +449,21 @@ pl:
         subject: Instrukcje resetowania hasła
     all: Wszystko
     amount: Kwota
+    api_key_mailer:
+      secret_key_created:
+        action: Przejrzyj klucze API
+        created_at_label: Utworzono
+        created_by_label: Utworzył(a)
+        greeting: Cześć %{name},
+        heading: Nowy klucz Admin API w %{store_name}
+        ip_address_label: Adres IP
+        key_label: Klucz
+        message: '%{creator_name} utworzył(a) nowy klucz Admin API o nazwie "%{key_name}" w %{store_name}.'
+        message_without_creator: W %{store_name} utworzono nowy klucz Admin API o nazwie "%{key_name}".
+        name_label: Nazwa
+        scopes_label: Uprawnienia
+        subject: Utworzono nowy klucz Admin API w %{store_name}
+        warning: Jeśli nie rozpoznajesz tego klucza, unieważnij go teraz i skontaktuj się z osobą, która go utworzyła. Jej konto mogło zostać przejęte.
     api_key_no_current_key: Żaden klucz API nie uwierzytelnił tego żądania
     api_key_scopes_immutable: nie mogą być zmienione po utworzeniu klucza; utwórz nowy klucz z potrzebnymi zakresami i unieważnij ten
     approver: Zatwierdzający

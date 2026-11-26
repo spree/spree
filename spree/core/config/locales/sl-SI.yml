@@ -304,6 +304,21 @@ sl-SI:
     adjustments_deleted: Prilagoditve izbrisane
     all: Vse
     amount: Znesek
+    api_key_mailer:
+      secret_key_created:
+        action: Preglej ključe API
+        created_at_label: Ustvarjeno
+        created_by_label: Ustvaril
+        greeting: Pozdravljeni, %{name},
+        heading: Nov ključ Admin API v %{store_name}
+        ip_address_label: Naslov IP
+        key_label: Ključ
+        message: '%{creator_name} je v %{store_name} ustvaril nov ključ Admin API z imenom "%{key_name}".'
+        message_without_creator: V %{store_name} je bil ustvarjen nov ključ Admin API z imenom "%{key_name}".
+        name_label: Ime
+        scopes_label: Dovoljenja
+        subject: V %{store_name} je bil ustvarjen nov ključ Admin API
+        warning: Če tega ključa ne prepoznate, ga takoj prekličite in preverite pri osebi, ki ga je ustvarila. Njen račun je morda ogrožen.
     api_key_no_current_key: Te zahteve ni overil noben API ključ
     api_key_scopes_immutable: ni mogoče spremeniti po ustvarjenju ključa; ustvarite nov ključ z obsegi, ki jih potrebujete, in tega prekličite
     availability: razpoložljivost

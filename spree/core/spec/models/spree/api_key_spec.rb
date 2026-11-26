@@ -192,6 +192,89 @@ RSpec.describe Spree::ApiKey, type: :model do
     end
   end
 
+  describe '#created_by_ip_address' do
+    it 'is encrypted at rest' do
+      key = create(:api_key, :secret, store: store, created_by_ip_address: '203.0.113.7')
+
+      # Read past the model, which would decrypt.
+      raw = described_class.connection.select_value("SELECT created_by_ip_address FROM #{described_class.table_name} WHERE id = #{key.id}")
+      expect(raw).not_to include('203.0.113.7')
+      expect(key.reload.created_by_ip_address).to eq('203.0.113.7')
+    end
+  end
+
+  describe 'admin notification' do
+    let!(:admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
+    let!(:second_admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
+
+    it 'emails every store admin when a secret key is created' do
+      notice = hash_including('name' => 'Warehouse')
+
+      expect {
+        create(:api_key, :secret, store: store, name: 'Warehouse')
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(store, notice, admin).
+        and have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(store, notice, second_admin)
+    end
+
+    # The job carries a copy of the key, so deleting the key before the job
+    # runs cannot suppress the notice.
+    it 'still sends the notice when the key is deleted before the job runs' do
+      deliveries = ActionMailer::Base.deliveries
+      create(:api_key, :secret, store: store, name: 'Short-lived').destroy!
+      expect(deliveries).to be_empty
+
+      perform_enqueued_jobs
+
+      expect(deliveries.size).to eq(2)
+      expect(email_body(deliveries.last)).to include('Short-lived')
+    end
+
+    it 'keeps the IP address encrypted in the job arguments' do
+      create(:api_key, :secret, store: store, created_by_ip_address: '203.0.113.7')
+
+      arguments = ActiveJob::Base.queue_adapter.enqueued_jobs.map { |job| job['arguments'].to_json }
+      expect(arguments).to all(satisfy { |json| json.exclude?('203.0.113.7') })
+    end
+
+    it 'still notifies the other admins when one enqueue fails, reporting the error' do
+      error = StandardError.new('queue down')
+      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).and_call_original
+      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).with(anything, anything, admin).and_raise(error)
+      allow(Rails.error).to receive(:report)
+
+      expect {
+        create(:api_key, :secret, store: store)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, anything, second_admin)
+      expect(Rails.error).to have_received(:report).with(error, source: 'spree.api_keys')
+    end
+
+    it 'skips staff without the admin role and admins of other stores' do
+      create(:role_user, user: create(:admin_user, :without_admin_role), role: create(:role, name: 'Manager', resource: store))
+      create(:role_user, user: create(:admin_user, :without_admin_role), role: Spree::Role.default_admin_role(create(:store)))
+
+      expect {
+        create(:api_key, :secret, store: store)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).twice
+    end
+
+    it 'sends nothing for a key minted while setting up the store' do
+      expect {
+        create(:api_key, :secret, store: store, skip_admin_notification: true)
+      }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+    end
+
+    it 'sends nothing for a publishable key' do
+      expect { create(:api_key, :publishable, store: store) }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+    end
+
+    it 'sends nothing when an existing secret key changes' do
+      key = create(:api_key, :secret, store: store)
+
+      expect { key.update!(name: 'Renamed') }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+      expect { key.revoke! }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+    end
+  end
+
   describe '#revoke!' do
     it 'sets revoked_at timestamp' do
       expect { api_key.revoke! }.to change { api_key.revoked_at }.from(nil)
