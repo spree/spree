@@ -29,8 +29,16 @@ import {
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { BanIcon, CheckIcon, CopyIcon, KeyRoundIcon, PencilIcon } from '@spree/dashboard-ui/icons'
-import type { ReactNode } from 'react'
+import {
+  BanIcon,
+  CheckIcon,
+  CopyIcon,
+  EyeIcon,
+  EyeOffIcon,
+  KeyRoundIcon,
+  PencilIcon,
+} from '@spree/dashboard-ui/icons'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDeleteApiKey, useRevokeApiKey } from '../../../hooks/use-api-keys'
 import { usePermissionCatalog } from '../../../hooks/use-roles'
@@ -277,11 +285,7 @@ function ApiKeyRow({
             {t('admin.api_keys.created_by', { actor: apiKey.created_by_label })}
           </div>
         )}
-        {apiKey.created_by_ip_address && (
-          <div className="text-xs">
-            {t('admin.api_keys.created_from_ip', { ip: apiKey.created_by_ip_address })}
-          </div>
-        )}
+        {apiKey.created_by_ip_address && <CreatedFromIp ip={apiKey.created_by_ip_address} />}
       </TableCell>
       <TableCell className="text-right">
         <RowActions
@@ -385,6 +389,30 @@ export function ScopeList({
           </PopoverContent>
         </Popover>
       )}
+    </div>
+  )
+}
+
+const MASKED_IP = '••••••••'
+
+/** Where a key was created from, hidden until the admin asks to see it. */
+function CreatedFromIp({ ip }: { ip: string }) {
+  const { t } = useTranslation()
+  const [revealed, setRevealed] = useState(false)
+
+  return (
+    <div className="flex items-center gap-1 text-xs">
+      <span>{t('admin.api_keys.created_from_ip', { ip: revealed ? ip : MASKED_IP })}</span>
+      <Button
+        type="button"
+        size="icon-xs"
+        variant="ghost"
+        aria-label={revealed ? t('admin.actions.hide') : t('admin.actions.show')}
+        aria-pressed={revealed}
+        onClick={() => setRevealed((visible) => !visible)}
+      >
+        {revealed ? <EyeOffIcon /> : <EyeIcon />}
+      </Button>
     </div>
   )
 }
