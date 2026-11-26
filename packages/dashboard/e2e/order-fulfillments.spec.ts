@@ -114,4 +114,30 @@ test.describe('order fulfillments', () => {
     await expect(card.getByText(/^uploaded$/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByRole('button', { name: /print label/i })).toBeVisible()
   })
+
+  // Marking delivered emails the customer unless the merchant unticks it.
+  test('marks a shipped parcel delivered without emailing the customer', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken)
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const card = fulfillmentsCard(page)
+    await card.getByRole('button', { name: /^mark as delivered$/i }).click({ timeout: 15_000 })
+
+    const dialog = page.getByRole('dialog')
+    const notify = dialog.getByRole('checkbox', { name: /email the customer/i })
+    await expect(notify).toBeChecked()
+    await notify.click()
+    await expect(notify).not.toBeChecked()
+
+    const request = page.waitForRequest(
+      (req) => req.method() === 'PATCH' && req.url().endsWith('/mark_delivered'),
+    )
+    await dialog.getByRole('button', { name: /^mark as delivered$/i }).click()
+    expect((await request).postDataJSON()).toMatchObject({ notify_customer: false })
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /^mark as delivered$/i })).toHaveCount(0)
+    await expect(card.getByText(/^delivered$/i).first()).toBeVisible()
+  })
 })

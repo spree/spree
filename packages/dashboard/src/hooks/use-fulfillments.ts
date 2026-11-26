@@ -101,8 +101,10 @@ export function useFulfillmentActions(orderId: string) {
 
   const markDelivered = useFulfillmentMutation(
     orderId,
-    (fulfillmentId: string) =>
-      adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
+    ({ fulfillmentId, notifyCustomer }: { fulfillmentId: string; notifyCustomer: boolean }) =>
+      adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId, {
+        notify_customer: notifyCustomer,
+      }),
     { toastValidationErrors: true },
   )
 
