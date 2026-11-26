@@ -49,6 +49,13 @@ module Spree
           failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_shippable'))
         end
         failure(stock_transfer, I18n.t('spree.stock_transfer.errors.must_have_variant')) if stock_transfer.items.empty?
+        # A deleted warehouse has no shelf to send from and none to land on.
+        if stock_transfer.source_location.deleted?
+          failure(stock_transfer, I18n.t('spree.stock_transfer.errors.source_location_deleted_before_shipping'))
+        end
+        return unless stock_transfer.destination_location.deleted?
+
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.destination_location_deleted'))
       end
 
       # Every line needs enough available stock for the quantity being moved,

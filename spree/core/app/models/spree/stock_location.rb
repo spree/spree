@@ -328,10 +328,12 @@ module Spree
       siblings.update_all(updated_at: Time.current)
     end
 
-    # In one statement, as the hard delete it replaces was: a location can
-    # hold a level for every variant in the catalog.
+    # In bulk, as the hard delete it replaces was: a location can hold a level
+    # for every variant in the catalog. The variants are touched first, while
+    # the levels still reach them, so cached availability drops this shelf.
     def soft_delete_stock_levels
       deleted_at = Time.current
+      variants.update_all(updated_at: deleted_at)
       stock_levels.update_all(deleted_at: deleted_at, updated_at: deleted_at)
     end
 

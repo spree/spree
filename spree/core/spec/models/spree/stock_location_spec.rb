@@ -357,6 +357,13 @@ module Spree
         expect(movement.reload.stock_level).to eq(stock_level)
         expect(StockMovement.for_store(subject.store)).to include(movement)
       end
+
+      it 'touches the variants it stocked' do
+        variant
+        travel(1.minute) do
+          expect { subject.destroy }.to change { variant.reload.updated_at }
+        end
+      end
     end
 
     describe '#conditionally_touch_records' do

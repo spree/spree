@@ -34,6 +34,10 @@ module Spree
       def ensure_draft
         failure(purchase_order, I18n.t('spree.purchase_order.errors.not_draft')) unless purchase_order.draft?
         failure(purchase_order, I18n.t('spree.purchase_order.errors.must_have_variant')) if purchase_order.items.empty?
+        # A deleted destination has no shelf left to count the units onto.
+        return unless purchase_order.destination_location.deleted?
+
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.destination_location_deleted'))
       end
 
       def mark_ordered

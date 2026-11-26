@@ -92,6 +92,17 @@ describe 'purchase order lifecycle', type: :model do
       expect(result).to be_failure
       expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.not_draft'))
     end
+
+    it 'refuses an order for a deleted destination' do
+      purchase_order
+      destination.destroy
+
+      result = Spree::PurchaseOrders::MarkOrdered.call(purchase_order: purchase_order.reload)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(I18n.t('spree.purchase_order.errors.destination_location_deleted'))
+      expect(purchase_order.reload).to be_draft
+    end
   end
 
   describe 'receiving' do

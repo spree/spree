@@ -1812,6 +1812,7 @@ en:
         repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
         same_location: cannot be the same as the destination location
         source_location_deleted: The source warehouse has been deleted — write the units off instead
+        source_location_deleted_before_shipping: The source warehouse has been deleted — cancel the transfer instead
         variants_unavailable: Some variants are not available on %{stock}
     store: Store
     store_credit:

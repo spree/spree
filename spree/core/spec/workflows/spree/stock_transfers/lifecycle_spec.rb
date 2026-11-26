@@ -150,6 +150,27 @@ describe 'stock transfer lifecycle', type: :model do
       expect(forced).to be_success
       expect(source_on_hand).to eq(-6)
     end
+
+    # Forcing past a deleted source would write a fresh, live level onto it.
+    it 'refuses to send from a deleted source, even when forced' do
+      transfer
+      source.destroy
+
+      forced = Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer.reload, force: true)
+
+      expect(forced).to be_failure
+      expect(forced.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.source_location_deleted_before_shipping'))
+      expect(source.stock_levels.reload).to be_empty
+    end
+
+    it 'refuses to send to a deleted destination' do
+      transfer
+      destination.destroy
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to eq(I18n.t('spree.stock_transfer.errors.destination_location_deleted'))
+      expect(source_on_hand).to eq(10)
+    end
   end
 
   describe 'receiving' do
