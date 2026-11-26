@@ -51,6 +51,7 @@ module Spree
       def ensure_cancelable
         failure(stock_transfer, I18n.t('spree.stock_transfer.errors.already_closed')) if stock_transfer.closed?
         return unless stock_transfer.in_flight?
+
         unless IN_TRANSIT_RESOLUTIONS.include?(on_in_transit)
           failure(stock_transfer, I18n.t('spree.stock_transfer.errors.in_transit_resolution_required'))
         end
