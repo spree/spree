@@ -27,9 +27,9 @@ export type CreateInvoiceRequestParams = {
      * partial address.
      */
     quick_checkout?: boolean
-    /** @deprecated Use `country_code`. Removed in 6.1. */
+    /** @deprecated Use `country_code`. Removed in 6.5. */
     country_iso?: string
-    /** @deprecated Use `state_code`. Removed in 6.1. */
+    /** @deprecated Use `state_code`. Removed in 6.5. */
     state_abbr?: string
   } | null
 }
