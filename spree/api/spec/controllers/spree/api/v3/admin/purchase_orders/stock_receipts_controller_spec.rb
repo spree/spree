@@ -57,6 +57,27 @@ RSpec.describe Spree::Api::V3::Admin::PurchaseOrders::StockReceiptsController, t
       expect(purchase_order).to be_received
     end
 
+    it 'stops counting a short line as incoming when an over-shipment on another line closes the order' do
+      short_variant = create(:variant)
+      order = Spree::PurchaseOrders::Create.call(
+        store: store, supplier: supplier, destination_location: destination_location,
+        items: [{ variant: variant, quantity_ordered: 10, unit_cost: 5 }, { variant: short_variant, quantity_ordered: 10, unit_cost: 5 }]
+      ).value
+      Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order)
+      lines = order.reload.items.index_by(&:variant_id)
+
+      post :create, params: {
+        purchase_order_id: order.prefixed_id,
+        items: [{ id: lines[variant.id].prefixed_id, quantity_accepted: 11 }, { id: lines[short_variant.id].prefixed_id, quantity_accepted: 4 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(order.reload).to be_over_received
+      expect(lines[short_variant.id].reload.outstanding).to eq(6)
+      short_level = destination_location.stock_level(short_variant.id)
+      expect([short_level.count_on_hand, short_level.incoming_count]).to eq([4, 0])
+    end
+
     it 'refuses a delivery against an order that has not been placed' do
       post :create, params: { purchase_order_id: purchase_order.prefixed_id }, as: :json
 

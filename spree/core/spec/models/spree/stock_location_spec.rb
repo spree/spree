@@ -167,7 +167,7 @@ module Spree
 
     it 'restocks a variant with a received movement' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: nil)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: nil, stock_level: nil)
       subject.restock(variant, 5, cause)
     end
 
@@ -175,7 +175,7 @@ module Spree
     # makes possible. Null for stock the merchant already owned.
     it 'records the unit cost of a purchase when one is given' do
       cause = double
-      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: 12.5)
+      expect(subject).to receive(:move).with(variant, 5, kind: 'received', cause: cause, unit_cost: 12.5, stock_level: nil)
       subject.restock(variant, 5, cause, unit_cost: 12.5)
     end
 

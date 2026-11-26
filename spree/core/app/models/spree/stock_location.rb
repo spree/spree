@@ -166,8 +166,10 @@ module Spree
     # @param unit_cost [BigDecimal, nil] what each unit landed at, when the
     #   goods were bought. Recorded on the movement so a rolling average cost
     #   has a ledger to read; null for stock the merchant already owned.
-    def restock(variant, quantity, cause = nil, unit_cost: nil)
-      move(variant, quantity, kind: 'received', cause: cause, unit_cost: unit_cost)
+    # @param stock_level [Spree::StockLevel, nil] the variant's level here, when
+    #   the caller loaded it already
+    def restock(variant, quantity, cause = nil, unit_cost: nil, stock_level: nil)
+      move(variant, quantity, kind: 'received', cause: cause, unit_cost: unit_cost, stock_level: stock_level)
     end
 
     # Goods left.

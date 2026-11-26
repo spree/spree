@@ -206,6 +206,31 @@ describe 'purchase order lifecycle', type: :model do
       expect(on_hand).to eq(110)
     end
 
+    # Over-receipt closes the order, so a line still short of its promise is
+    # no longer awaited: nothing will be delivered against a closed order.
+    it 'stops expecting a short line once an over-shipment on another line closes the order' do
+      over_variant = create(:variant)
+      short_variant = create(:variant)
+      order = Spree::PurchaseOrders::Create.call(
+        store: store, supplier: supplier, destination_location: destination,
+        items: [{ variant: over_variant, quantity_ordered: 10, unit_cost: 5 }, { variant: short_variant, quantity_ordered: 10, unit_cost: 5 }]
+      ).value
+      Spree::PurchaseOrders::MarkOrdered.call(purchase_order: order)
+      lines = order.reload.items.index_by(&:variant_id)
+
+      result = Spree::PurchaseOrders::Receive.call(
+        purchase_order: order,
+        items: [{ item: lines[over_variant.id], quantity_accepted: 11 }, { item: lines[short_variant.id], quantity_accepted: 4 }]
+      )
+
+      expect(result).to be_success
+      expect(order.reload).to be_over_received
+      expect(lines[short_variant.id].reload.outstanding).to eq(6)
+      expect(destination.stock_level(over_variant.id)).to have_attributes(count_on_hand: 11, incoming_count: 0)
+      expect(destination.stock_level(short_variant.id)).to have_attributes(count_on_hand: 4, incoming_count: 0)
+      expect(Spree::StockLevels::Recount.call.value).to be_empty
+    end
+
     it 'refuses a delivery that counts nothing' do
       result = receive([{ item: line, quantity_accepted: 0, quantity_rejected: 0 }])
 
