@@ -10,8 +10,6 @@ module Spree
     # second delivery of the same line adds to rather than restates. Accepted
     # units reach the shelf; rejected ones exist only on the receipt.
     module Recording
-      include Spree::Receivables::IncomingCounter
-
       private
 
       def record_delivery
@@ -43,13 +41,20 @@ module Spree
 
       # The caller resolved the lines before the lock, so their running totals
       # may predate a delivery that has since committed. Read again in one
-      # query rather than one per line.
+      # query rather than one per line, through the document so each line
+      # holds it already and touching it on save costs no query. A line of
+      # another document is read on its own, for `line_belongs?` to refuse;
+      # one of another type, sharing an id with one of these, is left as given.
       def reload_lines
-        lines = Array(items).filter_map { |item| item[:item] }
+        line_class = receivable.items.klass
+        lines = Array(items).filter_map { |item| item[:item] if item[:item].is_a?(line_class) }
         return if lines.empty?
 
-        fresh = lines.first.class.includes(:variant).where(id: lines.map(&:id)).index_by(&:id)
-        @items = items.map { |item| item[:item] ? item.merge(item: fresh[item[:item].id]) : item }
+        fresh = receivable.items.includes(:variant).where(id: lines.map(&:id)).index_by(&:id)
+        @items = items.map do |item|
+          line = item[:item]
+          line.is_a?(line_class) ? item.merge(item: fresh.fetch(line.id) { line.reload }) : item
+        end
       end
 
       # Nothing named means the whole outstanding balance arrived intact.
@@ -134,13 +139,40 @@ module Spree
       # What this delivery settled — accepted or refused — is no longer on its
       # way. Inside the document lock with the restock below, so no read in
       # between shows the units both incoming and on hand, or neither.
+      #
+      # An over-shipment closes the document with other lines still short;
+      # nothing more will arrive against it, so their balance leaves the
+      # destination's incoming figure too. Done here, in the same pass and in
+      # variant order, rather than after the restock: a short line's variant
+      # may sort before one this delivery already locked, and taking its row
+      # afterwards would cross with a delivery locking the two the other way.
       def uncount_landed_units
+        lines = {}
+        withdrawals = Hash.new(0)
         @normalized_items.each do |entry|
-          landed = entry[:incoming_before] - entry[:line].incoming
-          next if landed.zero?
-
-          destination_level_for(entry[:line]).adjust_incoming_count(-landed)
+          lines[entry[:line].variant_id] = entry[:line]
+          withdrawals[entry[:line].variant_id] += entry[:incoming_before] - entry[:line].incoming
         end
+
+        if closing_with_this_delivery?
+          receivable.items.includes(:variant).find_each do |line|
+            lines[line.variant_id] ||= line
+            withdrawals[line.variant_id] += line.incoming
+          end
+        end
+
+        withdrawals.sort.each do |variant_id, units|
+          next if units.zero?
+
+          destination_level_for(lines[variant_id]).adjust_incoming_count(-units)
+        end
+      end
+
+      # Whether the lines as this delivery left them close a document whose
+      # awaited units were counted as incoming.
+      def closing_with_this_delivery?
+        receivable.items.reset
+        receivable.incoming? && Spree::Receivable::CLOSED_STATUSES.include?(receivable.status_after_receive)
       end
 
       # Only accepted units land. The receipt is the cause, and brings the
@@ -176,13 +208,7 @@ module Spree
         receivable.items.reset
         status = receivable.status_after_receive
         attributes = { status: status }
-        if Spree::Receivable::CLOSED_STATUSES.include?(status)
-          attributes[:received_at] = Time.current
-          # An over-shipment closes the document with other lines still
-          # short; nothing more will arrive against it, so their balance
-          # leaves the destination's incoming figure.
-          uncount_incoming(receivable)
-        end
+        attributes[:received_at] = Time.current if Spree::Receivable::CLOSED_STATUSES.include?(status)
 
         failure(receivable) unless receivable.update(attributes)
       end
