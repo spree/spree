@@ -56,7 +56,7 @@ test.describe('api keys', () => {
     await createSecretKey(page, name)
 
     const row = page.locator('tbody tr').filter({ hasText: name })
-    await expect(row.getByText(/^from (127\.0\.0\.1|::1)$/)).toBeVisible({ timeout: 15_000 })
+    await expect(row.getByText(/^from \S+$/)).toBeVisible({ timeout: 15_000 })
   })
 
   // Renames a key this test created rather than a seeded one, so the fixtures

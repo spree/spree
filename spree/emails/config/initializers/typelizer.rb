@@ -33,7 +33,7 @@ Rails.application.config.after_initialize do
   )
 
   # Staff emails are not editable, so their data has no type.
-  staff = %w[User Invitation Import Export WebhookEndpoint].to_set
+  staff = %w[User Invitation Import Export WebhookEndpoint ApiKey].to_set
 
   Typelizer.configure do |config|
     config.dirs += [emails_root.join('app/serializers/spree/emails'), Spree::Core::Engine.root.join('app/serializers/spree/emails')]
