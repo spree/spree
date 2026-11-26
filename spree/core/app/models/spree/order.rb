@@ -180,8 +180,9 @@ module Spree
     # Two-state scope: see Spree::Base.ransack_flag for why the cast is done
     # inside the scope.
     def self.ransackable_scopes_skip_sanitize_args
-      %i[missing_invoice]
+      super | %w[missing_invoice]
     end
+
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
