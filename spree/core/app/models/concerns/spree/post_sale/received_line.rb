@@ -10,7 +10,10 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
-        validates :resellable_quantity, numericality: { greater_than_or_equal_to: 0 }
+        validates :resellable_quantity, numericality: {
+          greater_than_or_equal_to: 0,
+          less_than_or_equal_to: ->(line) { line.received_quantity.to_i }
+        }
       end
 
       # A line received before the count was stored has only the flag, and the

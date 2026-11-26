@@ -75,13 +75,22 @@ export function ReturnReceiveDialog({
   const items = receiptItems(rows)
 
   // `min`/`max` bind the stepper only — a typed value reaches onChange
-  // unclamped. The two parts of a line share its units.
+  // unclamped. The two parts of a line share its units, so raising one takes
+  // units from the other rather than refusing the value: the dialog opens with
+  // every unit resellable, and marking one damaged must not need two edits.
   const setPart = (line: ReturnLineForReceipt, part: keyof ReceiptRow, value: string) =>
     setRows((current) => {
       const row = current[line.id] ?? { resellable: 0, unresellable: 0 }
-      const other = part === 'resellable' ? row.unresellable : row.resellable
-      const count = Math.max(0, Math.min(Number(value) || 0, line.quantity - other))
-      return { ...current, [line.id]: { ...row, [part]: count } }
+      const otherPart: keyof ReceiptRow = part === 'resellable' ? 'unresellable' : 'resellable'
+      const count = Math.max(0, Math.min(Math.trunc(Number(value)) || 0, line.quantity))
+      return {
+        ...current,
+        [line.id]: {
+          ...row,
+          [part]: count,
+          [otherPart]: Math.min(row[otherPart], line.quantity - count),
+        },
+      }
     })
 
   const parts: Array<{ part: keyof ReceiptRow; label: string }> = [

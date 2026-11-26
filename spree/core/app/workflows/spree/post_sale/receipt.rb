@@ -79,9 +79,14 @@ module Spree
         { line: line, quantity: quantity, resellable: item.fetch(:resellable, true) }
       end
 
-      # Adds this receipt to what earlier ones counted. The line is locked and
-      # checked again, so two receipts racing cannot count more than came back.
+      # Adds this receipt to what earlier ones counted. The record and each line
+      # are locked and checked again, so two receipts racing cannot count more
+      # than came back, and a refund or cancel that landed since the check
+      # outside the transaction is not overwritten by `mark_received`.
       def record_receipt
+        post_sale_record.lock!
+        failure(post_sale_record, :not_approved) unless post_sale_record.approved? || post_sale_record.received?
+
         @normalized_items.group_by { |item| item[:line] }.each do |line, line_items|
           line.lock!
           received = line_items.sum { |item| item[:quantity] }
