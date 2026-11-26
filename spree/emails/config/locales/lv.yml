@@ -16,7 +16,7 @@ lv:
         let_us_know: Paziņojiet mums
         not_received: Vēl neesat saņēmis sūtījumu?
         subject: Jūsu sūtījums ir piegādāts
-        track_information: "Izsekošanas informācija: %{tracking}"
+        track_information: 'Izsekošanas informācija: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Sveiki,

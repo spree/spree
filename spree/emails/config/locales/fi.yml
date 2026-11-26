@@ -16,7 +16,7 @@ fi:
         let_us_know: Kerro meille
         not_received: Etkö ole vielä saanut pakettiasi?
         subject: Pakettisi on toimitettu
-        track_information: "Seurantatiedot: %{tracking}"
+        track_information: 'Seurantatiedot: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hei,

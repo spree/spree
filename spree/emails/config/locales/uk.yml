@@ -17,7 +17,7 @@ uk:
         let_us_know: Повідомте нам
         not_received: Ще не отримали посилку?
         subject: Вашу посилку доставлено
-        track_information: "Інформація для відстеження: %{tracking}"
+        track_information: 'Інформація для відстеження: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Вітаємо,

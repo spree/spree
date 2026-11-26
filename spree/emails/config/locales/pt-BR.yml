@@ -16,7 +16,7 @@ pt-BR:
         let_us_know: Avise-nos
         not_received: Ainda não recebeu seu pacote?
         subject: Seu pacote foi entregue
-        track_information: "Informações de rastreamento: %{tracking}"
+        track_information: 'Informações de rastreamento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         ignore_disclaimer: Se você não solicitou isso, ignore este e-mail.

@@ -17,7 +17,7 @@ ja:
         let_us_know: お知らせください
         not_received: まだ荷物が届いていませんか？
         subject: お荷物の配達が完了しました
-        track_information: "追跡情報: %{tracking}"
+        track_information: '追跡情報: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: こんにちは、

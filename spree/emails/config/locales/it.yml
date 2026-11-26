@@ -17,7 +17,7 @@ it:
         let_us_know: Faccelo sapere
         not_received: Non hai ancora ricevuto il pacco?
         subject: Il tuo pacco è stato consegnato
-        track_information: "Informazioni di tracciamento: %{tracking}"
+        track_information: 'Informazioni di tracciamento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Ciao,

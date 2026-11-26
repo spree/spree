@@ -16,7 +16,7 @@ fa:
         let_us_know: به ما اطلاع دهید
         not_received: هنوز بسته خود را دریافت نکرده‌اید؟
         subject: بسته شما تحویل داده شد
-        track_information: "اطلاعات رهگیری: %{tracking}"
+        track_information: 'اطلاعات رهگیری: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: سلام،

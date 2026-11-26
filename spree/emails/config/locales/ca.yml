@@ -16,7 +16,7 @@ ca:
         let_us_know: Fes-nos-ho saber
         not_received: Encara no has rebut el paquet?
         subject: El teu paquet s'ha lliurat
-        track_information: "Informació de seguiment: %{tracking}"
+        track_information: 'Informació de seguiment: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hola,

@@ -15,9 +15,9 @@ es:
         instructions: Se ha entregado un paquete de tu pedido %{number}.
         items_heading: Artículos de esta entrega
         let_us_know: Avísanos
-        not_received: ¿Todavía no has recibido tu paquete?
+        not_received: "¿Todavía no has recibido tu paquete?"
         subject: Tu paquete ha sido entregado
-        track_information: "Información de seguimiento: %{tracking}"
+        track_information: 'Información de seguimiento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: 'Hola:'

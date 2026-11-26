@@ -16,7 +16,7 @@ ro:
         let_us_know: Anunță-ne
         not_received: Nu ai primit încă coletul?
         subject: Coletul tău a fost livrat
-        track_information: "Informații de urmărire: %{tracking}"
+        track_information: 'Informații de urmărire: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bună,

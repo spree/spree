@@ -16,7 +16,7 @@ hu:
         let_us_know: Jelezze nekünk
         not_received: Még nem kapta meg a csomagját?
         subject: Csomagját kézbesítettük
-        track_information: "Nyomkövetési információ: %{tracking}"
+        track_information: 'Nyomkövetési információ: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Üdv,

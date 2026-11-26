@@ -16,7 +16,7 @@ be:
         let_us_know: Паведаміце нам
         not_received: Яшчэ не атрымалі пасылку?
         subject: Ваша пасылка дастаўлена
-        track_information: "Інфармацыя для адсочвання: %{tracking}"
+        track_information: 'Інфармацыя для адсочвання: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Прывітанне,

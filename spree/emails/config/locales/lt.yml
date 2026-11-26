@@ -16,7 +16,7 @@ lt:
         let_us_know: Praneškite mums
         not_received: Dar negavote siuntinio?
         subject: Jūsų siuntinys pristatytas
-        track_information: "Sekimo informacija: %{tracking}"
+        track_information: 'Sekimo informacija: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Sveiki,

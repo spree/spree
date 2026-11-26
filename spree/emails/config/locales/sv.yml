@@ -17,7 +17,7 @@ sv:
         let_us_know: Hör av dig
         not_received: Har du inte fått ditt paket än?
         subject: Ditt paket har levererats
-        track_information: "Spårningsinformation: %{tracking}"
+        track_information: 'Spårningsinformation: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,

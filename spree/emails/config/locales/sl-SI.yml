@@ -16,7 +16,7 @@ sl-SI:
         let_us_know: Sporočite nam
         not_received: Paketa še niste prejeli?
         subject: Vaš paket je bil dostavljen
-        track_information: "Podatki za sledenje: %{tracking}"
+        track_information: 'Podatki za sledenje: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Pozdravljeni,

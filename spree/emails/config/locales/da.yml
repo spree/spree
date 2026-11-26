@@ -16,7 +16,7 @@ da:
         let_us_know: Giv os besked
         not_received: Har du ikke modtaget din pakke endnu?
         subject: Din pakke er blevet leveret
-        track_information: "Sporingsinformation: %{tracking}"
+        track_information: 'Sporingsinformation: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,

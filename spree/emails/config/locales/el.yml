@@ -16,7 +16,7 @@ el:
         let_us_know: Ενημερώστε μας
         not_received: Δεν έχετε λάβει ακόμα το δέμα σας;
         subject: Το δέμα σας παραδόθηκε
-        track_information: "Πληροφορίες παρακολούθησης: %{tracking}"
+        track_information: 'Πληροφορίες παρακολούθησης: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Γεια,

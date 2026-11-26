@@ -17,7 +17,7 @@ ar:
         let_us_know: أخبرنا
         not_received: لم يصلك طردك بعد؟
         subject: تم تسليم طردك
-        track_information: "معلومات التتبع: %{tracking}"
+        track_information: 'معلومات التتبع: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: مرحبًا،

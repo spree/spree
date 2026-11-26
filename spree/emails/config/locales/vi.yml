@@ -16,7 +16,7 @@ vi:
         let_us_know: Hãy cho chúng tôi biết
         not_received: Bạn chưa nhận được kiện hàng?
         subject: Kiện hàng của bạn đã được giao
-        track_information: "Thông tin theo dõi: %{tracking}"
+        track_information: 'Thông tin theo dõi: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Xin chào,

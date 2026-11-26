@@ -16,7 +16,7 @@ ne:
         let_us_know: हामीलाई जानकारी दिनुहोस्
         not_received: अझै आफ्नो प्याकेज प्राप्त गर्नुभएको छैन?
         subject: तपाईंको प्याकेज डेलिभर भएको छ
-        track_information: "ट्र्याकिङ जानकारी: %{tracking}"
+        track_information: 'ट्र्याकिङ जानकारी: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: नमस्ते,

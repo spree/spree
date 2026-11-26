@@ -16,7 +16,7 @@ th:
         let_us_know: แจ้งให้เราทราบ
         not_received: ยังไม่ได้รับพัสดุใช่ไหม?
         subject: พัสดุของคุณจัดส่งถึงแล้ว
-        track_information: "ข้อมูลการติดตามพัสดุ: %{tracking}"
+        track_information: 'ข้อมูลการติดตามพัสดุ: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: สวัสดี,

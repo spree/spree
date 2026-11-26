@@ -17,7 +17,7 @@ cs:
         let_us_know: Dejte nám vědět
         not_received: Ještě jste zásilku neobdrželi?
         subject: Vaše zásilka byla doručena
-        track_information: "Informace o sledování: %{tracking}"
+        track_information: 'Informace o sledování: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Dobrý den,

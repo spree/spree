@@ -17,7 +17,7 @@ nl:
         let_us_know: Laat het ons weten
         not_received: Heb je je pakket nog niet ontvangen?
         subject: Je pakket is bezorgd
-        track_information: "Trackinginformatie: %{tracking}"
+        track_information: 'Trackinginformatie: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hoi,

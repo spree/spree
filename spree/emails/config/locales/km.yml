@@ -16,7 +16,7 @@ km:
         let_us_know: ប្រាប់យើង
         not_received: មិនទាន់ទទួលបានកញ្ចប់របស់អ្នកទេឬ?
         subject: កញ្ចប់របស់អ្នកត្រូវបានដឹកជញ្ជូនដល់ហើយ
-        track_information: "ព័ត៌មានតាមដាន: %{tracking}"
+        track_information: 'ព័ត៌មានតាមដាន: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: សួស្តី,

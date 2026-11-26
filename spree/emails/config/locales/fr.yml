@@ -17,7 +17,7 @@ fr:
         let_us_know: Prévenez-nous
         not_received: Vous n'avez pas encore reçu votre colis ?
         subject: Votre colis a été livré
-        track_information: "Informations de suivi : %{tracking}"
+        track_information: 'Informations de suivi : %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bonjour,

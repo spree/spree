@@ -16,7 +16,7 @@ ku:
         let_us_know: Ji me re bêje
         not_received: Hîn pakêta te negihîştiye?
         subject: Pakêta te hate radestkirin
-        track_information: "Agahiyên şopandinê: %{tracking}"
+        track_information: 'Agahiyên şopandinê: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Silav,

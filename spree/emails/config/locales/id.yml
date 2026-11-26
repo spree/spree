@@ -16,7 +16,7 @@ id:
         let_us_know: Beri tahu kami
         not_received: Belum menerima paket Anda?
         subject: Paket Anda telah sampai
-        track_information: "Informasi pelacakan: %{tracking}"
+        track_information: 'Informasi pelacakan: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hai,

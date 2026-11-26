@@ -16,7 +16,7 @@ bg:
         let_us_know: Уведомете ни
         not_received: Все още не сте получили пратката си?
         subject: Вашата пратка е доставена
-        track_information: "Информация за проследяване: %{tracking}"
+        track_information: 'Информация за проследяване: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Здравейте,

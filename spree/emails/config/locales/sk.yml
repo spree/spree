@@ -16,7 +16,7 @@ sk:
         let_us_know: Dajte nám vedieť
         not_received: Ešte ste zásielku nedostali?
         subject: Vaša zásielka bola doručená
-        track_information: "Informácie o sledovaní: %{tracking}"
+        track_information: 'Informácie o sledovaní: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Ahoj,

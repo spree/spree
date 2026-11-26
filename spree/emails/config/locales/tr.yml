@@ -17,7 +17,7 @@ tr:
         let_us_know: Bize bildirin
         not_received: Paketinizi henüz almadınız mı?
         subject: Paketiniz teslim edildi
-        track_information: "Takip bilgisi: %{tracking}"
+        track_information: 'Takip bilgisi: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Merhaba,
