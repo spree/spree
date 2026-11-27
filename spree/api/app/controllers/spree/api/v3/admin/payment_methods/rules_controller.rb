@@ -19,7 +19,6 @@ module Spree
                              only: :create,
                              example: 'channel_rule',
                              description: 'A rule kind from the payment method rule types endpoint.'
-              body.attribute :active, :boolean, description: 'Defaults to true on create.'
               body.attribute :preferences, :hash, description: "Values for the rule kind's preference schema."
             end
 

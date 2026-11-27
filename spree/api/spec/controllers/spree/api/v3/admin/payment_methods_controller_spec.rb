@@ -233,13 +233,13 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
       patch :update, params: {
         id: payment_method.prefixed_id,
-        rules: [{ id: company_rule.prefixed_id, type: 'company_rule', active: false },
+        rules: [{ id: company_rule.prefixed_id, type: 'company_rule', preferences: { company_orders_only: false } },
                 { type: 'order_total_rule', preferences: { max_totals: { USD: '500.00' } } }]
       }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['rules'].pluck('type')).to contain_exactly('company_rule', 'order_total_rule')
-      expect(company_rule.reload.active).to be(false)
+      expect(company_rule.reload.preferred_company_orders_only).to be(false)
     end
 
     it 'refuses an unknown rule type and keeps the existing rules' do

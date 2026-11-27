@@ -21,13 +21,6 @@ describe Spree::PaymentMethodRule, type: :model do
 
       expect(build(:channel_payment_method_rule, payment_method: payment_method)).not_to be_valid
     end
-
-    it 'refuses a missing active flag instead of failing on save' do
-      rule = build(:channel_payment_method_rule, payment_method: payment_method, active: nil)
-
-      expect(rule).not_to be_valid
-      expect(rule.errors[:active]).to be_present
-    end
   end
 
   describe Spree::PaymentMethodRules::ChannelRule do

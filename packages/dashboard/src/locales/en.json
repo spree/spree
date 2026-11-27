@@ -4557,7 +4557,7 @@
             "description": "Install a payment provider extension to accept cards and wallets."
           },
           "manual_title": "Manual payment methods",
-          "add_account": "Add account",
+          "add_another_account": "Add another {{provider}} account",
           "add_manual": "Add manual method",
           "manual_empty": {
             "title": "No manual payment methods",
@@ -4673,14 +4673,18 @@
     },
     "payment_methods": {
       "conditions": {
-        "active": "Turn {{name}} on or off",
         "add": "Add condition",
         "changed_elsewhere": "Someone else changed these conditions since you opened this payment method. Close it and open it again to see their changes.",
-        "description": "Offer this payment method at storefront checkout only when every active condition is met. Payments taken in the dashboard ignore them.",
+        "description": "Offer this payment method at storefront checkout only when every condition is met. Payments taken in the dashboard ignore them.",
         "empty": "No conditions — this payment method is offered at every checkout.",
         "fields": {
           "max_totals": "Maximum order total",
           "min_totals": "Minimum order total"
+        },
+        "remove": "Remove the {{name}} condition",
+        "summary": {
+          "max_totals": "up to {{amount}}",
+          "min_totals": "from {{amount}}"
         },
         "title": "Checkout conditions"
       },

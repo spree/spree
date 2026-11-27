@@ -14,7 +14,6 @@ export const CAPTURE_METHOD_OVERRIDES = ['', ...CAPTURE_METHODS] as const
 export const paymentMethodRuleSchema = z.object({
   id: z.string().optional(),
   type: z.string(),
-  active: z.boolean(),
   preferences: z.record(z.string(), z.unknown()),
 })
 

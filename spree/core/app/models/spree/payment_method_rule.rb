@@ -2,7 +2,7 @@ module Spree
   # Condition on whether a payment method is offered at storefront checkout,
   # evaluated against the cart or order through
   # {Spree::PaymentMethod#eligible_for_order?}. AND semantics across a
-  # method's active rules; a method with no rules is offered everywhere.
+  # method's rules; a method with no rules is offered everywhere.
   # Back-office payments bypass rules.
   # See docs/plans/6.1-payment-method-rules.md.
   class PaymentMethodRule < Spree.base_class
@@ -18,16 +18,11 @@ module Spree
 
     delegate :store, to: :payment_method
 
-    attribute :active, :boolean, default: true
-
     validates :type, presence: true
-    validates :active, inclusion: { in: [true, false] }
     # One instance of each rule kind per method — duplicates would either be
     # a no-op or contradict themselves under AND semantics.
     validates :type, uniqueness: { scope: [:payment_method_id, *spree_base_uniqueness_scope] }
     validate :type_must_be_registered
-
-    scope :active, -> { where(active: true) }
 
     registers_subclasses_via { Spree.payment_method_rules }
 

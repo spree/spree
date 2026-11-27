@@ -34274,7 +34274,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns the conditions a payment method must meet to be offered at storefront checkout, such as a channel, a market or an order total range. Every active rule must pass; a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.
+        Returns the conditions a payment method must meet to be offered at storefront checkout, such as a channel, a market or an order total range. Every rule must pass; a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -34345,7 +34345,6 @@ paths:
               example:
                 data:
                 - id: pmrule_UkLWZg9DAJ
-                  active: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   type: company_rule
@@ -34432,7 +34431,6 @@ paths:
             application/json:
               example:
                 id: pmrule_UkLWZg9DAJ
-                active: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: order_total_rule
@@ -34467,7 +34465,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Changes a rule's settings or turns it off. Its `type` is fixed once created.
+        Changes a rule's settings. Its `type` is fixed once created. To stop applying a rule, delete it.
 
         **Required scope:** `write_settings` (for API-key authentication).
       x-codeSamples:
@@ -34482,12 +34480,12 @@ paths:
           })
 
           const rule = await client.paymentMethods.rules.update('pm_UkLWZg9DAJ', 'pmrule_gbHJdmfrXB', {
-            active: false,
+            preferences: { channel_ids: ['ch_UkLWZg9DAJ'] },
           })
       - lang: bash
         label: Spree CLI
         source: spree api patch /payment_methods/{payment_method_id}/rules/{id} -d
-          '{"active":false}'
+          '{"preferences":{"channel_ids":["ch_UkLWZg9DAJ"]}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -34516,7 +34514,6 @@ paths:
             application/json:
               example:
                 id: pmrule_UkLWZg9DAJ
-                active: false
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 type: company_rule
@@ -72565,8 +72562,6 @@ components:
       properties:
         id:
           type: string
-        active:
-          type: boolean
         created_at:
           type: string
         updated_at:
@@ -72579,7 +72574,6 @@ components:
           "$ref": "#/components/schemas/PaymentMethodRulePreferences"
       required:
       - id
-      - active
       - created_at
       - updated_at
       - type
@@ -88191,8 +88185,6 @@ components:
               type:
                 type: string
                 description: A rule kind from the payment method rule types endpoint.
-              active:
-                type: boolean
               preferences:
                 type: object
                 additionalProperties: true
@@ -88208,9 +88200,6 @@ components:
           type: string
           description: A rule kind from the payment method rule types endpoint.
           example: channel_rule
-        active:
-          type: boolean
-          description: Defaults to true on create.
         preferences:
           type: object
           additionalProperties: true
@@ -88220,9 +88209,6 @@ components:
     PaymentMethodRuleUpdateParams:
       type: object
       properties:
-        active:
-          type: boolean
-          description: Defaults to true on create.
         preferences:
           type: object
           additionalProperties: true
@@ -88270,8 +88256,6 @@ components:
               type:
                 type: string
                 description: A rule kind from the payment method rule types endpoint.
-              active:
-                type: boolean
               preferences:
                 type: object
                 additionalProperties: true

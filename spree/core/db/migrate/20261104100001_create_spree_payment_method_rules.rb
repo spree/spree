@@ -5,7 +5,6 @@ class CreateSpreePaymentMethodRules < ActiveRecord::Migration[8.1]
     create_table :spree_payment_method_rules do |t|
       t.string :type, null: false
       t.references :payment_method, null: false
-      t.boolean :active, null: false, default: true
       if t.respond_to?(:jsonb)
         t.jsonb :preferences
       else

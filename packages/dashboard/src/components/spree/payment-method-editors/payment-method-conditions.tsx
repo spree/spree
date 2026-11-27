@@ -1,16 +1,18 @@
+import type { PaymentMethodRule } from '@spree/admin-sdk'
+import { formatMoney } from '@spree/core'
 import type { adminClient } from '@spree/dashboard-core'
 import {
   currencyParts,
   defaultPreferences,
   filterPreferenceSchema,
   PreferencesForm,
-  type ResourceFilterConfig,
   ResourceMultiAutocomplete,
   typeDescription,
   typeLabel,
   useStore,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -23,32 +25,25 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-  Switch,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
 } from '@spree/dashboard-ui'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { channelAutocompleteProps } from '../../../hooks/use-channels'
-import { companyAutocompleteProps } from '../../../hooks/use-companies'
-import { customerGroupAutocompleteProps } from '../../../hooks/use-customer-groups'
-import { marketAutocompleteProps } from '../../../hooks/use-markets'
-import { usePaymentMethodRuleTypes } from '../../../hooks/use-payment-methods'
+import {
+  PAYMENT_METHOD_RULE_PICKERS as PICKERS,
+  usePaymentMethodRuleRecordNames,
+  usePaymentMethodRuleTypes,
+} from '../../../hooks/use-payment-methods'
 import type { PaymentMethodFormValues } from './types'
 
 type PaymentMethodRuleType = Awaited<
   ReturnType<typeof adminClient.paymentMethods.ruleTypes>
 >['data'][number]
-
-// The record picker for an id list, keyed by the prefix the schema marks it
-// with. A rule kind an extension adds that names one of these records gets
-// the same picker without a change here.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PICKERS: Record<string, (queryKey: string) => ResourceFilterConfig<any>> = {
-  ch: channelAutocompleteProps,
-  mkt: () => marketAutocompleteProps(),
-  cg: customerGroupAutocompleteProps,
-  comp: companyAutocompleteProps,
-}
 
 /**
  * The conditions that decide whether a payment method is offered at
@@ -88,7 +83,6 @@ export function PaymentMethodConditions({
                   onClick={() =>
                     rulesArray.append({
                       type: type.type,
-                      active: true,
                       preferences: defaultPreferences(type.schema),
                     })
                   }
@@ -161,35 +155,22 @@ function ConditionRow({
     : ''
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border p-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-col">
-          <span className="text-sm">{label}</span>
-          {description && <span className="text-xs text-muted-foreground">{description}</span>}
-        </div>
-        <div className="flex items-center gap-2">
-          <Controller
-            control={form.control}
-            name={`rules.${index}.active`}
-            render={({ field }) => (
-              <Switch
-                checked={field.value}
-                onCheckedChange={field.onChange}
-                aria-label={t('admin.payment_methods.conditions.active', { name: label })}
-              />
-            )}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={onRemove}
-            aria-label={t('admin.actions.delete')}
-          >
-            <Trash2Icon className="size-4" />
-          </Button>
-        </div>
-      </div>
+    <Item variant="outline" data-condition={label}>
+      <ItemContent>
+        <ItemTitle>{label}</ItemTitle>
+        {description && <ItemDescription>{description}</ItemDescription>}
+      </ItemContent>
+      <ItemActions>
+        <Button
+          type="button"
+          variant="destructive-ghost"
+          size="icon-sm"
+          onClick={onRemove}
+          aria-label={t('admin.payment_methods.conditions.remove', { name: label })}
+        >
+          <Trash2Icon className="size-4" />
+        </Button>
+      </ItemActions>
 
       <Controller
         control={form.control}
@@ -199,7 +180,7 @@ function ConditionRow({
           const prefix = idList?.[1].items?.['x-spree-prefix']
           const picker = prefix ? PICKERS[prefix] : undefined
           return (
-            <div className="flex flex-col gap-3">
+            <div className="flex basis-full flex-col gap-3">
               {idList && picker && (
                 <ResourceMultiAutocomplete
                   {...picker(`payment-method-rule-${ruleType?.type}`)}
@@ -225,7 +206,7 @@ function ConditionRow({
           )
         }}
       />
-    </div>
+    </Item>
   )
 }
 
@@ -284,5 +265,65 @@ function CurrencyBounds({
         )
       })}
     </div>
+  )
+}
+
+/**
+ * A payment method's conditions as one badge each, such as "Market: Europe",
+ * so two accounts of one provider can be told apart on the payments list.
+ */
+export function PaymentMethodConditionsSummary({ rules }: { rules: PaymentMethodRule[] }) {
+  const { data: ruleTypes } = usePaymentMethodRuleTypes()
+  if (rules.length === 0) return null
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {rules.map((rule) => (
+        <ConditionSummary
+          key={rule.id}
+          rule={rule}
+          ruleType={(ruleTypes?.data ?? []).find((candidate) => candidate.type === rule.type)}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ConditionSummary({
+  rule,
+  ruleType,
+}: {
+  rule: PaymentMethodRule
+  ruleType?: PaymentMethodRuleType
+}) {
+  const { t, i18n } = useTranslation()
+  const preferences = rule.preferences ?? {}
+  const properties = Object.entries(ruleType?.schema?.properties ?? {})
+  const idList = properties.find(
+    ([, property]) => PICKERS[property.items?.['x-spree-prefix'] ?? ''],
+  )
+  const { data: names = [] } = usePaymentMethodRuleRecordNames(
+    idList?.[1].items?.['x-spree-prefix'],
+    idList ? ((preferences[idList[0]] ?? []) as string[]) : [],
+  )
+  const bounds = properties
+    .filter(([, property]) => property.propertyNames?.format === 'currency')
+    .flatMap(([key]) =>
+      Object.entries((preferences[key] ?? {}) as Record<string, string>).map(([code, amount]) =>
+        t(`admin.payment_methods.conditions.summary.${key}`, {
+          amount: formatMoney(amount, code, i18n.language),
+        }),
+      ),
+    )
+  const label = ruleType
+    ? typeLabel('payment_method_rule', ruleType.type, ruleType.label)
+    : rule.type
+  const details = [...names, ...bounds]
+  const text = details.length > 0 ? `${label}: ${details.join(', ')}` : label
+
+  return (
+    <Badge variant="outline" className="max-w-full" title={text}>
+      <span className="truncate">{text}</span>
+    </Badge>
   )
 }

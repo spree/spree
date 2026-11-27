@@ -189,7 +189,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the conditions a payment method must meet to be offered at storefront checkout, ' \
-                  'such as a channel, a market or an order total range. Every active rule must pass; ' \
+                  'such as a channel, a market or an order total range. Every rule must pass; ' \
                   'a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.'
       admin_scope :read, :settings
 
@@ -240,7 +240,6 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['type']).to eq('order_total_rule')
-          expect(data['active']).to be(true)
         end
       end
 
@@ -265,7 +264,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description "Changes a rule's settings or turns it off. Its `type` is fixed once created."
+      description "Changes a rule's settings. Its `type` is fixed once created. To stop applying a rule, delete it."
       admin_scope :write, :settings
 
       admin_sdk_example 'payment-methods/rules-update'
@@ -277,12 +276,12 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       request_body_for
 
       response '200', 'rule updated' do
-        let(:body) { { active: false, preferences: { company_orders_only: false } } }
+        let(:body) { { preferences: { company_orders_only: false } } }
 
         schema '$ref' => '#/components/schemas/PaymentMethodRule'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['active']).to be(false)
+          expect(JSON.parse(response.body).dig('preferences', 'company_orders_only')).to be(false)
         end
       end
     end

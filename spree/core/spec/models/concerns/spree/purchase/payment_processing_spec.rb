@@ -194,7 +194,7 @@ RSpec.shared_examples 'a payment processing host' do
       expect(record.payment_methods).not_to include(store_credit_method)
     end
 
-    it 'offers a method only when every active rule passes' do
+    it 'offers a method only when every rule passes' do
       channel = create(:channel, store: store)
       other_channel = create(:channel, store: store)
       record.update!(channel: channel)
@@ -203,7 +203,7 @@ RSpec.shared_examples 'a payment processing host' do
 
       expect(record.payment_methods).not_to include(restricted)
 
-      rule.update!(active: false)
+      rule.update!(preferred_channel_ids: [channel.id])
       expect(record.reload.payment_methods).to include(restricted)
     end
   end

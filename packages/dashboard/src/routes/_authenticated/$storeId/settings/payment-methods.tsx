@@ -31,11 +31,10 @@ import { useStoreSettings } from '../../../../hooks/use-store-settings'
 import { filterPaymentMethodProviderTypes } from '../../../../schemas/payment-method'
 
 /**
- * `new` names the provider to set up, `manual` for the store's own methods, or
- * `account` for another account of a provider the store already has.
+ * `new` names the provider to set up, including another account of one the
+ * store already has, or `manual` for the store's own methods.
  */
 const MANUAL = 'manual'
-const ACCOUNT = 'account'
 
 const paymentsSearchSchema = z.object({
   edit: z.string().optional(),
@@ -75,9 +74,9 @@ function PaymentsPage() {
     [typesResponse],
   )
   const providerTypes = addableTypes.filter((type) => type.third_party && !type.superseded)
-  // A provider the store already has is listed by its records, not offered again.
+  // A provider the store already has is listed by its records, each of which
+  // offers another account of it.
   const availableProviders = providerTypes.filter((type) => type.installed_count === 0)
-  const canAddAccount = canCreate && providerTypes.some((type) => type.installed_count > 0)
   const canAddManual = canCreate && addableTypes.some((type) => !type.third_party)
 
   const updateSearch = (patch: Partial<PaymentsSearch>) =>
@@ -90,7 +89,7 @@ function PaymentsPage() {
     })
   const closeSheets = () => updateSearch({ edit: undefined, new: undefined, order: undefined })
 
-  const settingUpProvider = availableProviders.find((type) => type.type === search.new)
+  const settingUpProvider = providerTypes.find((type) => type.type === search.new)
   const addManual = () => updateSearch({ new: MANUAL })
 
   return (
@@ -115,14 +114,6 @@ function PaymentsPage() {
             <CreditCardIcon />
             {t('admin.pages.settings.payments.providers_title')}
           </SectionTitle>
-          {canAddAccount && (
-            <SectionActions>
-              <Button variant="outline" size="sm" onClick={() => updateSearch({ new: ACCOUNT })}>
-                <PlusIcon className="size-4" />
-                {t('admin.pages.settings.payments.add_account')}
-              </Button>
-            </SectionActions>
-          )}
         </SectionHeader>
         {isLoading ? (
           <Skeleton className="h-36 w-full" />
@@ -143,6 +134,8 @@ function PaymentsPage() {
             available={availableProviders}
             onConfigure={(id) => updateSearch({ edit: id })}
             onSetUp={(type) => updateSearch({ new: type })}
+            addAccountTypes={canCreate ? providerTypes : []}
+            onAddAccount={(type) => updateSearch({ new: type })}
           />
         )}
       </Section>
@@ -210,9 +203,6 @@ function PaymentsPage() {
       <Can I="create" a={Subject.PaymentMethod}>
         {search.new === MANUAL && (
           <CreatePaymentMethodSheet manualOnly open onOpenChange={(o) => !o && closeSheets()} />
-        )}
-        {search.new === ACCOUNT && (
-          <CreatePaymentMethodSheet providersOnly open onOpenChange={(o) => !o && closeSheets()} />
         )}
       </Can>
       {search.order && (

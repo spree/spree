@@ -123,11 +123,10 @@ if wholesale_channel
     invoice.save!
 
     # The method is assigned first: the channel ids resolve through its store.
-    # Reset on every run, so an edited or switched-off rule cannot leave the
-    # invoice offered on retail checkout.
+    # Reset on every run, so an edited rule cannot leave the invoice offered
+    # on retail checkout.
     rule = invoice.payment_method_rules.find_by(type: 'Spree::PaymentMethodRules::ChannelRule') ||
            Spree::PaymentMethodRules::ChannelRule.new(payment_method: invoice)
-    rule.active = true
     rule.preferred_channel_ids = [wholesale_channel.id]
     rule.save!
   end

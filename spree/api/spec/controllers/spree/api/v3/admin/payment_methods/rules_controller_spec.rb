@@ -97,17 +97,15 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethods::RulesController, type: :co
   describe 'PATCH #update' do
     let!(:rule) { create(:company_payment_method_rule, payment_method: payment_method) }
 
-    it 'turns a rule off and changes its preferences' do
+    it 'changes its preferences' do
       patch :update, params: {
         payment_method_id: payment_method.prefixed_id,
         id: rule.prefixed_id,
-        active: false,
         preferences: { company_orders_only: false }
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(rule.reload.active).to be(false)
-      expect(rule.preferred_company_orders_only).to be(false)
+      expect(rule.reload.preferred_company_orders_only).to be(false)
     end
   end
 

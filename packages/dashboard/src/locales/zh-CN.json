@@ -4545,7 +4545,7 @@
             "description": "安装支付服务商扩展以接受银行卡和电子钱包。"
           },
           "manual_title": "手动付款方式",
-          "add_account": "添加账户",
+          "add_another_account": "再添加一个 {{provider}} 账户",
           "add_manual": "添加手动付款方式",
           "manual_empty": {
             "title": "没有手动付款方式",
@@ -4661,14 +4661,18 @@
     },
     "payment_methods": {
       "conditions": {
-        "active": "开启或关闭 {{name}}",
         "add": "添加条件",
         "changed_elsewhere": "自您打开此支付方式以来，其他人已更改了这些条件。请关闭后重新打开以查看其更改。",
-        "description": "仅当所有启用的条件都满足时，才在店铺结账时提供此支付方式。在后台录入的付款不受这些条件限制。",
+        "description": "仅在满足所有条件时，才在店铺结账时提供此支付方式。在后台录入的付款不受这些条件限制。",
         "empty": "没有条件 — 此支付方式在每次结账时都会提供。",
         "fields": {
           "max_totals": "最高订单金额",
           "min_totals": "最低订单金额"
+        },
+        "remove": "移除“{{name}}”条件",
+        "summary": {
+          "max_totals": "不超过 {{amount}}",
+          "min_totals": "不低于 {{amount}}"
         },
         "title": "结账条件"
       },

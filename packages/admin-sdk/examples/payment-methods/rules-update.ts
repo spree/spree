@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const rule = await client.paymentMethods.rules.update('pm_UkLWZg9DAJ', 'pmrule_gbHJdmfrXB', {
-  active: false,
+  preferences: { channel_ids: ['ch_UkLWZg9DAJ'] },
 })
 
 // endregion:example

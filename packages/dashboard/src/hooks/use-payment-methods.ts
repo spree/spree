@@ -6,6 +6,7 @@ import type {
 import {
   adminClient,
   listEveryPage,
+  type ResourceFilterConfig,
   STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
@@ -13,6 +14,42 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { channelAutocompleteProps } from './use-channels'
+import { companyAutocompleteProps } from './use-companies'
+import { customerGroupAutocompleteProps } from './use-customer-groups'
+import { marketAutocompleteProps } from './use-markets'
+
+/**
+ * The record picker for a rule's id list, keyed by the prefix its schema marks
+ * the ids with. A rule kind an extension adds that names one of these records
+ * gets the same picker without a change here.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const PAYMENT_METHOD_RULE_PICKERS: Record<
+  string,
+  (queryKey: string) => ResourceFilterConfig<any>
+> = {
+  ch: channelAutocompleteProps,
+  mkt: () => marketAutocompleteProps(),
+  cg: customerGroupAutocompleteProps,
+  comp: companyAutocompleteProps,
+}
+
+/** Names of the records a rule lists, for its summary on the payment methods list. */
+export function usePaymentMethodRuleRecordNames(prefix: string | undefined, ids: string[]) {
+  const picker = prefix
+    ? PAYMENT_METHOD_RULE_PICKERS[prefix]?.('payment-method-rule-names')
+    : undefined
+  return useQuery({
+    queryKey: useResourceKey('payment-methods', 'rule-record-names', prefix, ids),
+    queryFn: async () => {
+      if (!picker) return []
+      const { data } = await picker.hydrate(ids)
+      return data.map((record) => picker.getOptionLabel(record))
+    },
+    enabled: !!picker && ids.length > 0,
+  })
+}
 
 export function usePaymentMethodTypes({ enabled = true }: { enabled?: boolean } = {}) {
   // Every provider, with `installed_count` for how many this store already

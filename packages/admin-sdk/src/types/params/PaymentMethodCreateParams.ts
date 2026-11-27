@@ -22,7 +22,6 @@ export type PaymentMethodCreateParams = {
     id?: string
     /** A rule kind from the payment method rule types endpoint. */
     type?: string
-    active?: boolean
     preferences?: Record<string, unknown>
   }[]
 }

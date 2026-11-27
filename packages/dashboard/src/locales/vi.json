@@ -4556,7 +4556,7 @@
             "description": "Cài đặt tiện ích nhà cung cấp thanh toán để nhận thẻ và ví điện tử."
           },
           "manual_title": "Phương thức thanh toán thủ công",
-          "add_account": "Thêm tài khoản",
+          "add_another_account": "Thêm tài khoản {{provider}} khác",
           "add_manual": "Thêm phương thức thủ công",
           "manual_empty": {
             "title": "Chưa có phương thức thanh toán thủ công",
@@ -4655,14 +4655,18 @@
     },
     "payment_methods": {
       "conditions": {
-        "active": "Bật hoặc tắt {{name}}",
         "add": "Thêm điều kiện",
         "changed_elsewhere": "Người khác đã thay đổi các điều kiện này kể từ khi bạn mở phương thức thanh toán này. Hãy đóng và mở lại để xem các thay đổi.",
-        "description": "Chỉ hiển thị phương thức thanh toán này khi thanh toán trên cửa hàng nếu mọi điều kiện đang bật đều thỏa mãn. Thanh toán nhập trong bảng điều khiển bỏ qua các điều kiện này.",
+        "description": "Chỉ cung cấp phương thức thanh toán này khi thanh toán trên cửa hàng nếu mọi điều kiện đều được đáp ứng. Các khoản thanh toán ghi nhận trong bảng điều khiển bỏ qua chúng.",
         "empty": "Không có điều kiện — phương thức thanh toán này được hiển thị ở mọi lần thanh toán.",
         "fields": {
           "max_totals": "Tổng đơn hàng tối đa",
           "min_totals": "Tổng đơn hàng tối thiểu"
+        },
+        "remove": "Xóa điều kiện {{name}}",
+        "summary": {
+          "max_totals": "tối đa {{amount}}",
+          "min_totals": "từ {{amount}}"
         },
         "title": "Điều kiện thanh toán"
       },

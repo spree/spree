@@ -93,14 +93,16 @@ test.describe('payments', () => {
     await expect(row).toBeVisible({ timeout: 15_000 })
     await expect(methodRow(page, 'Bogus')).toHaveCount(0)
 
-    // Another account of it is added from the section, and the picker says
-    // how many the store already has.
-    await page.getByRole('button', { name: /^add account$/i }).click()
+    // A test gateway says so once, not also under its provider's name.
+    await expect(row.getByText(/^test gateway$/i)).toBeVisible()
+    await expect(row.getByText('Bogus', { exact: true })).toHaveCount(0)
+
+    // Another account of it is added from its own row, with the provider
+    // already chosen and its settings first.
+    await row.getByRole('button', { name: /^add another bogus account$/i }).click()
     await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
-    await page.locator('#type').click()
-    await expect(page.getByRole('option', { name: /^Bogus · 1 installed$/ })).toBeVisible()
-    await expect(page.getByRole('option', { name: 'Check' })).toHaveCount(0)
-    await page.keyboard.press('Escape')
+    await expect(page.locator('#preference-dummy_key')).toBeVisible()
+    await expect(page.locator('#type')).toHaveCount(0)
     await page.keyboard.press('Escape')
 
     // The plain setting comes back as typed, the secret only as a mask.
@@ -214,34 +216,39 @@ test.describe('payments', () => {
       timeout: 15_000,
     })
 
+    // The list names each condition, so two accounts of one provider can be
+    // told apart there, and a manual method is not labelled with its kind.
+    await expect(row.getByText('Order total: from $5,000.00')).toBeVisible()
+    await expect(row.getByText('Company', { exact: true })).toBeVisible()
+    await expect(row.getByText('Check', { exact: true })).toHaveCount(0)
+
     await page.reload()
     await row.getByRole('button', { name: /^configure$/i }).click()
     await expect(page.getByLabel('Minimum order total (USD)')).toHaveValue('5000.00', {
       timeout: 15_000,
     })
-    const companySwitch = page.getByRole('switch', { name: /turn company on or off/i })
-    await expect(companySwitch).toBeChecked()
+    // A condition is removed rather than switched off.
+    await expect(page.getByRole('switch', { name: /turn company on or off/i })).toHaveCount(0)
+    await page.getByRole('button', { name: /^remove the order total condition$/i }).click()
 
-    // Switching a condition off keeps it, but stops it applying.
-    await companySwitch.click()
-    // Removing one drops it.
-    await page
-      .getByText('Order total', { exact: true })
-      .locator('xpath=ancestor::div[contains(@class,"border")][1]')
-      .getByRole('button', { name: /^delete$/i })
-      .click()
+    // An admin-only method has no storefront checkout to set conditions for.
+    await page.getByRole('switch', { name: /visible in storefront/i }).click()
+    await expect(page.getByText('Checkout conditions')).toHaveCount(0)
+    await page.getByRole('switch', { name: /visible in storefront/i }).click()
+
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
       timeout: 15_000,
     })
 
-    const rules = await adminRequest<{ data: { type: string; active: boolean }[] }>(
+    const rules = await adminRequest<{ data: { type: string }[] }>(
       page,
       creds,
       'get',
       `/payment_methods/${method.id}/rules`,
     )
-    expect(rules.data).toEqual([expect.objectContaining({ type: 'company_rule', active: false })])
+    expect(rules.data).toEqual([expect.objectContaining({ type: 'company_rule' })])
+    await expect(row.getByText('Order total: from $5,000.00')).toHaveCount(0)
 
     await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
   })

@@ -6,8 +6,8 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FormSection,
   Input,
-  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -17,7 +17,7 @@ import {
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
-import { Controller, type UseFormReturn } from 'react-hook-form'
+import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { PaymentMethodConditions } from './payment-method-conditions'
 import {
@@ -85,6 +85,8 @@ export function PaymentMethodForm({
   const storeCaptureMethod = paymentMethod?.capture_method
     ? null
     : paymentMethod?.resolved_capture_method
+  // Conditions only decide storefront checkout, so an admin-only method has none to set.
+  const storefrontVisible = useWatch({ control: form.control, name: 'storefront_visible' })
 
   const slotContext: PaymentMethodEditorContext = {
     mode,
@@ -97,7 +99,7 @@ export function PaymentMethodForm({
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-6">
       {mode === 'create' && !providerLocked && (
         <Field>
           <FieldLabel htmlFor="type">{t('admin.fields.payment_method.type.label')}</FieldLabel>
@@ -144,16 +146,11 @@ export function PaymentMethodForm({
         </Field>
       )}
 
-      <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
-
       {providerType && <Slot name={paymentMethodGuideSlot(providerType)} context={slotContext} />}
 
       {providerType &&
       (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
-        <Item variant="outline" className="flex-col items-stretch gap-2">
-          <h3 className="text-base font-medium">
-            {t('admin.fields.payment_method.provider_configuration')}
-          </h3>
+        <FormSection title={t('admin.fields.payment_method.provider_configuration')}>
           {customFormRegistered ? (
             // A plugin has taken over — render the registered editor
             // instead of the generic preferences form. Plugin owns its
@@ -167,12 +164,14 @@ export function PaymentMethodForm({
               redactPasswords={mode === 'edit'}
             />
           )}
-        </Item>
+        </FormSection>
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}
 
-      {providerType && <PaymentMethodConditions form={form} />}
+      <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
+
+      {providerType && storefrontVisible && <PaymentMethodConditions form={form} />}
     </div>
   )
 }

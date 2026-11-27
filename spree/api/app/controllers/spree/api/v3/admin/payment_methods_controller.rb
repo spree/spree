@@ -36,7 +36,6 @@ module Spree
                                         'Replaces the full set: omitted rules are removed.' do |rule|
               rule.attribute :id, :id
               rule.attribute :type, :string, description: 'A rule kind from the payment method rule types endpoint.'
-              rule.attribute :active, :boolean
               rule.attribute :preferences, :hash
             end
           end
@@ -81,7 +80,7 @@ module Spree
           # shape and would be decoded to an integer. `preferences` decode their
           # own ids from their schema.
           def permitted_params
-            params.permit(*permitted_attributes, rules: [:id, :type, :active, { preferences: {} }])
+            params.permit(*permitted_attributes, rules: [:id, :type, { preferences: {} }])
           end
 
           # The add-payment dialog on an order picks from this list, so staff

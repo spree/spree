@@ -3,8 +3,6 @@
 export type PaymentMethodRuleCreateParams = {
   /** A rule kind from the payment method rule types endpoint. */
   type: string
-  /** Defaults to true on create. */
-  active?: boolean
   /** Values for the rule kind's preference schema. */
   preferences?: Record<string, unknown>
 }

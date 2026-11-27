@@ -132,7 +132,7 @@ Each payment method belongs to one store. To offer a method only on some channel
 
 ### Payment method rules
 
-Rules decide whether a payment method is offered at storefront checkout. A method with no rules is offered everywhere; with rules, every active rule must pass. Rules read the cart's own channel, market, total, customer and company, so the cart's list of payment methods and payment and session creation all apply them. Payments created through the Admin API or the dashboard ignore rules, so staff can record any active method against an order.
+Rules decide whether a payment method is offered at storefront checkout. A method with no rules is offered everywhere; with rules, every rule must pass. Rules read the cart's own channel, market, total, customer and company, so the cart's list of payment methods and payment and session creation all apply them. Payments created through the Admin API or the dashboard ignore rules, so staff can record any active method against an order.
 
 | Rule (`type`) | Preferences | Passes when |
 |---|---|---|

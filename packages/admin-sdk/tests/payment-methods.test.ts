@@ -146,7 +146,6 @@ describe('paymentMethods', () => {
     const sampleRule = {
       id: 'pmrule_1',
       type: 'channel_rule',
-      active: true,
       preferences: { channel_ids: ['ch_1'] },
       created_at: '2026-05-01T00:00:00Z',
       updated_at: '2026-05-01T00:00:00Z',
@@ -173,7 +172,7 @@ describe('paymentMethods', () => {
         }),
         http.patch(`${API_PREFIX}/payment_methods/pm_1/rules/pmrule_1`, async ({ request }) => {
           bodies.push((await request.json()) as Record<string, unknown>)
-          return HttpResponse.json({ ...sampleRule, active: false })
+          return HttpResponse.json({ ...sampleRule, preferences: { channel_ids: ['ch_2'] } })
         }),
       )
 
@@ -183,14 +182,14 @@ describe('paymentMethods', () => {
         preferences: { channel_ids: ['ch_1'] },
       })
       const updated = await client.paymentMethods.rules.update('pm_1', 'pmrule_1', {
-        active: false,
+        preferences: { channel_ids: ['ch_2'] },
       })
 
       expect(bodies).toEqual([
         { type: 'channel_rule', preferences: { channel_ids: ['ch_1'] } },
-        { active: false },
+        { preferences: { channel_ids: ['ch_2'] } },
       ])
-      expect(updated.active).toBe(false)
+      expect(updated.preferences).toEqual({ channel_ids: ['ch_2'] })
     })
 
     it('DELETEs a rule and GETs the rule types', async () => {

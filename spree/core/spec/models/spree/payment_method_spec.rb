@@ -319,13 +319,13 @@ describe Spree::PaymentMethod, type: :model do
     let(:payment_method) { create(:check_payment_method, store: store) }
     let(:cart) { create(:cart_with_line_items, store: store) }
 
-    it 'requires the gateway hook and every active rule to pass' do
+    it 'requires the gateway hook and every rule to pass' do
       expect(payment_method.eligible_for_order?(cart)).to be(true)
 
       rule = create(:company_payment_method_rule, payment_method: payment_method)
       expect(payment_method.reload.eligible_for_order?(cart)).to be(false)
 
-      rule.update!(active: false)
+      rule.destroy!
       expect(payment_method.reload.eligible_for_order?(cart)).to be(true)
 
       allow(payment_method).to receive(:available_for_order?).and_return(false)

@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 export const PaymentMethodRuleSchema = z.object({
   id: z.string(),
-  active: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
   type: z.string(),

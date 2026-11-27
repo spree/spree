@@ -62,15 +62,12 @@ export function CreatePaymentMethodSheet({
   onOpenChange,
   initialType,
   manualOnly = false,
-  providersOnly = false,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialType?: PaymentMethodType
   /** Offers only the methods the store handles itself, not outside providers. */
   manualOnly?: boolean
-  /** Offers only outside providers, for adding another account of one. */
-  providersOnly?: boolean
 }) {
   const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
@@ -78,11 +75,9 @@ export function CreatePaymentMethodSheet({
   const providerTypes = useMemo(
     () =>
       filterPaymentMethodProviderTypes(typesResponse?.data ?? []).filter(
-        (entry) =>
-          (!manualOnly || !entry.third_party) &&
-          (!providersOnly || (entry.third_party && !entry.superseded)),
+        (entry) => !manualOnly || !entry.third_party,
       ),
-    [typesResponse, manualOnly, providersOnly],
+    [typesResponse, manualOnly],
   )
   // Seed `currency`-typed preferences with the store default so the merchant
   // sees and submits a real value — `CurrencySelect` only displays the
@@ -202,7 +197,6 @@ function rulesFromRecord(paymentMethod: PaymentMethod): PaymentMethodFormValues[
   return (paymentMethod.rules ?? []).map((rule) => ({
     id: rule.id,
     type: rule.type,
-    active: rule.active,
     preferences: rule.preferences ?? {},
   }))
 }
