@@ -250,6 +250,10 @@ export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' |
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
   & Filter.EnumFilters<'status', 'draft' | 'placed' | 'canceled'>
 
+export type OrderActivityFields = Filter.TextFilters<'category' | 'kind'>
+  & Filter.RangeFilters<'created_at'>
+  & Filter.IdFilters<'id'>
+
 export type OrderCancellationReasonFields = Filter.BooleanFilters<'active'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -1605,6 +1609,26 @@ export type OrderFilters = OrderFields
   & OrderFilterExtensions
 
 export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'considered_risky' | 'coupon_code' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'email' | 'fulfillment_status' | 'id' | 'item_total' | 'locale' | 'market_id' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
+
+/**
+ * Filters your app adds to OrderActivity lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderActivityFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface OrderActivityFilterExtensions {}
+
+/** Sort fields your app adds to OrderActivity lists, as keys: `{ erp_id: true }`. */
+export interface OrderActivitySortExtensions {}
+
+export type OrderActivityFilters = OrderActivityFields
+  & Filter.OrFilters
+  & OrderActivityFilterExtensions
+
+export type OrderActivitySort = Filter.SortKey<'category' | 'created_at' | 'id' | 'kind' | (keyof OrderActivitySortExtensions & string)>
 
 /**
  * Filters your app adds to OrderCancellationReason lists. Generate them with `spree filters types`,

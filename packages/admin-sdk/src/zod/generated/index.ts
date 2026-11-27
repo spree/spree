@@ -94,6 +94,7 @@ export { OauthRedirectSchema, type OauthRedirect } from './OauthRedirect';
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
+export { OrderActivitySchema, type OrderActivity } from './OrderActivity';
 export { OrderCancellationReasonSchema, type OrderCancellationReason } from './OrderCancellationReason';
 export { OrderChangeSchema, type OrderChange } from './OrderChange';
 export { OrderChangeActionSchema, type OrderChangeAction } from './OrderChangeAction';

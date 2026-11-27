@@ -102,6 +102,8 @@ import type {
   MediaSort,
   OptionTypeFilters,
   OptionTypeSort,
+  OrderActivityFilters,
+  OrderActivitySort,
   OrderCancellationReasonFilters,
   OrderCancellationReasonSort,
   OrderChangeFilters,
@@ -482,6 +484,7 @@ import type {
   OauthAuthorizationParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
+  OrderActivityCreateParams,
   OrderCancelParams,
   OrderChangeCreateParams,
   OrderChangePreviewParams,
@@ -669,6 +672,7 @@ import type {
   OauthRedirect,
   OptionType,
   Order,
+  OrderActivity,
   OrderCancellationReason,
   OrderChange,
   OrderChangePreview,
@@ -2438,6 +2442,37 @@ export class AdminClient {
         options?: RequestOptions,
       ): Promise<Refund> =>
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
+    },
+
+    /**
+     * The order's timeline, newest first: its placement, payments, refunds,
+     * shipments, changes, returns, exchanges and claims, and staff comments.
+     */
+    activities: {
+      list: (
+        orderId: string,
+        params?: ListParams<OrderActivityFilters, OrderActivitySort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderActivity>> =>
+        this.request<PaginatedResponse<OrderActivity>>('GET', `/orders/${orderId}/activities`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      /** Adds a staff comment. */
+      create: (
+        orderId: string,
+        params: OrderActivityCreateParams,
+        options?: RequestOptions,
+      ): Promise<OrderActivity> =>
+        this.request<OrderActivity>('POST', `/orders/${orderId}/activities`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Deletes a comment the caller wrote. */
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/activities/${id}`, options),
     },
 
     /**

@@ -871,6 +871,7 @@ Spree::Core::Engine.add_routes do
             end
           end
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
+          resources :activities, controller: 'orders/activities', only: [:index, :create, :destroy]
         end
       end
 

@@ -29270,6 +29270,291 @@ paths:
                 required:
                 - data
                 - meta
+  "/api/v3/admin/orders/{order_id}/activities":
+    get:
+      summary: List order activities
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists the order’s timeline, newest first: its placement, payments, refunds, shipments, changes, returns, exchanges and claims, and the comments staff left on it. Recorded for orders placed since Spree 6.1.
+
+        **Required scope:** `read_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const activities = await client.orders.activities.list('or_UkLWZg9DAJ', {
+            expand: ['actor', 'order_change.actions.variant'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/activities -d '{"expand":["actor","order_change.actions.variant"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., actor, order_change.actions.variant).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[category_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `category` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+
+          **Sort by:** `category`, `created_at`, `id`, `kind`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderActivity
+        sortable:
+        - category
+        - created_at
+        - id
+        - kind
+      responses:
+        '200':
+          description: order activities listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: ordact_gbHJdmfrXB
+                  kind: comment
+                  category: comments
+                  body: Customer asked to hold the parcel until Monday.
+                  details:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  order_change_id:
+                  actor_id: adm_UkLWZg9DAJ
+                  actor_type: admin_user
+                  actor:
+                    id: adm_UkLWZg9DAJ
+                    type: admin_user
+                    label: Stephen Hartmann
+                - id: ordact_UkLWZg9DAJ
+                  kind: order.placed
+                  category: order
+                  body:
+                  details:
+                    total: '110.00'
+                    currency: USD
+                  created_at: '2026-01-15T11:00:00.000Z'
+                  order_change_id:
+                  actor_id:
+                  actor_type:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderActivity"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Comment on an order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a staff comment to the order’s timeline. Comments can be deleted by their author but not edited.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const comment = await client.orders.activities.create('or_UkLWZg9DAJ', {
+            body: 'Customer asked to hold the parcel until Monday.',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/activities -d '{"body":"Customer
+          asked to hold the parcel until Monday."}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: comment added
+          content:
+            application/json:
+              example:
+                id: ordact_UkLWZg9DAJ
+                kind: comment
+                category: comments
+                body: Customer asked to hold the parcel until Monday.
+                details:
+                created_at: '2026-01-15T12:00:00.000Z'
+                order_change_id:
+                actor_id: adm_UkLWZg9DAJ
+                actor_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/OrderActivity"
+        '422':
+          description: the comment is empty
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Body can't be blank
+                  details:
+                    body:
+                    - code: blank
+                      message: can't be blank
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderActivityCreateParams"
+        required: true
+  "/api/v3/admin/orders/{order_id}/activities/{id}":
+    delete:
+      summary: Delete a comment
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Deletes a comment its author wrote. Every other entry records something that happened and cannot be deleted.
+
+        **Required scope:** `write_orders` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.orders.activities.delete('or_UkLWZg9DAJ', 'ordact_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/activities/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order activity prefixed ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: comment deleted
+        '403':
+          description: not a comment this caller wrote
+          content:
+            application/json:
+              example:
+                error:
+                  code: access_denied
+                  message: Only a comment can be deleted, and only by the person who
+                    wrote it.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/orders/{order_id}/discount_codes":
     post:
       summary: Apply a discount code
@@ -71868,6 +72153,60 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    OrderActivity:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          description: The event that recorded the entry (`payment.completed`), or
+            `comment`.
+        category:
+          type: string
+          description: 'What the timeline groups it under: order, payments, fulfillment,
+            changes, returns, comments.'
+        body:
+          type: string
+          nullable: true
+          description: The comment, for a `comment` entry.
+        details:
+          type: object
+          nullable: true
+          description: What the entry shows. Its keys depend on the kind.
+        created_at:
+          type: string
+        order_change_id:
+          type: string
+          nullable: true
+        actor_id:
+          type: string
+          nullable: true
+        actor_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        actor:
+          "$ref": "#/components/schemas/Actor"
+        order_change:
+          "$ref": "#/components/schemas/OrderChange"
+      required:
+      - id
+      - kind
+      - category
+      - body
+      - details
+      - created_at
+      - order_change_id
+      - actor_id
+      - actor_type
+      x-typelizer: true
     OrderCancellationReason:
       type: object
       properties:
@@ -88760,6 +89099,14 @@ components:
           description: A `signed_id` from `files.upload()`, or null to remove the
             image.
           nullable: true
+    OrderActivityCreateParams:
+      type: object
+      properties:
+        body:
+          type: string
+          description: The comment.
+      required:
+      - body
     OrderCancelParams:
       type: object
       properties:
@@ -93650,6 +93997,14 @@ components:
         partially_refunded: boolean
         refunded: boolean
         search: text
+    OrderActivity:
+      attributes:
+        category: text
+        created_at: datetime
+        id: id
+        kind: text
+      associations: {}
+      scopes: {}
     OrderCancellationReason:
       attributes:
         active: boolean
