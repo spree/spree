@@ -48,7 +48,7 @@ function KindSummary({ activity, order }: ActivityProps) {
   const brand = detail(activity, 'brand')
   const last4 = detail(activity, 'last4')
   const method = last4 ? `${brand} •••• ${last4}`.trim() : detail(activity, 'payment_method')
-  const sentence = t(`admin.orders.detail.timeline.kinds.${activity.kind.replace('.', '_')}`, {
+  const sentence = t(`admin.orders.detail.timeline.kinds.${activity.kind.replaceAll('.', '_')}`, {
     amount: money('amount'),
     total: money('total'),
     number: detail(activity, 'number'),
@@ -185,9 +185,18 @@ function describeAction(
 function group(
   icon: ComponentType<{ className?: string }>,
   names: string[],
-  Details?: ActivityKind['Details'],
+  details?: Pick<ActivityKind, 'Details' | 'hasDetails'>,
 ): ActivityKind[] {
-  return names.map((kind) => ({ kind, icon, Summary: KindSummary, Details }))
+  return names.map((kind) => ({ kind, icon, Summary: KindSummary, ...details }))
+}
+
+const paymentDetails = {
+  Details: PaymentDetails,
+  hasDetails: (activity: ActivityProps['activity']) => !!detail(activity, 'transaction_id'),
+}
+const changeDetails = {
+  Details: OrderChangeDetails,
+  hasDetails: (activity: ActivityProps['activity']) => !!activity.order_change,
 }
 
 const kinds: ActivityKind[] = [
@@ -198,19 +207,19 @@ const kinds: ActivityKind[] = [
   ...group(
     CreditCardIcon,
     ['payment.completed', 'payment.capture_failed', 'payment.voided', 'payment.void_failed'],
-    PaymentDetails,
+    paymentDetails,
   ),
   ...group(
     RotateCcwIcon,
     ['payment.refunded', 'refund.requested', 'refund.failed'],
-    PaymentDetails,
+    paymentDetails,
   ),
   ...group(TruckIcon, ['fulfillment.fulfilled', 'fulfillment.canceled']),
   ...group(PackageCheckIcon, ['fulfillment.delivered']),
   ...group(
     PencilIcon,
     ['order_change.requested', 'order_change.confirmed', 'order_change.canceled'],
-    OrderChangeDetails,
+    changeDetails,
   ),
   ...group(
     RotateCcwIcon,
@@ -231,7 +240,7 @@ const kinds: ActivityKind[] = [
       'claim.denied',
       'claim.canceled',
     ],
-    OrderChangeDetails,
+    changeDetails,
   ),
 ]
 

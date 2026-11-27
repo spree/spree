@@ -19,19 +19,23 @@ module Spree
       # The builder reads the database too, so it runs inside the savepoint:
       # a failed query must not abort the step's own transaction.
       ApplicationRecord.transaction(requires_new: true) do
-        attributes = kind.builder.call(event)
-        # A draft or a cart has no timeline to show it on.
-        next if attributes.nil? || attributes[:order]&.completed_at.nil?
+        # One entry, or several: a placement also records what checkout
+        # settled, and a split checkout's payment shows on each order.
+        Array.wrap(kind.builder.call(event)).compact.each do |attributes|
+          # A draft or a cart has no timeline to show it on.
+          next if attributes[:order]&.completed_at.nil?
 
-        Spree::OrderActivity.create!(
-          order: attributes[:order],
-          order_change: attributes[:order_change],
-          details: attributes[:details].presence,
-          kind: event.name,
-          category: kind.category,
-          actor: event.actor,
-          created_at: event.created_at
-        )
+          entry_kind = attributes[:kind] || event.name
+          Spree::OrderActivity.create!(
+            order: attributes[:order],
+            order_change: attributes[:order_change],
+            details: attributes[:details].presence,
+            kind: entry_kind,
+            category: Spree.order_activity_kinds[entry_kind]&.category || kind.category,
+            actor: event.actor,
+            created_at: event.created_at
+          )
+        end
       end
     rescue StandardError => e
       Rails.error.report(e, source: 'spree.order_activities', context: { event: event.name })

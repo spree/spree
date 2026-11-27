@@ -52,18 +52,20 @@ module Spree
       super(base.merge((value || {}).deep_stringify_keys).freeze)
     end
 
-    # The actor this event's metadata names, if it still exists. One acting
-    # in this request or job is already loaded.
+    # The actor this event's metadata names, if it is a registered kind and
+    # still exists. One acting in this request or job is already loaded.
     #
     # @return [Object, nil]
     def actor
       return if metadata['actor_id'].blank?
 
+      type = Spree::Base.polymorphic_type_for(metadata['actor_type'], Spree.actor_classes)
+      return if type.nil?
+
       current = Spree::Current.actor
       return current if current.respond_to?(:prefixed_id) && current.prefixed_id == metadata['actor_id']
 
-      type = Spree::Base.polymorphic_type_for(metadata['actor_type'], Spree.actor_classes)
-      type&.safe_constantize&.find_by_prefix_id(metadata['actor_id'])
+      type.safe_constantize&.find_by_prefix_id(metadata['actor_id'])
     end
 
     # Who is acting, as the prefixed id and actor kind the API uses: webhook

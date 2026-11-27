@@ -46,6 +46,7 @@ export function OrderTimeline({ order }: { order: Order }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const { timezone } = useStore()
+  const kinds = useActivityKinds()
   const { data, isLoading, isError } = useOrderActivities(order.id, page)
   const activities = data?.data ?? []
   const onLastPage = !data?.meta || data.meta.page >= data.meta.pages
@@ -79,6 +80,7 @@ export function OrderTimeline({ order }: { order: Order }) {
                 <TimelineEntry
                   key={activity.id}
                   activity={activity}
+                  kind={kinds.get(activity.kind) ?? FALLBACK_KIND}
                   order={order}
                   timezone={timezone}
                 />
@@ -103,7 +105,9 @@ function groupByDay(activities: OrderActivity[], timezone: string): [string, Ord
   const days = new Map<string, OrderActivity[]>()
   for (const activity of activities) {
     const day = formatStoreTime(activity.created_at, timezone, 'PPP')
-    days.set(day, [...(days.get(day) ?? []), activity])
+    const entries = days.get(day)
+    if (entries) entries.push(activity)
+    else days.set(day, [activity])
   }
   return [...days]
 }
@@ -115,17 +119,19 @@ const FALLBACK_KIND: ActivityKind = {
 
 function TimelineEntry({
   activity,
+  kind,
   order,
   timezone,
 }: {
   activity: OrderActivity
+  kind: ActivityKind
   order: Order
   timezone: string
 }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const kind = useActivityKinds().get(activity.kind) ?? FALLBACK_KIND
   const Icon = kind.icon
+  const Details = kind.Details && (kind.hasDetails?.(activity) ?? true) ? kind.Details : undefined
 
   return (
     <TimelineItem
@@ -145,7 +151,7 @@ function TimelineEntry({
             <ActorLabel actor={activity.actor} />
           </span>
         )}
-        {kind.Details && (
+        {Details && (
           <button
             type="button"
             className="ml-1 inline-flex size-5 translate-y-1 items-center justify-center rounded text-muted-foreground hover:bg-muted"
@@ -157,7 +163,7 @@ function TimelineEntry({
           </button>
         )}
       </div>
-      {open && kind.Details && <kind.Details activity={activity} order={order} />}
+      {open && Details && <Details activity={activity} order={order} />}
     </TimelineItem>
   )
 }

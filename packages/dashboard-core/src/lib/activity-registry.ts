@@ -27,6 +27,8 @@ export interface ActivityKind {
   namesActor?: boolean
   /** More to show under the sentence, behind a toggle, when the entry has it. */
   Details?: ComponentType<ActivityProps>
+  /** Whether this entry has anything for `Details` to show; without it, every entry does. */
+  hasDetails?: (activity: OrderActivity) => boolean
 }
 
 interface ActivityMutator {

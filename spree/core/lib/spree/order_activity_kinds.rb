@@ -5,7 +5,8 @@ module Spree
   # A builder turns an event into the attributes of a {Spree::OrderActivity},
   # or into nil when the event says nothing worth showing on that order. It
   # names the order and may add `order_change` and a small `details` hash;
-  # the kind, category and actor are filled in by the subscriber.
+  # the kind, category and actor are filled in by the subscriber. A builder
+  # may answer several entries, each naming its own `kind:`.
   #
   #   Spree.order_activity_kinds.register('loyalty.points_awarded', category: 'loyalty') do |event|
   #     order = Spree::Order.find_by_prefix_id(event.payload['order_id'])
@@ -63,7 +64,12 @@ module Spree
         order = Spree::Order.find_by_prefix_id(event.payload['id'])
         next unless order
 
-        { order: order, details: { total: money(order.total, order.currency) } }
+        # Checkout settles its payments before the order is placed, when there
+        # is no timeline yet, so the placement records them.
+        settled = order_payments(order).select { |payment, _| payment.completed? }.map do |payment, amount|
+          { order: order, kind: 'payment.completed', details: payment_details(payment, amount) }
+        end
+        [{ order: order, details: { total: money(order.total, order.currency) } }, *settled]
       end
 
       %w[order.approved order.canceled].each do |name|
@@ -77,7 +83,10 @@ module Spree
       %w[payment.completed payment.capture_failed payment.voided payment.void_failed].each do |name|
         register(name, category: 'payments') do |event|
           payment = Spree::Payment.find_by_prefix_id(event.payload['id'])
-          { order: payment.order, details: payment_details(payment) } if payment&.order
+          next unless payment
+
+          # A split checkout's payment shows on each order, for that order's share.
+          paid_orders(payment).map { |order, amount| { order: order, details: payment_details(payment, amount) } }
         end
       end
 
@@ -148,11 +157,29 @@ module Spree
       { order: order, details: details.compact }
     end
 
-    def payment_details(payment)
+    # @return [Array<Array(Spree::Payment, BigDecimal)>] the order's payments, and its share of a split checkout's
+    def order_payments(order)
+      own = order.payments.includes(:payment_method, :source).map { |payment| [payment, payment.amount] }
+      shares = order.payment_splits.includes(payment: [:payment_method, :source]).map { |split| [split.payment, share(split)] }
+      own + shares
+    end
+
+    # @return [Array<Array(Spree::Order, BigDecimal)>] who a payment paid, and how much of it each
+    def paid_orders(payment)
+      return [[payment.order, payment.amount]] if payment.order
+
+      payment.payment_splits.includes(:order).map { |split| [split.order, share(split)] }
+    end
+
+    def share(split)
+      split.captured_amount.to_d.positive? ? split.captured_amount : split.authorized_amount
+    end
+
+    def payment_details(payment, amount = payment.amount)
       {
         payment_id: payment.prefixed_id,
         payment_method: payment.payment_method&.name,
-        amount: money(payment.amount, payment.currency),
+        amount: money(amount, payment.currency),
         brand: payment.source.try(:brand).presence,
         last4: payment.source.try(:last4).presence,
         transaction_id: payment.response_code.presence

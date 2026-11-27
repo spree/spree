@@ -31,6 +31,37 @@ RSpec.describe Spree::OrderActivitySubscriber, events: true do
     expect(order.activities).to be_empty
   end
 
+  it 'records on placement the payments checkout settled before the order had a timeline' do
+    payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    create(:payment, order: order, cart: nil, amount: 1, status: 'pending')
+    publish(order, 'order.placed')
+
+    expect(order.activities.reload.map(&:kind)).to contain_exactly('order.placed', 'payment.completed')
+    expect(order.activities.find_by(kind: 'payment.completed')).to have_attributes(category: 'payments')
+    expect(order.activities.find_by(kind: 'payment.completed').details).to include('payment_id' => payment.prefixed_id)
+  end
+
+  it 'records a split checkout’s payment on each order, for that order’s share' do
+    group = create(:order_group, store: store)
+    other = create(:completed_order_with_totals, store: store)
+    [order, other].each { |placed| placed.update_columns(order_group_id: group.id) }
+    payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 30, status: 'completed')
+    create(:payment_split, payment: payment, order: order, captured_amount: 10)
+    create(:payment_split, payment: payment, order: other, captured_amount: 20)
+    publish(payment, 'payment.completed')
+
+    expect(order.activities.sole.details['amount']).to eq(Spree::Money::Rounding.format(10, order.currency))
+    expect(other.activities.sole.details['amount']).to eq(Spree::Money::Rounding.format(20, other.currency))
+  end
+
+  it 'writes the entry without an actor whose class is not registered' do
+    Spree::Current.actor = admin
+    allow(Spree).to receive(:actor_classes).and_return(['Spree::ApiKey'])
+    publish(order, 'order.approved')
+
+    expect(order.activities.sole.actor).to be_nil
+  end
+
   it 'records a settled payment with its method and amount' do
     payment = create(:payment, order: order, cart: nil, amount: order.total, response_code: 'ch_3Pq')
     publish(payment, 'payment.completed')
