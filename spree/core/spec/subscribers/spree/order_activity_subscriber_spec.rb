@@ -32,11 +32,11 @@ RSpec.describe Spree::OrderActivitySubscriber, events: true do
   end
 
   it 'records a settled payment with its method and amount' do
-    payment = create(:payment, order: order, cart: nil, amount: order.total)
+    payment = create(:payment, order: order, cart: nil, amount: order.total, response_code: 'ch_3Pq')
     publish(payment, 'payment.completed')
 
     expect(order.activities.sole).to have_attributes(kind: 'payment.completed', category: 'payments')
-    expect(order.activities.sole.details).to include('payment_id' => payment.prefixed_id,
+    expect(order.activities.sole.details).to include('payment_id' => payment.prefixed_id, 'transaction_id' => 'ch_3Pq',
                                                      'amount' => Spree::Money::Rounding.format(payment.amount, order.currency))
   end
 

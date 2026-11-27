@@ -166,7 +166,8 @@ module Spree
         payment_method: payment.payment_method&.name,
         amount: money(payment.amount, payment.currency),
         brand: payment.source.try(:cc_type).presence,
-        last_digits: payment.source.try(:last_digits).presence
+        last_digits: payment.source.try(:last_digits).presence,
+        transaction_id: payment.response_code.presence
       }.compact
     end
 
