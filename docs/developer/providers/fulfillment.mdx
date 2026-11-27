@@ -3,6 +3,8 @@ title: Shipping & WMS
 description: Connect your warehouse, 3PL or carrier stack through fulfillment providers — label purchase, tracking, and delivery confirmation flow through one contract.
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 When an order ships, something outside Spree does the physical work — a warehouse management system, a 3PL, or a carrier API. Fulfillment providers are the contract between Spree's fulfillment lifecycle and that system.
 
 ## What a fulfillment provider does
@@ -21,5 +23,7 @@ Carrier truth — in transit, out for delivery, delivered — is tracked separat
 The `spree_easypost` gem ships in the monorepo as the reference implementation: live carrier rates, label purchase and refunds, and tracker webhooks, with credentials managed through a Spree integration.
 
 ## Writing your own
+
+<RequiresEject />
 
 A WMS or 3PL integration implements the same contract: receive the fulfillment, do the physical work, report tracking back. Rate quoting is a separate, smaller contract — see [custom delivery rates](/developer/how-to/custom-delivery-rate-provider).

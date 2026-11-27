@@ -3,6 +3,8 @@ title: Taxes
 description: How Spree works out tax — tax categories and rates, inclusive versus added-on pricing, and connecting an external tax service.
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 Tax is the part of commerce most likely to differ from what you assumed. A US shopper expects `$17.99` on the shelf and a little more at the till. A German shopper expects `€17.99` to be the whole story, VAT already inside it. Both are correct, and a store selling to both has to do both.
@@ -219,6 +221,8 @@ Whichever provider is in use, the result is the same: tax lines on the order, in
 Spree tells the provider whether the market's prices include tax: `estimate` and `estimate_replacement` receive it as `tax_inclusive:`. A provider passes it on to its service, such as a "tax included" flag on each line, and marks its tax lines `included` to match.
 
 The provider also decides the tax given back on returns, claims and exchanges, and the refund pays exactly what it answers. Spree's own rates give back each returned unit's share of the tax the sale actually charged, so the customer gets back what they paid even if a rate has been edited since. An external service may calculate it itself instead, for example at the rates in force on the day of the sale. If it cannot be reached, the return is refused until it can, rather than refunding tax nobody worked out.
+
+<RequiresEject />
 
 If you are writing a provider, these are the calls Spree makes after the sale:
 

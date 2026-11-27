@@ -3,6 +3,8 @@ title: Search & Filtering
 description: "Use Ransack-style query parameters to search, filter, sort, and paginate products, taxons, and other resources through the Spree Store API."
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 Spree provides powerful search, filtering, and sorting capabilities for products and other resources. The Store API supports:
@@ -270,6 +272,8 @@ Only attributes explicitly allowed by each resource can be used for filtering. A
 </Info>
 
 ### Making a field filterable
+
+<RequiresEject />
 
 A resource's filters come from its model's allowlists, and nowhere else. Spree generates its API reference and SDK types from them, so the [Querying](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts) reference lists what core declares. Filters your app adds take effect in the API immediately; to use them from TypeScript, declare them as shown below, since the published SDK types are generated from core alone.
 

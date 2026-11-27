@@ -3,6 +3,8 @@ title: Carts
 description: How Spree models the shopping and checkout phase — a cart collects items and customer details, then completing it creates an order.
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 A cart is everything that happens before a purchase is final: adding items, entering an address, choosing delivery, and paying. Completing a cart creates an [Order](/developer/core-concepts/orders) — a separate, permanent record.
@@ -218,6 +220,8 @@ placed, so `current_step` and `requirements` do not appear on it.
 
 To add your own step or requirement, see
 [Customizing checkout](/developer/customization/checkout).
+
+<RequiresEject />
 
 ## Checkout
 

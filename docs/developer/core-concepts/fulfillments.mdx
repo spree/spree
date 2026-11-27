@@ -3,6 +3,8 @@ title: Fulfillments
 description: How Spree models getting items to the customer — fulfillments, delivery methods and zones, and delivery types covering shipping, digital and pickup.
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 A fulfillment is one batch of items going to the customer by one method — a parcel from a warehouse, a digital download, or an order waiting at a pickup counter. An order gets one fulfillment per combination of stock location and delivery method, so an order sourced from two warehouses has two.
@@ -265,6 +267,8 @@ curl 'https://api.mystore.com/api/v3/store/delivery_methods/dm_xxx/pickup_locati
 
 </CodeGroup>
 
+<RequiresEject />
+
 Third-party pickup points come from a pickup point provider — a locker network or partner-shop integration. Spree ships none; an extension registers its provider so a delivery method can select it by its short name (for example `inpost` for `SpreeInpost::PickupPointProvider`):
 
 ```ruby server/config/initializers/spree.rb
@@ -332,6 +336,8 @@ Which methods a customer is offered, what they cost and where they reach is
 configured separately — see [delivery setup](/developer/core-concepts/delivery-setup).
 
 ## Adding your own statuses
+
+<RequiresEject />
 
 A made-to-order business — print on demand, furniture built after purchase —
 has a stage between "order placed" and "handed to the carrier". There are two

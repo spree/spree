@@ -3,6 +3,9 @@ title: Observability
 description: Distributed tracing with OpenTelemetry — one gem, standard OTEL_* environment variables, and every checkout becomes a trace from HTTP request to gateway call to webhook delivery.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 Spree supports [OpenTelemetry](https://opentelemetry.io), the open standard for
 distributed tracing. Install the optional `spree_opentelemetry` gem, point it
 at your collector with the same environment variables every other
@@ -11,6 +14,8 @@ vendor lock-in. Traces flow to any OpenTelemetry-compatible backend: Grafana
 Tempo, Jaeger, Datadog, Honeycomb, New Relic, Dynatrace, and others.
 
 ## Setup
+
+<WorksOnPrebuiltImage />
 
 New Spree projects include `spree_opentelemetry` already. To add it to an older project:
 
@@ -168,6 +173,8 @@ over the same traces.
 
 ## Correlating logs
 
+<RequiresEject />
+
 To connect log lines to traces, tag your Rails logs with the current trace:
 
 ```ruby
@@ -196,6 +203,8 @@ to see the trace.
 
 ## Code-level configuration
 
+<RequiresEject />
+
 Everything routine is controlled by environment variables. A
 `SpreeOpenTelemetry.configure` block exists for the rest — adding
 instrumentation for libraries your app uses, removing a default, or advanced
@@ -211,6 +220,8 @@ end
 ```
 
 ## Instrumenting your own code
+
+<RequiresEject />
 
 Spree's spans are built on `ActiveSupport::Notifications`, and yours can be
 too — or use the OpenTelemetry API directly:

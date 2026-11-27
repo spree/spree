@@ -3,6 +3,10 @@ title: Emails
 description: Spree sends transactional email over plain SMTP, configured entirely by environment variable — any provider works, and none of them needs anything installed.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+
+<WorksOnPrebuiltImage />
+
 Every transactional email Spree sends — order confirmations, shipping notifications, password resets, staff invitations — goes out over SMTP. There is nothing to install and no integration to connect: you give Spree an SMTP host and credentials through environment variables, and it sends.
 
 This makes email the one provider category that is **not** configured per store in the admin. Payment gateways, tax engines and search each hold their credentials as a [store integration](/developer/providers/overview); email is infrastructure for the whole deployment, so it lives in the environment alongside the database URL.

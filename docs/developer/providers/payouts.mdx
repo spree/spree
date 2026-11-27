@@ -3,6 +3,10 @@ title: Seller Payouts
 description: Pay marketplace sellers through your own rails — a bank transfer API, a wallet, another PSP's platform product — by implementing the payout provider contract.
 ---
 
+import RequiresEject from '/snippets/requires-eject.mdx'
+
+<RequiresEject />
+
 Spree keeps the marketplace's books on its own: what each seller earned as their orders shipped, and what has been settled to them. A **payout provider** is the part that actually moves the money. The built-in one moves nothing and leaves the operator to pay by bank; Stripe Connect moves it through connected accounts. This guide is for the third case — a provider of your own.
 
 Read [how the ledger works](/developer/core-concepts/sellers#payouts) first. Everything below assumes the vocabulary there: a *transfer* is one order's earning, a *payout* is a batch of them settled to the seller.
