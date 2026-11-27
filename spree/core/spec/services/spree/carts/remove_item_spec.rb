@@ -59,5 +59,26 @@ module Spree
         expect { execute }.to change { cart.payments.store_credits.count }.by(-1)
       end
     end
+
+    context 'with a gift card paying the whole total' do
+      let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 3, price: nil) }
+      let(:gift_card) { create(:gift_card, amount: 100, store: cart.store) }
+
+      before do
+        create(:store_credit_payment_method)
+        cart.apply_gift_card(gift_card)
+      end
+
+      it 'keeps the card on the cart and shrinks its payment to the new total' do
+        expect(cart.reload.gift_card_total).to eq(60)
+
+        expect(execute).to be_success
+
+        expect(cart.reload.gift_card).to eq(gift_card)
+        expect(cart.total).to eq(40)
+        expect(cart.gift_card_total).to eq(40)
+        expect(gift_card.reload.amount_used).to eq(40)
+      end
+    end
   end
 end

@@ -33,9 +33,12 @@ module Spree
 
       private
 
+      # A gift card's payment stays, since RecalculateTotals resizes it to the
+      # new total; plain store credit is never resized, so it is dropped.
       def unapply_stale_payment_sources
-        cart.remove_gift_card if cart.gift_card.present?
-        cart.payments.store_credits.checkout.destroy_all if cart.payments.store_credits.checkout.any?
+        stale = cart.payments.store_credits.checkout
+        stale = stale.where.not(source: cart.gift_card.store_credits) if cart.gift_card.present?
+        stale.destroy_all
       end
 
       def rebuild_delivery_proposals

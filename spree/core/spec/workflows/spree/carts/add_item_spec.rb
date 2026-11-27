@@ -154,6 +154,55 @@ module Spree
       end
     end
 
+    context 'with a gift card paying part of the total' do
+      let(:gift_card) { create(:gift_card, amount: 30, store: cart.store) }
+
+      before do
+        create(:store_credit_payment_method)
+        subject.call(cart: cart, variant: variant, quantity: 1)
+        cart.apply_gift_card(gift_card)
+      end
+
+      it 'keeps the card on the cart and grows its payment up to its balance' do
+        expect(cart.reload.gift_card_total).to eq(20)
+
+        expect(execute).to be_success
+
+        expect(cart.reload.gift_card).to eq(gift_card)
+        expect(cart.total).to eq(40)
+        expect(cart.gift_card_total).to eq(30)
+        expect(cart.amount_due).to eq(10)
+        expect(gift_card.reload.amount_used).to eq(30)
+      end
+    end
+
+    # The card is released under a lock after the delivery rebuild has warned
+    # about the dropped delivery, which is not saved anywhere.
+    context 'with a gift card paying only delivery when the change leaves no delivery' do
+      let(:cart) { create(:cart_ready_for_delivery, line_items_price: 0) }
+      let(:variant) { cart.line_items.sole.variant }
+      let(:gift_card) { create(:gift_card, amount: 30, store: cart.store) }
+
+      before do
+        create(:store_credit_payment_method)
+        Spree::Price.where(variant_id: variant.id).update_all(amount: 0)
+        Spree.cart_recalculate_workflow.call(cart: cart)
+        cart.apply_gift_card(gift_card)
+        Spree::DeliveryMethod.update_all(deleted_at: Time.current)
+      end
+
+      it 'releases the card and keeps the delivery warning' do
+        expect(cart.reload.gift_card_total).to eq(10)
+
+        expect(execute).to be_success
+
+        expect(cart.total).to eq(0)
+        expect(cart.gift_card).to be_nil
+        expect(cart.warnings.pluck(:code)).to include('delivery_unavailable')
+        expect(gift_card.reload.amount_used).to eq(0)
+      end
+    end
+
     context 'running promotions' do
       let(:promotion) { create(:promotion, kind: :automatic) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
