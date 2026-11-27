@@ -198,7 +198,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
 
-        schema SwaggerSchemaHelpers.paginated('Product')
+        schema SwaggerSchemaHelpers.paginated('CollectionProduct')
 
         run_test!
       end

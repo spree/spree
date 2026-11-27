@@ -616,6 +616,7 @@ import type {
   ClaimReason,
   Collection,
   CollectionExclusion,
+  CollectionProduct,
   CollectionPublication,
   CollectionRuleTypeDefinition,
   CommissionLine,
@@ -972,9 +973,9 @@ export class AdminClient {
     }
   }
 
-  private positionedProductMembership(basePath: string) {
+  private positionedProductMembership<Row = Product>(basePath: string) {
     return {
-      ...this.productMembership(basePath),
+      ...this.productMembership<Row>(basePath),
 
       /** Persists a drag-to-reorder; `new_position` is a 0-based index. */
       reposition: (
@@ -5189,7 +5190,8 @@ export class AdminClient {
      * rule-matched one becomes hand-picked in place). Removing a product the
      * rules still match brings it back on regeneration: exclude it instead.
      */
-    products: this.positionedProductMembership('/collections'),
+    /** Each row says whether the rules matched it or it was hand-picked (`membership_source`). */
+    products: this.positionedProductMembership<CollectionProduct>('/collections'),
 
     /**
      * The channels a collection is published on, each with an optional

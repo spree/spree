@@ -351,6 +351,7 @@
         "description": "无论规则如何匹配，都不会加入此系列。此处的更改会立即生效。",
         "exclude": "排除",
         "exclude_row": "排除 {{name}}",
+        "exclude_tooltip": "立即将其移出系列，即使规则再次匹配也不会重新加入。可在已排除的商品中撤销。",
         "messages": {
           "excluded": "商品已排除",
           "removed": "已取消排除"

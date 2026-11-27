@@ -37,6 +37,17 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
       expect(ids).not_to include(other_product.prefixed_id)
     end
 
+    it 'says how each product joined the collection' do
+      Spree::ProductCollection.find_by(collection: collection, product: product_a).update!(source: 'rule')
+      Spree::ProductCollection.find_by(collection: collection, product: product_c).update_columns(source: nil)
+
+      get :index, params: { collection_id: collection.prefixed_id }, as: :json
+
+      sources = json_response['data'].to_h { |row| [row['id'], row['membership_source']] }
+      # A row from before 6.1 on a collection without rules was hand-picked.
+      expect(sources).to eq(product_b.prefixed_id => 'manual', product_a.prefixed_id => 'rule', product_c.prefixed_id => 'manual')
+    end
+
     it 'returns an empty list for a collection with no products' do
       empty = create(:collection, store: store)
       get :index, params: { collection_id: empty.prefixed_id }, as: :json

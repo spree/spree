@@ -352,6 +352,7 @@
         "description": "Tenus hors de cette collection quelles que soient les règles. Les modifications ici s'appliquent immédiatement.",
         "exclude": "Exclure",
         "exclude_row": "Exclure {{name}}",
+        "exclude_tooltip": "Le retire de la collection maintenant et le tient à l'écart, même si les règles le sélectionnent à nouveau. Annulez depuis Produits exclus.",
         "messages": {
           "excluded": "Produit exclu",
           "removed": "Exclusion retirée"

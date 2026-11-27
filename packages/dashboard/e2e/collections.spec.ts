@@ -283,6 +283,13 @@ test.describe('collections management', () => {
       await expect(pickedRow).toBeVisible({ timeout: 15_000 })
       await expect(ruleRow).toBeVisible()
 
+      // Only the rule-matched row offers Exclude, and says what it does.
+      await expect(pickedRow.getByRole('button', { name: /^exclude/i })).toHaveCount(0)
+      await ruleRow.getByRole('button', { name: /^exclude/i }).hover()
+      await expect(
+        page.getByText(/keeps it out, even when the rules match it again/i),
+      ).toBeVisible()
+
       // Exclude the rule-matched product: it leaves now and is listed as excluded.
       await ruleRow.getByRole('button', { name: /^exclude/i }).click()
       await page

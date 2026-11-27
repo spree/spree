@@ -36,6 +36,19 @@ module Spree
       source == 'manual' || (source.nil? && collection.manual?)
     end
 
+    # How each product joined the collection, in one query: `manual` for a
+    # hand-pick, `rule` for a rule match. Follows {#hand_picked?} for rows
+    # from before 6.1.
+    #
+    # @param collection [Spree::Collection]
+    # @param product_ids [Array<Integer>]
+    # @return [Hash{Integer => String}] product id => `manual` or `rule`
+    def self.sources_for(collection, product_ids)
+      where(collection_id: collection.id, product_id: product_ids).pluck(:product_id, :source).to_h do |product_id, source|
+        [product_id, source || (collection.manual? ? 'manual' : 'rule')]
+      end
+    end
+
     # Makes existing rule memberships hand-picked, keeping their positions.
     #
     # @param collection_ids [Array<Integer>, ActiveRecord::Relation]

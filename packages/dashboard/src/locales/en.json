@@ -352,6 +352,7 @@
         "description": "Kept out of this collection whatever the rules match. Changes here apply immediately.",
         "exclude": "Exclude",
         "exclude_row": "Exclude {{name}}",
+        "exclude_tooltip": "Removes it from the collection now and keeps it out, even when the rules match it again. Undo from Excluded products.",
         "messages": {
           "excluded": "Product excluded",
           "removed": "Exclusion removed"

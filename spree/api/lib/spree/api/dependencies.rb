@@ -37,7 +37,7 @@ module Spree
            seller seller_requirement seller_requirement_submission seller_requirement_status commission_rate
            commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address address_owner
            channel order_routing_rule product_publication collection_publication collection_exclusion market delivery_method delivery_method_service
-           category_publication
+           category_publication collection_product
            stock_location stock_reservation delivery_rate freight_summary freight_summary_line payment_method
            credit_card store_credit store_credit_event customer_group payment_source digital_asset digital_link
            store setup_task update_status diagnostics api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect

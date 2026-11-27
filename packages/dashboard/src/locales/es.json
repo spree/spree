@@ -4366,6 +4366,7 @@
         "description": "Quedan fuera de esta colección aunque cumplan las reglas. Los cambios aquí se aplican al instante.",
         "exclude": "Excluir",
         "exclude_row": "Excluir {{name}}",
+        "exclude_tooltip": "Lo quita de la colección ahora y lo mantiene fuera, aunque las reglas vuelvan a incluirlo. Puedes deshacerlo en Productos excluidos.",
         "messages": {
           "excluded": "Producto excluido",
           "removed": "Exclusión quitada"

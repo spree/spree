@@ -26,6 +26,7 @@ export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { ClaimReasonSchema, type ClaimReason } from './ClaimReason';
 export { CollectionSchema, type Collection } from './Collection';
 export { CollectionExclusionSchema, type CollectionExclusion } from './CollectionExclusion';
+export { CollectionProductSchema, type CollectionProduct } from './CollectionProduct';
 export { CollectionPublicationSchema, type CollectionPublication } from './CollectionPublication';
 export { CollectionRuleSchema, type CollectionRule } from './CollectionRule';
 export { CollectionRuleTypeDefinitionSchema, type CollectionRuleTypeDefinition } from './CollectionRuleTypeDefinition';

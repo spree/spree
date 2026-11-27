@@ -352,6 +352,7 @@
         "description": "Luôn nằm ngoài bộ sưu tập này dù quy tắc khớp. Thay đổi ở đây áp dụng ngay.",
         "exclude": "Loại trừ",
         "exclude_row": "Loại trừ {{name}}",
+        "exclude_tooltip": "Gỡ sản phẩm khỏi bộ sưu tập ngay và giữ nó ở ngoài, kể cả khi quy tắc khớp lại. Hoàn tác trong Sản phẩm bị loại trừ.",
         "messages": {
           "excluded": "Đã loại trừ sản phẩm",
           "removed": "Đã bỏ loại trừ"

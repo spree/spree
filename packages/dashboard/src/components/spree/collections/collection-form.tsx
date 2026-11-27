@@ -91,7 +91,10 @@ export function CollectionMain({
 
       {collection && (
         <>
-          <CollectionProductsCard collectionId={collection.id} />
+          <CollectionProductsCard
+            collectionId={collection.id}
+            hasRules={(collection.rules?.length ?? 0) > 0}
+          />
           <CollectionExclusionsCard collectionId={collection.id} />
           <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
           <FormBackedCustomFieldsProvider form={form} resourceType="collection">

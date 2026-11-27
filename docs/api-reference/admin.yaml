@@ -8098,7 +8098,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Product"
+                      "$ref": "#/components/schemas/CollectionProduct"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:
@@ -65379,6 +65379,230 @@ components:
       - updated_at
       - collection_id
       - product_id
+      x-typelizer: true
+    CollectionProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        preorder_ships_at:
+          type: string
+          nullable: true
+        purchasable:
+          type: boolean
+        preorder:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        description_html:
+          type: string
+          nullable: true
+        default_variant_id:
+          type: string
+        buy_box_variant_id:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        price:
+          anyOf:
+          - "$ref": "#/components/schemas/Price"
+          - type: object
+            nullable: true
+            enum:
+            -
+        original_price:
+          anyOf:
+          - "$ref": "#/components/schemas/Price"
+          - type: object
+            nullable: true
+            enum:
+            -
+        seller_id:
+          type: string
+          nullable: true
+        seller:
+          "$ref": "#/components/schemas/Seller"
+        primary_media:
+          "$ref": "#/components/schemas/Media"
+        media:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Media"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Variant"
+        default_variant:
+          "$ref": "#/components/schemas/Variant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionType"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
+        categories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Category"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        prior_price:
+          anyOf:
+          - "$ref": "#/components/schemas/PriceHistory"
+          - type: object
+            nullable: true
+            enum:
+            -
+        external_references:
+          type: object
+        translations:
+          type: object
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+            - proposed
+            - rejected
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        metadata:
+          type: object
+        deleted_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        delivery_profile_id:
+          type: string
+          nullable: true
+        submission:
+          anyOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          - type: object
+            nullable: true
+            enum:
+            -
+        seller_name:
+          type: string
+          nullable: true
+        product_type_id:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
+          nullable: true
+        total_on_hand:
+          type: number
+          nullable: true
+        digital_assets:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DigitalAsset"
+        collections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Collection"
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: Collections the product is hand-picked into; rule memberships
+            are left out.
+        product_publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ProductPublication"
+        channels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Channel"
+        product_type:
+          "$ref": "#/components/schemas/ProductType"
+        membership_source:
+          type: string
+          description: "`rule` when the collection rules matched the product, `manual`
+            when it was hand-picked"
+          enum:
+          - manual
+          - rule
+      required:
+      - id
+      - name
+      - slug
+      - meta_title
+      - meta_description
+      - meta_keywords
+      - variant_count
+      - available_on
+      - preorder_ships_at
+      - purchasable
+      - preorder
+      - in_stock
+      - backorderable
+      - available
+      - description
+      - description_html
+      - default_variant_id
+      - buy_box_variant_id
+      - thumbnail_url
+      - tags
+      - price
+      - original_price
+      - seller_id
+      - external_references
+      - status
+      - metadata
+      - deleted_at
+      - created_at
+      - updated_at
+      - delivery_profile_id
+      - seller_name
+      - product_type_id
+      - tax_category_id
+      - total_on_hand
+      - collection_ids
+      - membership_source
       x-typelizer: true
     CollectionPublication:
       type: object

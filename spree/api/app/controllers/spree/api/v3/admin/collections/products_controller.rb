@@ -48,6 +48,18 @@ module Spree
 
             protected
 
+            def serializer_class
+              Spree.api.admin_collection_product_serializer
+            end
+
+            # How each listed product joined the collection, for the page in
+            # one query rather than a lookup per row.
+            def serializer_params
+              return super unless @collection
+
+              super.merge(membership_sources: Spree::ProductCollection.sources_for(@parent_collection, @collection.map(&:id)))
+            end
+
             # The collection's products, ordered by membership position.
             def scope
               product_scope.

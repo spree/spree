@@ -360,6 +360,7 @@
         "description": "Pozostają poza tą kolekcją niezależnie od reguł. Zmiany tutaj obowiązują od razu.",
         "exclude": "Wyklucz",
         "exclude_row": "Wyklucz {{name}}",
+        "exclude_tooltip": "Usuwa produkt z kolekcji od razu i nie pozwala mu wrócić, nawet gdy reguły znów go dopasują. Cofniesz to w sekcji Wykluczone produkty.",
         "messages": {
           "excluded": "Produkt wykluczony",
           "removed": "Wykluczenie usunięte"

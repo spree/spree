@@ -352,6 +352,7 @@
         "description": "Bleiben unabhängig von den Regeln aus dieser Kollektion. Änderungen hier gelten sofort.",
         "exclude": "Ausschließen",
         "exclude_row": "{{name}} ausschließen",
+        "exclude_tooltip": "Entfernt das Produkt sofort aus der Kollektion und hält es draußen, auch wenn die Regeln es wieder erfassen. Rückgängig unter Ausgeschlossene Produkte.",
         "messages": {
           "excluded": "Produkt ausgeschlossen",
           "removed": "Ausschluss aufgehoben"
