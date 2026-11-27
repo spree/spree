@@ -82,18 +82,18 @@ test.describe('api keys', () => {
     // The withheld key itself is not on offer.
     await expect(sheet.getByRole('checkbox', { name: 'Manage Maintenance tasks' })).toBeDisabled()
 
-    const readAll = sheet.locator('label[for="scope-read-all"]')
-    const fullAccess = sheet.locator('label[for="scope-write-all"]')
-    await expect(readAll.getByRole('checkbox')).toBeEnabled()
-    await expect(fullAccess.getByRole('checkbox')).toBeEnabled()
+    const readAll = sheet.getByRole('checkbox', { name: /^read all \(read_all\)/i })
+    const fullAccess = sheet.getByRole('checkbox', { name: /^full access \(write_all\)/i })
+    await expect(readAll).toBeEnabled()
+    await expect(fullAccess).toBeEnabled()
 
     await readAll.click()
-    await expect(readAll.getByRole('checkbox')).toBeChecked()
+    await expect(readAll).toBeChecked()
     await readAll.click()
-    await expect(readAll.getByRole('checkbox')).not.toBeChecked()
+    await expect(readAll).not.toBeChecked()
 
     await fullAccess.click()
-    await expect(fullAccess.getByRole('checkbox')).toBeChecked()
+    await expect(fullAccess).toBeChecked()
 
     await sheet.getByRole('button', { name: /create key/i }).click()
     await expect(page.getByText(/copy.*secret|save.*secret/i).first()).toBeVisible({
