@@ -25,6 +25,12 @@ export type CustomFieldDefinitionCreateParams = {
    */
   storefront_visible?: boolean
   /**
+   * Shoppers fill the field in through the Store API: an order field at checkout, a customer field
+   * at registration and from their account. Only order and customer fields take it, and the field
+   * must also be `storefront_visible`. Defaults to false.
+   */
+  storefront_writable?: boolean
+  /**
    * Include values in storefront product text search. Supported for `short_text`, `long_text`,
    * `number`, `date`, `date_time` and `choice` fields; other types are refused.
    */

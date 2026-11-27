@@ -60,7 +60,7 @@ module Spree
       # reroute them through a plain assignment.
       CORE_ATTRIBUTES = %i[
         email customer_note po_number market_id currency locale metadata use_shipping
-        preferred_stock_location_id company_id po_document_signed_id
+        preferred_stock_location_id company_id po_document_signed_id custom_fields
       ].freeze
 
       private
@@ -99,6 +99,7 @@ module Spree
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
         assign_po_document if params.key?(:po_document_signed_id)
+        cart.storefront_custom_field_values = params[:custom_fields] if params[:custom_fields].present?
       end
 
       # Columns an extension made writable with

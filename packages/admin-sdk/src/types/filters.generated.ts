@@ -105,7 +105,7 @@ export type CustomFieldFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 export type CustomFieldDefinitionFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'field_type' | 'id' | 'resource_type'>
   & Filter.TextFilters<'key' | 'label' | 'namespace'>
-  & Filter.BooleanFilters<'searchable' | 'sortable' | 'storefront_visible'>
+  & Filter.BooleanFilters<'searchable' | 'sortable' | 'storefront_visible' | 'storefront_writable'>
 
 export type CustomerFields = Filter.BooleanFilters<'accepts_email_marketing'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -1013,7 +1013,7 @@ export type CustomFieldDefinitionFilters = CustomFieldDefinitionFields
   & Filter.OrFilters
   & CustomFieldDefinitionFilterExtensions
 
-export type CustomFieldDefinitionSort = Filter.SortKey<'created_at' | 'field_type' | 'id' | 'key' | 'label' | 'namespace' | 'resource_type' | 'searchable' | 'sortable' | 'storefront_visible' | 'updated_at' | (keyof CustomFieldDefinitionSortExtensions & string)>
+export type CustomFieldDefinitionSort = Filter.SortKey<'created_at' | 'field_type' | 'id' | 'key' | 'label' | 'namespace' | 'resource_type' | 'searchable' | 'sortable' | 'storefront_visible' | 'storefront_writable' | 'updated_at' | (keyof CustomFieldDefinitionSortExtensions & string)>
 
 /**
  * Filters your app adds to DataRequest lists. Generate them with `spree filters types`,

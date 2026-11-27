@@ -179,6 +179,21 @@ module Spree
         end
       end
 
+      context 'when the shopper filled in order fields' do
+        before do
+          definition = create(:custom_field_definition, :for_order, store: cart.store, namespace: 'checkout',
+                                                                    key: 'delivery_date', storefront_writable: true)
+          cart.set_custom_field(definition, 'Friday')
+        end
+
+        it 'carries them onto every child order' do
+          expect(group.orders.size).to eq(3)
+          group.orders.each do |order|
+            expect(order.reload.get_custom_field('checkout.delivery_date').value).to eq('Friday')
+          end
+        end
+      end
+
       it 'computes each child’s totals from its own rows' do
         group.orders.each do |order|
           expect(order.total).to be > 0

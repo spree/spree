@@ -151,6 +151,31 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     end
   end
 
+  describe 'storefront_writable' do
+    it 'defaults to false' do
+      expect(described_class.new.storefront_writable).to be(false)
+    end
+
+    it 'is allowed on order and customer fields that shoppers can see' do
+      expect(build(:custom_field_definition, :for_order, storefront_writable: true)).to be_valid
+      expect(build(:custom_field_definition, :for_user, storefront_writable: true)).to be_valid
+    end
+
+    it 'is refused on other resources' do
+      definition = build(:custom_field_definition, storefront_writable: true)
+
+      expect(definition).not_to be_valid
+      expect(definition.errors.details[:storefront_writable]).to include(error: :resource_not_storefront_writable)
+    end
+
+    it 'is refused on an admin-only field' do
+      definition = build(:custom_field_definition, :for_order, :admin_only, storefront_writable: true)
+
+      expect(definition).not_to be_valid
+      expect(definition.errors.details[:storefront_writable]).to include(error: :requires_storefront_visible)
+    end
+  end
+
   describe 'fixed types' do
     let(:definition) { create(:custom_field_definition, :number_field) }
 

@@ -2,6 +2,7 @@
 
 import type { CartAddressParams } from './CartAddressParams'
 import type { CurrencyCode } from '../generated'
+import type { CustomFieldEntryParams } from './CustomFieldEntryParams'
 import type { LineItemInputParams } from './LineItemInputParams'
 import type { LocaleCode } from '../generated'
 
@@ -46,6 +47,13 @@ export type UpdateCartParams = {
   billing_address?: CartAddressParams
   /** Write-only key-value metadata, merged with what the cart has. */
   metadata?: Record<string, unknown>
+  /**
+   * Values for the order fields shoppers fill in, listed by
+   * `GET /store/custom_field_definitions?q[resource_type_eq]=order`. Each is checked against its
+   * field's rules; an unknown key is refused. Fields not named keep their values. The values move
+   * to the order when checkout completes.
+   */
+  custom_fields?: CustomFieldEntryParams[]
   /** Items to upsert: sets the quantity of a variant already in the cart, adds the others. */
   items?: LineItemInputParams[]
 }

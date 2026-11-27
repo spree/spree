@@ -131,6 +131,7 @@ module Spree
     #
     scope :storefront_visible, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.storefront_visible) }
     scope :admin_only, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.admin_only) }
+    scope :storefront_writable, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.storefront_writable) }
     scope :with_key, ->(namespace, key) {
       joins(:custom_field_definition).
         where(Spree::CustomFieldDefinition.table_name => { namespace: namespace, key: key })
@@ -224,6 +225,8 @@ module Spree
 
       definition_type = custom_field_definition.resource_type
       return if resource_type == definition_type
+      # The one exception: a cart holds its order's fields until checkout completes.
+      return if resource_type == 'Spree::Cart' && definition_type == 'Spree::Order'
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
       errors.add(:resource_type, :custom_field_definition_mismatch,

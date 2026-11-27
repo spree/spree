@@ -82,6 +82,44 @@ RSpec.describe Spree::Customers::Create do
     end
   end
 
+  describe 'custom fields at registration' do
+    let!(:definition) do
+      create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'gender', storefront_writable: true,
+                                                  validations: { required: true })
+    end
+
+    def register(custom_fields)
+      described_class.call(store: store, email: 'new@customer.com', password: 'password123', custom_fields: custom_fields)
+    end
+
+    it 'writes the values with the account' do
+      result = register([{ key: 'profile.gender', value: 'female' }])
+
+      expect(result).to be_success
+      expect(result.value.get_custom_field('profile.gender').value).to eq('female')
+    end
+
+    it 'refuses a registration missing a required field, creating no account' do
+      result = nil
+
+      expect { result = register([]) }.not_to change(Spree.customer_class, :count)
+      expect(result).to be_failure
+      expect(result.value.errors.details[:custom_fields]).to include(a_hash_including(error: :required_missing))
+    end
+
+    it 'leaves no account behind when a value is refused' do
+      create(:custom_field_definition, :for_user, :number_field, store: store, namespace: 'profile', storefront_writable: true,
+                                                                 validations: { max: 10 })
+
+      expect { register([{ key: 'profile.gender', value: 'female' }, { key: 'profile.priority', value: '11' }]) }.
+        not_to change(Spree.customer_class, :count)
+    end
+
+    it 'does not ask flows that render no fields' do
+      expect(described_class.call(store: store, email: 'new@customer.com', password: 'password123')).to be_success
+    end
+  end
+
   describe 'checkout account creation (order:)' do
     subject(:result) { described_class.call(store: store, order: order) }
 

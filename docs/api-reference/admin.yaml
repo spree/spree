@@ -11168,9 +11168,10 @@ paths:
           | `searchable` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `sortable` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `storefront_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `storefront_writable` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `created_at`, `field_type`, `id`, `key`, `label`, `namespace`, `resource_type`, `searchable`, `sortable`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `created_at`, `field_type`, `id`, `key`, `label`, `namespace`, `resource_type`, `searchable`, `sortable`, `storefront_visible`, `storefront_writable`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: CustomFieldDefinition
         sortable:
@@ -11184,6 +11185,7 @@ paths:
         - searchable
         - sortable
         - storefront_visible
+        - storefront_writable
         - updated_at
       responses:
         '200':
@@ -11195,14 +11197,9 @@ paths:
                 - id: cfdef_UkLWZg9DAJ
                   namespace: specs
                   key: fabric
+                  full_key: specs.fabric
                   label: Title
                   field_type: short_text
-                  storefront_visible: true
-                  searchable: false
-                  sortable: false
-                  filter_key: cf_specs_fabric
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
                   resource_type: product
                   validations:
                     required: false
@@ -11211,17 +11208,19 @@ paths:
                     regex:
                     multiple: false
                     choices: []
+                  storefront_visible: true
+                  storefront_writable: false
+                  searchable: false
+                  sortable: false
+                  filter_key: cf_specs_fabric
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
+                  full_key: custom.order_notes
                   label: Order Notes
                   field_type: short_text
-                  storefront_visible: true
-                  searchable: false
-                  sortable: false
-                  filter_key: cf_custom_order_notes
-                  created_at: '2026-01-15T12:00:00.000Z'
-                  updated_at: '2026-01-15T12:00:00.000Z'
                   resource_type: order
                   validations:
                     required: false
@@ -11230,6 +11229,13 @@ paths:
                     regex:
                     multiple: false
                     choices: []
+                  storefront_visible: true
+                  storefront_writable: false
+                  searchable: false
+                  sortable: false
+                  filter_key: cf_custom_order_notes
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -11303,14 +11309,9 @@ paths:
                 id: cfdef_EfhxLZ9ck8
                 namespace: warehouse
                 key: zone
+                full_key: warehouse.zone
                 label: Warehouse zone
                 field_type: choice
-                storefront_visible: false
-                searchable: false
-                sortable: false
-                filter_key: cf_warehouse_zone
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
                 validations:
                   required: true
@@ -11323,6 +11324,13 @@ paths:
                     label: Zone A
                   - value: b
                     label: Zone B
+                storefront_visible: false
+                storefront_writable: false
+                searchable: false
+                sortable: false
+                filter_key: cf_warehouse_zone
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
               schema:
                 "$ref": "#/components/schemas/CustomFieldDefinition"
       requestBody:
@@ -11394,14 +11402,9 @@ paths:
                 id: cfdef_UkLWZg9DAJ
                 namespace: specs
                 key: fabric
+                full_key: specs.fabric
                 label: Title
                 field_type: short_text
-                storefront_visible: true
-                searchable: false
-                sortable: false
-                filter_key: cf_specs_fabric
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
                 validations:
                   required: false
@@ -11410,6 +11413,13 @@ paths:
                   regex:
                   multiple: false
                   choices: []
+                storefront_visible: true
+                storefront_writable: false
+                searchable: false
+                sortable: false
+                filter_key: cf_specs_fabric
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
               schema:
                 "$ref": "#/components/schemas/CustomFieldDefinition"
     patch:
@@ -11464,14 +11474,9 @@ paths:
                 id: cfdef_UkLWZg9DAJ
                 namespace: specs
                 key: fabric
+                full_key: specs.fabric
                 label: Fabric Composition
                 field_type: short_text
-                storefront_visible: false
-                searchable: false
-                sortable: false
-                filter_key: cf_specs_fabric
-                created_at: '2026-01-15T12:00:00.000Z'
-                updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
                 validations:
                   required: false
@@ -11480,6 +11485,13 @@ paths:
                   regex:
                   multiple: false
                   choices: []
+                storefront_visible: false
+                storefront_writable: false
+                searchable: false
+                sortable: false
+                filter_key: cf_specs_fabric
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
               schema:
                 "$ref": "#/components/schemas/CustomFieldDefinition"
         '422':
@@ -63828,6 +63840,10 @@ components:
             nullable: true
             enum:
             -
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
         completed_at:
           type: string
           nullable: true
@@ -66526,6 +66542,9 @@ components:
           type: string
         key:
           type: string
+        full_key:
+          type: string
+          description: The `namespace.key` a value is read and written under.
         label:
           type: string
         field_type:
@@ -66540,8 +66559,19 @@ components:
           - date
           - date_time
           - choice
+        resource_type:
+          type: string
+          description: Shorthand of the resource the field attaches to, for example
+            product, variant, order, customer or category. Discover the full list
+            from the resource_types endpoint; extensions may register more.
+        validations:
+          "$ref": "#/components/schemas/CustomFieldValidations"
         storefront_visible:
           type: boolean
+        storefront_writable:
+          type: boolean
+          description: 'Shoppers fill the field in: an order field at checkout, a
+            customer field at registration and from their account.'
         searchable:
           type: boolean
         sortable:
@@ -66552,27 +66582,22 @@ components:
           type: string
         updated_at:
           type: string
-        resource_type:
-          type: string
-          description: Shorthand of the resource the field attaches to, for example
-            product, variant, order, customer or category. Discover the full list
-            from the resource_types endpoint; extensions may register more.
-        validations:
-          "$ref": "#/components/schemas/CustomFieldValidations"
       required:
       - id
       - namespace
       - key
+      - full_key
       - label
       - field_type
+      - resource_type
+      - validations
       - storefront_visible
+      - storefront_writable
       - searchable
       - sortable
       - filter_key
       - created_at
       - updated_at
-      - resource_type
-      - validations
       x-typelizer: true
     CustomField:
       type: object
@@ -85682,6 +85707,12 @@ components:
           description: When false, the definition is admin-only and never exposed
             in the Store API. Defaults to false on create; an update without it keeps
             the stored value.
+        storefront_writable:
+          type: boolean
+          description: 'Shoppers fill the field in through the Store API: an order
+            field at checkout, a customer field at registration and from their account.
+            Only order and customer fields take it, and the field must also be `storefront_visible`.
+            Defaults to false.'
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported
@@ -85720,6 +85751,12 @@ components:
           description: When false, the definition is admin-only and never exposed
             in the Store API. Defaults to false on create; an update without it keeps
             the stored value.
+        storefront_writable:
+          type: boolean
+          description: 'Shoppers fill the field in through the Store API: an order
+            field at checkout, a customer field at registration and from their account.
+            Only order and customer fields take it, and the field must also be `storefront_visible`.
+            Defaults to false.'
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported
@@ -92109,6 +92146,7 @@ components:
         searchable: boolean
         sortable: boolean
         storefront_visible: boolean
+        storefront_writable: boolean
         updated_at: datetime
       associations: {}
       scopes:

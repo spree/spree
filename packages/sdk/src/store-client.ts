@@ -46,6 +46,9 @@ import type {
   CreditCard,
   Currency,
   Customer,
+  CustomFieldDefinition,
+  CustomFieldDefinitionFilters,
+  CustomFieldDefinitionSort,
   DataRequest,
   DeliveryMethod,
   DigitalLink,
@@ -464,6 +467,27 @@ export class StoreClient {
      */
     get: (id: string, options?: RequestOptions): Promise<Policy> =>
       this.request<Policy>('GET', `/policies/${id}`, options),
+  }
+
+  // ============================================
+  // Custom fields
+  // ============================================
+
+  readonly customFieldDefinitions = {
+    /**
+     * List the custom fields shoppers fill in, with each field's type, label
+     * and rules. Filter with `resource_type_eq: 'order'` for the fields asked
+     * at checkout, or `'customer'` for registration and the account, then
+     * write values by `full_key` in `custom_fields` on the cart or customer.
+     */
+    list: (
+      params?: ListParams<CustomFieldDefinitionFilters, CustomFieldDefinitionSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<CustomFieldDefinition>> =>
+      this.request<PaginatedResponse<CustomFieldDefinition>>('GET', '/custom_field_definitions', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
   }
 
   // ============================================

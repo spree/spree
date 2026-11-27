@@ -25,6 +25,11 @@ module Spree
               When false, the definition is admin-only and never exposed in the Store API.
               Defaults to false on create; an update without it keeps the stored value.
             TEXT
+            body.attribute :storefront_writable, :boolean, description: <<~TEXT.squish
+              Shoppers fill the field in through the Store API: an order field at checkout, a customer field at registration
+              and from their account. Only order and customer fields take it, and the field must also be `storefront_visible`.
+              Defaults to false.
+            TEXT
             body.attribute :searchable, :boolean, description: <<~TEXT.squish
               Include values in storefront product text search.
               Supported for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice` fields; other types are refused.

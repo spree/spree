@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CustomFieldSchema } from './CustomField';
 import { FulfillmentSchema } from './Fulfillment';
 import { OrderLineItemSchema } from './OrderLineItem';
 import { PaymentSplitSchema } from './PaymentSplit';
@@ -40,6 +41,7 @@ export const OrderSchema = z.object({
   fulfillments: z.array(FulfillmentSchema),
   shipping_address: AddressSchema,
   billing_address: AddressSchema,
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

@@ -33,6 +33,11 @@ module Spree
       # @param accepts_email_marketing [Boolean, nil] defaults from the
       #   order's marketing opt-in with `order:`
       # @param metadata [Hash, nil]
+      # @param custom_fields [Array<Hash>, nil] the shopper's values, as
+      #   `{ key:, value: }`, for the store's storefront-writable customer
+      #   fields. Passing a list, even an empty one, also refuses a
+      #   registration missing a required field; nil skips both, for flows
+      #   that render no fields
       # @param order [Spree::Order, nil] a placed order adopting the new
       #   account; when its email already belongs to a customer, the order is
       #   linked to that account and no new customer is created
@@ -48,7 +53,7 @@ module Spree
       #   self-registration
       def perform(store:, email: nil, password: nil, password_confirmation: nil,
                   first_name: nil, last_name: nil, phone: nil,
-                  accepts_email_marketing: nil, metadata: nil,
+                  accepts_email_marketing: nil, metadata: nil, custom_fields: nil,
                   order: nil, password_required: nil, created_by: nil,
                   terms_of_service: nil, ip_address: nil, user_agent: nil)
         super
@@ -89,6 +94,8 @@ module Spree
 
       def build_customer
         @customer = Spree.customer_class.new(customer_attributes)
+        # Written in the same save as the account, so a refused field leaves no account behind.
+        customer.storefront_custom_field_values = custom_fields unless custom_fields.nil?
       end
 
       def customer_attributes

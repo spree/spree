@@ -27570,6 +27570,10 @@ components:
           "$ref": "#/components/schemas/Address"
         billing_address:
           "$ref": "#/components/schemas/Address"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - number

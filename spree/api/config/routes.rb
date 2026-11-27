@@ -83,6 +83,9 @@ Spree::Core::Engine.add_routes do
         # Policies (return policy, privacy policy, terms of service, etc.)
         resources :policies, only: [:index, :show]
 
+        # Custom fields shoppers fill in at checkout, registration and in their account
+        resources :custom_field_definitions, only: [:index]
+
         # Password Resets (top-level, no auth required)
         resources :password_resets, only: [:create, :update], controller: 'customer/password_resets'
 

@@ -298,6 +298,7 @@ module Spree
           copy_tax_identifier!(cart, order)
           copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
           order.copy_po_document_from!(cart)
+          order.copy_custom_fields_from!(cart)
           repoint_money_records!(cart, order)
           Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
 

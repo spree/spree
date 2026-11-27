@@ -19,6 +19,7 @@ module Spree
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
     validate :field_type_and_resource_type_must_not_change, on: :update
+    validate :storefront_writable_must_be_allowed, if: :storefront_writable?
 
     #
     # Scopes
@@ -26,6 +27,7 @@ module Spree
     scope :for_resource_type, ->(resource_type) { where(resource_type: resource_type) }
     scope :storefront_visible, -> { where(storefront_visible: true) }
     scope :admin_only, -> { where(storefront_visible: false) }
+    scope :storefront_writable, -> { where(storefront_writable: true) }
 
     #
     # Callbacks
@@ -47,7 +49,11 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+    self.whitelisted_ransackable_attributes = %w[
+      key namespace label resource_type field_type storefront_visible storefront_writable searchable sortable
+    ]
+    # The Store API lists writable fields only, and storefronts pick them by resource.
+    self.private_ransackable_attributes = { store: %w[label field_type storefront_visible storefront_writable searchable sortable] }
 
     # Both columns store class names; filters take the short names clients see.
     def self.api_type_resolver(attribute)
@@ -143,6 +149,14 @@ module Spree
       end.uniq { |entry| entry[:resource_type] }.sort_by { |entry| entry[:name] }
     end
 
+    # What shoppers may write: an order's fields at checkout, a customer's at
+    # registration and from their account.
+    #
+    # @return [Array<String>] class names
+    def self.storefront_writable_resource_types
+      ['Spree::Order', Spree.customer_class.to_s]
+    end
+
     # Returns the full key with namespace
     # @return [String] eg. custom.id
     def full_key
@@ -198,6 +212,19 @@ module Spree
 
         errors.add(attribute, :cannot_change, message: I18n.t('spree.errors.messages.custom_field_type_cannot_change'))
       end
+    end
+
+    # A field a shopper writes but cannot read back would be a form that
+    # forgets what was typed into it.
+    def storefront_writable_must_be_allowed
+      unless self.class.storefront_writable_resource_types.include?(resource_type)
+        errors.add(:storefront_writable, :resource_not_storefront_writable,
+                   message: I18n.t('spree.errors.messages.custom_field_resource_not_storefront_writable'))
+      end
+      return if storefront_visible?
+
+      errors.add(:storefront_writable, :requires_storefront_visible,
+                 message: I18n.t('spree.errors.messages.custom_field_writable_requires_visible'))
     end
 
     def valid_available_resources

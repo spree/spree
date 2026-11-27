@@ -336,4 +336,132 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
       }.to change { product.custom_fields.count }.by(1)
     end
   end
+
+  describe '#storefront_custom_field_values=' do
+    let(:store) { Spree::Store.default || create(:store) }
+    let!(:gender) do
+      create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'gender', storefront_writable: true)
+    end
+    let!(:birthday) do
+      create(:custom_field_definition, :for_user, :date_field, store: store, namespace: 'profile', key: 'birthday', storefront_writable: true)
+    end
+    let(:customer) { create(:user) }
+
+    it 'writes the named fields and leaves the others' do
+      customer.set_custom_field(birthday, '1990-01-01')
+
+      customer.update!(storefront_custom_field_values: [{ key: 'profile.gender', value: 'female' }])
+
+      expect(customer.reload.get_custom_field('profile.gender').value).to eq('female')
+      expect(customer.get_custom_field('profile.birthday').value).to eq('1990-01-01')
+    end
+
+    it 'accepts a list keyed by position, as a form sends it' do
+      customer.update!(storefront_custom_field_values: { '0' => { key: 'profile.gender', value: 'female' } })
+
+      expect(customer.reload.get_custom_field('profile.gender').value).to eq('female')
+    end
+
+    it 'removes a field written blank' do
+      customer.set_custom_field(gender, 'female')
+
+      customer.update!(storefront_custom_field_values: [{ key: 'profile.gender', value: '' }])
+
+      expect(customer.reload.has_custom_field?('profile.gender')).to be(false)
+    end
+
+    it 'refuses a key that is unknown, not writable or for another resource, and creates no definition' do
+      create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'tier')
+      create(:custom_field_definition, :for_order, store: store, namespace: 'profile', key: 'note', storefront_writable: true)
+
+      %w[profile.unknown profile.tier profile.note].each do |key|
+        customer.storefront_custom_field_values = [{ key: key, value: 'x' }]
+
+        expect(customer.save).to be(false)
+        expect(customer.errors[:'custom_fields[0].key']).to include('is not a custom field you can fill in')
+      end
+      expect(Spree::CustomFieldDefinition.where(key: 'unknown')).to be_empty
+    end
+
+    it 'reports a value its rules refuse against the entry' do
+      customer.storefront_custom_field_values = [{ key: 'profile.gender', value: 'x' }, { key: 'profile.birthday', value: 'soon' }]
+
+      expect(customer.save).to be(false)
+      expect(customer.errors.attribute_names).to include(:'custom_fields[1].value')
+      expect(customer.reload.custom_fields).to be_empty
+    end
+
+    context 'with a required field' do
+      before { gender.update!(validations: { required: true }) }
+
+      it 'refuses a new record that leaves it out, saving nothing' do
+        new_customer = build(:user, storefront_custom_field_values: [{ key: 'profile.birthday', value: '1990-01-01' }])
+
+        expect { expect(new_customer.save).to be(false) }.not_to change(Spree.customer_class, :count)
+        expect(new_customer.errors.details[:custom_fields]).to include(a_hash_including(error: :required_missing))
+      end
+
+      it 'refuses blanking it on an existing record' do
+        customer.set_custom_field(gender, 'female')
+
+        customer.storefront_custom_field_values = [{ key: 'profile.gender', value: nil }]
+
+        expect(customer.save).to be(false)
+        expect(customer.errors[:'custom_fields[0].value']).to include("can't be blank")
+      end
+
+      it 'does not ask an existing record for a field the write does not name' do
+        expect(customer.update(storefront_custom_field_values: [{ key: 'profile.birthday', value: '1990-01-01' }])).to be(true)
+      end
+    end
+
+    context 'on a cart' do
+      let(:cart) { create(:cart, store: store) }
+      let!(:delivery_date) do
+        create(:custom_field_definition, :for_order, :date_field,
+               store: store, namespace: 'checkout', storefront_writable: true, validations: { required: true })
+      end
+
+      it "writes the order's fields, and leaves a missing required one to checkout" do
+        cart.update!(storefront_custom_field_values: [{ key: 'checkout.delivery_date', value: '2026-10-12' }])
+        expect(cart.reload.get_custom_field('checkout.delivery_date').value).to eq('2026-10-12')
+
+        cart.update!(storefront_custom_field_values: [{ key: 'checkout.delivery_date', value: '' }])
+        expect(cart.reload.custom_fields).to be_empty
+      end
+    end
+  end
+
+  describe 'on a cart' do
+    let(:cart) { create(:cart) }
+
+    it 'accepts order definitions' do
+      definition = create(:custom_field_definition, :for_order, store: cart.store)
+
+      expect(cart.set_custom_field(definition, 'Ring the bell')).to be_persisted
+    end
+
+    it 'never creates a definition from a key' do
+      expect { cart.set_custom_field('checkout.gift_message', 'Hi') }.to raise_error(ArgumentError, /define "checkout.gift_message" for orders/)
+      expect { Spree::Cart.ensure_custom_field_definition_exists!('checkout.gift_message') }.to raise_error(ArgumentError)
+      expect(Spree::CustomFieldDefinition.where(key: 'gift_message')).to be_empty
+    end
+  end
+
+  describe '#copy_custom_fields_from!' do
+    let(:cart) { create(:cart) }
+    let(:order) { create(:order, store: cart.store) }
+    let(:definition) { create(:custom_field_definition, :for_order, :number_field, store: cart.store, validations: { max: 5 }) }
+
+    it 'copies the values as they are, without applying rules changed since' do
+      cart.set_custom_field(definition, '4')
+      definition.update!(validations: { max: 3 })
+
+      order.copy_custom_fields_from!(cart)
+
+      copied = order.custom_fields.sole
+      expect(copied).to have_attributes(custom_field_definition_id: definition.id, value: '4', type: 'Spree::CustomFields::Number')
+      expect(cart.custom_fields.count).to eq(1)
+    end
+  end
 end

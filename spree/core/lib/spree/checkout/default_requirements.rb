@@ -42,6 +42,7 @@ module Spree
           r.concat(undeliverable_errors)
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
+          r.concat(missing_custom_field_requirements)
           r << order_minimum_requirement if below_order_minimum?
         end
       end
@@ -194,6 +195,36 @@ module Spree
       # step the buyer never visits is one they cannot clear.
       def po_number_missing?
         @cart.po_number.blank? && @cart.po_number_required? && !keyed_in_by_staff?
+      end
+
+      # Required order fields a shopper can fill in and has not. Like the PO
+      # number, they are shopper input, so an order staff key in is never
+      # blocked on them.
+      def missing_custom_field_requirements
+        return [] if keyed_in_by_staff? || !@cart.respond_to?(:storefront_writable_custom_field_definitions)
+
+        required = @cart.storefront_writable_custom_field_definitions.select(&:required?)
+        return [] if required.empty?
+
+        filled = if @cart.custom_fields.loaded?
+                   @cart.custom_fields.map(&:custom_field_definition_id)
+                 else
+                   @cart.custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
+                 end
+        required.reject { |definition| filled.include?(definition.id) }.map do |definition|
+          req(custom_field_step, definition.full_key, I18n.t('spree.checkout_requirements.custom_field_required', label: definition.label),
+              code: 'custom_field_required')
+        end
+      end
+
+      # The last step before completion, where storefronts collect order
+      # details: `payment`, or the step before it on a cart that owes nothing,
+      # which has no payment step to clear it on.
+      def custom_field_step
+        return 'payment' unless @cart.is_a?(Spree::Cart)
+
+        steps = @cart.checkout_steps - %w[complete]
+        steps.include?('payment') ? 'payment' : steps.last || 'address'
       end
 
       # Narrower than {Spree::Purchase::QuantityRules#staff_initiated?} on

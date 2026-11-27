@@ -102,6 +102,22 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       end
     end
 
+    context 'with storefront_writable' do
+      it 'lets shoppers write an order field' do
+        post :create, params: create_params.merge(resource_type: 'order', storefront_writable: true), as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['storefront_writable']).to eq(true)
+      end
+
+      it 'refuses it on a product field' do
+        post :create, params: create_params.merge(storefront_writable: true), as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'storefront_writable')).to be_present
+      end
+    end
+
     context 'when key collides with an existing definition for the same resource type' do
       it 'returns 422' do
         post :create, params: create_params.merge(key: 'fabric'), as: :json
