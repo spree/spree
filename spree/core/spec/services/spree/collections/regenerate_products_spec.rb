@@ -42,6 +42,36 @@ module Spree
       expect(collection.reload.products).to contain_exactly(matching_product)
     end
 
+    context 'when the store was deleted after the collection was loaded' do
+      let(:other_store) { create(:store) }
+
+      # Soft-deletes the store the way Store#destroy does, before its
+      # destroy_async cascade has reached the collections: the window the
+      # regeneration runs in.
+      def delete_store!
+        other_store.update_column(:deleted_at, Time.current)
+      end
+      let!(:collection) { create(:automatic_collection, store: other_store) }
+
+      it 'leaves the collection untouched instead of crashing' do
+        membership = Spree::ProductCollection.create!(collection: collection, product: matching_product, position: 1)
+        before_attributes = membership.reload.attributes
+        loaded = Spree::Collection.find(collection.id)
+        delete_store!
+
+        expect { described_class.call(collection: loaded) }.not_to raise_error
+        expect(Spree::ProductCollection.find_by(id: membership.id)&.attributes).to eq(before_attributes)
+        expect(Spree::ProductCollection.where(collection_id: collection.id).count).to eq(1)
+      end
+
+      it 'matches no products' do
+        loaded = Spree::Collection.find(collection.id)
+        delete_store!
+
+        expect(loaded.products_matching_rules).to be_empty
+      end
+    end
+
     context 'with a manual collection' do
       let!(:collection) { create(:collection, store: store) }
       let!(:rule) { nil }
