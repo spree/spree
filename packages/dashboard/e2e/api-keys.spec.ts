@@ -3,6 +3,24 @@ import { gotoIndex, login } from './helpers'
 
 const API_KEYS_PATH = (storeId: string) => `/${storeId}/settings/api-keys`
 const CTA = /new key/i
+const ME_URL = /\/api\/v3\/admin\/me(\?|$)/
+
+/**
+ * Answers `/me` the way an installation with maintenance tasks turned off
+ * does: the admin's permission keys come back without them. Faked on the
+ * response because the switch is a server setting every spec shares.
+ */
+async function withholdMaintenanceTaskKeys(page: Page) {
+  await page.route(ME_URL, async (route) => {
+    if (route.request().method() !== 'GET') return route.fallback()
+    const response = await route.fetch()
+    const me = await response.json()
+    me.permission_keys = me.permission_keys.filter(
+      (key: string) => !key.endsWith('_maintenance_tasks'),
+    )
+    await route.fulfill({ response, json: me })
+  })
+}
 
 /**
  * Creates a read-only secret key and dismisses the one-shot token dialog.
@@ -45,6 +63,46 @@ test.describe('api keys', () => {
     await createSecretKey(page, name)
 
     await expect(page.getByText(name)).toBeVisible()
+  })
+
+  // The admin role may grant every scope even when the installation withholds
+  // some keys from everyone, so the two catch-all choices must stay pickable.
+  test('lets an admin pick read all and full access when some keys are withheld', async ({
+    page,
+  }) => {
+    await withholdMaintenanceTaskKeys(page)
+    const creds = await login(page)
+    await gotoIndex(page, API_KEYS_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    const sheet = page.getByRole('dialog')
+    const name = `Full access key ${Date.now()}`
+    await sheet.locator('#api-key-name').fill(name)
+
+    // The withheld key itself is not on offer.
+    await expect(sheet.getByRole('checkbox', { name: 'Manage Maintenance tasks' })).toBeDisabled()
+
+    const readAll = sheet.locator('label[for="scope-read-all"]')
+    const fullAccess = sheet.locator('label[for="scope-write-all"]')
+    await expect(readAll.getByRole('checkbox')).toBeEnabled()
+    await expect(fullAccess.getByRole('checkbox')).toBeEnabled()
+
+    await readAll.click()
+    await expect(readAll.getByRole('checkbox')).toBeChecked()
+    await readAll.click()
+    await expect(readAll.getByRole('checkbox')).not.toBeChecked()
+
+    await fullAccess.click()
+    await expect(fullAccess.getByRole('checkbox')).toBeChecked()
+
+    await sheet.getByRole('button', { name: /create key/i }).click()
+    await expect(page.getByText(/copy.*secret|save.*secret/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /^done$/i }).click()
+
+    const row = page.locator('tbody tr').filter({ hasText: name })
+    await expect(row.getByText('Full access', { exact: true })).toBeVisible({ timeout: 15_000 })
   })
 
   // Admins reviewing a key they don't recognize need to see where it came from.
