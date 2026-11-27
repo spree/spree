@@ -31,22 +31,23 @@ description: Guide to upgrading a Spree 6.0 application to Spree 6.1
 | Step | What it does |
 |---|---|
 | `spree:collections:backfill_publications` | Publishes every collection that has no publication on every active channel of its store, so collections stay visible once the Store API filters on publications. |
+| `spree:categories:backfill_publications` | Does the same for categories. |
 | `spree:collections:backfill_membership_sources` | Records where each existing collection membership came from: rule-matched on automatic collections, hand-picked on the others. |
 
 ## Behavior changes
 
-### Collections are published per channel
+### Categories and collections are published per channel
 
-The Store API serves a collection only on channels where it is published. After the backfill every existing collection is published on every active channel, so shoppers see no change.
+The Store API serves a category or collection only on channels where it is published. Unpublishing a category hides its subcategories too. After the backfill every existing category and collection is published on every active channel, so shoppers see no change.
 
-New collections created through the Admin API, the dashboard or `Spree.collection_create_workflow` are published on every active channel unless the request sends `publications`. Code that creates collections with `Spree::Collection.create` directly must publish them itself, or they are invisible on every storefront:
+A new category or collection is published on every active channel unless it is created with `publications`, however it is created. A channel created after the upgrade starts with none. Publish them from the channel:
 
-```ruby server/app/services/my_app/collection_importer.rb
-collection = store.collections.create!(name: 'Summer')
-store.channels.active.add_collections(collection.id)
+```ruby server/app/services/my_app/channel_setup.rb
+channel.publish_records(Spree::Category, store.categories.ids)
+channel.publish_records(Spree::Collection, store.collections.ids)
 ```
 
-A channel created after the upgrade starts with no collections. Publish them from the channel with `Channel#add_collections`.
+The Store API also stops filtering products by a hidden category: `q[in_category]` and `q[in_categories]` skip categories that are not published on the channel, and a product's `categories` leave them out.
 
 ### Collections mix rules, hand-picked products and exclusions
 

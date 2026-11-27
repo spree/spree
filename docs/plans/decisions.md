@@ -6926,3 +6926,14 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Consequences:** Any tax provider can offer a lookup by implementing one class method. The Avalara gem's `commit_transaction_enabled` preference becomes a three-way `document_recording` choice, translated by the upgrade task. A workflow failure carrying a hash renders its messages in the Admin and Store APIs instead of the hash printed as text.
 
 **Plan:** `6.0-avalara-provider-gem.md` (Key Decision "Sales Tax Badge certification scope", Phase 8).
+
+## 2026-11-27 — Categories are published per channel; one publishing implementation for products, categories and collections
+
+**Context:** 6.1 publishes collections per channel. Categories were still public on every channel, and product and collection publishing were two copies of the same code: a sync setter on each model and a publish/unpublish pair per resource on `Channel`.
+
+**Decision:** Categories get `Spree::CategoryPublication`, a table of their own like products and collections. A category shows on a channel only while it and every ancestor are published there, so hiding a category hides its subtree. Its products stay visible: the category leaves navigation, category filters, a product's `categories` and the category facet. The three record types share one implementation: `Spree::ChannelPublication` (publication models), `Spree::ChannelPublishable` (records) and `Channel#publish_records` / `#unpublish_records`. New categories and collections publish on every active channel from the model, so every creation path is covered. An upgrade step backfills existing categories.
+
+**Consequences:** `Channel#add_collections` / `#remove_collections` and `Spree::Api::V3::Store::StorefrontCollections` are replaced before release (`StorefrontVisibility`). Store API reads of categories go through `storefront_categories`. Ransack predicates on the product `categories` association still match hidden categories.
+
+**Plan:** `6.1-collections-merchandising.md` (Key Decisions, Constraints on Current Work).
+

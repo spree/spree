@@ -1070,11 +1070,13 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/exclu
 
 </CodeGroup>
 
-### Publishing collections
+### Publishing categories and collections
 
-Like products, collections are published per [channel](/developer/core-concepts/channels), with an optional window. The Store API serves a collection only on channels where it is published and its window is open; anywhere else it is a 404.
+Like products, categories and collections are published per [channel](/developer/core-concepts/channels), with an optional window. The Store API serves one only on channels where it is published and its window is open; anywhere else it is a 404.
 
-A new collection is published on every active channel of the store, unless the request sends its own `publications`. To stage a collection before launch, give it a future `published_at`. A channel created later starts with no collections; publish them from the channel.
+Hiding a category hides its subcategories too: a category shows on a channel only while it and every parent category are published there. Its products stay visible in search and in other categories, but filtering by a hidden category returns nothing, and it is left out of a product's `categories` and of the category facet.
+
+A new category or collection is published on every active channel of the store, unless the request sends its own `publications`. This happens whichever way it is created, imports included. To stage one before launch, give it a future `published_at`. A channel created later starts with no categories or collections; publish them from the channel.
 
 <CodeGroup>
 
@@ -1097,7 +1099,16 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/publi
 
 </CodeGroup>
 
-Adding and removing a publication sends the `collection.published` and `collection.unpublished` [webhooks](/developer/core-concepts/webhooks).
+Categories take the same `publications` set and have the same nested endpoint, `/api/v3/admin/categories/{category_id}/publications`.
+
+Adding and removing a publication sends the `category.published` / `category.unpublished` and `collection.published` / `collection.unpublished` [webhooks](/developer/core-concepts/webhooks).
+
+In Ruby, `Spree::Channel#publish_records` and `#unpublish_records` publish products, categories or collections in bulk on one channel, or on every channel of a scope:
+
+```ruby
+store.channels.active.publish_records(Spree::Category, category_ids, published_at: 1.week.from_now)
+pos_channel.unpublish_records(Spree::Collection, collection_ids)
+```
 
 ## Publications and Sales Channels
 
