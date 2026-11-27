@@ -407,6 +407,9 @@
       "shipping_title": "Edytuj adres dostawy"
     },
     "billing_address": "Adres rozliczeniowy",
+    "checkout_details": {
+      "title": "Dane z zamówienia"
+    },
     "columns": {
       "fulfillment": "Realizacja",
       "number": "Zamówienie",

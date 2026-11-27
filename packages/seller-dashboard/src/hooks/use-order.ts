@@ -8,9 +8,10 @@ import { sellerClient } from '../api-client'
 export function useOrder(orderId: string) {
   return useQuery({
     queryKey: useResourceKey('seller-order', orderId),
-    // The shares of the basket's payment are expand-gated, and the payment
-    // card is what reads them.
-    queryFn: () => sellerClient().orders.get(orderId, { expand: ['payment_splits'] }),
+    // The shares of the basket's payment and the buyer's checkout answers are
+    // expand-gated; the payment and checkout details cards read them.
+    queryFn: () =>
+      sellerClient().orders.get(orderId, { expand: ['payment_splits', 'custom_fields'] }),
     enabled: !!orderId,
   })
 }

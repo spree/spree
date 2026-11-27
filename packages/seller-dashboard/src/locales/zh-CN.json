@@ -404,6 +404,9 @@
       "shipping_title": "编辑收货地址"
     },
     "billing_address": "账单地址",
+    "checkout_details": {
+      "title": "结账信息"
+    },
     "columns": {
       "fulfillment": "发货",
       "number": "订单",

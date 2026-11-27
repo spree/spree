@@ -405,6 +405,9 @@
       "shipping_title": "Edit Shipping Address"
     },
     "billing_address": "Billing address",
+    "checkout_details": {
+      "title": "Checkout details"
+    },
     "columns": {
       "fulfillment": "Fulfillment",
       "number": "Order",

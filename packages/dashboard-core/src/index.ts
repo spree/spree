@@ -109,6 +109,7 @@ export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------
 export * from './lib/currency-amounts'
 export * from './lib/custom-field-components'
+export * from './lib/custom-field-values'
 export * from './lib/date-presets'
 export * from './lib/delivery-form'
 export { type DeveloperInspectorEntry, isFailedEntry } from './lib/developer-inspector'

@@ -25,6 +25,8 @@ import {
   FIXTURE_INVENTORY_PRODUCT,
   FIXTURE_INVENTORY_RESERVED,
   FIXTURE_INVENTORY_SKU,
+  FIXTURE_LEDGER_GIFT_MESSAGE,
+  FIXTURE_LEDGER_INTERNAL_NOTE,
   FIXTURE_LEDGER_OWED_AMOUNT,
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
   FIXTURE_LEDGER_PRODUCT_IN_REVIEW,
@@ -156,6 +158,12 @@ const BOOTSTRAP_RUBY = [
   `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
+  // What the buyer filled in at checkout, which the seller reads on the
+  // order, beside an admin-only field the seller must not see.
+  `gift_message = s.custom_field_definitions.where(resource_type: 'Spree::Order', namespace: 'e2e_checkout', key: 'gift_message').first_or_create!(label: 'Gift message', storefront_visible: true, storefront_writable: true)`,
+  `ledger_order.set_custom_field(gift_message, '${FIXTURE_LEDGER_GIFT_MESSAGE}')`,
+  `fraud_review = s.custom_field_definitions.where(resource_type: 'Spree::Order', namespace: 'e2e_internal', key: 'fraud_review').first_or_create!(label: 'Fraud review')`,
+  `ledger_order.set_custom_field(fraud_review, '${FIXTURE_LEDGER_INTERNAL_NOTE}')`,
   `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
   // In review on every run: a spec approves it, and update_columns skips the
   // review workflow that would otherwise be the only way back.

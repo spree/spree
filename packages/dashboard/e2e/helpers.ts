@@ -181,6 +181,10 @@ export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
  * the suite is serial, and CI splits it across shards.
  */
 export const FIXTURE_LEDGER_OWED_AMOUNT = '75.0'
+/** What the buyer wrote in a shopper-writable field on the ledger order. */
+export const FIXTURE_LEDGER_GIFT_MESSAGE = 'Happy birthday, Sam'
+/** An admin-only field on the ledger order, which its seller must never see. */
+export const FIXTURE_LEDGER_INTERNAL_NOTE = 'Cleared by the fraud team'
 
 /**
  * Seller panel accounts. `FIXTURE_SELLER_USER_EMAIL` runs the ledger seller, so

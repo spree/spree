@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { sellerLogin } from './helpers'
+import { FIXTURE_LEDGER_GIFT_MESSAGE, FIXTURE_LEDGER_INTERNAL_NOTE, sellerLogin } from './helpers'
 
 // The seeded ledger seller has one placed order, one settled earning of
 // $120.00 against it, and payouts of $120.00 and $75.00 (see global-setup.ts).
@@ -30,6 +30,21 @@ test.describe('seller panel — orders and earnings', () => {
       .filter({ has: page.getByText(/^what you earned$/i) })
     await expect(earnings.getByText('$120.00').first()).toBeVisible()
     await expect(earnings.getByRole('link', { name: /view payout/i })).toBeVisible()
+  })
+
+  test('shows what the buyer filled in at checkout, and nothing admin-only', async ({ page }) => {
+    await sellerLogin(page)
+    await openSection(page, /^orders$/i, /^orders$/i)
+    await page.getByRole('button', { name: /^R\d+/ }).first().click()
+
+    const details = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.getByText(/^checkout details$/i) })
+    await expect(details.getByText(/^gift message$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(details.getByText(FIXTURE_LEDGER_GIFT_MESSAGE)).toBeVisible()
+    await expect(page.getByText(FIXTURE_LEDGER_INTERNAL_NOTE)).toHaveCount(0)
+    // Read-only: the buyer's answers are not the seller's to edit.
+    await expect(details.getByRole('button')).toHaveCount(0)
   })
 
   test('shows the balance and the sale behind it', async ({ page }) => {
