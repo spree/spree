@@ -8,6 +8,8 @@ import './i18n'
 // runs, so a plugin's `nav.remove('team')` finds the entry to remove.
 import './nav/default'
 import './nav/settings'
+// Reloads a tab left open across a deploy onto the current build.
+import './stale-chunk-setup'
 
 export * from '@spree/dashboard-core'
 export {

@@ -551,6 +551,12 @@
         "title": "حدث خطأ في الخادم",
         "request_id": "الطلب {{id}}",
         "report": "إبلاغ"
+      },
+      "isolated_lazy": {
+        "load_failed": "تعذّر تحميل هذا المحتوى",
+        "load_failed_description": "تحقق من اتصالك وحاول مرة أخرى.",
+        "updated_description": "تم تحديث لوحة التحكم. أعد تحميل الصفحة للمتابعة.",
+        "reload": "إعادة تحميل الصفحة"
       }
     },
     "currency_amounts": {

@@ -42,6 +42,7 @@ export * from './components/image-upload-field'
 export * from './components/import-button'
 export * from './components/import-wizard-dialog'
 export * from './components/invitation-acceptance'
+export * from './components/isolated-lazy'
 export * from './components/locale-select'
 export * from './components/market-combobox'
 export * from './components/media-editor-dialog'
@@ -141,6 +142,11 @@ export * from './lib/route-registry'
 export * from './lib/search-registry'
 export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
+export {
+  installStaleChunkRecovery,
+  isStaleChunkError,
+  reloadForStaleChunk,
+} from './lib/stale-chunk-recovery'
 export * from './lib/store-config'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'

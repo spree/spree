@@ -32,7 +32,7 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 
 ## Bundle size (`docs/plans/6.1-dashboard-code-splitting.md`)
 
-- Register at import time only from a module the packages' `sideEffects` lists name: the shells' bootstrap modules (admin `i18n-setup`, `api-client-setup`, `nav/*`, `search/*`; seller `i18n`, `nav/*`), a `tables/*` module, or a `register.ts(x)` module beside the editors it registers. Once the packages declare `sideEffects`, import-time registration anywhere else is dropped by the build.
+- Register at import time only from a module the packages' `sideEffects` lists name: the shells' bootstrap modules (admin `i18n-setup`, `api-client-setup`, `stale-chunk-setup`, `nav/*`, `search/*`; seller `i18n`, `stale-chunk-setup`, `nav/*`), a `tables/*` module, or a `register.ts(x)` module beside the editors it registers. Once the packages declare `sideEffects`, import-time registration anywhere else is dropped by the build.
 - Import TipTap, CodeMirror and Recharts only inside their `@spree/dashboard-ui` component (`RichTextEditor`, `CodeEditor`, the chart components), never from a page or plugin.
 
 ## Releases

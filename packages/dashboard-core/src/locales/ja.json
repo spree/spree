@@ -549,6 +549,12 @@
         "title": "サーバーでエラーが発生しました",
         "request_id": "リクエスト {{id}}",
         "report": "報告"
+      },
+      "isolated_lazy": {
+        "load_failed": "読み込めませんでした",
+        "load_failed_description": "接続を確認して、もう一度お試しください。",
+        "updated_description": "ダッシュボードが更新されました。続行するにはページを再読み込みしてください。",
+        "reload": "ページを再読み込み"
       }
     },
     "currency_amounts": {

@@ -158,6 +158,40 @@ test.describe('webhooks', () => {
     })
   })
 
+  test('offers a page reload when a deploy removed the payload viewer', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
+    const suffix = Date.now()
+    await createEndpoint(page, {
+      name: `E2E Stale Payload ${suffix}`,
+      url: `https://stale-${suffix}.example.com/hook`,
+      pickEvents: ['order.placed'],
+    })
+    await page.getByRole('button', { name: /^done$/i }).click()
+    await page.getByRole('button', { name: /send test/i }).click()
+    const delivery = page.getByText('webhook.test', { exact: true }).first()
+    await expect(delivery).toBeVisible({ timeout: 15_000 })
+
+    // This tab reloaded for a stale chunk a moment ago, so it does not reload
+    // by itself again; the chunk is answered with index.html, as the SPA
+    // fallback does once a deploy removed it.
+    await page.evaluate(() =>
+      sessionStorage.setItem('spree:reloaded-for-chunk', String(Date.now())),
+    )
+    await page.route(/json-value-view[^/]*$/, (route) =>
+      route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html>' }),
+    )
+    await delivery.click()
+
+    await expect(
+      page.getByText('The dashboard was updated. Reload the page to continue.'),
+    ).toBeVisible()
+    await page.unroute(/json-value-view[^/]*$/)
+    const reloaded = page.waitForEvent('load')
+    await page.getByRole('button', { name: 'Reload page' }).click()
+    await reloaded
+  })
+
   test('refuses a custom event that is not an event name or pattern', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
