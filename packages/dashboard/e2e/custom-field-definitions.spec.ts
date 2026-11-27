@@ -263,6 +263,53 @@ test.describe('custom field definitions', () => {
     await expect(customFields.getByText('ABC', { exact: true })).toBeVisible()
   })
 
+  test('a pattern rule refuses an unusable pattern and checks text on a customer before saving', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const code = `E2E Pattern ${suffix}`
+
+    await page.getByRole('button', { name: CTA }).click()
+    await page.locator('#cfd-resource-type').click()
+    await page.getByRole('option', { name: /^customers$/i }).click()
+    await page.getByLabel(/^label$/i).fill(code)
+    await page.getByLabel(/^key$/i).fill(`pattern_${suffix}`)
+    const pattern = page.getByLabel(/^pattern$/i)
+    await pattern.fill('(a)\\1')
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(page.getByText(/regex must be a valid pattern/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await pattern.fill('[A-Z]{3}-\\d{4}')
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(rowButton(page, code)).toBeVisible({ timeout: 15_000 })
+
+    const email = `e2e-cf-pattern-${suffix}@example.com`
+    await page.goto(`/${creds.store_id}/customers`)
+    await page.getByRole('button', { name: /new customer/i }).click()
+    await page.locator('#email').fill(email)
+    await page.getByRole('button', { name: /^create customer$/i }).click()
+    await expect(page.getByRole('heading', { name: email })).toBeVisible({ timeout: 15_000 })
+
+    const customFields = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^custom fields$/i }) })
+    await customFields.getByRole('button', { name: /^edit$/i }).click()
+    const codeInput = customFields.getByLabel(new RegExp(`^${code}$`, 'i'))
+    await codeInput.fill('abc-1234')
+    await expect(customFields.getByText(/does not match the required format/i)).toBeVisible()
+    await customFields.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/fix these custom fields before saving/i)).toBeVisible()
+
+    await codeInput.fill('ABC-1234')
+    await customFields.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/custom fields saved/i)).toBeVisible({ timeout: 15_000 })
+  })
+
   // Types no dashboard screen edits stay definable for integrations, but the
   // picker says so instead of implying a merchant can fill them in.
   test('lists types without an edit screen apart, under their own heading', async ({ page }) => {

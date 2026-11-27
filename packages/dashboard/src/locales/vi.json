@@ -587,6 +587,7 @@
           "required": "Nhập giá trị",
           "too_short": "Dùng ít nhất {{count}} ký tự",
           "too_long": "Dùng tối đa {{count}} ký tự",
+          "regex_mismatch": "Không khớp với định dạng yêu cầu",
           "less_than_min": "Phải ít nhất là {{min}}",
           "greater_than_max": "Phải tối đa là {{max}}",
           "before_min": "Phải vào hoặc sau {{min}}",
@@ -1541,6 +1542,10 @@
             "number": "Tối đa",
             "date": "Ngày muộn nhất",
             "date_time": "Ngày và giờ muộn nhất"
+          },
+          "regex": {
+            "label": "Mẫu",
+            "help": "Biểu thức chính quy mà toàn bộ giá trị phải khớp, ví dụ [A-Z]{3}-\\d{4}. Không cho phép tham chiếu ngược."
           },
           "choices": {
             "label": "Lựa chọn",

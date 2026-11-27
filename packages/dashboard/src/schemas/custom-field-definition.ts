@@ -118,6 +118,7 @@ const validationsSchema = z.object({
   required: z.boolean(),
   min: z.string(),
   max: z.string(),
+  regex: z.string(),
   multiple: z.boolean(),
   choices: z.array(z.object({ value: z.string(), label: z.string() })),
 })
@@ -175,13 +176,13 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   storefront_visible: false,
   searchable: false,
   sortable: false,
-  validations: { required: false, min: '', max: '', multiple: false, choices: [] },
+  validations: { required: false, min: '', max: '', regex: '', multiple: false, choices: [] },
 }
 
 export function customFieldDefinitionToFormValues(
   definition: CustomFieldDefinition,
 ): CustomFieldDefinitionFormValues {
-  const { required, min, max, multiple, choices } = definition.validations
+  const { required, min, max, regex, multiple, choices } = definition.validations
   return {
     label: definition.label,
     namespace: definition.namespace,
@@ -195,6 +196,7 @@ export function customFieldDefinitionToFormValues(
       required,
       min: min == null ? '' : String(min),
       max: max == null ? '' : String(max),
+      regex: regex ?? '',
       multiple,
       choices: choices.map((choice) => ({ ...choice })),
     },
@@ -205,13 +207,15 @@ export function customFieldDefinitionToFormValues(
 function validationsToParams(
   values: CustomFieldDefinitionFormValues,
 ): CustomFieldValidationsParams | null {
-  const { required, min, max, multiple, choices } = values.validations
+  const { required, min, max, regex, multiple, choices } = values.validations
   const rules: CustomFieldValidationsParams = {}
   if (required) rules.required = true
-  if (fieldTypeBoundKind(values.field_type)) {
+  const boundKind = fieldTypeBoundKind(values.field_type)
+  if (boundKind) {
     if (min.trim()) rules.min = min.trim()
     if (max.trim()) rules.max = max.trim()
   }
+  if (boundKind === 'length' && regex) rules.regex = regex
   if (values.field_type === 'choice') {
     rules.choices = choices.map((choice) => ({
       value: choice.value.trim(),
@@ -299,7 +303,7 @@ export function customFieldValueError(
       const length = [...String(value).trim()].length
       if (min != null && length < Number(min)) return message('too_short', { count: Number(min) })
       if (max != null && length > Number(max)) return message('too_long', { count: Number(max) })
-      return null
+      return regexMismatch(rules.regex, String(value).trim()) ? message('regex_mismatch') : null
     }
     case 'number': {
       const number = Number(value)
@@ -327,6 +331,19 @@ export function customFieldValueError(
     if (missing !== undefined) return message('choice_not_offered', { value: String(missing) })
   }
   return null
+}
+
+/**
+ * Whether a text value misses the definition's pattern. The server checks it
+ * with Ruby's engine; a pattern JavaScript cannot read is left to the server.
+ */
+function regexMismatch(source: string | null, value: string): boolean {
+  if (!source) return false
+  try {
+    return !new RegExp(`^(?:${source})$`, 'u').test(value)
+  } catch {
+    return false
+  }
 }
 
 export function customFieldDefinitionValuesToCreateParams(

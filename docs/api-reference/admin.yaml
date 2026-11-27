@@ -11208,6 +11208,7 @@ paths:
                     required: false
                     min:
                     max:
+                    regex:
                     multiple: false
                     choices: []
                 - id: cfdef_gbHJdmfrXB
@@ -11226,6 +11227,7 @@ paths:
                     required: false
                     min:
                     max:
+                    regex:
                     multiple: false
                     choices: []
                 meta:
@@ -11314,6 +11316,7 @@ paths:
                   required: true
                   min:
                   max:
+                  regex:
                   multiple: false
                   choices:
                   - value: a
@@ -11404,6 +11407,7 @@ paths:
                   required: false
                   min:
                   max:
+                  regex:
                   multiple: false
                   choices: []
               schema:
@@ -11473,6 +11477,7 @@ paths:
                   required: false
                   min:
                   max:
+                  regex:
                   multiple: false
                   choices: []
               schema:
@@ -66635,6 +66640,10 @@ components:
             -
           description: Characters for text fields, a value for number fields, an ISO
             8601 date or date-time for date fields.
+        regex:
+          type: string
+          nullable: true
+          description: 'For text fields: a pattern the whole value must match.'
         multiple:
           type: boolean
         choices:
@@ -66645,6 +66654,7 @@ components:
       - required
       - min
       - max
+      - regex
       - multiple
       - choices
       x-typelizer: true
@@ -85749,6 +85759,11 @@ components:
             for `date` and `date_time`.'
         max:
           description: Inclusive upper bound, in the same form as `min`.
+        regex:
+          type: string
+          description: 'For `short_text` and `long_text`: a Ruby regular expression
+            the whole value must match, so no anchors are needed. At most 255 characters;
+            backreferences are refused, so every pattern is checked in linear time.'
         choices:
           type: array
           items:

@@ -208,6 +208,17 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       expect(build(:custom_field_definition, :short_text_field, validations: { min: 2, max: 5, required: true })).to be_valid
     end
 
+    it 'takes a regex on text fields only when it compiles and runs in linear time' do
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: '[A-Z]{3}-\\d{4}' })).to be_valid
+      expect(build(:custom_field_definition, :long_text_field, validations: { regex: '(?i)abc' })).to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: '(a' })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: 'a)|(b' })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: '(a)\\1' })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: 'a' * 256 })).not_to be_valid
+      expect(build(:custom_field_definition, :short_text_field, validations: { regex: 1 })).not_to be_valid
+      expect(build(:custom_field_definition, :number_field, validations: { regex: '\\d+' })).not_to be_valid
+    end
+
     it 'rejects a non-boolean required or multiple' do
       expect(build(:custom_field_definition, validations: { required: 'yes' })).not_to be_valid
     end

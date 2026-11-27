@@ -45,6 +45,10 @@ module Spree
                 an ISO 8601 date or date-time for `date` and `date_time`.
               TEXT
               rules.attribute :max, :any, description: 'Inclusive upper bound, in the same form as `min`.'
+              rules.attribute :regex, :string, description: <<~TEXT.squish
+                For `short_text` and `long_text`: a Ruby regular expression the whole value must match, so no anchors are
+                needed. At most 255 characters; backreferences are refused, so every pattern is checked in linear time.
+              TEXT
               rules.attribute :choices, :array, as: 'CustomFieldChoiceParams', description: <<~TEXT.squish do |choice|
                 For `choice` fields, required: the options in display order. Values must be unique.
               TEXT

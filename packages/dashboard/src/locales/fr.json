@@ -587,6 +587,7 @@
           "required": "Saisissez une valeur",
           "too_short": "Utilisez au moins {{count}} caractères",
           "too_long": "Utilisez au plus {{count}} caractères",
+          "regex_mismatch": "Ne respecte pas le format requis",
           "less_than_min": "Doit être au moins {{min}}",
           "greater_than_max": "Doit être au plus {{max}}",
           "before_min": "Doit être le {{min}} ou après",
@@ -1541,6 +1542,10 @@
             "number": "Maximum",
             "date": "Date la plus lointaine",
             "date_time": "Date et heure les plus lointaines"
+          },
+          "regex": {
+            "label": "Motif",
+            "help": "Une expression régulière à laquelle toute la valeur doit correspondre, par exemple [A-Z]{3}-\\d{4}. Les références arrière ne sont pas autorisées."
           },
           "choices": {
             "label": "Choix",

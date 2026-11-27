@@ -10,6 +10,7 @@ module Spree
                          comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
                    max: ['number | string | null',
                          comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
+                   regex: ['string | null', comment: 'For text fields: a pattern the whole value must match.'],
                    multiple: :boolean,
                    choices: [:CustomFieldChoice, multi: true]
 
@@ -19,6 +20,9 @@ module Spree
           end
           attribute :max do |definition|
             definition.validation_rules['max']
+          end
+          attribute :regex do |definition|
+            definition.validation_rules['regex']
           end
           attribute :multiple, &:multiple_choices?
 

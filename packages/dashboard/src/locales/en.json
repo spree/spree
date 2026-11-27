@@ -587,6 +587,7 @@
           "required": "Enter a value",
           "too_short": "Use at least {{count}} characters",
           "too_long": "Use at most {{count}} characters",
+          "regex_mismatch": "Does not match the required format",
           "less_than_min": "Must be at least {{min}}",
           "greater_than_max": "Must be at most {{max}}",
           "before_min": "Must be on or after {{min}}",
@@ -1541,6 +1542,10 @@
             "number": "Maximum",
             "date": "Latest date",
             "date_time": "Latest date and time"
+          },
+          "regex": {
+            "label": "Pattern",
+            "help": "A regular expression the whole value must match, for example [A-Z]{3}-\\d{4}. Backreferences are not allowed."
           },
           "choices": {
             "label": "Choices",

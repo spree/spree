@@ -587,6 +587,7 @@
           "required": "値を入力してください",
           "too_short": "{{count}}文字以上で入力してください",
           "too_long": "{{count}}文字以内で入力してください",
+          "regex_mismatch": "必要な形式と一致しません",
           "less_than_min": "{{min}}以上である必要があります",
           "greater_than_max": "{{max}}以下である必要があります",
           "before_min": "{{min}}以降である必要があります",
@@ -1541,6 +1542,10 @@
             "number": "最大値",
             "date": "最も遅い日付",
             "date_time": "最も遅い日時"
+          },
+          "regex": {
+            "label": "パターン",
+            "help": "値全体が一致する必要がある正規表現。例: [A-Z]{3}-\\d{4}。後方参照は使用できません。"
           },
           "choices": {
             "label": "選択肢",

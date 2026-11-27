@@ -1560,6 +1560,10 @@
             "date": "Fecha más tardía",
             "date_time": "Fecha y hora más tardías"
           },
+          "regex": {
+            "label": "Patrón",
+            "help": "Una expresión regular con la que debe coincidir todo el valor, por ejemplo [A-Z]{3}-\\d{4}. No se permiten referencias inversas."
+          },
           "choices": {
             "label": "Opciones",
             "value": "Valor",
@@ -5908,6 +5912,7 @@
           "required": "Introduce un valor",
           "too_short": "Usa al menos {{count}} caracteres",
           "too_long": "Usa como máximo {{count}} caracteres",
+          "regex_mismatch": "No tiene el formato requerido",
           "less_than_min": "Debe ser al menos {{min}}",
           "greater_than_max": "Debe ser como máximo {{max}}",
           "before_min": "Debe ser el {{min}} o posterior",

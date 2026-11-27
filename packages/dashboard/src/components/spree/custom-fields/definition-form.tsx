@@ -238,6 +238,9 @@ export function DefinitionFormFields({
                 // A bound means something different for each type.
                 form.setValue('validations.min', '')
                 form.setValue('validations.max', '')
+                if (fieldTypeBoundKind(next) !== 'length') {
+                  form.setValue('validations.regex', '')
+                }
                 form.clearErrors(['searchable', 'sortable', 'validations'])
               }}
               disabled={fieldTypeReadOnly}
@@ -355,6 +358,20 @@ function ValidationRulesFields({ form }: { form: UseFormReturn<CustomFieldDefini
             </Field>
           ))}
         </div>
+      )}
+
+      {boundKind === 'length' && (
+        <Field>
+          <FieldLabel htmlFor="cfd-regex">{t(`${prefix}.regex.label`)}</FieldLabel>
+          <Input
+            id="cfd-regex"
+            className="font-mono"
+            spellCheck={false}
+            autoComplete="off"
+            {...form.register('validations.regex')}
+          />
+          <FieldDescription>{t(`${prefix}.regex.help`)}</FieldDescription>
+        </Field>
       )}
 
       {fieldType === 'choice' && (

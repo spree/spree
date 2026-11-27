@@ -901,6 +901,7 @@ en:
         custom_field_invalid_date: must be a date in the YYYY-MM-DD format
         custom_field_invalid_date_time: must be a date and time in the ISO 8601 format
         custom_field_less_than_min: must be greater than or equal to %{bound}
+        custom_field_regex_mismatch: does not match the required format
         custom_field_single_choice_only: allows only one choice
         custom_field_sortable_single_choice_only: is not supported for a choice field that allows several values
         custom_field_too_long: is too long (maximum is %{bound} characters)
@@ -910,6 +911,7 @@ en:
         custom_field_validation_choices_not_unique: must not repeat a choice value
         custom_field_validation_choices_required: must list at least one choice
         custom_field_validation_invalid_bound: "%{rule} is not a valid bound for this field type"
+        custom_field_validation_invalid_regex: regex must be a valid pattern of at most 255 characters, without backreferences
         custom_field_validation_min_above_max: min must not be greater than max
         custom_field_validation_multiple_in_use: multiple cannot be turned off while values hold several choices
         custom_field_validation_not_a_boolean: "%{rule} must be true or false"

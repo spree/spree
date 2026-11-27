@@ -143,7 +143,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
 
       expect(response).to have_http_status(:created)
       expect(json_response['validations']).to eq(
-        'required' => true, 'min' => nil, 'max' => nil, 'multiple' => true,
+        'required' => true, 'min' => nil, 'max' => nil, 'regex' => nil, 'multiple' => true,
         'choices' => [{ 'value' => 'a', 'label' => 'Zone A' }, { 'value' => 'b', 'label' => 'b' }]
       )
     end
@@ -205,15 +205,22 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
     end
 
     it 'replaces the rules, and null removes them' do
-      patch :update, params: { id: product_definition.prefixed_id, validations: { min: 2, max: 40 } }, as: :json
+      patch :update, params: { id: product_definition.prefixed_id, validations: { min: 2, max: 40, regex: '[a-z ]+' } }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['validations']).to include('min' => 2, 'max' => 40)
+      expect(json_response['validations']).to include('min' => 2, 'max' => 40, 'regex' => '[a-z ]+')
 
       patch :update, params: { id: product_definition.prefixed_id, validations: nil }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(product_definition.reload.validations).to be_nil
+    end
+
+    it 'returns 422 for a regex that is not a usable pattern' do
+      patch :update, params: { id: product_definition.prefixed_id, validations: { regex: '(a)\\1' } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details', 'validations')).to be_present
     end
 
     it 'returns 422 when the request tries to change the field type or resource type' do

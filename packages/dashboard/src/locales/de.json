@@ -587,6 +587,7 @@
           "required": "Einen Wert eingeben",
           "too_short": "Mindestens {{count}} Zeichen verwenden",
           "too_long": "Höchstens {{count}} Zeichen verwenden",
+          "regex_mismatch": "Entspricht nicht dem erforderlichen Format",
           "less_than_min": "Muss mindestens {{min}} sein",
           "greater_than_max": "Darf höchstens {{max}} sein",
           "before_min": "Muss am oder nach dem {{min}} liegen",
@@ -1541,6 +1542,10 @@
             "number": "Maximum",
             "date": "Spätestes Datum",
             "date_time": "Spätestes Datum und Uhrzeit"
+          },
+          "regex": {
+            "label": "Muster",
+            "help": "Ein regulärer Ausdruck, dem der gesamte Wert entsprechen muss, zum Beispiel [A-Z]{3}-\\d{4}. Rückverweise sind nicht erlaubt."
           },
           "choices": {
             "label": "Optionen",

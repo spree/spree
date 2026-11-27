@@ -17,6 +17,7 @@ const definition = (
       required: false,
       min: null,
       max: null,
+      regex: null,
       multiple: false,
       choices: [],
       ...validations,
@@ -45,6 +46,14 @@ describe('customFieldValueError', () => {
         '2026-10-12T07:59:00.000Z',
       ),
     ).not.toBeNull()
+  })
+
+  it('checks text against the whole pattern, leaving patterns JavaScript cannot read to the server', () => {
+    const code = definition('short_text', { regex: '[A-Z]{3}-\\d{4}' })
+
+    expect(customFieldValueError(code, 'ABC-1234')).toBeNull()
+    expect(customFieldValueError(code, 'xABC-1234')).not.toBeNull()
+    expect(customFieldValueError(definition('short_text', { regex: '(?i)abc' }), 'zzz')).toBeNull()
   })
 
   it('refuses a value that is not one of the choices', () => {
@@ -83,10 +92,23 @@ describe('customFieldDefinitionSchema', () => {
     const params = customFieldDefinitionValuesToCreateParams({
       ...CUSTOM_FIELD_DEFINITION_DEFAULTS,
       field_type: 'boolean',
-      validations: { required: true, min: '2', max: '', multiple: true, choices: [] },
+      validations: {
+        required: true,
+        min: '2',
+        max: '',
+        regex: '\\d+',
+        multiple: true,
+        choices: [],
+      },
     })
 
     expect(params.validations).toEqual({ required: true })
+    expect(
+      customFieldDefinitionValuesToCreateParams({
+        ...CUSTOM_FIELD_DEFINITION_DEFAULTS,
+        validations: { ...CUSTOM_FIELD_DEFINITION_DEFAULTS.validations, regex: '\\d+' },
+      }).validations,
+    ).toEqual({ regex: '\\d+' })
     expect(
       customFieldDefinitionValuesToCreateParams(CUSTOM_FIELD_DEFINITION_DEFAULTS).validations,
     ).toBeNull()

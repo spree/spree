@@ -93,6 +93,7 @@ module Spree
         validate_boolean_rules(rules)
         validate_bound_rules(rules)
         validate_choices_rule(rules) if field_type_class.supported_validation_rules.include?('choices')
+        validate_regex_rule(rules['regex']) if rules.key?('regex')
       end
 
       def validate_boolean_rules(rules)
@@ -119,6 +120,10 @@ module Spree
         end
 
         add_validations_error(:validation_choices_not_unique) if choice_values.uniq.size != choice_values.size
+      end
+
+      def validate_regex_rule(source)
+        add_validations_error(:validation_invalid_regex) unless field_type_class.validation_regex(source)
       end
 
       # Several stored values have no single sort position.

@@ -70,6 +70,7 @@ The **Validation** section offers the rules that suit the type you picked:
 
 - **Required** - Marks the field with an asterisk, and stops the dashboard saving it blank.
 - **Minimum and maximum** - The number of characters for text, the lowest and highest value for a number, or the earliest and latest date.
+- **Pattern** - For text, a regular expression the whole value must match. For example, `[A-Z]{3}-\d{4}` accepts `ABC-1234`. Backreferences such as `\1` are not allowed.
 - **Choices** - For a choice field, the options your team picks from. Each has a **Value**, which is what is stored, and a **Display label**, which is what people see. Renaming a display label changes nothing that is already saved.
 - **Allow several choices** - Lets a choice field hold more than one value. Such a field cannot be sortable.
 

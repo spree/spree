@@ -6,6 +6,7 @@ export const CustomFieldValidationsSchema = z.object({
   required: z.boolean(),
   min: z.union([z.number(), z.string()]).nullable(),
   max: z.union([z.number(), z.string()]).nullable(),
+  regex: z.string().nullable(),
   multiple: z.boolean(),
   choices: z.array(CustomFieldChoiceSchema),
 });

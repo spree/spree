@@ -585,6 +585,7 @@
           "required": "请输入值",
           "too_short": "至少使用 {{count}} 个字符",
           "too_long": "最多使用 {{count}} 个字符",
+          "regex_mismatch": "不符合要求的格式",
           "less_than_min": "必须至少为 {{min}}",
           "greater_than_max": "必须最多为 {{max}}",
           "before_min": "必须在 {{min}} 当天或之后",
@@ -1536,6 +1537,10 @@
             "number": "最大值",
             "date": "最晚日期",
             "date_time": "最晚日期和时间"
+          },
+          "regex": {
+            "label": "格式规则",
+            "help": "整个值必须匹配的正则表达式，例如 [A-Z]{3}-\\d{4}。不允许使用反向引用。"
           },
           "choices": {
             "label": "选项",

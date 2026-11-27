@@ -123,6 +123,7 @@ Definitions can also be managed in the dashboard under **Settings → Custom Fie
 | `min`, `max` | `short_text`, `long_text` | Number of characters, inclusive |
 | `min`, `max` | `number` | Value, inclusive |
 | `min`, `max` | `date`, `date_time` | Earliest and latest ISO 8601 date or date-time, inclusive |
+| `regex` | `short_text`, `long_text` | A Ruby regular expression the whole value must match, such as `[A-Z]{3}-\d{4}`. At most 255 characters. Backreferences are refused, so every pattern is checked in linear time. |
 | `choices` | `choice` (required) | The options in display order, each a `value` and a `label` |
 | `multiple` | `choice` | Several values may be chosen; the value is a list |
 

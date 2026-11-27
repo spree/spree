@@ -15,4 +15,16 @@ describe Spree::CustomFields::ShortText, type: :model do
       expect(custom_field('abcde').tap(&:valid?).errors[:value]).to include(I18n.t('spree.errors.messages.custom_field_too_long', bound: 4))
     end
   end
+
+  describe 'regex rule' do
+    let(:custom_field_definition) { create(:custom_field_definition, :short_text_field, validations: { regex: '[A-Z]{3}-\\d{4}' }) }
+
+    it 'requires the whole value to match' do
+      mismatch = I18n.t('spree.errors.messages.custom_field_regex_mismatch')
+
+      expect(custom_field('ABC-1234')).to be_valid
+      expect(custom_field('xABC-1234').tap(&:valid?).errors[:value]).to include(mismatch)
+      expect(custom_field("ABC-1234\nmore").tap(&:valid?).errors[:value]).to include(mismatch)
+    end
+  end
 end
