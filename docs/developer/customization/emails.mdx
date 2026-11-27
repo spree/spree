@@ -4,6 +4,9 @@ sidebarTitle: Emails
 description: Change what Spree's transactional emails say and look like, with Liquid templates written in MJML.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 Every email Spree sends — order confirmations, shipping notices, password resets, staff invitations — renders from a **Liquid** template written in **MJML**. Liquid fills in the data; MJML turns a dozen layout tags into the nested tables, inline styles and Outlook workarounds that email clients need, and makes the email stack on phones.
 
 To change an email, you copy its template into your app and edit it. Nothing else changes: Spree still picks the recipient, the language and the sender, and delivers the email through your [SMTP provider](/developer/providers/emails).
@@ -13,6 +16,8 @@ To change an email, you copy its template into your app and edit it. Nothing els
 </Note>
 
 ## Where templates live
+
+<RequiresEject />
 
 A template sits at its email's path with a `.liquid` extension. To override one, create the file at the same path in your app:
 
@@ -106,6 +111,8 @@ To look at every email with real data, open the mailer previews at `/rails/maile
 
 ## Templates merchants edit in the dashboard
 
+<WorksOnPrebuiltImage />
+
 Merchants can edit the emails their customers receive in **Settings → Emails → Templates**, along with the layout and the shared blocks in `spree/shared`. An edit is saved as a draft and goes live when published; publishing renders it with the store's own data first and refuses a template that does not render. An email built from a record the store does not have yet, such as an order confirmation in a store with no orders, is checked for template syntax only. Staff, store-owner and seller emails are not editable and always render from files.
 
 A store's published template comes first, so the lookup for an editable email is:
@@ -150,6 +157,8 @@ Merchants set the colors and font of their customer emails in **Settings → Ema
 
 ### Making your own customer email editable
 
+<RequiresEject />
+
 A customer email your app adds can be edited like Spree's own. Register it with a class that builds the data its preview renders with:
 
 ```ruby server/config/initializers/spree.rb
@@ -172,6 +181,8 @@ end
 A sample builds from the record the merchant picked, else the store's latest one; a store with none is told there is nothing to preview with yet. Pass placeholder URLs, never real tokens, and register only emails your customers receive.
 
 ## Your own mailers
+
+<RequiresEject />
 
 A mailer that inherits `Spree::BaseMailer` and renders its own ERB views with `mail` keeps working. Spree wraps its HTML in the same layout as every other email, so it carries the store's logo, header and footer. The `spree/shared/mailer_hero` and `spree/shared/mailer_button` partials are still there for those views.
 

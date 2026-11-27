@@ -2,6 +2,9 @@
 title: Metadata
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 Metadata provides simple, unstructured key-value storage on Spree resources — similar to [Stripe's metadata](https://docs.stripe.com/api/metadata). It's ideal for storing integration IDs, tracking data, or any arbitrary information that doesn't need validation or admin UI.
@@ -15,6 +18,8 @@ For structured, type-safe custom attributes with admin UI support, use [Custom F
 </Info>
 
 ## Store API
+
+<WorksOnPrebuiltImage />
 
 ### Cart creation
 
@@ -119,6 +124,8 @@ await client.carts.update(cartId, {
 
 ## Admin API
 
+<WorksOnPrebuiltImage />
+
 Metadata is **readable** in Admin API responses on orders and line items:
 
 ```json
@@ -143,6 +150,8 @@ Metadata is **readable** in Admin API responses on orders and line items:
 When there is no metadata, the field is `null`.
 
 ## Ruby / Backend
+
+<RequiresEject />
 
 ### Reading and writing
 

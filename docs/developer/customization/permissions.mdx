@@ -3,9 +3,14 @@ title: Permissions
 description: The permission catalog, staff roles, and how extensions register their own permissions.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 Staff roles and their permissions are managed as data — in the dashboard under **Settings → Roles**, through the Admin API (`/api/v3/admin/roles`), or in seeds. There is nothing to configure in Ruby for day-to-day permission management. This page covers what extension and host-application developers can plug into.
 
 ## The permission catalog
+
+<WorksOnPrebuiltImage />
 
 Every grantable capability is a flat key of the form `read_<resource>` or `write_<resource>` — the same vocabulary secret API keys use as scopes. `write_*` implies the matching `read_*`. Discover the catalog at runtime with `GET /api/v3/admin/permissions`; the role editor and the API-key scope picker are both rendered from it.
 
@@ -25,6 +30,8 @@ A role marked immutable renders read-only in the dashboard, for roles the applic
 
 ## Registering extension permissions
 
+<RequiresEject />
+
 Register your models as a catalog scope once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
 
 ```ruby
@@ -41,6 +48,8 @@ Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
 Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same scope on your admin controllers with `scoped_resource :reviews`.
 
 ## Who may hold a key
+
+<RequiresEject />
 
 `audiences` is the complete list of audiences whose roles may hold a scope's keys. The store's own back office is `:store`, and is the list when a registration names none — so the example above is grantable to staff and nobody else.
 

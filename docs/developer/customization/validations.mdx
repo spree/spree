@@ -3,6 +3,9 @@ title: Validations
 section: customization
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 Adding a rule — and occasionally relaxing one Spree ships — is one of the most
@@ -20,6 +23,8 @@ validations. Adding one with a decorator is already a single line of ordinary
 Rails, and removing a core rule is served by the knobs below.
 
 ## Vetoing an operation
+
+<RequiresEject />
 
 This is the one to reach for first. A `validate` hook runs inside the flow,
 before anything is written, and can stop it:
@@ -75,6 +80,8 @@ cause. Use one of these instead.
 
 ### Store preferences
 
+<WorksOnPrebuiltImage />
+
 Some rules are switchable per store, with no code at all. Change them in the
 dashboard under **Settings → Store**, or through the Admin API:
 
@@ -109,6 +116,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
 
 ### The address validator registry
 
+<RequiresEject />
+
 Address rules are regional and business-specific, so addresses carry a registry
 of extra validator classes you can add to and remove from:
 
@@ -139,6 +148,8 @@ the registry holds classes, and a reloadable constant registered once at boot
 goes stale on the next reload.
 
 ## Checkout requirements
+
+<RequiresEject />
 
 Rules about what a cart needs *before it can be completed* — a phone number
 before delivery, a purchase order number for B2B — belong in the checkout

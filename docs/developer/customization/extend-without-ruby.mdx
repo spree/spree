@@ -4,6 +4,11 @@ sidebarTitle: Without Ruby
 description: Configure Spree with environment variables and connect your own services, scripts, admin screens and AI agents through webhooks, the Admin API, the TypeScript SDKs, the MCP server and dashboard plugins — no Ruby required.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
+<WorksOnPrebuiltImage />
+
 Your team doesn't have to write Ruby to build on Spree. The backend runs from a prebuilt Docker image, and everything below works against that image as it is:
 
 - **Environment variables** configure the application: database, hosts, email, file storage, search, background jobs, error tracking and more.
@@ -188,6 +193,8 @@ Your screens talk to the Admin API through the same typed client the dashboard u
 See [Dashboard customization](/developer/dashboard/customization/quickstart) and [Backend integration](/developer/dashboard/customization/backend).
 
 ## When to use Ruby instead
+
+<RequiresEject />
 
 The options above work from outside Spree's process. Write Ruby when the change has to happen inside it:
 
