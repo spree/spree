@@ -39,6 +39,7 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
       }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(store, anything, admin_user)
 
       expect(Spree::ApiKey.find_by_prefix_id!(json_response['id']).created_by_ip_address).to eq('203.0.113.7')
+      expect(json_response['created_by_ip_address']).to eq('203.0.113.7')
     end
 
     it 'allows the implied read scope of a held write scope' do
@@ -95,6 +96,27 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['token_prefix']).to eq(caller_key.token_prefix)
       expect(json_response['scopes']).to eq(['read_orders'])
+    end
+
+    it "blanks the creator's IP address without read_api_keys" do
+      caller_key.update_column(:created_by_ip_address, '203.0.113.7')
+
+      get :current, as: :json
+
+      expect(response.body.scan('"created_by_ip_address"').size).to eq(1)
+      expect(json_response['created_by_ip_address']).to be_nil
+
+      openapi = YAML.load_file(Rails.root.join('../../../../docs/api-reference/admin.yaml'))
+      errors = JSONSchemer.openapi(openapi).schema('ApiKey').validate(json_response).pluck('error')
+      expect(errors).to be_empty
+    end
+
+    it "includes the creator's IP address with read_api_keys" do
+      caller_key.update_columns(scopes: %w[read_api_keys], created_by_ip_address: '203.0.113.7')
+
+      get :current, as: :json
+
+      expect(json_response['created_by_ip_address']).to eq('203.0.113.7')
     end
 
     it 'reflects a server-side scope change (no read_api_keys needed)' do

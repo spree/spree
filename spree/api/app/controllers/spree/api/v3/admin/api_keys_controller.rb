@@ -83,7 +83,11 @@ module Spree
               )
             end
 
-            render json: serialize_resource(current_api_key)
+            key = serialize_resource(current_api_key)
+            # Any key may describe itself, but where its creator was is api_keys data.
+            # Blanked rather than dropped, since the ApiKey schema requires the field.
+            key = key.merge('created_by_ip_address' => nil) unless current_api_key.has_scope?('read_api_keys')
+            render json: key
           end
 
           protected

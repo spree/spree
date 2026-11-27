@@ -3256,6 +3256,7 @@ paths:
                   key_type: publishable
                   token_prefix:
                   scopes: []
+                  created_by_ip_address:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   revoked_at:
@@ -3271,6 +3272,7 @@ paths:
                   token_prefix: sk_JiXS5S1gJ
                   scopes:
                   - write_all
+                  created_by_ip_address:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   revoked_at:
@@ -3286,6 +3288,7 @@ paths:
                   token_prefix: sk_vihKVmP6r
                   scopes:
                   - write_all
+                  created_by_ip_address:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   revoked_at:
@@ -3372,6 +3375,7 @@ paths:
                 token_prefix: sk_kCkDUvba1
                 scopes:
                 - read_orders
+                created_by_ip_address: 127.0.0.1
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 revoked_at:
@@ -3457,6 +3461,7 @@ paths:
                 key_type: publishable
                 token_prefix:
                 scopes: []
+                created_by_ip_address:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 revoked_at:
@@ -3523,6 +3528,7 @@ paths:
                 token_prefix: sk_ZPBGFa2TH
                 scopes:
                 - write_all
+                created_by_ip_address:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 revoked_at:
@@ -3627,6 +3633,7 @@ paths:
                 token_prefix: sk_L5LVfygvH
                 scopes:
                 - write_all
+                created_by_ip_address:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 revoked_at:
@@ -3693,6 +3700,7 @@ paths:
                 token_prefix: sk_11yGX4rad
                 scopes:
                 - write_all
+                created_by_ip_address:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 revoked_at: '2026-01-15T12:00:00.000Z'
@@ -62573,6 +62581,9 @@ components:
           type: array
           items:
             type: string
+        created_by_ip_address:
+          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
@@ -62611,6 +62622,7 @@ components:
       - key_type
       - token_prefix
       - scopes
+      - created_by_ip_address
       - created_at
       - updated_at
       - revoked_at

@@ -38,6 +38,7 @@
       "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
       "create_sheet_title": "创建 API key",
       "created_by": "由 {{actor}}",
+      "created_from_ip": "来自 IP {{ip}}",
       "delete_confirm": {
         "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。",
         "title": "删除密钥？"

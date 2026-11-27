@@ -7,6 +7,7 @@ export const ApiKeySchema = z.object({
   key_type: z.string(),
   token_prefix: z.string().nullable(),
   scopes: z.array(z.string()),
+  created_by_ip_address: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   revoked_at: z.string().nullable(),
