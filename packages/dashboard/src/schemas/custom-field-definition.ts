@@ -41,6 +41,13 @@ export const SEARCHABLE_FIELD_TYPES = [
  */
 export const SORTABLE_FIELD_TYPES = ['short_text', 'number', 'date', 'date_time', 'choice'] as const
 
+/** Resources whose fields shoppers may fill in (mirrors backend validation). */
+export const STOREFRONT_WRITABLE_RESOURCE_TYPES = ['order', 'customer'] as const
+
+export function resourceTypeSupportsStorefrontWritable(resourceType: string): boolean {
+  return (STOREFRONT_WRITABLE_RESOURCE_TYPES as readonly string[]).includes(resourceType)
+}
+
 export function fieldTypeSupportsSearchable(fieldType: string): boolean {
   return (SEARCHABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
 }
@@ -138,6 +145,7 @@ export const customFieldDefinitionSchema = z
       .string()
       .min(1, { error: requiredMessage('custom_field_definition.resource_type') }),
     storefront_visible: z.boolean(),
+    storefront_writable: z.boolean(),
     searchable: z.boolean(),
     sortable: z.boolean(),
     validations: validationsSchema,
@@ -174,6 +182,7 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   field_type: 'short_text',
   resource_type: 'product',
   storefront_visible: false,
+  storefront_writable: false,
   searchable: false,
   sortable: false,
   validations: { required: false, min: '', max: '', regex: '', multiple: false, choices: [] },
@@ -190,6 +199,7 @@ export function customFieldDefinitionToFormValues(
     field_type: definition.field_type,
     resource_type: definition.resource_type,
     storefront_visible: definition.storefront_visible,
+    storefront_writable: definition.storefront_writable,
     searchable: definition.searchable,
     sortable: definition.sortable,
     validations: {
@@ -358,6 +368,7 @@ export function customFieldDefinitionValuesToCreateParams(
     field_type: v.field_type,
     resource_type: v.resource_type,
     storefront_visible: v.storefront_visible,
+    storefront_writable: v.storefront_writable,
     searchable: v.searchable,
     sortable: v.sortable,
     validations: validationsToParams(v),
@@ -374,6 +385,7 @@ export function customFieldDefinitionValuesToUpdateParams(
     namespace: v.namespace,
     key: v.key,
     storefront_visible: v.storefront_visible,
+    storefront_writable: v.storefront_writable,
     searchable: v.searchable,
     sortable: v.sortable,
     validations: validationsToParams(v),

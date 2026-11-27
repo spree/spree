@@ -1544,6 +1544,11 @@
           "column_label": "Sklep",
           "label": "Widoczne w sklepie"
         },
+        "storefront_writable": {
+          "help_customer": "Pytamy o nie przy rejestracji i na koncie klienta. Pole musi być widoczne w sklepie.",
+          "help_order": "Pytamy o nie przy składaniu zamówienia i zapisujemy w zamówieniu. Pole musi być widoczne w sklepie.",
+          "label": "Wypełniane przez klientów"
+        },
         "validations": {
           "title": "Walidacja",
           "help": "Sprawdzane przy zapisie wartości. Istniejące wartości pozostają bez zmian, dopóki nie zostaną edytowane.",

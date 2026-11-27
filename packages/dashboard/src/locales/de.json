@@ -1526,6 +1526,11 @@
           "column_label": "Storefront",
           "label": "Im Storefront sichtbar"
         },
+        "storefront_writable": {
+          "help_customer": "Wird bei der Registrierung und im Kundenkonto abgefragt. Das Feld muss im Storefront sichtbar sein.",
+          "help_order": "Wird beim Checkout abgefragt und mit der Bestellung gespeichert. Das Feld muss im Storefront sichtbar sein.",
+          "label": "Von Kunden ausgefüllt"
+        },
         "validations": {
           "title": "Validierung",
           "help": "Wird beim Speichern eines Werts geprüft. Bestehende Werte bleiben unverändert, bis sie bearbeitet werden.",

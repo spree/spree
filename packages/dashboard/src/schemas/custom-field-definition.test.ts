@@ -5,6 +5,7 @@ import {
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
   customFieldValueError,
+  resourceTypeSupportsStorefrontWritable,
 } from './custom-field-definition'
 
 const definition = (
@@ -120,5 +121,21 @@ describe('customFieldDefinitionSchema', () => {
     expect(
       customFieldDefinitionValuesToCreateParams(CUSTOM_FIELD_DEFINITION_DEFAULTS).validations,
     ).toBeNull()
+  })
+
+  it('sends whether shoppers fill the field in, which only orders and customers offer', () => {
+    expect(
+      customFieldDefinitionValuesToCreateParams({
+        ...CUSTOM_FIELD_DEFINITION_DEFAULTS,
+        resource_type: 'order',
+        storefront_visible: true,
+        storefront_writable: true,
+      }).storefront_writable,
+    ).toBe(true)
+    expect(['order', 'customer', 'product'].map(resourceTypeSupportsStorefrontWritable)).toEqual([
+      true,
+      true,
+      false,
+    ])
   })
 })

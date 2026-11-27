@@ -1521,6 +1521,11 @@
           "column_label": "网店",
           "label": "在网店中显示"
         },
+        "storefront_writable": {
+          "help_customer": "在注册时和顾客账户中填写。该字段必须在店面中可见。",
+          "help_order": "在结账时填写，并随订单保存。该字段必须在店面中可见。",
+          "label": "由顾客填写"
+        },
         "validations": {
           "title": "验证",
           "help": "保存值时检查。现有值在编辑前保持不变。",

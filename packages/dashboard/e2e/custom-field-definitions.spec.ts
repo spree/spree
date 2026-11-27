@@ -68,6 +68,44 @@ test.describe('custom field definitions', () => {
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
   })
 
+  test('lets customers fill in an order field, only while it is visible on the storefront', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const label = `E2E Checkout Field ${suffix}`
+
+    await page.getByRole('button', { name: CTA }).click()
+    // A product field has no shopper input.
+    await expect(page.getByRole('switch', { name: /customers fill this in/i })).toHaveCount(0)
+
+    await page.locator('#cfd-resource-type').click()
+    await page.getByRole('option', { name: /^orders$/i }).click()
+    const writable = page.getByRole('switch', { name: /customers fill this in/i })
+    await expect(writable).toBeDisabled()
+
+    const visible = page.getByRole('switch', { name: /visible on storefront/i })
+    await visible.click()
+    await writable.click()
+    await expect(writable).toBeChecked()
+    // Hiding the field from the storefront takes shopper input away with it.
+    await visible.click()
+    await expect(writable).not.toBeChecked()
+    await visible.click()
+    await writable.click()
+
+    await page.getByLabel(/^label$/i).fill(label)
+    await page.getByLabel(/^key$/i).fill(`checkout_${suffix}`)
+    await page.getByRole('button', { name: /create custom field/i }).click()
+    await expect(rowButton(page, label)).toBeVisible({ timeout: 15_000 })
+
+    await rowButton(page, label).click()
+    await expect(page.getByRole('heading', { name: label })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('switch', { name: /customers fill this in/i })).toBeChecked()
+  })
+
   test('deletes a definition', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PATH(creds.store_id), CTA)
