@@ -3,6 +3,9 @@ title: Events
 description: Reacting to things that happen in Spree — an order placed, a payment taken, stock running out — without modifying core code.
 ---
 
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
 ## Overview
 
 Something happens in a store — an order is placed, a payment clears, a product sells out — and you want something else to happen: notify a warehouse, post to a channel, update a spreadsheet.
@@ -12,8 +15,8 @@ Events are how you attach that behaviour without editing Spree. Spree announces 
 ```mermaid
 flowchart LR
     Action["Order is placed"] --> Event["order.placed"]
-    Event --> Sub["Your subscriber<br/>(in-app)"]
     Event --> Hook["Webhook<br/>(external system)"]
+    Event --> Sub["Your subscriber<br/>(in-app)"]
 ```
 
 There are two ways to listen, and which you want depends on where your code lives:
@@ -23,7 +26,7 @@ There are two ways to listen, and which you want depends on where your code live
 | **[Webhooks](/developer/core-concepts/webhooks)** | The thing reacting is a separate system — a Next.js app, an ERP, an automation tool |
 | **Subscribers** | The reaction belongs inside the Spree application itself |
 
-If you're building a headless storefront, **webhooks are almost certainly what you want**. Subscribers are for when you're running Spree as your own application and want to add behaviour to it.
+**Start with webhooks.** They work with the prebuilt image and your code can be in any language. Subscribers are Ruby: they are for when you build the backend from your own source and want to add behaviour inside it.
 
 ## What Spree announces
 
@@ -76,9 +79,13 @@ IDs are the same prefixed IDs the API uses, so you can take an ID out of an even
 
 ## Reacting in another system
 
+<WorksOnPrebuiltImage />
+
 Point a webhook at your endpoint and subscribe it to the events you care about. That's covered fully in [Webhooks](/developer/core-concepts/webhooks) — including signature verification, which you should not skip.
 
 ## Reacting inside Spree
+
+<RequiresEject />
 
 A subscriber is a small class that names the events it wants and does something when one arrives.
 
@@ -139,6 +146,8 @@ A synchronous subscriber runs while the customer waits, so a slow one slows thei
 </Warning>
 
 ## Publishing your own events
+
+<RequiresEject />
 
 Anything in your own code can announce something, and subscribers and webhooks treat it like any built-in event. Declare the event on the model first, then publish it:
 
