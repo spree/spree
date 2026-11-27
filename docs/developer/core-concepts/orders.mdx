@@ -287,6 +287,36 @@ Spree.hooks.register('order_changes.add_action.validate') do |workflow|
 end
 ```
 
+## Order timeline
+
+Every placed order keeps a timeline of what happened to it, which the dashboard shows at the bottom of the order page and `GET /api/v3/admin/orders/{order_id}/activities` lists. Each entry is written when an event the order's records publish arrives: a payment completing, a fulfillment shipping, an order change being confirmed, a return being received. It names who did it, from the [event's metadata](/developer/core-concepts/events#what-an-event-carries), and keeps a few details it could not read later, such as the amount and the tracking number. Entries are never changed afterwards. Staff can add comments, and only the author can delete one.
+
+To put a step of your own on the timeline, register its event with a builder that names the order. Return `nil` for an event that says nothing about an order:
+
+```ruby config/initializers/spree.rb
+Spree.order_activity_kinds.register('loyalty.points_awarded', category: 'loyalty') do |event|
+  order = Spree::Order.find_by_prefix_id(event.payload['order_id'])
+  next unless order
+
+  { order: order, details: { points: event.payload['points'] } }
+end
+```
+
+Then tell the dashboard how to show it. An entry with no renderer still appears, named by its event:
+
+```tsx src/timeline.tsx
+import { activityRegistry } from '@spree/dashboard-core'
+import { StarIcon } from '@spree/dashboard-ui/icons'
+
+activityRegistry.register({
+  kind: 'loyalty.points_awarded',
+  icon: StarIcon,
+  Summary: ({ activity }) => <>Awarded {String(activity.details?.points)} loyalty points</>,
+})
+```
+
+Keep personal data out of `details`. The timeline references the customer and the actor rather than copying a name or email, so anonymizing a customer leaves nothing behind in it.
+
 ## Money on an order
 
 Tax, discounts and fees are kept as separate records, so you can ask what tax was charged without picking through a mixed list. See [Order totals](/developer/core-concepts/order-totals).

@@ -74,6 +74,8 @@ An event carries the record it's about, serialized:
 
 IDs are the same prefixed IDs the API uses, so you can take an ID out of an event and fetch the full record without translating anything.
 
+An event's metadata says who caused it. When a member of staff or an API key made the request, `actor_id` is their prefixed ID and `actor_type` is `admin_user` or `api_key`. Both are missing when nobody was signed in, such as a customer checking out. Work done in a background job names an actor only if the job sets `Spree::Current.actor` before it publishes.
+
 ## Reacting in another system
 
 Point a webhook at your endpoint and subscribe it to the events you care about. That's covered fully in [Webhooks](/developer/core-concepts/webhooks) — including signature verification, which you should not skip.
