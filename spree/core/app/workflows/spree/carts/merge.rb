@@ -149,7 +149,7 @@ module Spree
       def carry_custom_fields
         return unless other_cart.line_items.reload.empty?
 
-        answered = cart.custom_fields.unscope(:includes).select(:custom_field_definition_id)
+        answered = cart.custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
         other_cart.custom_fields.unscope(:includes).where.not(custom_field_definition_id: answered).
           update_all(resource_id: cart.id, updated_at: Time.current)
         cart.reset_custom_fields
