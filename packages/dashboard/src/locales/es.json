@@ -4870,6 +4870,10 @@
       },
       "products_count_one": "{{count}} producto",
       "products_count_other": "{{count}} productos",
+      "publishing": {
+        "empty": "Aún no se ha publicado en ningún canal de venta.",
+        "manage_description": "Elige los canales de venta cuyas tiendas muestran esta categoría. Si la retiras de un canal, sus subcategorías también se ocultan allí."
+      },
       "search_placeholder": "Buscar categorías…",
       "seo": {
         "preview_slug_placeholder": "categoria-slug",

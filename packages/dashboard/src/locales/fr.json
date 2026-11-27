@@ -315,6 +315,10 @@
       },
       "products_count_one": "{{count}} produit",
       "products_count_other": "{{count}} produits",
+      "publishing": {
+        "empty": "Pas encore publiée sur un canal de vente.",
+        "manage_description": "Choisissez les canaux de vente dont les vitrines affichent cette catégorie. La retirer d'un canal y masque aussi ses sous-catégories."
+      },
       "search_placeholder": "Rechercher des catégories…",
       "seo": {
         "preview_slug_placeholder": "slug-categorie",

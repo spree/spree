@@ -315,6 +315,10 @@
       },
       "products_count_one": "{{count}} 件の商品",
       "products_count_other": "{{count}} 件の商品",
+      "publishing": {
+        "empty": "まだどの販売チャネルにも公開されていません。",
+        "manage_description": "このカテゴリを表示するストアフロントの販売チャネルを選択します。チャネルで非公開にすると、そのサブカテゴリも非表示になります。"
+      },
       "search_placeholder": "カテゴリを検索…",
       "seo": {
         "preview_slug_placeholder": "category-slug",

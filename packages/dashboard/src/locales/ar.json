@@ -319,6 +319,10 @@
       },
       "products_count_one": "منتج واحد",
       "products_count_other": "{{count}} منتجات",
+      "publishing": {
+        "empty": "لم يُنشر على أي قناة بيع بعد.",
+        "manage_description": "اختر قنوات البيع التي تعرض واجهاتها هذه الفئة. إلغاء نشرها من قناة يُخفي فئاتها الفرعية هناك أيضًا."
+      },
       "search_placeholder": "البحث عن الفئات…",
       "seo": {
         "preview_slug_placeholder": "category-slug",

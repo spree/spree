@@ -315,6 +315,10 @@
       },
       "products_count_one": "{{count}} sản phẩm",
       "products_count_other": "{{count}} sản phẩm",
+      "publishing": {
+        "empty": "Chưa được xuất bản trên kênh bán hàng nào.",
+        "manage_description": "Chọn các kênh bán hàng có cửa hàng hiển thị danh mục này. Gỡ xuất bản trên một kênh cũng ẩn các danh mục con của nó ở đó."
+      },
       "search_placeholder": "Tìm kiếm danh mục…",
       "seo": {
         "preview_slug_placeholder": "duong-dan-danh-muc",

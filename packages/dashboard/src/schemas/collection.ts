@@ -11,6 +11,7 @@ import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
+import { publicationsFormSchema, publicationsParam, publicationsToForm } from './publications'
 
 /**
  * Locale key for a sort order's label. The server vocabulary is
@@ -121,20 +122,7 @@ export const collectionFormSchema = (valuelessTypes: readonly string[] | null = 
     sort_order: z.enum(COLLECTION_SORT_ORDERS),
     rules_match_policy: z.enum(MATCH_POLICIES),
     rules: z.array(collectionRuleSchema(valuelessTypes)),
-    /**
-     * The channels the collection is published on — a sync set. Null on a new
-     * collection until the Publishing card seeds it, so a create that never
-     * loaded channels still publishes everywhere (the server's default).
-     */
-    publications: z
-      .array(
-        z.object({
-          channel_id: z.string(),
-          published_at: z.string().nullable(),
-          unpublished_at: z.string().nullable(),
-        }),
-      )
-      .nullable(),
+    publications: publicationsFormSchema,
     custom_fields: z.array(customFieldFormSchema).optional(),
     ...imageFields,
   })
@@ -198,12 +186,7 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
         currency: rule.currency ?? null,
         preferences: rule.preferences ?? {},
       })) ?? [],
-    publications:
-      collection.publications?.map((publication) => ({
-        channel_id: publication.channel_id,
-        published_at: publication.published_at,
-        unpublished_at: publication.unpublished_at,
-      })) ?? [],
+    publications: publicationsToForm(collection.publications),
     custom_fields:
       collection.custom_fields?.map((cf) => ({
         id: cf.id,
@@ -233,7 +216,7 @@ export function collectionToParams(values: CollectionFormValues) {
     // the desired set, so an omitted rule or channel is removed. A collection
     // with no rules is curated by hand only.
     rules: values.rules as CollectionRuleParams[],
-    ...(values.publications ? { publications: values.publications } : {}),
+    ...publicationsParam(values.publications),
     ...(values.custom_fields && values.custom_fields.length > 0
       ? { custom_fields: values.custom_fields }
       : {}),

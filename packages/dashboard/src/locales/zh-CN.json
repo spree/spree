@@ -314,6 +314,10 @@
       },
       "products_count_one": "{{count}} 个商品",
       "products_count_other": "{{count}} 个商品",
+      "publishing": {
+        "empty": "尚未在任何销售渠道发布。",
+        "manage_description": "选择在其店面中显示此类别的销售渠道。在某个渠道取消发布后，其子类别在该渠道也会隐藏。"
+      },
       "search_placeholder": "搜索分类…",
       "seo": {
         "preview_slug_placeholder": "category-slug",

@@ -315,6 +315,10 @@
       },
       "products_count_one": "{{count}} Produkt",
       "products_count_other": "{{count}} Produkte",
+      "publishing": {
+        "empty": "Noch auf keinem Vertriebskanal veröffentlicht.",
+        "manage_description": "Wähle die Vertriebskanäle, deren Storefronts diese Kategorie zeigen. Wird sie dort zurückgezogen, sind auch ihre Unterkategorien verborgen."
+      },
       "search_placeholder": "Kategorien suchen…",
       "seo": {
         "preview_slug_placeholder": "kategorie-slug",

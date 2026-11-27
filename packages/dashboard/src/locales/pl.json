@@ -323,6 +323,10 @@
       },
       "products_count_one": "{{count}} produkt",
       "products_count_other": "{{count}} produktów",
+      "publishing": {
+        "empty": "Jeszcze nieopublikowana w żadnym kanale sprzedaży.",
+        "manage_description": "Wybierz kanały sprzedaży, których sklepy pokazują tę kategorię. Wycofanie jej z kanału ukrywa tam także jej podkategorie."
+      },
       "search_placeholder": "Szukaj kategorii…",
       "seo": {
         "preview_slug_placeholder": "slug-kategorii",

@@ -315,6 +315,10 @@
       },
       "products_count_one": "{{count}} product",
       "products_count_other": "{{count}} products",
+      "publishing": {
+        "empty": "Not published on any sales channel yet.",
+        "manage_description": "Pick the sales channels whose storefronts show this category. Unpublishing it hides its subcategories there too."
+      },
       "search_placeholder": "Search categories…",
       "seo": {
         "preview_slug_placeholder": "category-slug",
