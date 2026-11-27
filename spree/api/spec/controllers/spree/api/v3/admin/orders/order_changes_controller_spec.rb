@@ -207,8 +207,22 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(action['variant']).to include('id' => removed.prefixed_id, 'product_name' => removed.product.name)
     end
 
+    it 'names who made each change' do
+      Spree::OrderChanges::Apply.call(order: order, requested_by: admin_user,
+                                      actions: [{ kind: 'update_item', line_item: line_item, quantity: 3 }])
+
+      get :index, params: { order_id: order.prefixed_id, expand: 'requested_by', sort: '-created_at' }, as: :json
+
+      expect(json_response['data'].first['requested_by']).to include('type' => 'admin_user', 'label' => admin_user.actor_label)
+    end
+
     it_behaves_like 'a list without N+1 queries' do
-      subject { get :index, params: { order_id: order.prefixed_id, expand: 'actions.variant' }, as: :json }
+      before do
+        Spree::OrderChanges::Apply.call(order: order, requested_by: admin_user,
+                                        actions: [{ kind: 'update_item', line_item: line_item, quantity: 3 }])
+      end
+
+      subject { get :index, params: { order_id: order.prefixed_id, expand: 'requested_by,actions.variant' }, as: :json }
     end
   end
 

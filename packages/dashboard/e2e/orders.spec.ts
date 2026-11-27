@@ -758,6 +758,17 @@ test.describe('placed order editing', () => {
     await expect(history.getByText(/to a quantity of 2$/)).toBeVisible({ timeout: 15_000 })
     await expect(history.getByText(/^applied$/i)).toBeVisible()
 
+    // Both changes are made with this session's token, so both name its user.
+    const { data: changes } = await adminRequest<{ data: { requested_by?: { label: string } }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/order_changes?expand=requested_by`,
+    )
+    const actor = changes[0].requested_by?.label ?? ''
+    expect(actor).not.toBe('')
+    await expect(history.getByText(actor, { exact: false })).toBeVisible()
+
     const { items } = await adminRequest<{ items: { id: string }[] }>(
       page,
       creds,
@@ -771,6 +782,7 @@ test.describe('placed order editing', () => {
     await page.reload()
     await expect(history.getByText(/to a quantity of 5$/)).toBeVisible({ timeout: 15_000 })
     await expect(history.getByText(/^requested$/i)).toBeVisible()
+    await expect(history.getByText(actor, { exact: false })).toHaveCount(2)
   })
 })
 

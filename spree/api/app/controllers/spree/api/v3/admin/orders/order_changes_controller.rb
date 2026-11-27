@@ -93,7 +93,9 @@ module Spree
               actions = [:fulfillment, :delivery_method]
               actions << { variant: variant_includes } if expand_list.include?('actions.variant')
 
-              [:requested_by, :order, :return, :exchange, :claim, { actions: actions }]
+              includes = [:order, :return, :exchange, :claim, { actions: actions }]
+              includes << :requested_by if expand_list.include?('requested_by')
+              includes
             end
 
             private

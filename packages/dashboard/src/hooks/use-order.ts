@@ -123,7 +123,7 @@ export function useOrderChanges(orderId: string, page: number) {
         page,
         limit: 10,
         sort: '-created_at',
-        expand: ['actions.variant'],
+        expand: ['requested_by', 'actions.variant'],
       }),
     enabled: !!orderId,
   })
