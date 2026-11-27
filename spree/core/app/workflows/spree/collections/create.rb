@@ -1,9 +1,9 @@
 module Spree
   module Collections
-    # Creates a collection and publishes it. Without a `publications` set in
-    # the attributes the collection goes live on every active channel of its
-    # store, so API clients that create collections keep getting live ones
-    # (docs/plans/6.1-collections-merchandising.md).
+    # Creates a collection. Without a `publications` set in the attributes the
+    # collection goes live on every active channel of its store
+    # (Spree::ChannelPublishable), so API clients that create collections keep
+    # getting live ones (docs/plans/6.1-collections-merchandising.md).
     class Create < Spree::Workflow
       hooks :validate, :after_create
 
@@ -20,15 +20,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :save_collection
-          step :publish_on_active_channels
           run_hooks :after_create
-        end
-
-        # Deferred so a caller's transaction that rolls back announces nothing.
-        ActiveRecord.after_all_transactions_commit do
-          @published_channels&.each do |channel|
-            collection.publish_event('collection.published', nil, { channel_id: channel.prefixed_id })
-          end
         end
 
         success(collection)
@@ -42,14 +34,6 @@ module Spree
 
       def save_collection
         failure(collection) unless collection.save
-      end
-
-      def publish_on_active_channels
-        return if collection.publications_assigned?
-
-        channels = store.channels.active
-        channels.add_collections(collection.id, publish_events: false)
-        @published_channels = channels.to_a
       end
     end
   end

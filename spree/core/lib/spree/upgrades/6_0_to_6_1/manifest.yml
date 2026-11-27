@@ -18,6 +18,18 @@ steps:
 
       Idempotent: collections that already have a publication are skipped.
 
+  - id: backfill_category_publications
+    name: "Publish existing categories on every active channel"
+    task: "spree:categories:backfill_publications"
+    notes: |
+      Spree 6.1 publishes categories per channel, and the Store API serves
+      only categories published on the request's channel, along with their
+      subcategories. Categories were public before, so this step puts every
+      category that has no publication on every active channel of its store.
+      Nothing a shopper sees changes.
+
+      Idempotent: categories that already have a publication are skipped.
+
   - id: backfill_collection_membership_sources
     name: "Record where each collection membership came from"
     task: "spree:collections:backfill_membership_sources"

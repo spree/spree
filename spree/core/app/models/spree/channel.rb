@@ -23,6 +23,8 @@ module Spree
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
+    has_many :category_publications, class_name: 'Spree::CategoryPublication', dependent: :destroy, inverse_of: :channel
+    has_many :categories, through: :category_publications, class_name: 'Spree::Category'
     has_many :collection_publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :channel
     has_many :collections, through: :collection_publications, class_name: 'Spree::Collection'
     # When set, only the default catalog's products are visible on this
@@ -65,133 +67,97 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name code active default store_id]
     search_by :name
 
-    # Publishes the given products on every channel in the current scope
-    # (`store.channels.where(id: ids).add_products(product_ids)`), touching
-    # and reindexing each product once rather than once per channel.
+    # Publishes records of one kind (products, categories or collections) on
+    # every channel in the current scope
+    # (`store.channels.where(id: ids).publish_records(Spree::Category, category_ids)`),
+    # refreshing each record once rather than once per channel. Re-publishing
+    # keeps an existing window unless a new one is given.
+    # @param model_class [Class<Spree::ChannelPublishable>]
+    # @param record_ids [Array<Integer>, Integer]
+    # @param published_at [Time, nil] when the publications go live; nil means immediately
+    # @param unpublished_at [Time, nil] when the publications come down; nil means never
+    # @param publish_events [Boolean] whether each new publication sends `<record>.published`
+    # @return [Integer] the number of publications created or updated
+    def self.publish_records(model_class, record_ids, published_at: nil, unpublished_at: nil, publish_events: true)
+      record_ids = Array(record_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if record_ids.empty? || channels.empty?
+
+      count = channels.sum do |channel|
+        channel.send(:upsert_publications, model_class, record_ids, published_at, unpublished_at, publish_events)
+      end
+      model_class.refresh_after_publishing(record_ids)
+      channels.each(&:touch)
+      count
+    end
+
+    # Unpublishes records of one kind from every channel in the current scope.
+    # @param model_class [Class<Spree::ChannelPublishable>]
+    # @param record_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of publications destroyed
+    def self.unpublish_records(model_class, record_ids)
+      record_ids = Array(record_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if record_ids.empty? || channels.empty?
+
+      reflection = model_class.reflect_on_association(model_class.publications_association)
+      removed = reflection.klass.includes(reflection.inverse_of.name, :channel).
+                where(channel_id: channels.map(&:id), reflection.foreign_key => record_ids).destroy_all
+      model_class.refresh_after_publishing(record_ids)
+      emptied_channel_ids = removed.map(&:channel_id).uniq
+      channels.select { |channel| emptied_channel_ids.include?(channel.id) }.each(&:touch)
+      removed.size
+    end
+
+    # Publishes the given products on every channel in the current scope.
     # @param product_ids [Array<Integer>, Integer]
     # @return [Integer] the number of ProductPublications created or updated
     def self.add_products(product_ids)
-      product_ids = Array(product_ids).map(&:to_s).uniq
-      channels = all.to_a
-      return 0 if product_ids.empty? || channels.empty?
-
-      count = channels.sum { |channel| channel.send(:upsert_publications, product_ids) }
-      refresh_products(product_ids)
-      channels.each(&:touch)
-      count
+      publish_records(Spree::Product, product_ids)
     end
 
     # Unpublishes the given products from every channel in the current scope.
     # @param product_ids [Array<Integer>, Integer]
     # @return [Integer] the number of ProductPublications destroyed
     def self.remove_products(product_ids)
-      product_ids = Array(product_ids).map(&:to_s).uniq
-      channels = all.to_a
-      return 0 if product_ids.empty? || channels.empty?
-
-      removed = Spree::ProductPublication.includes(:product).where(channel_id: channels.map(&:id), product_id: product_ids).destroy_all
-      refresh_products(product_ids)
-      emptied_channel_ids = removed.map(&:channel_id).uniq
-      channels.select { |channel| emptied_channel_ids.include?(channel.id) }.each(&:touch)
-      removed.size
-    end
-
-    # Publishes the given collections on every channel in the current scope
-    # (`store.channels.active.add_collections(collection_ids)`). A channel
-    # gets collections only this way: nothing publishes onto a channel when it
-    # is created.
-    # @param collection_ids [Array<Integer>, Integer]
-    # @param publish_events [Boolean] whether each new publication sends `collection.published`
-    # @return [Integer] the number of CollectionPublications created or updated
-    def self.add_collections(collection_ids, publish_events: true)
-      collection_ids = Array(collection_ids).map(&:to_s).uniq
-      channels = all.to_a
-      return 0 if collection_ids.empty? || channels.empty?
-
-      count = channels.sum do |channel|
-        channel.send(:publish_collections, collection_ids, publish_events: publish_events)
-      end
-      Spree::Collection.where(id: collection_ids).touch_all
-      count
-    end
-
-    # Unpublishes the given collections from every channel in the current scope.
-    # @param collection_ids [Array<Integer>, Integer]
-    # @return [Integer] the number of CollectionPublications destroyed
-    def self.remove_collections(collection_ids)
-      collection_ids = Array(collection_ids).map(&:to_s).uniq
-      channels = all.to_a
-      return 0 if collection_ids.empty? || channels.empty?
-
-      Spree::CollectionPublication.includes(:collection, :channel).
-        where(channel_id: channels.map(&:id), collection_id: collection_ids).destroy_all.size
+      unpublish_records(Spree::Product, product_ids)
     end
 
     # @param product_ids [Array<String>]
     # @return [void]
     def self.refresh_products(product_ids)
-      products = Spree::Product.where(id: product_ids)
-      products.touch_all
-      # `to_a` once: `touch_all` does not load the relation, so iterating it
-      # afterwards would re-run the query.
-      products.to_a.each(&:enqueue_search_index)
+      Spree::Product.refresh_after_publishing(product_ids)
     end
 
-    # Publishes the given products on this channel by creating/upserting ProductPublications.
-    # Optionally sets the publication window; if not given, the products will be published immediately
-    # with no end date.
+    # Publishes records of one kind on this channel, with an optional window.
+    # @see .publish_records
+    def publish_records(model_class, record_ids, published_at: nil, unpublished_at: nil, publish_events: true)
+      self.class.where(id: id).publish_records(model_class, record_ids, published_at: published_at, unpublished_at: unpublished_at,
+                                                                        publish_events: publish_events)
+    end
+
+    # Unpublishes records of one kind from this channel.
+    # @see .unpublish_records
+    def unpublish_records(model_class, record_ids)
+      self.class.where(id: id).unpublish_records(model_class, record_ids)
+    end
+
+    # Publishes the given products on this channel. Optionally sets the
+    # publication window; if not given, the products will be published
+    # immediately with no end date.
     # @param product_ids [Array<Integer>, Integer] the IDs of the products to publish on this channel
     # @param published_at [Time, nil] when the publications go live; nil means immediately
     # @param unpublished_at [Time, nil] when the publications come down; nil means never
     # @return [Integer] the number of ProductPublications created or updated
     def add_products(product_ids, published_at: nil, unpublished_at: nil)
-      product_ids = Array(product_ids).map(&:to_s).uniq
-      return 0 if product_ids.empty?
-
-      count = upsert_publications(product_ids, published_at: published_at, unpublished_at: unpublished_at)
-      self.class.refresh_products(product_ids)
-      touch
-      count
+      publish_records(Spree::Product, product_ids, published_at: published_at, unpublished_at: unpublished_at)
     end
 
     # Unpublishes the given products from this channel.
     # @param product_ids [Array<Integer>, Integer] the IDs of the products to unpublish
     # @return [Integer] the number of ProductPublications destroyed
     def remove_products(product_ids)
-      product_ids = Array(product_ids).map(&:to_s).uniq
-      return 0 if product_ids.empty?
-
-      count = publications.includes(:product).where(product_id: product_ids).destroy_all.size
-
-      self.class.refresh_products(product_ids)
-      touch if count.positive?
-      count
-    end
-
-    # Publishes the given collections on this channel, with an optional window.
-    # @param collection_ids [Array<Integer>, Integer]
-    # @param published_at [Time, nil] when the publications go live; nil means immediately
-    # @param unpublished_at [Time, nil] when the publications come down; nil means never
-    # @param publish_events [Boolean] whether each new publication sends `collection.published`
-    # @return [Integer] the number of CollectionPublications created or updated
-    def add_collections(collection_ids, published_at: nil, unpublished_at: nil, publish_events: true)
-      collection_ids = Array(collection_ids).map(&:to_s).uniq
-      return 0 if collection_ids.empty?
-
-      count = publish_collections(collection_ids, published_at: published_at, unpublished_at: unpublished_at,
-                                                  publish_events: publish_events)
-      Spree::Collection.where(id: collection_ids).touch_all
-      count
-    end
-
-    # Unpublishes the given collections from this channel.
-    # @param collection_ids [Array<Integer>, Integer]
-    # @return [Integer] the number of CollectionPublications destroyed
-    def remove_collections(collection_ids)
-      collection_ids = Array(collection_ids).map(&:to_s).uniq
-      return 0 if collection_ids.empty?
-
-      collection_publications.includes(:collection).where(collection_id: collection_ids).destroy_all.size
+      unpublish_records(Spree::Product, product_ids)
     end
 
     # @return [Boolean]
@@ -227,23 +193,21 @@ module Spree
 
     private
 
-    def upsert_publications(product_ids, published_at: nil, unpublished_at: nil)
-      upsert_publication_rows(Spree::ProductPublication, :product_id, product_ids, published_at, unpublished_at)
-    end
-
-    def upsert_collection_publications(collection_ids, published_at: nil, unpublished_at: nil)
-      upsert_publication_rows(Spree::CollectionPublication, :collection_id, collection_ids, published_at, unpublished_at)
-    end
-
     # The bulk upsert skips the publication callbacks, so the events for the
     # newly created rows are sent here.
-    def publish_collections(collection_ids, publish_events:, published_at: nil, unpublished_at: nil)
-      existing_ids = publish_events ? collection_publications.where(collection_id: collection_ids).pluck(:collection_id).map(&:to_s) : []
-      count = upsert_collection_publications(collection_ids, published_at: published_at, unpublished_at: unpublished_at)
+    def upsert_publications(model_class, record_ids, published_at, unpublished_at, publish_events)
+      reflection = model_class.reflect_on_association(model_class.publications_association)
+      publish_events &&= model_class.channel_publication_events
+      existing_ids = if publish_events
+                       reflection.klass.where(channel_id: id, reflection.foreign_key => record_ids).pluck(reflection.foreign_key).map(&:to_s)
+                     else
+                       []
+                     end
+      count = upsert_publication_rows(reflection.klass, reflection.foreign_key.to_sym, record_ids, published_at, unpublished_at)
       return count unless publish_events
 
-      store.collections.where(id: collection_ids - existing_ids).find_each do |collection|
-        collection.publish_event('collection.published', nil, { channel_id: prefixed_id })
+      model_class.where(store_id: store_id, id: record_ids - existing_ids).find_each do |record|
+        record.publish_event("#{record.event_prefix}.published", nil, { channel_id: prefixed_id })
       end
       count
     end

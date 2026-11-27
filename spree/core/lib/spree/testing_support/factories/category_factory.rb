@@ -7,6 +7,11 @@ FactoryBot.define do
 
     parent { nil }
 
+    # A new category goes live on every active channel; an empty set keeps it off all of them.
+    trait :unpublished do
+      publications { [] }
+    end
+
     trait :with_description do
       description { '<div>Test <strong>description</strong></div>' }
     end

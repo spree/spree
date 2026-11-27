@@ -5,6 +5,7 @@ module Spree
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
     attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :applicable_catalog_groups, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
+    attribute :storefront_category_ids
     # Latch for the cross-store leak tripwire — see #store= below. Lives here
     # so it clears exactly when the store context does, which Rails does per
     # request and per job.
@@ -136,6 +137,14 @@ module Spree
     # @return [Array<Spree::Integration>]
     def integrations
       super || (self.integrations = store ? store.integrations.active.to_a : [])
+    end
+
+    # Ids of the store's categories a shopper on the current channel may see
+    # (Spree::Category.published_on), loaded once per request: a product
+    # listing checks every product's categories against it.
+    # @return [Set<Integer>]
+    def storefront_category_ids
+      super || (self.storefront_category_ids = store ? store.categories.published_on(channel).ids.to_set : Set.new)
     end
 
     # Returns the standalone (rule-matched) price lists in effect for the

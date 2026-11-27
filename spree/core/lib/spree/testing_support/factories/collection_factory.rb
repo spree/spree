@@ -3,17 +3,9 @@ FactoryBot.define do
     sequence(:name) { |n| "collection_#{n}" }
     store { Spree::Store.default }
 
-    # Mirrors Spree.collection_create_workflow: live on every active channel.
-    transient do
-      published { true }
-    end
-
-    after(:create) do |collection, evaluator|
-      collection.store.channels.active.add_collections(collection.id) if evaluator.published
-    end
-
+    # A new collection goes live on every active channel; an empty set keeps it off all of them.
     trait :unpublished do
-      published { false }
+      publications { [] }
     end
 
     trait :with_description do

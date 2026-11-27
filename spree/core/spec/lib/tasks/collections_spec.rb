@@ -18,7 +18,7 @@ describe 'spree:collections' do
     let!(:retired) { create(:channel, store: store, name: 'Retired', code: 'retired', active: false) }
     let!(:unpublished) { create(:collection, :unpublished, store: store) }
     let!(:published_on_pos) do
-      create(:collection, :unpublished, store: store).tap { |collection| pos.add_collections(collection.id) }
+      create(:collection, :unpublished, store: store).tap { |collection| pos.publish_records(Spree::Collection, collection.id) }
     end
 
     it 'puts collections without a publication on every active channel' do

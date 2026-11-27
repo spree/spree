@@ -10,12 +10,9 @@ module Spree
   class ProductPublication < Spree.base_class
     has_prefix_id :pp
 
-    include Spree::PublicationWindow
+    include Spree::ChannelPublication
 
-    belongs_to :product, class_name: 'Spree::Product', touch: true
-    belongs_to :channel, class_name: 'Spree::Channel'
-
-    validates :product_id, uniqueness: { scope: :channel_id }
+    publication_of :product, inverse_of: :product_publications
 
     self.whitelisted_ransackable_attributes = %w[product_id channel_id published_at unpublished_at]
     self.whitelisted_ransackable_associations = %w[product channel]

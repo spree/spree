@@ -7,21 +7,7 @@ namespace :spree do
       Idempotent: a collection that already has a publication is skipped.
     DESC
     task backfill_publications: :environment do
-      batch_size = (ENV['BATCH_SIZE'] || 1_000).to_i
-      published = 0
-
-      Spree::Store.find_each do |store|
-        channels = store.channels.active
-        next unless channels.exists?
-
-        store.collections.where.missing(:publications).in_batches(of: batch_size) do |batch|
-          collection_ids = batch.ids
-          # All or none of a batch's channels, so a rerun finds an interrupted batch unpublished.
-          ApplicationRecord.transaction { channels.add_collections(collection_ids, publish_events: false) }
-          published += collection_ids.size
-        end
-      end
-
+      published = Spree::Collection.backfill_publications(batch_size: (ENV['BATCH_SIZE'] || 1_000).to_i)
       puts "  Published #{published} collection(s)"
     end
 

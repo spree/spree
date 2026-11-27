@@ -9,8 +9,6 @@ module Spree
 
     has_prefix_id :coll
 
-    publishes_events :published, :unpublished
-
     RULES_MATCH_POLICIES = %w[all any].freeze
     # Space format (e.g. 'price asc') is required by the search sort pipeline:
     # FiltersAggregator#to_api_sort splits on a space, and apply_sort maps to 'price'/etc.
@@ -65,7 +63,9 @@ module Spree
     has_many :products, through: :product_collections
 
     has_many :publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :collection
-    has_many :channels, through: :publications, class_name: 'Spree::Channel'
+    include Spree::ChannelPublishable
+
+    publishable_on_channels :publications, events: true, publish_on_active_channels: true
 
     has_many :promotion_rule_collections, class_name: 'Spree::PromotionRuleCollection', dependent: :delete_all
     has_many :exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all, inverse_of: :collection
@@ -100,7 +100,6 @@ module Spree
     validates :sort_order, inclusion: { in: SORT_ORDERS }, presence: true
 
     before_validation :set_permalink, if: :name
-    after_save :apply_pending_publications, if: -> { @pending_publications }
 
     #
     # Scopes
@@ -108,10 +107,6 @@ module Spree
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }
     scope :with_rule_types, ->(rule_types) { where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) }
-    # Collections live on the channel now: a publication exists and its window is open.
-    scope :published_on, lambda { |channel|
-      where(id: Spree::CollectionPublication.published.where(channel_id: channel&.id).select(:collection_id))
-    }
 
     #
     # Ransack
@@ -143,27 +138,6 @@ module Spree
 
     def slug=(value)
       self.permalink = value
-    end
-
-    # Replaces the collection's publications with the given set: one hash per
-    # channel (`channel_id`, optional `published_at` / `unpublished_at`).
-    # Channels left out are unpublished. Applied after save, so a new
-    # collection gets an id first. Channels of another store are ignored.
-    #
-    # @param publications_params [Array<Hash>, Array<Spree::CollectionPublication>]
-    # @return [void]
-    def publications=(publications_params)
-      if publications_params.nil? || publications_params.first.is_a?(Spree::CollectionPublication)
-        super
-      else
-        @publications_assigned = true
-        @pending_publications = publications_params.map { |row| row.to_h.with_indifferent_access }
-      end
-    end
-
-    # @return [Boolean] whether the save carries a publications set
-    def publications_assigned?
-      @publications_assigned == true
     end
 
     # Rebuild the materialized ProductCollection membership from the rules.
@@ -348,37 +322,6 @@ module Spree
       def generate_slug
         permalink.blank? ? name_with_fallback.to_url : permalink.to_url
       end
-    end
-
-    private
-
-    def apply_pending_publications
-      rows = @pending_publications
-      @pending_publications = nil
-      if rows.any? { |row| row[:channel_id].blank? }
-        errors.add(:publications, :blank)
-        raise ActiveRecord::RecordInvalid, self
-      end
-
-      channels_by_id = store.channels.where(id: rows.map { |row| decode_channel_id(row[:channel_id]) }).index_by(&:id)
-      existing = publications.to_a.index_by(&:channel_id)
-      kept = rows.filter_map do |row|
-        channel = channels_by_id[decode_channel_id(row[:channel_id]).to_i]
-        next unless channel
-
-        publication = existing[channel.id] || publications.build(channel: channel)
-        unless publication.update(row.slice(:published_at, :unpublished_at))
-          publication.errors.each { |error| errors.add(:publications, error.full_message) }
-          raise ActiveRecord::RecordInvalid, self
-        end
-        publication
-      end
-
-      (existing.values - kept).each(&:destroy!)
-    end
-
-    def decode_channel_id(value)
-      Spree::Channel.decode_own_prefixed_id(value.to_s) || value
     end
   end
 end

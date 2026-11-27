@@ -285,6 +285,10 @@ en:
           attributes:
             parent:
               must_belong_to_same_store: must belong to the same store
+        spree/category_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: must be after published date
         spree/classification:
           attributes:
             taxon_id:
