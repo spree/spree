@@ -175,6 +175,8 @@ module Spree
         def render_service_error(error, code: ERROR_CODES[:processing_error], status: :unprocessable_content)
           error = error.value if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Symbol)
 
+          error = error.value if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(ActiveModel::Errors)
+
           if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Hash)
             render_failure_hash(error.value, code: code, status: status)
           elsif error.is_a?(ActiveModel::Errors)

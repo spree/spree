@@ -33,8 +33,8 @@ import {
   fieldTypeLabel,
   fieldTypeSupportsSearchable,
   fieldTypeSupportsSortable,
+  fieldTypeSupportsStorefrontWritable,
   resourceTypeLabel,
-  resourceTypeSupportsStorefrontWritable,
 } from '../../../schemas/custom-field-definition'
 
 interface DefinitionFormFieldsProps {
@@ -98,6 +98,12 @@ export function DefinitionFormFields({
     value: resource_type,
     label: resourceTypeLabel(resource_type, name),
   }))
+  // Where shoppers may fill fields in, as the server decides.
+  const writableResourceTypes = new Set(
+    (resourceTypesResponse?.data ?? [])
+      .filter((entry) => entry.storefront_writable)
+      .map((entry) => entry.resource_type),
+  )
   // Types the dashboard edits come first; the rest are still definable for
   // integrations, but say so, since no screen here fills them in.
   const editableTypes = new Set<string>(DEFAULT_RESOURCE_TYPES)
@@ -172,7 +178,7 @@ export function DefinitionFormFields({
                 value={field.value}
                 onValueChange={(value) => {
                   field.onChange(value)
-                  if (!resourceTypeSupportsStorefrontWritable(String(value))) {
+                  if (!writableResourceTypes.has(String(value))) {
                     form.setValue('storefront_writable', false)
                   }
                 }}
@@ -243,6 +249,9 @@ export function DefinitionFormFields({
                 if (next !== 'choice') {
                   form.setValue('validations.multiple', false)
                 }
+                if (!fieldTypeSupportsStorefrontWritable(next)) {
+                  form.setValue('storefront_writable', false)
+                }
                 // A bound means something different for each type.
                 form.setValue('validations.min', '')
                 form.setValue('validations.max', '')
@@ -284,14 +293,18 @@ export function DefinitionFormFields({
           if (!checked) form.setValue('storefront_writable', false)
         }}
       />
-      {resourceTypeSupportsStorefrontWritable(resourceType) && (
+      {writableResourceTypes.has(resourceType) && (
         <SwitchRow
           form={form}
           name="storefront_writable"
           id="cfd-storefront-writable"
           label={t('admin.fields.custom_field_definition.storefront_writable.label')}
-          help={t(`admin.fields.custom_field_definition.storefront_writable.help_${resourceType}`)}
-          disabled={!storefrontVisible}
+          help={
+            resourceType === 'order'
+              ? t('admin.fields.custom_field_definition.storefront_writable.help_order')
+              : t('admin.fields.custom_field_definition.storefront_writable.help_customer')
+          }
+          disabled={!storefrontVisible || !fieldTypeSupportsStorefrontWritable(fieldType)}
           error={errors.storefront_writable}
         />
       )}

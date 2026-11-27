@@ -201,9 +201,9 @@ module Spree
       # number, they are shopper input, so an order staff key in is never
       # blocked on them.
       def missing_custom_field_requirements
-        return [] if keyed_in_by_staff? || !@cart.respond_to?(:storefront_writable_custom_field_definitions)
+        return [] if keyed_in_by_staff? || !@cart.respond_to?(:required_storefront_writable_custom_field_definitions)
 
-        required = @cart.storefront_writable_custom_field_definitions.select(&:required?)
+        required = @cart.required_storefront_writable_custom_field_definitions
         return [] if required.empty?
 
         filled = if @cart.custom_fields.loaded?

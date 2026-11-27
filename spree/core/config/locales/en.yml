@@ -912,6 +912,7 @@ en:
         custom_field_too_long: is too long (maximum is %{bound} characters)
         custom_field_too_short: is too short (minimum is %{bound} characters)
         custom_field_type_cannot_change: cannot be changed once the custom field definition is created — create a new definition instead
+        custom_field_type_not_storefront_writable: is not available for JSON and rich text fields
         custom_field_validation_choices_invalid: must be a list of choices, each with a value and a label
         custom_field_validation_choices_not_unique: must not repeat a choice value
         custom_field_validation_choices_required: must list at least one choice

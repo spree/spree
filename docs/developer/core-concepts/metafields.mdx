@@ -121,7 +121,7 @@ Definitions can also be managed in the dashboard under **Settings → Custom Fie
 
 | Rule | Field types | Meaning |
 |---|---|---|
-| `required` | All | The value cannot be blank. The dashboard marks the field and checks it before saving; the API still accepts a blank value. |
+| `required` | All | The value cannot be blank. The dashboard marks the field and checks it before saving, and the Admin API still accepts a blank value. Where shoppers fill the field in, it is enforced (see [Fields shoppers fill in](#fields-shoppers-fill-in)). |
 | `min`, `max` | `short_text`, `long_text` | Number of characters, inclusive |
 | `min`, `max` | `number` | Value, inclusive |
 | `min`, `max` | `date`, `date_time` | Earliest and latest ISO 8601 date or date-time, inclusive |
@@ -265,7 +265,7 @@ curl 'https://api.mystore.com/api/v3/store/sellers?expand=custom_fields' \
 
 ## Fields shoppers fill in
 
-A delivery date, a gift message or a customer's date of birth is input the shopper gives you. Mark the definition `storefront_writable`, and the Store API accepts it:
+A delivery date, a gift message or a customer's date of birth is input the shopper gives you. Mark the definition `storefront_writable`, and the Store API accepts it. Any field type except `json` and `rich_text` can be writable.
 
 - **Order fields** are written on the cart during checkout. Completing checkout copies them to the order, and on a marketplace to every seller's order, where sellers read them.
 - **Customer fields** are written at registration and from the customer's account.
@@ -338,9 +338,9 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
 </CodeGroup>
 
 - A key that is not a writable field of this store is refused with `422`. The API never creates a definition from a shopper's key.
-- Each value is checked against the field's rules. Numbers are sent as decimal strings, dates in ISO 8601.
+- Each value is checked against the field's rules, and is at most 5,000 characters whatever the rules say. Numbers are sent as decimal strings, dates in ISO 8601.
 - A blank value removes the field. Fields the request does not name keep their values.
-- Read them back with `expand: ['custom_fields']` on the cart, the order or the customer.
+- Read them back with `expand: ['custom_fields']` on the cart, the order or the customer. Each value comes with a `display_value`, which shows a choice field's labels.
 
 `required` is enforced where the shopper writes:
 

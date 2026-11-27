@@ -38,6 +38,12 @@ module Spree
         chosen_values.join(', ')
       end
 
+      # The chosen labels; a value whose choice was since removed reads as stored.
+      def display_value
+        labels = custom_field_definition&.choices.to_a.to_h { |choice| [choice['value'], choice['label'].presence || choice['value']] }
+        chosen_values.map { |chosen| labels.fetch(chosen, chosen) }.join(', ')
+      end
+
       # @return [Array<String>]
       def chosen_values
         stored_values || [value].compact

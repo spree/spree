@@ -13203,6 +13203,7 @@ paths:
                   field_type: number
                   key: merchandising.navigation_position
                   value: '10.0'
+                  display_value: '10'
               schema:
                 "$ref": "#/components/schemas/Seller"
         '404':
@@ -16244,12 +16245,17 @@ components:
         key:
           type: string
         value: {}
+        display_value:
+          type: string
+          description: 'The value as text to show: the labels of the chosen options
+            for a choice field.'
       required:
       - id
       - label
       - field_type
       - key
       - value
+      - display_value
       x-typelizer: true
     CustomFieldValidations:
       type: object

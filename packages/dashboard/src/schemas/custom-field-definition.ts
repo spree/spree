@@ -45,11 +45,22 @@ export const SEARCHABLE_FIELD_TYPES = [
  */
 export const SORTABLE_FIELD_TYPES = ['short_text', 'number', 'date', 'date_time', 'choice'] as const
 
-/** Resources whose fields shoppers may fill in (mirrors backend validation). */
-export const STOREFRONT_WRITABLE_RESOURCE_TYPES = ['order', 'customer'] as const
+/**
+ * Field types shoppers may fill in (mirrors backend validation). Which
+ * resources take it comes from the server's resource types list.
+ */
+export const STOREFRONT_WRITABLE_FIELD_TYPES = [
+  'short_text',
+  'long_text',
+  'number',
+  'boolean',
+  'date',
+  'date_time',
+  'choice',
+] as const
 
-export function resourceTypeSupportsStorefrontWritable(resourceType: string): boolean {
-  return (STOREFRONT_WRITABLE_RESOURCE_TYPES as readonly string[]).includes(resourceType)
+export function fieldTypeSupportsStorefrontWritable(fieldType: string): boolean {
+  return (STOREFRONT_WRITABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
 }
 
 export function fieldTypeSupportsSearchable(fieldType: string): boolean {

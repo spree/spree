@@ -168,6 +168,13 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       expect(definition.errors.details[:storefront_writable]).to include(error: :resource_not_storefront_writable)
     end
 
+    it 'is refused on JSON and rich text fields' do
+      definition = build(:custom_field_definition, :for_order, :json_field, storefront_writable: true)
+
+      expect(definition).not_to be_valid
+      expect(definition.errors.details[:storefront_writable]).to include(error: :field_type_not_storefront_writable)
+    end
+
     it 'is refused on an admin-only field' do
       definition = build(:custom_field_definition, :for_order, :admin_only, storefront_writable: true)
 

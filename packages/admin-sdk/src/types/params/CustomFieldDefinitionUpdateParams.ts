@@ -16,7 +16,8 @@ export type CustomFieldDefinitionUpdateParams = {
   /**
    * Shoppers fill the field in through the Store API: an order field at checkout, a customer field
    * at registration and from their account. Only order and customer fields take it, and the field
-   * must also be `storefront_visible`. Defaults to false.
+   * must also be `storefront_visible`. Not available for `json` and `rich_text` fields. Defaults to
+   * false.
    */
   storefront_writable?: boolean
   /**

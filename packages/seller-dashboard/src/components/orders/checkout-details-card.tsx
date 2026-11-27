@@ -26,7 +26,9 @@ export function CheckoutDetailsCard({ order }: { order: Order }) {
             <div key={field.id} className="flex flex-col gap-0.5">
               <dt className="text-sm text-muted-foreground">{field.label}</dt>
               <dd className="text-base whitespace-pre-line">
-                {formatCustomFieldValue(field.value, field.field_type, timezone)}
+                {field.field_type === 'choice'
+                  ? field.display_value
+                  : formatCustomFieldValue(field.value, field.field_type, timezone)}
               </dd>
             </div>
           ))}

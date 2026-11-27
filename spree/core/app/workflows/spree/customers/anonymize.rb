@@ -263,6 +263,10 @@ module Spree
         # each is scrubbed to the columns it actually has.
         owned_purchases(Spree::Order).update_all(scrubbed.merge(internal_note: nil))
         owned_purchases(Spree::Cart).update_all(scrubbed)
+        # What the shopper typed into checkout fields is free text about them.
+        [Spree::Order, Spree::Cart].each do |model|
+          Spree::CustomField.where(resource_type: model.polymorphic_name, resource_id: owned_purchases(model).select(:id)).delete_all
+        end
 
         owned_purchases(Spree::OrderGroup).
           update_all(email: customer.email, metadata: {}, updated_at: Time.current)

@@ -139,13 +139,15 @@ module Spree
     # as the API names it, so a client renders a picker rather than carrying
     # its own list that drifts from the registry.
     #
-    # @return [Array<Hash{Symbol => String}>] `resource_type` shorthand + `name`
+    # @return [Array<Hash{Symbol => Object}>] `resource_type` shorthand, `name`, and whether
+    #   shoppers may fill in its fields (`storefront_writable`)
     def self.enabled_resource_types
       # Through `available_resources`, not the registry directly: that is the
       # accessor the rest of the class reads, so discovery and validation
       # cannot disagree about what a host app has made available.
       Array(available_resources).compact.map do |resource|
-        { resource_type: Spree::Base.polymorphic_api_type(resource), name: resource.to_s.demodulize.titleize.pluralize }
+        { resource_type: Spree::Base.polymorphic_api_type(resource), name: resource.to_s.demodulize.titleize.pluralize,
+          storefront_writable: storefront_writable_resource_types.include?(resource.to_s) }
       end.uniq { |entry| entry[:resource_type] }.sort_by { |entry| entry[:name] }
     end
 
@@ -156,6 +158,11 @@ module Spree
     def self.storefront_writable_resource_types
       ['Spree::Order', Spree.customer_class.to_s]
     end
+
+    # Field types a shopper may write. JSON and rich text are structure and
+    # markup a storefront form cannot collect, and an anonymous guest should
+    # not be able to store either.
+    STOREFRONT_WRITABLE_FIELD_TYPES = %w[short_text long_text number boolean date date_time choice].freeze
 
     # Returns the full key with namespace
     # @return [String] eg. custom.id
@@ -220,6 +227,10 @@ module Spree
       unless self.class.storefront_writable_resource_types.include?(resource_type)
         errors.add(:storefront_writable, :resource_not_storefront_writable,
                    message: I18n.t('spree.errors.messages.custom_field_resource_not_storefront_writable'))
+      end
+      unless STOREFRONT_WRITABLE_FIELD_TYPES.include?(field_type)
+        errors.add(:storefront_writable, :field_type_not_storefront_writable,
+                   message: I18n.t('spree.errors.messages.custom_field_type_not_storefront_writable'))
       end
       return if storefront_visible?
 

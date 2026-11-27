@@ -383,6 +383,13 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
       expect(Spree::CustomFieldDefinition.where(key: 'unknown')).to be_empty
     end
 
+    it 'caps the length of a value, whatever the rules say' do
+      customer.storefront_custom_field_values = [{ key: 'profile.gender', value: 'x' * 5_001 }]
+
+      expect(customer.save).to be(false)
+      expect(customer.errors.attribute_names).to include(:'custom_fields[0].value')
+    end
+
     it 'reports a value its rules refuse against the entry' do
       customer.storefront_custom_field_values = [{ key: 'profile.gender', value: 'x' }, { key: 'profile.birthday', value: 'soon' }]
 

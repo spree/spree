@@ -72,6 +72,16 @@ module Spree
         expect(order.bill_address_id).not_to eq(cart.bill_address_id)
       end
 
+      it 'carries what the shopper filled in at checkout' do
+        definition = create(:custom_field_definition, :for_order, store: cart.store, key: 'gift_message', storefront_writable: true)
+        cart.set_custom_field(definition, 'Happy birthday')
+
+        order = described_class.call(cart: cart).value
+
+        expect(order.custom_fields.sole.value).to eq('Happy birthday')
+        expect(cart.custom_fields.count).to eq(1)
+      end
+
       it 'stamps created_by and honors a customer override' do
         admin = create(:admin_user)
         other_customer = create(:user)

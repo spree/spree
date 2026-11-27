@@ -2,6 +2,9 @@ module Spree
   module HasCustomFields
     extend ActiveSupport::Concern
 
+    # The most a shopper may write into one field, in characters.
+    STOREFRONT_VALUE_MAX_LENGTH = 5_000
+
     module ClassMethods
       # @param key_with_namespace [String] the dotted `"namespace.key"` form
       # @param store [Spree::Store, nil] the store the definition belongs to;
@@ -121,6 +124,14 @@ module Spree
       def storefront_writable_custom_field_definitions
         custom_field_definition_store.custom_field_definitions.storefront_writable.storefront_visible.
           for_resource_type(self.class.custom_field_definition_resource_type)
+      end
+
+      # Read once per record: every cart response works out its requirements
+      # several times over.
+      #
+      # @return [Array<Spree::CustomFieldDefinition>]
+      def required_storefront_writable_custom_field_definitions
+        @required_storefront_writable_custom_field_definitions ||= storefront_writable_custom_field_definitions.select(&:required?)
       end
 
       scope :with_custom_field_key, ->(key_with_namespace) {
@@ -323,6 +334,11 @@ module Spree
             errors.add("custom_fields[#{index}].key", I18n.t('spree.errors.messages.custom_field_not_storefront_writable'))
           elsif definition.required? && enforce_required_storefront_custom_fields? && storefront_value_missing?(entry[:value])
             errors.add("custom_fields[#{index}].value", I18n.t('spree.errors.messages.custom_field_blank'))
+          elsif entry[:value].to_json.length > STOREFRONT_VALUE_MAX_LENGTH
+            # Anyone with the publishable key can write here, so a value is
+            # capped whatever rules the merchant set.
+            errors.add("custom_fields[#{index}].value",
+                       I18n.t('spree.errors.messages.custom_field_too_long', bound: STOREFRONT_VALUE_MAX_LENGTH))
           else
             @resolved_storefront_custom_fields << [index, definition, entry[:value]]
           end

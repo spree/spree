@@ -51,7 +51,9 @@ module Spree
 
         failure(cart, { code: unavailable_code_for(e), message: unavailable_message_for(e) })
       rescue ActiveRecord::RecordInvalid => e
-        failure(cart, e.record.errors.full_messages.to_sentence)
+        # The errors themselves rather than their sentence, so the API can key
+        # each one to its field (`custom_fields[0].value`).
+        failure(cart, e.record.errors)
       rescue StandardError => e
         failure(cart, e.message)
       end

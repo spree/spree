@@ -312,6 +312,15 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(cart.last_ip_address).to be_nil
       expect(cart.customer_note).to be_nil
     end
+
+    it 'erases what the shopper typed into checkout fields' do
+      definition = create(:custom_field_definition, :for_order, store: store, key: 'gift_message', storefront_writable: true)
+      cart.set_custom_field(definition, 'Happy birthday, Sam')
+
+      result
+
+      expect(cart.reload.custom_fields).to be_empty
+    end
   end
 
   # A split checkout keeps its own address snapshots on the group, beside the

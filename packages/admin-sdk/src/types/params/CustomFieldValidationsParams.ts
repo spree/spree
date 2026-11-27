@@ -4,8 +4,10 @@ import type { CustomFieldChoiceParams } from './CustomFieldChoiceParams'
 
 export type CustomFieldValidationsParams = {
   /**
-   * The value cannot be blank. Marked and checked by the forms that edit the value; the API accepts
-   * a blank value.
+   * The value cannot be blank. Marked and checked by the forms that edit the value, and the Admin
+   * API accepts a blank value. Where shoppers fill a `storefront_writable` field in, it is
+   * enforced: a required order field holds up checkout, and a required customer field must be given
+   * at registration.
    */
   required?: boolean
   /**

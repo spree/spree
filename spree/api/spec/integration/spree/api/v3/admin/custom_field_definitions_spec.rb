@@ -228,7 +228,8 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
                      type: :object,
                      properties: {
                        resource_type: { type: :string, example: 'seller' },
-                       name: { type: :string, example: 'Sellers' }
+                       name: { type: :string, example: 'Sellers' },
+                       storefront_writable: { type: :boolean, example: false }
                      }
                    }
                  }

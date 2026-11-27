@@ -28,7 +28,7 @@ module Spree
             body.attribute :storefront_writable, :boolean, description: <<~TEXT.squish
               Shoppers fill the field in through the Store API: an order field at checkout, a customer field at registration
               and from their account. Only order and customer fields take it, and the field must also be `storefront_visible`.
-              Defaults to false.
+              Not available for `json` and `rich_text` fields. Defaults to false.
             TEXT
             body.attribute :searchable, :boolean, description: <<~TEXT.squish
               Include values in storefront product text search.
@@ -43,7 +43,9 @@ module Spree
               so existing values stay readable after a rule changes. Replaces the stored rules; send null to remove every rule.
             TEXT
               rules.attribute :required, :boolean, description: <<~TEXT.squish
-                The value cannot be blank. Marked and checked by the forms that edit the value; the API accepts a blank value.
+                The value cannot be blank. Marked and checked by the forms that edit the value, and the Admin API accepts a
+                blank value. Where shoppers fill a `storefront_writable` field in, it is enforced: a required order field
+                holds up checkout, and a required customer field must be given at registration.
               TEXT
               rules.attribute :min, :any, description: <<~TEXT.squish
                 Inclusive lower bound: a character count for `short_text` and `long_text`, a number for `number`,

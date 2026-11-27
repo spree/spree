@@ -151,6 +151,11 @@ module Spree
       text_value
     end
 
+    # The value as a shopper or seller reads it.
+    def display_value
+      text_value
+    end
+
     #
     # Deprecated 6.0 names, removed in 6.3
     #
@@ -225,8 +230,8 @@ module Spree
 
       definition_type = custom_field_definition.resource_type
       return if resource_type == definition_type
-      # The one exception: a cart holds its order's fields until checkout completes.
-      return if resource_type == 'Spree::Cart' && definition_type == 'Spree::Order'
+      # A record may hold another's fields: a cart holds its order's until checkout completes.
+      return if resource_type.safe_constantize.try(:custom_field_definition_resource_type) == definition_type
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
       errors.add(:resource_type, :custom_field_definition_mismatch,

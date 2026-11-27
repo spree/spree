@@ -108,7 +108,7 @@ module Spree
               @cart = result.value
               render_cart(status: :created)
             else
-              render_service_error(result.error.to_s)
+              render_service_error(result.error)
             end
           end
 

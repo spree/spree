@@ -18435,6 +18435,9 @@ paths:
                 error:
                   code: processing_error
                   message: Requirements Accept terms is not complete
+                  details:
+                    requirements:
+                    - Accept terms is not complete
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/onboarding/payout_account":
@@ -22194,6 +22197,10 @@ paths:
                   code: processing_error
                   message: Only a draft or a product needing changes can be submitted
                     for review.
+                  details:
+                    base:
+                    - Only a draft or a product needing changes can be submitted for
+                      review.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/products/{id}/draft":
@@ -24871,12 +24878,17 @@ components:
         key:
           type: string
         value: {}
+        display_value:
+          type: string
+          description: 'The value as text to show: the labels of the chosen options
+            for a choice field.'
       required:
       - id
       - label
       - field_type
       - key
       - value
+      - display_value
       x-typelizer: true
     OptionValue:
       type: object
