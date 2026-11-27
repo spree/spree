@@ -12,8 +12,21 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id amount transaction_id payment_id refund_reason_id originator_id originator_type reimbursement_id
+      id amount transaction_id payment_id refund_reason_id originator_id originator_type store_credit_id reimbursement_id
     ])
+  end
+
+  it 'leaves store_credit_id null for a refund to the payment' do
+    expect(subject['store_credit_id']).to be_nil
+  end
+
+  context 'when the refund was paid as store credit' do
+    let(:credit) { create(:store_credit, store: store, amount: 10) }
+    let(:refund) { create(:refund, payment: payment, amount: 10, store_credit: credit, transaction_id: credit.prefixed_id) }
+
+    it 'names the credit' do
+      expect(subject['store_credit_id']).to eq(credit.prefixed_id)
+    end
   end
 
   context 'when the refund was issued for a return' do

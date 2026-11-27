@@ -66,20 +66,30 @@ module Spree
 
       # Locked because a redelivery of the same outcome races this one, and
       # the capture request that wrote the record may still be finishing.
+      #
+      # The payment's orders are locked before the payment itself, in the
+      # order returns, claims and exchanges take them (the order, then
+      # Spree::Refunds::Create the payment): settling a share writes its
+      # order's payment total, so a payment-first lock here would deadlock
+      # against a refund holding the order.
       def apply_outcome
-        payment.with_lock do
-          record.reload
-          # A session payment carries no Spree-side source unless its gateway
-          # built one, so the requirement is skipped, as settlement does.
-          payment.skip_source_requirement = true if payment.source.blank?
+        ApplicationRecord.transaction do
+          Spree::Order.where(id: payment_order_ids).order(:id).lock.pluck(:id)
 
-          case action
-          when :capture_succeeded then capture_succeeded
-          when :capture_failed then capture_failed
-          when :void_succeeded then void_succeeded
-          when :void_failed then void_failed
-          when :refund_succeeded then refund_succeeded
-          when :refund_failed then refund_failed
+          payment.with_lock do
+            record.reload
+            # A session payment carries no Spree-side source unless its gateway
+            # built one, so the requirement is skipped, as settlement does.
+            payment.skip_source_requirement = true if payment.source.blank?
+
+            case action
+            when :capture_succeeded then capture_succeeded
+            when :capture_failed then capture_failed
+            when :void_succeeded then void_succeeded
+            when :void_failed then void_failed
+            when :refund_succeeded then refund_succeeded
+            when :refund_failed then refund_failed
+            end
           end
         end
       end
@@ -146,7 +156,7 @@ module Spree
       # the outcome turns that claim into captured money, or releases it.
       def settle_claimed_share(amount, captured:)
         remaining = amount
-        payment.payment_splits.each do |split|
+        payment.payment_splits.order(:id).each do |split|
           next unless split.capture_in_flight? && remaining.positive?
 
           # Under the share's own lock, as dispatch writes it, so a parcel
@@ -160,7 +170,7 @@ module Spree
 
       def take_back_captured_share(amount)
         remaining = amount
-        payment.payment_splits.each do |split|
+        payment.payment_splits.order(:id).each do |split|
           taken_back = split.with_lock do
             [split.captured_amount, remaining].min.tap do |amount|
               split.update!(captured_amount: split.captured_amount - amount) if amount.positive?
@@ -211,7 +221,11 @@ module Spree
       end
 
       def payment_orders
-        payment.grouped? ? Spree::Order.where(id: payment.payment_splits.select(:order_id)).to_a : [payment.order]
+        payment.grouped? ? Spree::Order.where(id: payment_order_ids).to_a : [payment.order]
+      end
+
+      def payment_order_ids
+        payment.grouped? ? payment.payment_splits.pluck(:order_id) : [payment.order_id].compact
       end
     end
   end

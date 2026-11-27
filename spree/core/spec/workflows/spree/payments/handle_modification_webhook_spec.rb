@@ -38,6 +38,20 @@ RSpec.describe Spree::Payments::HandleModificationWebhook do
       expect(Spree::Events).to published?('payment.captured')
     end
 
+    # A return's refund locks the order and then the payment, and settling a
+    # capture writes the order; the other way round the two deadlock.
+    it 'locks the order before the payment' do
+      locked = []
+      allow_any_instance_of(ActiveRecord::Relation).to receive(:lock).and_wrap_original do |original, *args|
+        locked << original.receiver.klass.base_class
+        original.call(*args)
+      end
+
+      outcome(:capture_succeeded, capture_event)
+
+      expect(locked.uniq.first(2)).to eq([Spree::Order, Spree::Payment])
+    end
+
     it 'completes a session payment that carries no source' do
       payment.update_columns(source_id: nil, source_type: nil)
 

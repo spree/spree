@@ -32,6 +32,10 @@ module Spree
                                 inverse_of: :store_credit_refunds
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
+    # The refund rows that record this credit as money an order gave back —
+    # one per payment it was drawn against. Kept when the credit is withdrawn,
+    # and marked failed instead (see #withdraw_refunds).
+    has_many :refunds, class_name: 'Spree::Refund', inverse_of: :store_credit, dependent: nil
     has_many :payments, as: :source, class_name: 'Spree::Payment'
     has_many :orders, through: :payments, class_name: 'Spree::Order'
 
@@ -40,6 +44,9 @@ module Spree
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
+    # Its refund rows record the amount as given back, so changing it would
+    # leave the order's refunds saying something the credit no longer does.
+    validate :amount_unchanged_once_refunded, on: :update
 
     # Redemption order: the oldest credit is spent first.
     scope :oldest_first, -> { order(:created_at, :id) }
@@ -99,8 +106,12 @@ module Spree
       end
     }
 
-    after_save :store_event
+    before_destroy :lock_for_destroy
     before_destroy :validate_no_amount_used
+    before_destroy :withdraw_refunds
+    after_destroy :refresh_withdrawn_orders
+    after_save :store_event
+    after_commit :announce_withdrawn_refunds, on: :destroy
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
@@ -329,11 +340,79 @@ module Spree
       end
     end
 
+    def amount_unchanged_once_refunded
+      errors.add(:amount, :refunded) if amount_changed? && refunds.exists?
+    end
+
+    # Also refused while part of it is authorized on a cart: that cart could
+    # still capture it once deleted.
     def validate_no_amount_used
       if amount_used > 0
         errors.add(:amount_used, :greater_than_zero_restrict_delete)
         throw(:abort)
+      elsif amount_authorized.positive?
+        errors.add(:amount_authorized, :greater_than_zero_restrict_delete)
+        throw(:abort)
       end
+    end
+
+    # Takes the locks the destroy needs before anything is read: the orders
+    # its refunds were recorded against, in id order, then the credit itself,
+    # re-read. Refund creation and the backfill lock the order before they
+    # write a refund for the credit, and an authorization locks the credit,
+    # so neither can land between the guard below and the withdrawal. The
+    # order-then-credit order matches theirs, so the two cannot deadlock.
+    def lock_for_destroy
+      order_ids = (refunds.not_failed.distinct.pluck(:order_id) + [refunded_order_id]).compact.uniq.sort
+      @withdrawn_orders = Spree::Order.where(id: order_ids).order(:id).lock.to_a
+      # The re-read clears how the destroy was reached; keep it.
+      by_association = destroyed_by_association
+      lock!
+      self.destroyed_by_association = by_association
+    end
+
+    # A credit withdrawn before it was spent gave the order nothing back after
+    # all, so the refunds that recorded it fail — in the same transaction, so
+    # they cannot be left standing. Not when the credit goes with its
+    # customer: that money was given back, and the refunds stand.
+    def withdraw_refunds
+      return if destroyed_by_association
+
+      @withdrawn_refunds = refunds.not_failed.lock.to_a
+      @withdrawn_refunds.each do |refund|
+        refund.update!(status: 'failed', failure_reason: I18n.t('spree.store_credit_withdrawn'))
+      end
+    end
+
+    # Once the credit is gone, still inside the destroy's transaction: before
+    # then the order would count it as credit given back that no refund
+    # records.
+    def refresh_withdrawn_orders
+      Array(@withdrawn_orders).each { |order| refresh_refunded_order(order) } unless destroyed_by_association
+      @withdrawn_orders = nil
+    end
+
+    # What refund.failed would move, moved here so it cannot be skipped: each
+    # share's refunded figure — under the share's lock, from a locking read,
+    # so a refund landing on it meanwhile is not overwritten — and the
+    # order's payment total and statuses.
+    def refresh_refunded_order(order)
+      order.payment_splits.order(:id).each do |split|
+        split.with_lock do
+          refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: order.id).
+                     lock.pluck(:amount).sum(0.to_d)
+          split.update!(refunded_amount: refunded)
+        end
+      end
+      order.refresh_payment_total!
+      order.update_statuses!
+    end
+
+    # Announced once committed, so the split share and the order's payment
+    # total and status follow, as for any refund that failed.
+    def announce_withdrawn_refunds
+      Array(@withdrawn_refunds).each { |refund| refund.publish_event('refund.failed') }
+      @withdrawn_refunds = nil
     end
   end
 end

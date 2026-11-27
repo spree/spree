@@ -39,5 +39,69 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
       expect(response).to have_http_status(:created)
       expect(json_response['amount']).to eq('5.00')
     end
+
+    # The credit is recorded as a refund against the payment, so the payment's
+    # balance already leaves it out and a card refund cannot give the same
+    # money back again (V-3832).
+    context 'after a return was refunded as store credit' do
+      let(:return_record) { create(:received_return, store: store) }
+      let(:order) { return_record.order }
+      let(:payment) { order.payments.completed.first }
+      let(:credited) { return_record.refund_total }
+
+      before do
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
+        expect(result).to be_success
+      end
+
+      def refund(amount)
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_id: payment.prefixed_id,
+          amount: Spree::Money::Rounding.format(amount, 'USD')
+        }, as: :json
+      end
+
+      it 'refuses to refund the whole payment and records nothing' do
+        expect { refund(payment.amount) }.not_to change(Spree::Refund, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'refunds what the store credit left' do
+        expect { refund(payment.amount - credited) }.to change(Spree::Refund, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'lists the credit as a refund naming the store credit it was paid as' do
+        get :index, params: { order_id: order.prefixed_id }, as: :json
+
+        credit = Spree::StoreCredit.find_by!(originator: return_record)
+        expect(json_response['data'].pluck('store_credit_id')).to eq([credit.prefixed_id])
+        expect(json_response['data'].first['amount']).to eq(Spree::Money::Rounding.format(credited, 'USD'))
+      end
+    end
+
+    # Credit issued before credit was recorded as refunds has no refund row
+    # until the upgrade backfills it; it still bounds a card refund (V-3832).
+    context 'after store credit not yet recorded as refunds gave the whole order back' do
+      before do
+        create(:store_credit, refunded_order: order, customer: order.customer, store: store, amount: payment.amount)
+      end
+
+      it 'refuses a card refund and records nothing' do
+        expect {
+          post :create, params: {
+            order_id: order.prefixed_id, payment_id: payment.prefixed_id,
+            amount: Spree::Money::Rounding.format(payment.amount, 'USD')
+          }, as: :json
+        }.not_to change(Spree::Refund, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(I18n.t('spree.refund_exceeds_order_balance'))
+      end
+    end
   end
 end

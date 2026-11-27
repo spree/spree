@@ -12,6 +12,7 @@ export const RefundSchema = z.object({
   refund_reason_id: z.string().nullable(),
   originator_id: z.string().nullable(),
   originator_type: z.string().nullable(),
+  store_credit_id: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
   status: z.string(),
   failure_reason: z.string().nullable(),
@@ -30,6 +31,7 @@ export const RefundSchema = z.object({
   refund_reason_id: z.ZodType<Refund['refund_reason_id']>;
   originator_id: z.ZodType<Refund['originator_id']>;
   originator_type: z.ZodType<Refund['originator_type']>;
+  store_credit_id: z.ZodType<Refund['store_credit_id']>;
   metadata: z.ZodType<Refund['metadata']>;
   status: z.ZodType<Refund['status']>;
   failure_reason: z.ZodType<Refund['failure_reason']>;

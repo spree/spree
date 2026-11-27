@@ -99,10 +99,100 @@ RSpec.describe Spree::Orders::Cancel, 'an order placed in a split checkout' do
       expect(first_party_split.reload.captured_amount).to eq(60)
     end
 
+    # The order's reported refunded figure trails its refund rows, so a check
+    # against it would pass an amount settlement then cannot refund, and the
+    # order would be canceled with less given back than was asked.
+    it 'refuses an amount settlement cannot refund before canceling anything' do
+      create(:refund, payment: payment, order: seller_order, amount: 25)
+      seller_split.update_columns(refunded_amount: 0)
+
+      result = described_class.call(order: seller_order, refund_payments: true, refund_amount: 40)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_exceeds_order_balance)
+      expect(seller_order.reload).not_to be_canceled
+    end
+
+    # Checked again under the order lock: a before_cancel hook (or a refund
+    # landing meanwhile) can give money back after the first check passed.
+    context 'when a before_cancel hook gives part of the balance back' do
+      let(:handler) { ->(_flow) { create(:refund, payment: payment, order: seller_order, amount: 25) } }
+
+      before { Spree.hooks.register('orders.cancel.before_cancel', handler) }
+      after { Spree.hooks.unregister('orders.cancel.before_cancel', handler) }
+
+      it 'refuses the amount before canceling anything' do
+        result = described_class.call(order: seller_order, refund_payments: true, refund_amount: 40)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_order_balance)
+        expect(seller_order.reload).not_to be_canceled
+      end
+    end
+
     it 'honours an explicit smaller amount' do
       described_class.call(order: seller_order, refund_payments: true, refund_amount: 15)
 
       expect(Spree::Refund.where(order_id: seller_order.id).sum(:amount)).to eq(15)
+    end
+
+    # A refund still waiting on its provider is not yet in the share's
+    # refunded column, but Refunds::Create counts it. Sizing a share's refund
+    # from the column alone would ask for more than the workflow allows, fail
+    # after the order already reads canceled, and leave the next share
+    # unsettled.
+    context 'when one of two shares has a refund still requested' do
+      let(:payment_a) do
+        create(:payment, order: nil, cart: nil, order_group: group, amount: 100, status: 'completed')
+      end
+      let(:payment_b) do
+        create(:payment, order: nil, cart: nil, order_group: group, amount: 50, status: 'completed')
+      end
+      let!(:share_a) do
+        create(:payment_split, payment: payment_a, order: seller_order, authorized_amount: 100, captured_amount: 100)
+      end
+      let!(:share_b) do
+        create(:payment_split, payment: payment_b, order: seller_order, authorized_amount: 50, captured_amount: 50)
+      end
+
+      before do
+        seller_split.destroy!
+        create(:refund, :requested, payment: payment_a, order: seller_order, amount: 30)
+        share_a.update_columns(refunded_amount: 0)
+      end
+
+      it 'refunds each share only what it can still give back' do
+        result = described_class.call(order: seller_order, refund_payments: true)
+
+        expect(result).to be_success
+        expect(Spree::Refund.where(payment: payment_a, status: 'completed').sum(:amount)).to eq(70)
+        expect(Spree::Refund.where(payment: payment_b, status: 'completed').sum(:amount)).to eq(50)
+      end
+    end
+
+    # Store credit given back is a refund against the order's share, so the
+    # share already leaves it out (V-3832).
+    context 'after part of the order was given back as store credit' do
+      before do
+        give_back_as_store_credit(seller_order, 30)
+      end
+
+      it 'gives back only what the credit left' do
+        result = described_class.call(order: seller_order, refund_payments: true)
+
+        expect(result).to be_success
+        expect(Spree::Refund.to_original_payment.where(order_id: seller_order.id).sum(:amount)).to eq(10)
+        expect(first_party_split.reload.refunded_amount).to eq(0)
+      end
+
+      it 'refuses an explicit amount above that before canceling anything' do
+        result = described_class.call(order: seller_order, refund_payments: true, refund_amount: 40)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_order_balance)
+        expect(seller_order.reload).not_to be_canceled
+        expect(Spree::Refund.to_original_payment.where(order_id: seller_order.id)).to be_empty
+      end
     end
   end
 end

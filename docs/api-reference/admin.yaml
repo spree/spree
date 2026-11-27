@@ -45629,6 +45629,7 @@ paths:
                 refund_reason_id: rr_UkLWZg9DAJ
                 originator_id:
                 originator_type:
+                store_credit_id:
                 metadata: {}
                 status: completed
                 failure_reason:
@@ -74414,6 +74415,11 @@ components:
         originator_type:
           type: string
           nullable: true
+        store_credit_id:
+          type: string
+          nullable: true
+          description: The store credit the money went back as; null when it went
+            back to the payment.
         metadata:
           type: object
         status:

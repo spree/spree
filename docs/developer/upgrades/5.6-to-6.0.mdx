@@ -270,6 +270,39 @@ the store, so they were missing from that list while tags added one at a time
 were not. This stamps the record's store on every tagging without one. Safe to
 re-run at any time.
 
+### Record store credit given back for orders as refunds
+
+```bash
+spree upgrade --step backfill_store_credit_refunds
+```
+
+Store credit that a return, claim or exchange gives back is recorded as a
+refund against the order's payment, named by the refund's `store_credit_id`,
+so the payment cannot give the same money back again by card or when the order
+is canceled. This writes those refunds for credit issued before that change,
+oldest payment first, without sending webhooks or reversing seller earnings. A
+credit larger than what the order's payments can still refund is recorded as
+far as they allow and counted under `credits_partly_unallocated`, and one they
+cannot take at all under `credits_unallocatable`. It supports a preview and is
+safe to re-run. Until it runs, and for any part it cannot record, the credit is
+still counted against its order, so nothing can be given back twice meanwhile.
+
+What changes for integrations:
+
+- Giving back store credit now also creates refunds, so `refund.created` and
+  `payment.refunded` webhooks and subscribers, and handlers registered on the
+  `refunds.create` hooks, run for it too. Those hooks run inside the
+  transaction of the return, claim or exchange. A refund paid as store credit
+  carries `store_credit_id`, and its `transaction_id` is the credit's id; no
+  payment provider is called.
+- On a marketplace, a store-credit refund on a seller's order reverses the
+  seller's earnings, as a refund to the card does. Withdrawing the credit later
+  fails its refunds but does not restore the earnings, the same as a provider
+  refund that fails after completing.
+- A credit issued as a refund cannot change amount. Deleting an unspent one
+  marks its refunds `failed`; a credit that is used, or authorized on a cart,
+  cannot be deleted.
+
 ### Move users onto the Customer and AdminUser models
 
 ```bash

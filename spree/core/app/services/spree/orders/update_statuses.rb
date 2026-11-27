@@ -62,14 +62,14 @@ module Spree
       # shipped and been captured while another has not, no proportion of the
       # group's totals can describe either.
       #
-      # Refunded spans both ledgers. A refund paid as store credit writes no
-      # {Spree::Refund} row, and counting only those rows left an order that
-      # had given every penny back still reading `paid`.
+      # Refunded counts every refund row, store credit included: credit given
+      # back for an order is recorded as refunds against its payments. Credit
+      # issued before that, and not yet backfilled, is added on top.
       #
       # @return [Array(BigDecimal, BigDecimal, BigDecimal)] captured,
       #   authorized and refunded, in that order
       def money_for(order)
-        credited = order.store_credit_refunds.sum(:amount)
+        unrecorded = order.unrecorded_store_credit_refund_total
 
         unless order.order_group_id.present?
           # A payment waiting on its provider's answer to a capture or void
@@ -77,7 +77,7 @@ module Spree
           return [
             order.payments.valid.completed.sum(:amount),
             order.payments.valid.with_status(:pending, :requested).sum(:amount),
-            order.refunds.completed_or_unset.sum(:amount) + credited
+            order.refunds.completed_or_unset.sum(:amount) + unrecorded
           ]
         end
 
@@ -86,7 +86,7 @@ module Spree
 
         # Authorized means still to draw: what the shares allow, less what has
         # already been taken against them.
-        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount) + credited]
+        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount) + unrecorded]
       end
 
       # Rolls the fulfillments up into one word for filtering and display.

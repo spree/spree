@@ -1,6 +1,6 @@
 module Spree
   # The trigger side of derive-then-persist statuses: any payment, refund,
-  # store credit, fulfillment or return change recomputes the owning order's
+  # fulfillment or return change recomputes the owning order's
   # payment_status / fulfillment_status through the single writer
   # (Spree::Orders::UpdateStatuses). Synchronous so API responses right
   # after a capture/void/fulfill already carry the fresh status. Cart-owned
@@ -15,16 +15,15 @@ module Spree
     subscribes_to 'payment.created', 'payment.updated', 'payment.deleted',
                   'payment.completed', 'payment.captured', 'payment.voided',
                   'refund.created', 'refund.updated', 'payment.refunded', 'refund.failed',
-                  'store_credit.created', 'store_credit.updated', 'store_credit.deleted',
                   'fulfillment.created', 'fulfillment.updated', 'fulfillment.deleted',
                   'return.received', 'return.refunded', 'return.canceled',
                   async: false
 
     # Events whose payload changes what the customer has actually paid, so
-    # payment_total has to be re-summed before statuses derive from it.
-    # Store credit is not one of them: the money stayed with the store, and
-    # payment_total is what came in through payments. A refund counts once it
-    # completes (payment.refunded) and stops counting if it fails.
+    # payment_total has to be re-summed before statuses derive from it. A
+    # refund counts once it completes (payment.refunded) and stops counting if
+    # it fails. Store credit given back for an order is recorded as refunds,
+    # so it arrives as these events too; a withdrawn credit fails its refunds.
     MONEY_EVENTS = %w[
       payment.created payment.updated payment.deleted payment.completed
       payment.voided refund.created refund.updated payment.refunded refund.failed
@@ -67,15 +66,13 @@ module Spree
       resource_class = {
         'payment' => Spree::Payment,
         'refund' => Spree::Refund,
-        'store_credit' => Spree::StoreCredit,
         'fulfillment' => Spree::Fulfillment,
         'return' => Spree::Return
       }[event.resource_type]
       return if resource_class.nil?
 
       # A paranoid model's .deleted event leaves the row in place but out of
-      # default scope, and a credit that has been withdrawn is exactly the
-      # kind of change the order has to learn about.
+      # default scope, and the order still has to learn about the change.
       record = (resource_class.try(:with_deleted) || resource_class).
                find_by_prefix_id(event.payload['id'])
       # Neither Payment nor Fulfillment is paranoid, so their .deleted events
@@ -84,7 +81,7 @@ module Spree
       # order money recalculate from their own after_destroy instead.
       return if record.nil?
 
-      record.try(:owner) || record.try(:order) || record.try(:refunded_order) ||
+      record.try(:owner) || record.try(:order) ||
         record.try(:payment)&.try(:owner)
     end
   end

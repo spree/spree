@@ -264,9 +264,24 @@ RSpec.describe 'Spree::Returns workflows' do
         credit = Spree::StoreCredit.find_by(originator: return_record)
         expect(credit).to be_present
         expect(credit.amount).to eq(return_record.refund_total)
-        # Credit writes no refund row, so naming the order is the only way the
-        # order can tell it gave anything back.
         expect(credit.refunded_order).to eq(return_record.order)
+      end
+
+      # The credit is money the order gave back, so it is recorded as a refund
+      # against the payment — paid as the credit, never at the gateway.
+      it 'records the credit as a refund against the payment without calling the gateway' do
+        expect_any_instance_of(Spree::Refund).not_to receive(:perform!)
+        payment = return_record.order.payments.completed.first
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        credit = Spree::StoreCredit.find_by(originator: return_record)
+        refund = payment.refunds.sole
+        expect(refund).to have_attributes(store_credit: credit, originator: return_record, status: 'completed',
+                                          amount: credit.amount, order: return_record.order)
+        expect(refund.tax_amount).to eq(return_record.reload.credited_tax_total)
+        # Counted once, from the credit.
+        expect(return_record.refunded_total).to eq(credit.amount)
       end
 
       it 'credits only the lines that actually arrived' do
@@ -380,6 +395,64 @@ RSpec.describe 'Spree::Returns workflows' do
           expect(result.error.value).to eq(:refund_exceeds_balance)
           expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
         end
+      end
+
+      # The credit being issued has no refund rows until they are written, so
+      # it must not count against the balance it is drawing on.
+      context 'when the credit takes everything the payment can still give back' do
+        let(:payment) { return_record.order.payments.completed.sole }
+
+        before { payment.update_columns(amount: return_record.refund_total) }
+
+        it 'records all of it' do
+          result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+          expect(result).to be_success
+          expect(payment.reload.credit_allowed).to eq(0)
+        end
+
+        it 'records what credit not yet recorded as refunds left, and refuses more' do
+          order = return_record.order
+          legacy = (return_record.refund_total / 4).round(2)
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: legacy)
+
+          refused = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+          expect(refused.error.value).to eq(:refund_exceeds_paid)
+
+          result = Spree::Returns::Refund.call(return_record: return_record.reload, refund_method: 'store_credit',
+                                               amount: return_record.refund_total - legacy)
+          expect(result).to be_success
+          expect(payment.reload.credit_allowed).to eq(legacy)
+        end
+      end
+
+      # Credit issued before credit was recorded as refunds has no refund row
+      # until the upgrade backfills it, and still counts against the order.
+      it 'refuses a return once credit not yet recorded as refunds gave the order back' do
+        order = return_record.order
+        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store,
+                              amount: order.payments.completed.sum(:amount))
+
+        result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(result.error.value).to eq(:refund_exceeds_paid)
+        expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
+      end
+
+      # The credit is a refund against the card's payment, so the card's own
+      # balance leaves out what the order already gave back (V-3832).
+      it 'leaves the card only what the credit did not give back' do
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+        payment = return_record.order.payments.completed.first
+        credited = return_record.refund_total
+
+        Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
+
+        refused = Spree.refund_create_workflow.call(payment: payment, amount: payment.amount)
+        expect(refused.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds.to_original_payment).to be_empty
+
+        expect(Spree.refund_create_workflow.call(payment: payment, amount: payment.amount - credited)).to be_success
       end
 
       it 'lets a validate handler veto before any credit is issued' do

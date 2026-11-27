@@ -137,7 +137,8 @@ module Spree
           amount: @amount_to_refund,
           record: claim,
           memo: "Claim #{claim.number}",
-          refunder: resolver
+          refunder: resolver,
+          tax_amount: @tax_amount
         )
       end
 

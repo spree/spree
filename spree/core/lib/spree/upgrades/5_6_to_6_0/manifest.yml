@@ -941,3 +941,24 @@ steps:
       missing from the list. This stamps the store of the record on every
       tagging without one, for each taggable that keeps its taggings per
       store. Idempotent — taggings that already carry a store are skipped.
+
+  - id: backfill_store_credit_refunds
+    name: "Record store credit given back for orders as refunds"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillStoreCreditRefunds"
+    notes: |
+      Store credit issued by a return, claim or exchange is now recorded as
+      refunds against the order's payments, so a later refund to the card or
+      an order cancellation cannot give the same money back again. This writes
+      those refunds for credit issued before that change, oldest payment
+      first. It publishes no events: no webhook, gateway call or seller
+      earnings reversal follows. A credit larger than what its order's
+      payments can still refund is recorded as far as they allow and counted
+      under `credits_partly_unallocated`; one they cannot take at all is
+      counted under `credits_unallocatable`. Until it runs, and for anything
+      it cannot record, the credit is still counted against its order, so the
+      same money cannot go back twice.
+
+      Stores already on 6.0 run it after updating to that patch release, with
+      `spree upgrade --step backfill_store_credit_refunds`.
+
+      Idempotent, and supports a dry run.

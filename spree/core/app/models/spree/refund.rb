@@ -29,6 +29,11 @@ module Spree
     # or Claim; nil for a manual refund. Deliberately polymorphic: the set is
     # small and closed, and refunds are never bulk-queried in a hot path.
     belongs_to :originator, polymorphic: true, optional: true
+    # The credit this refund was paid with, when the money went back as store
+    # credit rather than to the payment. Such a refund never reaches the
+    # payment's gateway; it is written completed, with the credit's id as its
+    # transaction id, and counts against the payment like any other refund.
+    belongs_to :store_credit, class_name: 'Spree::StoreCredit', optional: true, inverse_of: :refunds
 
     with_options presence: true do
       # not required on create — perform! sets it after the gateway credit
@@ -41,6 +46,9 @@ module Spree
     # Refunds for goods that came back, which settle what the customer owed
     # for them rather than leaving it owed again.
     scope :for_returned_items, -> { where(originator_type: returned_item_originators) }
+    # Refunds paid back to the payment itself, as opposed to as store credit.
+    scope :to_original_payment, -> { where(store_credit_id: nil) }
+    scope :to_store_credit, -> { where.not(store_credit_id: nil) }
 
     # @return [Array<String>]
     def self.returned_item_originators
@@ -66,8 +74,14 @@ module Spree
     end
     alias display_amount money
 
+    # What the money went back as: the payment's method, or store credit.
     def description
-      payment.payment_method.name
+      to_store_credit? ? I18n.t('spree.store_credit_name') : payment.payment_method.name
+    end
+
+    # @return [Boolean] whether the money went back as store credit
+    def to_store_credit?
+      store_credit_id.present?
     end
 
     # The lines this refund paid for, when it came from a return.

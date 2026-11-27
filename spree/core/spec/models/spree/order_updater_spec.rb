@@ -220,13 +220,13 @@ module Spree
         end
       end
 
-      # A refund paid as store credit writes no Spree::Refund row, so an order
-      # settled that way used to read `paid` on money already given back.
+      # Store credit given back for an order is recorded as refunds against its
+      # payments, so an order settled that way reads as refunded.
       context 'refunded to store credit' do
         before { create(:payment, order: order, amount: order_total, status: 'completed') }
 
         it 'is partially_refunded when part of it came back as credit' do
-          create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order_total - 1)
+          give_back_as_store_credit(order, order_total - 1)
 
           updater.update_payment_state
 
@@ -234,6 +234,16 @@ module Spree
         end
 
         it 'is refunded when all of it came back as credit' do
+          give_back_as_store_credit(order, order_total)
+
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('refunded')
+        end
+
+        # Until the upgrade backfills it, credit issued before credit was
+        # recorded as refunds counts on its own.
+        it 'is refunded when all of it came back as credit not yet recorded as refunds' do
           create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order_total)
 
           updater.update_payment_state

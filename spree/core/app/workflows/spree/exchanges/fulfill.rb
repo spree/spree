@@ -124,7 +124,8 @@ module Spree
           amount: credit_amount,
           record: exchange,
           memo: "Exchange #{exchange.number}",
-          refunder: refunder
+          refunder: refunder,
+          tax_amount: received_lines.sum(0.to_d, &:settled_tax)
         )
       end
 

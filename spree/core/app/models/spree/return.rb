@@ -162,14 +162,15 @@ module Spree
     end
 
     # What has actually been refunded so far — a return can be refunded in
-    # more than one step (part to store credit, part to the card), and store
-    # credit is its own ledger rather than a Spree::Refund row.
+    # more than one step (part to store credit, part to the card). Store
+    # credit is counted from the credits themselves rather than from the
+    # refunds that record them, so a credit is counted once.
     # A failed refund gave nothing back; one still requested holds its amount.
     def refunded_total
       refunds_given = if read_association_in_memory?(:refunds)
-                        refunds.reject(&:failed?).sum(0.to_d, &:amount)
+                        refunds.reject { |refund| refund.failed? || refund.to_store_credit? }.sum(0.to_d, &:amount)
                       else
-                        refunds.not_failed.sum(:amount)
+                        refunds.not_failed.to_original_payment.sum(:amount)
                       end
       refunds_given + ledger_total(:store_credits)
     end

@@ -65,6 +65,120 @@ describe Spree::StoreCredit, type: :model do
         expect(subject.errors[:amount_authorized]).to include(text)
       end
     end
+
+    # Its refunds record the amount as what the order gave back.
+    describe 'amount of a credit issued as a refund' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+      let(:credit) { give_back_as_store_credit(order, 10) }
+
+      it 'cannot change' do
+        credit.amount = 5
+
+        expect(credit).not_to be_valid
+        expect(credit.errors[:amount]).to include(I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount.refunded'))
+      end
+
+      it 'leaves the memo editable' do
+        expect(credit.update(memo: 'Return R1')).to be(true)
+      end
+    end
+  end
+
+  describe 'withdrawing a credit' do
+    let(:order) { create(:completed_order_with_totals) }
+    let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+    # A cart holding the authorization could still capture it once deleted.
+    it 'is refused while part of it is authorized on a cart' do
+      credit = create(:store_credit, amount: 10, amount_authorized: 5)
+
+      expect(credit.destroy).to be(false)
+      expect(credit.reload).not_to be_deleted
+    end
+
+    # A cart may authorize it after this copy was loaded; the guard reads the
+    # row as locked, not the stale copy.
+    it 'is refused when an authorization landed after it was loaded' do
+      credit = create(:store_credit, amount: 10)
+      described_class.where(id: credit.id).update_all(amount_authorized: 5)
+
+      expect(credit.destroy).to be(false)
+      expect(credit.reload).not_to be_deleted
+    end
+
+    context 'when it was issued as a refund' do
+      let!(:credit) { give_back_as_store_credit(order, 10) }
+
+      it 'fails its refunds in the same transaction, so the payment can give the money back again' do
+        credit.destroy!
+
+        refund = credit.refunds.sole
+        expect(refund).to be_failed
+        expect(refund.failure_reason).to eq(I18n.t('spree.store_credit_withdrawn'))
+        expect(payment.reload.credit_allowed).to eq(payment.amount)
+      end
+
+      # Refreshed with the credit already gone, inside the destroy, so the
+      # order reads right without any event consumer.
+      it 'leaves the order paid without relying on refund.failed' do
+        order.update_columns(payment_total: payment.amount - 10, payment_status: 'partially_refunded')
+
+        Spree::Events.disable { credit.destroy! }
+
+        expect(order.reload.payment_status).to eq('paid')
+        expect(order.payment_total).to eq(payment.amount)
+      end
+
+      # Refund creation locks the order before its payment and refund rows;
+      # withdrawing in the other order could deadlock against it.
+      it 'locks the order before the refunds it fails' do
+        locked = []
+        allow_any_instance_of(ActiveRecord::Relation).to receive(:lock).and_wrap_original do |original, *args|
+          locked << original.receiver.klass.base_class
+          original.call(*args)
+        end
+
+        credit.destroy!
+
+        expect(locked).to include(Spree::Order, Spree::Refund)
+        expect(locked.index(Spree::Order)).to be < locked.index(Spree::Refund)
+      end
+
+      # Refund creation and the backfill lock the order before the credit.
+      it 'locks the order before the credit itself' do
+        calls = []
+        allow_any_instance_of(ActiveRecord::Relation).to receive(:lock).and_wrap_original do |original, *args|
+          calls << original.receiver.klass.base_class
+          original.call(*args)
+        end
+        allow(credit).to receive(:lock!).and_wrap_original do |original, *args|
+          calls << :credit
+          original.call(*args)
+        end
+
+        credit.destroy!
+
+        expect(calls.index(Spree::Order)).to be < calls.index(:credit)
+      end
+
+      it 'announces each failed refund once committed' do
+        refund = credit.refunds.sole
+        expect_any_instance_of(Spree::Refund).to receive(:publish_event).with('refund.failed') do |instance|
+          expect(instance.id).to eq(refund.id)
+        end
+
+        credit.destroy!
+      end
+
+      # The money was given back; the customer going does not undo that.
+      it 'keeps its refunds when it goes with its customer' do
+        credit.destroyed_by_association = Spree.customer_class.reflect_on_association(:store_credits)
+        credit.destroy!
+
+        expect(credit.refunds.sole.reload).to be_completed
+      end
+    end
   end
 
   describe '.oldest_first' do

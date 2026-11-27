@@ -55,7 +55,7 @@ module Spree
         # Read and written under the row's lock, so a dispatch capturing the
         # same share at the same moment cannot be overwritten by the figure
         # this one read before it.
-        settled = split.with_lock do
+        settled = with_share_lock(split) do
           next false if split.captured_amount >= split.authorized_amount
 
           split.update!(captured_amount: split.authorized_amount)
@@ -74,7 +74,7 @@ module Spree
       # replayed event cannot count the same money twice — and read and
       # written under the row's lock, so two refunds landing together cannot
       # each total the rows before the other's has committed.
-      split.with_lock do
+      with_share_lock(split) do
         refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: split.order_id).sum(:amount)
         split.update!(refunded_amount: refunded)
       end
@@ -84,6 +84,17 @@ module Spree
       # derived before this share was written would describe the refund as
       # not having happened.
       Spree::Orders::UpdateStatuses.call(order: order) if order
+    end
+
+    # Locks the share's order before the share. Saving a share writes its
+    # order's payment total, and payment settlement locks orders before the
+    # payment and its shares, so taking the share first could deadlock
+    # against a settlement of the same payment.
+    def with_share_lock(split, &block)
+      ApplicationRecord.transaction do
+        Spree::Order.lock.find_by(id: split.order_id)
+        split.with_lock(&block)
+      end
     end
   end
 end

@@ -217,6 +217,20 @@ describe Spree::Refund, type: :model do
     end
   end
 
+  describe '#description' do
+    it 'names the payment method' do
+      refund = build(:refund)
+
+      expect(refund.description).to eq(refund.payment.payment_method.name)
+    end
+
+    it 'says store credit for a refund paid as store credit' do
+      refund = build(:refund, store_credit: create(:store_credit))
+
+      expect(refund.description).to eq(I18n.t('spree.store_credit_name'))
+    end
+  end
+
   describe '#return_line_items' do
     subject { refund.return_line_items }
 

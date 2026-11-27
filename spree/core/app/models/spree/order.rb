@@ -733,6 +733,32 @@ module Spree
       end
     end
 
+    # Store credit issued for this order that no refund row records yet:
+    # credit issued before credit was recorded as refunds, until the
+    # backfill_store_credit_refunds upgrade step writes its rows. Counted
+    # wherever refunds are, so that money cannot be given back again
+    # meanwhile, and safe to leave in place once every credit is recorded.
+    #
+    # @return [BigDecimal]
+    def unrecorded_store_credit_refund_total
+      credits = store_credit_refunds
+      issued = credits.sum(:amount).to_d
+      return issued if issued.zero?
+
+      [issued - Spree::Refund.not_failed.where(store_credit_id: credits.select(:id)).sum(:amount).to_d, 0.to_d].max
+    end
+
+    # What this order's payments can still give back to it: each completed
+    # payment's own balance, or on a split checkout this order's share of it.
+    # A share mid-capture counts what it has already captured.
+    #
+    # @return [BigDecimal]
+    def refundable_payment_total
+      return payments.completed.to_a.sum(0.to_d) { |payment| payment.credit_allowed.to_d } unless grouped?
+
+      payment_splits.includes(:payment).select { |split| split.payment&.completed? }.sum(0.to_d, &:refundable_amount)
+    end
+
     # What refunds for returns, claims and exchanges have given back. Read off
     # loaded refunds when a list preloaded them, as {#refunds_total} is, since
     # every order serializer asks for it.

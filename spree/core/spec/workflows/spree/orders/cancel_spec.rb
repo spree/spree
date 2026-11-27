@@ -166,6 +166,8 @@ module Spree
       let(:order) { create(:completed_order_with_totals, order_group: create(:order_group)) }
       let!(:split) do
         create(:payment_split, order: order, currency: order.currency,
+                               payment: create(:payment, order: nil, cart: nil, order_group: order.order_group,
+                                                         amount: 30, status: 'completed'),
                                authorized_amount: BigDecimal(30), captured_amount: BigDecimal(30))
       end
 
@@ -202,6 +204,26 @@ module Spree
         expect(payment.reload).to be_void
       end
 
+      it 'refunds instead of voiding when store credit not yet recorded as refunds gave part back' do
+        create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+
+        subject.call(order: order, canceler: user, refund_payments: true)
+
+        expect(payment.reload).not_to be_void
+        expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
+      end
+
+      # A void releases the whole charge, so a partly refunded one would give
+      # back again what its refunds already returned. Only the rest goes back.
+      it 'refunds only the remainder of a partly refunded charge instead of voiding it' do
+        create(:refund, payment: payment, amount: 10)
+
+        subject.call(order: order, canceler: user, refund_payments: true)
+
+        expect(payment.reload).not_to be_void
+        expect(payment.refunds.sum(:amount)).to eq(payment.amount)
+      end
+
       # Stripe and PayPal cannot void a drawn charge: they refund it or, when
       # the operator keeps the money, leave it standing. The order must then
       # still read as paid.
@@ -211,7 +233,9 @@ module Spree
           allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_wrap_original do |original, response_code, payment, refund:|
             next original.call(response_code, payment, refund: refund) unless refund
 
-            Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+            result = Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+            raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
             Spree::PaymentResponse.new(true, 'refunded', {}, authorization: payment.response_code)
           end
         end
@@ -230,6 +254,136 @@ module Spree
           expect(payment.refunds.sum(:amount)).to eq(payment.amount)
           expect(order.reload.payment_total).to eq(0)
         end
+
+        # Store credit given back is a refund against the payment, so the
+        # payment's own balance already leaves it out (V-3832).
+        it 'refunds nothing to the card when store credit already gave everything back' do
+          give_back_as_store_credit(order, payment.amount)
+
+          result = subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(result).to be_success
+          expect(order.reload).to be_canceled
+          expect(payment.refunds.to_original_payment).to be_empty
+        end
+
+        it 'refunds to the card only what store credit left' do
+          give_back_as_store_credit(order, 10)
+
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 10)
+        end
+
+        # Credit issued before credit was recorded as refunds has no refund
+        # row until the upgrade backfills it; it still counts against the order.
+        it 'refunds to the card only what store credit not yet recorded as refunds left' do
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
+        end
+      end
+
+      # Releasing a store-credit payment hands back all of it whatever the
+      # caller asked; what a return already gave back as credit is recorded
+      # against the card, so the card gives back only the rest.
+      context 'with part of the order paid in store credit' do
+        let!(:payment) { create(:payment, order: order, amount: order.total - 20, status: 'completed') }
+        let(:credit) { create(:store_credit, store: order.store, customer: order.customer, amount: 20) }
+        let!(:credit_payment) do
+          create(:store_credit_payment, order: order, source: credit, amount: 20, status: 'completed').tap do |credit_payment|
+            code = credit.authorize(BigDecimal(20), order.currency)
+            credit.capture(BigDecimal(20), code, order.currency)
+            credit_payment.update_columns(response_code: code)
+          end
+        end
+
+        def credit_released
+          Spree::StoreCreditEvent.where(store_credit: credit, action: Spree::StoreCredit::CREDIT_ACTION).sum(:amount)
+        end
+
+        it 'releases it all when nothing was given back yet' do
+          subject.call(order: order, canceler: user)
+
+          expect(credit_payment.reload).to be_void
+          expect(credit_released).to eq(20)
+        end
+
+        it 'refunds the card only the rest once a return gave part of it back as store credit' do
+          give_back_as_store_credit(order, 20)
+
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.reload).not_to be_void
+          expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 20)
+          expect(credit_payment.reload).to be_void
+          expect(credit_released).to eq(20)
+        end
+
+        context 'on a gateway that cannot void a captured charge' do
+          before do
+            allow_any_instance_of(Spree::Gateway::Bogus).to receive(:can_void?) { |_gateway, payment| !payment.completed? }
+            allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_wrap_original do |original, response_code, payment, refund:|
+              next original.call(response_code, payment, refund: refund) unless refund
+
+              result = Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+              raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
+              Spree::PaymentResponse.new(true, 'refunded', {}, authorization: payment.response_code)
+            end
+          end
+
+          it 'refunds the card only what a return did not already give back as store credit' do
+            give_back_as_store_credit(order, 20)
+
+            subject.call(order: order, canceler: user, refund_payments: true)
+
+            expect(payment.refunds.to_original_payment.sum(:amount)).to eq(payment.amount - 20)
+            expect(credit_released).to eq(20)
+          end
+
+          # Once the card is used up, the rest of the credit was given back
+          # from the store-credit payment, which then releases only what is left.
+          it 'releases only the part of a store-credit payment a return left' do
+            give_back_as_store_credit(order, payment.amount + 5)
+
+            subject.call(order: order, canceler: user, refund_payments: true)
+
+            expect(payment.refunds.to_original_payment).to be_empty
+            expect(credit_payment.reload).to be_completed
+            expect(credit_payment.refunds.to_original_payment.sum(:amount)).to eq(15)
+            expect(credit_released).to eq(15)
+          end
+        end
+      end
+    end
+
+    # An order paid in full by gift card is settled by voiding its payment,
+    # which writes the whole payment off as given back.
+    describe 'an order paid in full by gift card' do
+      let!(:credit_payment) { create(:store_credit_payment, order: order, amount: order.total, status: 'completed') }
+
+      before do
+        allow(order).to receive_messages(gift_card: build_stubbed(:gift_card), covered_by_store_credit?: true)
+      end
+
+      it 'voids the payment' do
+        subject.call(order: order, canceler: user)
+
+        expect(credit_payment.reload).to be_void
+      end
+
+      # Voiding would release all of it again; only the rest goes back.
+      it 'refunds only the rest of the payment once a return gave part of it back as store credit' do
+        give_back_as_store_credit(order, 20)
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+
+        subject.call(order: order, canceler: user)
+
+        expect(credit_payment.reload).to be_completed
+        expect(credit_payment.refunds.to_original_payment.sum(:amount)).to eq(credit_payment.amount - 20)
       end
     end
 

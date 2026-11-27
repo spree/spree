@@ -53,10 +53,10 @@ module Spree
             def destroy
               authorize_resource!(@resource)
 
-              if @resource.amount_used.positive?
+              unless @resource.can_be_deleted?
                 render_error(
                   code: 'store_credit_in_use',
-                  message: 'Cannot delete a store credit that has already been used',
+                  message: 'Cannot delete a store credit that has been used or is being spent',
                   status: :unprocessable_content
                 )
                 return
