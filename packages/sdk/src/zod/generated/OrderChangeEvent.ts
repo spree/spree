@@ -13,6 +13,9 @@ export const OrderChangeEventSchema = z.object({
   return_id: z.string().nullable(),
   exchange_id: z.string().nullable(),
   claim_id: z.string().nullable(),
+  previous_total: z.string().nullable(),
+  new_total: z.string().nullable(),
+  balance_delta: z.string().nullable(),
 });
 
 export type OrderChangeEvent = z.infer<typeof OrderChangeEventSchema>;

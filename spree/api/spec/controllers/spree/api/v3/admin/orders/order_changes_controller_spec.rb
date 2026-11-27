@@ -222,7 +222,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
                                         actions: [{ kind: 'update_item', line_item: line_item, quantity: 3 }])
       end
 
-      subject { get :index, params: { order_id: order.prefixed_id, expand: 'requested_by,actions.variant' }, as: :json }
+      subject { get :index, params: { order_id: order.prefixed_id, expand: 'requested_by,confirmed_by,canceled_by,actions.variant' }, as: :json }
     end
   end
 
@@ -232,12 +232,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
                                       actions: [{ kind: 'update_item', line_item: line_item, quantity: 4 }]).value
     end
 
-    it 'confirms a requested change' do
+    it 'confirms a requested change, recording who did and what it did to the total' do
+      previous_total = order.total
+
       patch :confirm, params: { order_id: order.prefixed_id, id: order_change.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('confirmed')
       expect(line_item.reload.quantity).to eq(4)
+      expect(json_response).to include('confirmed_by_id' => admin_user.prefixed_id, 'confirmed_by_type' => 'admin_user',
+                                       'previous_total' => Spree::Money::Rounding.format(previous_total, order.currency),
+                                       'new_total' => Spree::Money::Rounding.format(order.reload.total, order.currency))
+      expect(json_response['balance_delta'].to_d).to be_positive
     end
 
     it 'cancels a requested change' do
@@ -245,6 +251,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('canceled')
+      expect(json_response).to include('canceled_by_id' => admin_user.prefixed_id, 'previous_total' => nil, 'balance_delta' => nil)
       expect(line_item.reload.quantity).to eq(1)
     end
 

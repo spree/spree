@@ -157,7 +157,7 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       previous_total = order.total
 
       workflow = Spree::OrderChanges::Confirm.new
-      result = workflow.call(order_change: change)
+      result = workflow.call(order_change: change, confirmed_by: admin)
 
       expect(result).to be_success
       expect(change.reload).to be_confirmed
@@ -165,6 +165,8 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(order.reload.total).to be > previous_total
       expect(workflow.balance_delta).to eq(order.total - previous_total)
       expect(order.payment_status).to eq('partially_paid')
+      expect(change).to have_attributes(confirmed_by: admin, previous_total: previous_total, new_total: order.total,
+                                        balance_delta: workflow.balance_delta)
     end
 
     it 'removes a line' do
@@ -278,8 +280,9 @@ RSpec.describe 'Spree::OrderChanges workflows' do
     it 'closes an open set and keeps it' do
       change = begin_change
 
-      expect(Spree::OrderChanges::Cancel.call(order_change: change)).to be_success
+      expect(Spree::OrderChanges::Cancel.call(order_change: change, canceled_by: admin)).to be_success
       expect(change.reload).to be_canceled
+      expect(change.canceled_by).to eq(admin)
     end
 
     it 'never overwrites a set confirmed since it was loaded' do
@@ -456,6 +459,7 @@ RSpec.describe 'Spree::OrderChanges workflows' do
 
       expect(result).to be_success
       expect(result.value).to be_confirmed
+      expect(result.value.confirmed_by).to eq(admin)
       expect(line_item.reload.quantity).to eq(2)
     end
 

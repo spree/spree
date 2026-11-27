@@ -6,8 +6,8 @@ module Spree
   # all reach the order through one of these, so every post-placement change
   # has the same lifecycle and leaves the same record. The model holds
   # associations and reads only: moving a set between statuses is a workflow
-  # (`Spree::OrderChanges::Confirm.call(order_change:)`), and the money a set
-  # moves is derived by previewing, never stored here.
+  # (`Spree::OrderChanges::Confirm.call(order_change:)`). What a set will do
+  # to the money is previewed; what it did is kept once it is confirmed.
   class OrderChange < Spree.base_class
     has_prefix_id :ordchg
 
@@ -26,6 +26,8 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :order_changes
     # Staff only — a customer-initiated change leaves this nil.
     acted_by :requested_by
+    acted_by :confirmed_by
+    acted_by :canceled_by
 
     # The business operation that opened the set; none for an admin edit.
     belongs_to :return, class_name: 'Spree::Return', optional: true, inverse_of: :order_changes
@@ -36,6 +38,14 @@ module Spree
                                                      dependent: :destroy, inverse_of: :order_change
 
     self.whitelisted_ransackable_attributes = %w[status created_at confirmed_at]
+
+    # How far confirming moved the order total: positive when the customer
+    # owes more. Nil until the set is confirmed.
+    #
+    # @return [BigDecimal, nil]
+    def balance_delta
+      new_total - previous_total if previous_total && new_total
+    end
 
     # @return [Boolean] whether actions can still be added or the set applied
     def open?

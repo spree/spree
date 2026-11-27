@@ -16,6 +16,15 @@ module Spree
                    created_at: :iso8601, updated_at: :iso8601
 
         prefixed_id_attributes :order, :return, :exchange, :claim
+
+        money_attributes :previous_total, :new_total, :balance_delta,
+                         currency: ->(order_change) { order_change.order.currency },
+                         descriptions: {
+                           previous_total: 'The order total before the change was confirmed. Null until it is.',
+                           new_total: 'The order total after the change was confirmed. Null until it is.',
+                           balance_delta: 'How far confirming moved the order total: positive when the customer owes more. ' \
+                                          'Null until the change is confirmed.'
+                         }
       end
     end
   end

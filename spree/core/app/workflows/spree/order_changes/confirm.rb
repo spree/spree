@@ -22,7 +22,8 @@ module Spree
       attr_reader :balance_delta, :fulfillments
 
       # @param order_change [Spree::OrderChange] must be requested
-      def perform(order_change:)
+      # @param confirmed_by [Object, nil] staff actor
+      def perform(order_change:, confirmed_by: nil)
         super
 
         payload = nil
@@ -38,7 +39,8 @@ module Spree
           step :apply_actions
           order.update_statuses!
           @balance_delta = order.total - previous_total
-          order_change.update!(status: 'confirmed', confirmed_at: Time.current)
+          order_change.update!(status: 'confirmed', confirmed_at: Time.current, confirmed_by: confirmed_by,
+                               previous_total: previous_total, new_total: order.total)
           run_hooks :before_confirm
           # Built here, so a payload that fails to build rolls the edit back.
           payload = order_change.event_payload_for('order_change.confirmed') if Spree::Events.enabled?

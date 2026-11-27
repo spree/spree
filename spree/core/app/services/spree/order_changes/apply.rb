@@ -37,7 +37,10 @@ module Spree
             run_workflow(Spree.order_change_add_action_workflow, order_change: order_change, **attributes.to_h.symbolize_keys)
           end
           run_workflow(Spree.order_change_request_workflow, order_change: order_change)
-          @fulfillments = run_workflow(Spree.order_change_confirm_workflow, order_change: order_change).fulfillments if confirm
+          if confirm
+            @fulfillments = run_workflow(Spree.order_change_confirm_workflow,
+                                         order_change: order_change, confirmed_by: requested_by).fulfillments
+          end
         end
 
         @failure || success(order_change)

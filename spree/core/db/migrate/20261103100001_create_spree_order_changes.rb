@@ -4,6 +4,8 @@ class CreateSpreeOrderChanges < ActiveRecord::Migration[8.1]
       t.references :order, null: false
       # Staff only — a customer-initiated change leaves it nil.
       t.references :requested_by, polymorphic: true, index: { name: 'index_spree_order_changes_on_requested_by' }
+      t.references :confirmed_by, polymorphic: true, index: { name: 'index_spree_order_changes_on_confirmed_by' }
+      t.references :canceled_by, polymorphic: true, index: { name: 'index_spree_order_changes_on_canceled_by' }
       # The business operation that opened the set; none for an admin edit.
       t.references :return
       t.references :exchange
@@ -12,6 +14,9 @@ class CreateSpreeOrderChanges < ActiveRecord::Migration[8.1]
       t.datetime :requested_at
       t.datetime :confirmed_at
       t.datetime :canceled_at
+      # The order total either side of confirming, in the order's currency.
+      t.decimal :previous_total, precision: 10, scale: 2
+      t.decimal :new_total, precision: 10, scale: 2
       if t.respond_to?(:jsonb)
         t.jsonb :metadata
       else

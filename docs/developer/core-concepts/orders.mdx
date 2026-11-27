@@ -276,6 +276,8 @@ To settle the balance automatically — charging or refunding at your payment
 provider — subscribe to the `order_change.confirmed` [event](/developer/core-concepts/events),
 which is sent once the change is saved, rather than doing it in a hook: a
 return or claim can apply its change inside a larger step that may still fail.
+The event's `balance_delta` is how far the change moved the order total, and
+`previous_total` and `new_total` are the totals on either side of it.
 
 ```ruby config/initializers/spree.rb
 Spree.hooks.register('order_changes.add_action.validate') do |workflow|

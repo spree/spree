@@ -30267,9 +30267,16 @@ paths:
                   return_id:
                   exchange_id:
                   claim_id:
+                  previous_total:
+                  new_total:
+                  balance_delta:
                   metadata: {}
                   requested_by_id:
                   requested_by_type:
+                  confirmed_by_id:
+                  confirmed_by_type:
+                  canceled_by_id:
+                  canceled_by_type:
                   actions:
                   - id: ordchga_UkLWZg9DAJ
                     kind: update_item
@@ -30434,9 +30441,16 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                previous_total: '110.00'
+                new_total: '120.00'
+                balance_delta: '10.00'
                 metadata: {}
                 requested_by_id: adm_UkLWZg9DAJ
                 requested_by_type: admin_user
+                confirmed_by_id: adm_UkLWZg9DAJ
+                confirmed_by_type: admin_user
+                canceled_by_id:
+                canceled_by_type:
                 actions:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
@@ -30612,9 +30626,16 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                previous_total: '110.00'
+                new_total: '120.00'
+                balance_delta: '10.00'
                 metadata: {}
                 requested_by_id:
                 requested_by_type:
+                confirmed_by_id: adm_UkLWZg9DAJ
+                confirmed_by_type: admin_user
+                canceled_by_id:
+                canceled_by_type:
                 actions:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
@@ -30701,9 +30722,16 @@ paths:
                 return_id:
                 exchange_id:
                 claim_id:
+                previous_total:
+                new_total:
+                balance_delta:
                 metadata: {}
                 requested_by_id:
                 requested_by_type:
+                confirmed_by_id:
+                confirmed_by_type:
+                canceled_by_id: adm_UkLWZg9DAJ
+                canceled_by_type: admin_user
                 actions:
                 - id: ordchga_UkLWZg9DAJ
                   kind: update_item
@@ -72220,6 +72248,21 @@ components:
         claim_id:
           type: string
           nullable: true
+        previous_total:
+          type: string
+          nullable: true
+          description: The order total before the change was confirmed. Null until
+            it is.
+        new_total:
+          type: string
+          nullable: true
+          description: The order total after the change was confirmed. Null until
+            it is.
+        balance_delta:
+          type: string
+          nullable: true
+          description: 'How far confirming moved the order total: positive when the
+            customer owes more. Null until the change is confirmed.'
         metadata:
           type: object
         requested_by_id:
@@ -72237,6 +72280,36 @@ components:
             more.
         requested_by:
           "$ref": "#/components/schemas/Actor"
+        confirmed_by_id:
+          type: string
+          nullable: true
+        confirmed_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        confirmed_by:
+          "$ref": "#/components/schemas/Actor"
+        canceled_by_id:
+          type: string
+          nullable: true
+        canceled_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        canceled_by:
+          "$ref": "#/components/schemas/Actor"
         actions:
           type: array
           items:
@@ -72253,9 +72326,16 @@ components:
       - return_id
       - exchange_id
       - claim_id
+      - previous_total
+      - new_total
+      - balance_delta
       - metadata
       - requested_by_id
       - requested_by_type
+      - confirmed_by_id
+      - confirmed_by_type
+      - canceled_by_id
+      - canceled_by_type
       - actions
       x-typelizer: true
     OrderGroup:

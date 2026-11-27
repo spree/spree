@@ -70,13 +70,13 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/order_changes/:id/confirm
             def confirm
               with_order_lock do
-                render_result(Spree.order_change_confirm_workflow.call(order_change: @resource))
+                render_result(Spree.order_change_confirm_workflow.call(order_change: @resource, confirmed_by: current_actor))
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/order_changes/:id/cancel
             def cancel
-              render_result(Spree.order_change_cancel_workflow.call(order_change: @resource))
+              render_result(Spree.order_change_cancel_workflow.call(order_change: @resource, canceled_by: current_actor))
             end
 
             protected
@@ -93,9 +93,7 @@ module Spree
               actions = [:fulfillment, :delivery_method]
               actions << { variant: variant_includes } if expand_list.include?('actions.variant')
 
-              includes = [:order, :return, :exchange, :claim, { actions: actions }]
-              includes << :requested_by if expand_list.include?('requested_by')
-              includes
+              [:order, :return, :exchange, :claim, { actions: actions }] + (%w[requested_by confirmed_by canceled_by] & expand_list).map(&:to_sym)
             end
 
             private

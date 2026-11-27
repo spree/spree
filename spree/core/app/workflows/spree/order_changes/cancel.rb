@@ -6,7 +6,8 @@ module Spree
       hooks :after_cancel
 
       # @param order_change [Spree::OrderChange] must be pending or requested
-      def perform(order_change:)
+      # @param canceled_by [Object, nil] staff actor
+      def perform(order_change:, canceled_by: nil)
         super
 
         ApplicationRecord.transaction do
@@ -14,7 +15,7 @@ module Spree
           # than overwriting a confirmed one.
           order_change.lock_for_transition!
           failure(order_change, :order_change_not_open) unless order_change.open?
-          order_change.update!(status: 'canceled', canceled_at: Time.current)
+          order_change.update!(status: 'canceled', canceled_at: Time.current, canceled_by: canceled_by)
           run_hooks :after_cancel
         end
 
