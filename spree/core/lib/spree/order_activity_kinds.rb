@@ -17,9 +17,9 @@ module Spree
     Kind = Struct.new(:category, :builder, keyword_init: true)
 
     POST_SALE_EVENTS = {
-      'return' => %w[return.requested return.received return.refunded return.canceled],
-      'exchange' => %w[exchange.requested exchange.received exchange.fulfilled exchange.canceled],
-      'claim' => %w[claim.opened claim.resolved claim.denied claim.canceled]
+      'return' => %w[return.requested return.approved return.received return.refunded return.canceled],
+      'exchange' => %w[exchange.requested exchange.approved exchange.received exchange.fulfilled exchange.canceled],
+      'claim' => %w[claim.opened claim.approved claim.resolved claim.denied claim.canceled]
     }.freeze
 
     def initialize

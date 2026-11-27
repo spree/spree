@@ -20,7 +20,8 @@ module Spree
       # a failed query must not abort the step's own transaction.
       ApplicationRecord.transaction(requires_new: true) do
         attributes = kind.builder.call(event)
-        next if attributes.nil? || attributes[:order].nil?
+        # A draft or a cart has no timeline to show it on.
+        next if attributes.nil? || attributes[:order]&.completed_at.nil?
 
         Spree::OrderActivity.create!(
           order: attributes[:order],

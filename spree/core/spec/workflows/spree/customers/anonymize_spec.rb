@@ -131,6 +131,15 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(order).to be_persisted
     end
 
+    it 'deletes the staff comments on its timeline and keeps the other entries' do
+      create(:order_activity, order: order, body: 'John called from 555-0100')
+      placed = create(:order_activity, order: order, kind: 'order.placed', category: 'order', body: nil)
+
+      result
+
+      expect(order.activities.reload).to eq([placed])
+    end
+
     it 'scrubs the personal data attached to it' do
       result
       order.reload

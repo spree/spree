@@ -65,7 +65,9 @@ module Spree
       #   Spree::Events.publish('order.completed', order.serializable_hash, { user_id: current_user.id })
       #
       def publish(name, payload = {}, metadata = {})
-        adapter.publish(name, payload, metadata)
+        # Stamped here, for every adapter, so a subscriber running later still
+        # knows who acted (docs/plans/6.1-order-timeline.md).
+        adapter.publish(name, payload, Spree::Event.actor_metadata.merge((metadata || {}).to_h.deep_stringify_keys))
       end
 
       # Subscribe to an event pattern

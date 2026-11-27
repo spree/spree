@@ -1,5 +1,12 @@
 import type { Order, OrderActivity } from '@spree/admin-sdk'
-import { type ActivityKind, Can, Subject, useActivityKinds, useStore } from '@spree/dashboard-core'
+import {
+  type ActivityKind,
+  Can,
+  formatStoreTime,
+  Subject,
+  useActivityKinds,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -11,9 +18,6 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import { CircleIcon, HistoryIcon } from '@spree/dashboard-ui/icons'
-import { activeDateLocale } from '@spree/dashboard-ui/lib/date-locale'
-import { parseISO } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -34,7 +38,7 @@ export function OrderTimeline({ order }: { order: Order }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const { timezone } = useStore()
-  const { data, isLoading } = useOrderActivities(order.id, page)
+  const { data, isLoading, isError } = useOrderActivities(order.id, page)
   const activities = data?.data ?? []
   const onLastPage = !data?.meta || data.meta.page >= data.meta.pages
   // Orders placed before the timeline existed have no placement entry.
@@ -57,6 +61,10 @@ export function OrderTimeline({ order }: { order: Order }) {
           </Can>
           {isLoading ? (
             <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+          ) : isError ? (
+            <p className="text-destructive text-base">
+              {t('admin.orders.detail.timeline.load_failed')}
+            </p>
           ) : (
             groupByDay(activities, timezone).map(([day, entries]) => (
               <div key={day} className="flex flex-col gap-2">
@@ -74,7 +82,7 @@ export function OrderTimeline({ order }: { order: Order }) {
               </div>
             ))
           )}
-          {!isLoading && onLastPage && !startRecorded && (
+          {data && onLastPage && !startRecorded && (
             <p className="text-muted-foreground text-base">
               {t('admin.orders.detail.timeline.earlier_not_recorded')}
             </p>
@@ -88,15 +96,10 @@ export function OrderTimeline({ order }: { order: Order }) {
   )
 }
 
-/** A date or time as the store keeps it, in the admin's language. */
-function storeTime(iso: string, timezone: string, pattern: string) {
-  return formatInTimeZone(parseISO(iso), timezone, pattern, { locale: activeDateLocale() })
-}
-
 function groupByDay(activities: OrderActivity[], timezone: string): [string, OrderActivity[]][] {
   const days = new Map<string, OrderActivity[]>()
   for (const activity of activities) {
-    const day = storeTime(activity.created_at, timezone, 'PPP')
+    const day = formatStoreTime(activity.created_at, timezone, 'PPP')
     days.set(day, [...(days.get(day) ?? []), activity])
   }
   return [...days]
@@ -130,7 +133,7 @@ function TimelineEntry({
             <kind.Summary activity={activity} order={order} />
           </span>
           <time className="shrink-0 text-muted-foreground text-sm" dateTime={activity.created_at}>
-            {storeTime(activity.created_at, timezone, 'p')}
+            {formatStoreTime(activity.created_at, timezone, 'p')}
           </time>
         </div>
         {activity.actor && (
