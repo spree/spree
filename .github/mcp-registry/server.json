@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.spree/ecommerce-b2b-marketplace",
+  "title": "Spree Commerce: open-source B2B and marketplace ecommerce",
+  "description": "Open-source B2B and marketplace ecommerce; new stores include an MCP server for AI agents.",
+  "version": "0.0.0",
+  "websiteUrl": "https://spreecommerce.org",
+  "repository": {
+    "url": "https://github.com/spree/spree",
+    "source": "github",
+    "subfolder": "spree/mcp"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://{store_domain}/api/v3/admin/mcp",
+      "variables": {
+        "store_domain": {
+          "description": "Your Spree store's domain, for example shop.example.com",
+          "isRequired": true
+        }
+      }
+    }
+  ]
+}

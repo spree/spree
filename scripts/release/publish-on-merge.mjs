@@ -9,10 +9,10 @@
 // tag, waits for `@spree/docs` on npm, then tags and releases `@spree/cli` and
 // `create-spree-app` when their versions are not on npm yet, creates the GitHub
 // release from the notes in the pull request's description, and starts
-// discord-release.yml. Tags made with the workflow's token start no workflow,
-// so it starts release.yml itself; that keeps release.yml the workflow npm and
-// RubyGems see, which Trusted Publishing needs. Every step skips what already
-// exists, so a failed run is re-run as it is.
+// discord-release.yml and mcp-registry.yml. Tags made with the workflow's
+// token start no workflow, so it starts release.yml itself; that keeps
+// release.yml the workflow npm and RubyGems see, which Trusted Publishing needs.
+// Every step skips what already exists, so a failed run is re-run as it is.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -208,6 +208,20 @@ function postToDiscord(tag) {
   )
 }
 
+/** The same for the MCP Registry: publishes the store's MCP server entry with this version. */
+function publishToMcpRegistry(tag) {
+  const title = `Publish ${tag} to the MCP Registry`
+  const runs = workflowRuns('mcp-registry.yml', '').filter((run) => run.display_title === title)
+  if (runs.some((run) => run.conclusion === 'success')) {
+    return console.log(`${tag} is already in the MCP Registry.`)
+  }
+  const active = runs.find((run) => run.status !== 'completed')
+  watch(
+    active?.id ?? dispatch('mcp-registry.yml', 'main', { tag }),
+    `the MCP Registry entry of ${tag}`,
+  )
+}
+
 function main() {
   const match = subject?.split('\n')[0].match(/^Released Spree (\S+) \(#(\d+)\)$/)
   if (!match) throw new Error(`Not a release pull request's merge commit: ${subject}`)
@@ -262,6 +276,7 @@ function main() {
 
   createRelease(tag, notes)
   postToDiscord(tag)
+  publishToMcpRegistry(tag)
 }
 
 main()
