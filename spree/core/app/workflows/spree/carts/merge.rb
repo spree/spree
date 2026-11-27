@@ -46,6 +46,7 @@ module Spree
           run_hooks :after_items_moved
           step :destroy_absorbed_line_items
           step :associate_customer
+          step :carry_custom_fields
           step :destroy_drained_cart
         end
 
@@ -141,6 +142,17 @@ module Spree
 
       def associate_customer
         cart.associate_customer!(customer) if customer && cart.customer.blank?
+      end
+
+      # What the shopper filled in on a cart about to be destroyed moves with
+      # them, unless the surviving cart already answers the same field.
+      def carry_custom_fields
+        return unless other_cart.line_items.reload.empty?
+
+        answered = cart.custom_fields.unscope(:includes).select(:custom_field_definition_id)
+        other_cart.custom_fields.unscope(:includes).where.not(custom_field_definition_id: answered).
+          update_all(resource_id: cart.id, updated_at: Time.current)
+        cart.custom_fields.reset
       end
 
       def destroy_drained_cart

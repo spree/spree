@@ -157,7 +157,8 @@ module Spree
       text_value
     end
 
-    # The value as a shopper or seller reads it.
+    # The value as plain text to show: a choice's labels, rich text without
+    # its markup. Dates stay ISO 8601, for the reader to format in their zone.
     def display_value
       text_value
     end

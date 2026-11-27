@@ -903,6 +903,7 @@ en:
         custom_field_invalid_date: must be a date in the YYYY-MM-DD format
         custom_field_invalid_date_time: must be a date and time in the ISO 8601 format
         custom_field_less_than_min: must be greater than or equal to %{bound}
+        custom_field_named_twice: names a field already given in this request
         custom_field_not_storefront_writable: is not a custom field you can fill in
         custom_field_regex_mismatch: does not match the required format
         custom_field_required_missing: must include %{label}

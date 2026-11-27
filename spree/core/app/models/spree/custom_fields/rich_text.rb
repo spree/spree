@@ -18,6 +18,10 @@ module Spree
 
         Nokogiri::HTML.fragment(value).text
       end
+
+      def display_value
+        csv_value
+      end
     end
   end
 end

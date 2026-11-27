@@ -23,6 +23,20 @@ RSpec.describe Spree::Carts::Merge do
       expect { other_cart.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it "carries the drained cart's checkout answers, keeping the surviving cart's own" do
+      delivery_date = create(:custom_field_definition, :for_order, store: store, key: 'delivery_date', storefront_writable: true)
+      gift_message = create(:custom_field_definition, :for_order, store: store, key: 'gift_message', storefront_writable: true)
+      cart.set_custom_field(delivery_date, 'Friday')
+      other_cart.set_custom_field(delivery_date, 'Monday')
+      other_cart.set_custom_field(gift_message, 'Happy birthday')
+      other_cart.line_items.create!(variant: variant, quantity: 1, currency: other_cart.currency)
+
+      described_class.call(cart: cart, other_cart: other_cart)
+
+      values = cart.reload.custom_fields.to_h { |field| [field.key, field.value] }
+      expect(values).to eq('delivery_date' => 'Friday', 'gift_message' => 'Happy birthday')
+    end
+
     it 'moves a non-matching item across' do
       other_variant = create(:variant)
       cart.line_items.create!(variant: variant, quantity: 1, currency: cart.currency)

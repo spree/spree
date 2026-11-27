@@ -24880,8 +24880,8 @@ components:
         value: {}
         display_value:
           type: string
-          description: 'The value as text to show: the labels of the chosen options
-            for a choice field.'
+          description: 'The value as plain text to show: the chosen labels of a choice
+            field, rich text without its markup. Dates stay ISO 8601.'
       required:
       - id
       - label

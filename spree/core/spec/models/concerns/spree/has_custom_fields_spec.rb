@@ -384,10 +384,19 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
     end
 
     it 'caps the length of a value, whatever the rules say' do
+      expect(customer.update(storefront_custom_field_values: [{ key: 'profile.gender', value: '&' * 5_000 }])).to be(true)
+
       customer.storefront_custom_field_values = [{ key: 'profile.gender', value: 'x' * 5_001 }]
 
       expect(customer.save).to be(false)
       expect(customer.errors.attribute_names).to include(:'custom_fields[0].value')
+    end
+
+    it 'refuses a field named twice in one write' do
+      customer.storefront_custom_field_values = [{ key: 'profile.gender', value: 'x' }, { key: 'profile.gender', value: 'y' }]
+
+      expect(customer.save).to be(false)
+      expect(customer.errors.attribute_names).to include(:'custom_fields[1].key')
     end
 
     it 'reports a value its rules refuse against the entry' do

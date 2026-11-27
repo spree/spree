@@ -339,8 +339,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
 
 - A key that is not a writable field of this store is refused with `422`. The API never creates a definition from a shopper's key.
 - Each value is checked against the field's rules, and is at most 5,000 characters whatever the rules say. Numbers are sent as decimal strings, dates in ISO 8601.
-- A blank value removes the field. Fields the request does not name keep their values.
-- Read them back with `expand: ['custom_fields']` on the cart, the order or the customer. Each value comes with a `display_value`, which shows a choice field's labels.
+- A blank value removes the field. Fields the request does not name keep their values, and a field may be named only once per request.
+- Read them back with `expand: ['custom_fields']` on the cart, the order or the customer. Each value comes with a `display_value`: plain text with a choice field's labels and rich text without its markup.
 
 `required` is enforced where the shopper writes:
 

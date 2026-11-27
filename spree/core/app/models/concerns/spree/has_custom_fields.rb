@@ -126,6 +126,18 @@ module Spree
           for_resource_type(self.class.custom_field_definition_resource_type)
       end
 
+      # The definitions this record has a value for. Read once per record, like
+      # the required definitions, and forgotten whenever a value is written.
+      #
+      # @return [Array<Integer>]
+      def filled_custom_field_definition_ids
+        @filled_custom_field_definition_ids ||= if custom_fields.loaded?
+                                                  custom_fields.map(&:custom_field_definition_id)
+                                                else
+                                                  custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
+                                                end
+      end
+
       # Read once per record: every cart response works out its requirements
       # several times over.
       #
@@ -172,6 +184,7 @@ module Spree
       # @raise [ArgumentError] if `definition_or_key` doesn't resolve to a
       #   known definition.
       def set_custom_field(definition_or_key, value)
+        @filled_custom_field_definition_ids = nil
         definition_id = resolve_custom_field_definition_id(definition_or_key)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
         # An empty list is a value for JSON, but no choice at all for a choice field.
@@ -198,6 +211,7 @@ module Spree
 
         Spree::CustomField.insert_all!(rows)
         custom_fields.reset
+        @filled_custom_field_definition_ids = nil
       end
 
       def get_custom_field(key_with_namespace)
@@ -300,7 +314,7 @@ module Spree
         end
       end
 
-      # @param index [Integer] the entry's position in the request, for the error key
+      # +index+ is the entry's position in the request, for the error key.
       def write_custom_field_at!(index, definition_or_key, value)
         set_custom_field(definition_or_key, value)
       rescue ArgumentError => e
@@ -331,9 +345,12 @@ module Spree
           # reads the attribute, and these entries are no attribute of the record.
           if definition.nil?
             errors.add("custom_fields[#{index}].key", I18n.t('spree.errors.messages.custom_field_not_storefront_writable'))
+          elsif @resolved_storefront_custom_fields.any? { |_index, resolved, _value| resolved == definition }
+            # One entry per field, so a request writes each field once at most.
+            errors.add("custom_fields[#{index}].key", I18n.t('spree.errors.messages.custom_field_named_twice'))
           elsif definition.required? && enforce_required_storefront_custom_fields? && storefront_value_missing?(entry[:value])
             errors.add("custom_fields[#{index}].value", I18n.t('spree.errors.messages.custom_field_blank'))
-          elsif entry[:value].to_json.length > STOREFRONT_VALUE_MAX_LENGTH
+          elsif storefront_value_length(entry[:value]) > STOREFRONT_VALUE_MAX_LENGTH
             # Anyone with the publishable key can write here, so a value is
             # capped whatever rules the merchant set.
             errors.add("custom_fields[#{index}].value",
@@ -354,6 +371,11 @@ module Spree
           message = I18n.t('spree.errors.messages.custom_field_required_missing', label: definition.label)
           errors.add(:custom_fields, :required_missing, label: definition.label, message: message)
         end
+      end
+
+      # Characters of text, or of the list a multiple choice sends.
+      def storefront_value_length(value)
+        value.is_a?(String) ? value.length : value.to_json.length
       end
 
       # An empty list is no choice at all, which a required field cannot keep.

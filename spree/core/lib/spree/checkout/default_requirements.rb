@@ -206,11 +206,7 @@ module Spree
         required = @cart.required_storefront_writable_custom_field_definitions
         return [] if required.empty?
 
-        filled = if @cart.custom_fields.loaded?
-                   @cart.custom_fields.map(&:custom_field_definition_id)
-                 else
-                   @cart.custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
-                 end
+        filled = @cart.filled_custom_field_definition_ids
         step = custom_field_step
         required.reject { |definition| filled.include?(definition.id) }.map do |definition|
           req(step, definition.full_key, I18n.t('spree.checkout_requirements.custom_field_required', label: definition.label),

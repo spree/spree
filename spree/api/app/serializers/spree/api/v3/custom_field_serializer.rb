@@ -8,7 +8,8 @@ module Spree
                  label: :string,
                  field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
                  value: :any,
-                 display_value: [:string, comment: 'The value as text to show: the labels of the chosen options for a choice field.']
+                 display_value: [:string, comment: 'The value as plain text to show: the chosen labels of a choice field, ' \
+                                                   'rich text without its markup. Dates stay ISO 8601.']
 
         attributes :label, :field_type
 
