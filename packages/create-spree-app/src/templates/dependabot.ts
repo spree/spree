@@ -4,6 +4,12 @@ interface Ecosystem {
   directory: string
   /** Group-name prefix, unique per block (group names must be unique). */
   group: string
+  /**
+   * Keeps majors out of the grouped version PR and skips `@types/node` majors.
+   * For the Vite apps, where one breaking release in the weekly group would
+   * otherwise block every other bump with it.
+   */
+  majorsSeparate?: boolean
 }
 
 /**
@@ -11,20 +17,44 @@ interface Ecosystem {
  * into a single grouped PR per ecosystem (`applies-to`), so a weekly run opens
  * at most one security PR and one version PR instead of one per package.
  */
-function ecosystemBlock({ comment, ecosystem, directory, group }: Ecosystem): string {
+function ecosystemBlock({
+  comment,
+  ecosystem,
+  directory,
+  group,
+  majorsSeparate = false,
+}: Ecosystem): string {
+  const ignore = majorsSeparate
+    ? `
+    # @types/node follows the Node version you run on, so bump its major by hand.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]`
+    : ''
+  const versionComment = majorsSeparate
+    ? `
+      # Majors open as their own PRs, so one breaking release can't hold up the rest.`
+    : ''
+  const versionUpdateTypes = majorsSeparate
+    ? `
+        update-types:
+          - minor
+          - patch`
+    : ''
+
   return `  # ${comment}
   - package-ecosystem: ${ecosystem}
     directory: "${directory}"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 5${ignore}
     groups:
       ${group}-security:
         applies-to: security-updates
         patterns:
-          - "*"
+          - "*"${versionComment}
       ${group}-version:
-        applies-to: version-updates
+        applies-to: version-updates${versionUpdateTypes}
         patterns:
           - "*"`
 }
@@ -81,6 +111,7 @@ export function dependabotContent(
       ecosystem: 'npm',
       directory: '/apps/dashboard',
       group: 'dashboard',
+      majorsSeparate: true,
     })
   }
 
@@ -90,6 +121,7 @@ export function dependabotContent(
       ecosystem: 'npm',
       directory: '/apps/seller-dashboard',
       group: 'seller-dashboard',
+      majorsSeparate: true,
     })
   }
 
