@@ -90,11 +90,21 @@ module Spree
             end
 
             def collection_includes
-              [:requested_by, :order, :return, :exchange, :claim,
-               { actions: [:fulfillment, :delivery_method] }]
+              actions = [:fulfillment, :delivery_method]
+              actions << { variant: variant_includes } if expand_list.include?('actions.variant')
+
+              [:requested_by, :order, :return, :exchange, :claim, { actions: actions }]
             end
 
             private
+
+            # What the variant payload reads, loaded only when it is expanded.
+            def variant_includes
+              [:product, :prices, :external_references,
+               { stock_levels: [:stock_location, :active_stock_reservations] },
+               { option_values: :option_type },
+               { primary_media: [{ attachment_attachment: :blob }, { poster_attachment: :blob }] }]
+            end
 
             def ensure_actions_are_objects
               return if Array(params[:actions]).all?(ActionController::Parameters)

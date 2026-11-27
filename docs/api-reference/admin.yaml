@@ -30209,6 +30209,13 @@ paths:
         description: Order prefixed ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., actions.variant).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
       - name: q
         in: query
         required: false
@@ -30274,11 +30281,71 @@ paths:
                     updated_at: '2026-01-15T12:00:00.000Z'
                     value:
                     amount:
-                    discount_id:
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
+                    discount_id:
                     fulfillment_id:
                     delivery_method_id:
+                    variant:
+                      id: variant_UkLWZg9DAJ
+                      product_id: prod_UkLWZg9DAJ
+                      sku: SKU-117
+                      options_text: ''
+                      track_inventory: true
+                      media_count: 0
+                      preorder_ships_at:
+                      thumbnail_url:
+                      purchasable: true
+                      in_stock: false
+                      backorderable: true
+                      preorder: false
+                      weight: 0.0
+                      height:
+                      width:
+                      depth:
+                      weight_unit: lb
+                      dimensions_unit: in
+                      minimum_order_quantity:
+                      order_multiple:
+                      purchase_unit:
+                      units_per_carton:
+                      price:
+                        id: price_UkLWZg9DAJ
+                        currency: USD
+                        amount: '19.99'
+                        compare_at_amount:
+                        price_list_id:
+                        min_quantity: 1
+                        variant_id: variant_UkLWZg9DAJ
+                        created_at: '2026-01-15T12:00:00.000Z'
+                        updated_at: '2026-01-15T12:00:00.000Z'
+                      original_price:
+                      seller_id:
+                      option_values: []
+                      external_references: {}
+                      metadata: {}
+                      position: 1
+                      cost_currency: USD
+                      barcode:
+                      backorder_limit:
+                      hs_code:
+                      country_of_origin:
+                      customs_description:
+                      carton_weight:
+                      cartons_per_pallet:
+                      deleted_at:
+                      created_at: '2026-01-15T12:00:00.000Z'
+                      updated_at: '2026-01-15T12:00:00.000Z'
+                      cost_price: '17.00'
+                      preorderable: false
+                      tax_category_id:
+                      carton_package_type_id:
+                      units_per_pallet:
+                      available_stock: 0
+                      reserved_quantity: 0
+                      total_on_hand: 0
+                      product_name: Product 977583
+                      delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -30289,6 +30356,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderChange"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
     post:
       summary: Create an order change
       tags:
@@ -30369,9 +30448,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
-                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
+                  discount_id:
                   fulfillment_id:
                   delivery_method_id:
               schema:
@@ -30547,9 +30626,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
-                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
+                  discount_id:
                   fulfillment_id:
                   delivery_method_id:
               schema:
@@ -30636,9 +30715,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   value:
                   amount:
-                  discount_id:
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
+                  discount_id:
                   fulfillment_id:
                   delivery_method_id:
               schema:
@@ -71828,13 +71907,13 @@ components:
           type: string
           nullable: true
           description: The new amount `update_discount` gives the row.
-        discount_id:
-          type: string
-          nullable: true
         line_item_id:
           type: string
           nullable: true
         variant_id:
+          type: string
+          nullable: true
+        discount_id:
           type: string
           nullable: true
         fulfillment_id:
@@ -71843,6 +71922,8 @@ components:
         delivery_method_id:
           type: string
           nullable: true
+        variant:
+          "$ref": "#/components/schemas/Variant"
       required:
       - id
       - kind
@@ -71854,9 +71935,9 @@ components:
       - updated_at
       - value
       - amount
-      - discount_id
       - line_item_id
       - variant_id
+      - discount_id
       - fulfillment_id
       - delivery_method_id
       x-typelizer: true

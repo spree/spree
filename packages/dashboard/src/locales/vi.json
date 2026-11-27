@@ -3275,6 +3275,33 @@
         "order_group_help": "Đơn hàng này được đặt cùng với những đơn hàng khác trong một lần thanh toán.",
         "order_group_part_of": "Một phần của giao dịch mua lớn hơn",
         "order_group_view_all": "Xem tất cả các đơn đặt hàng trong giao dịch mua này",
+        "order_changes": {
+          "title": "Thay đổi đơn hàng",
+          "empty": "Không có thay đổi nào kể từ khi đặt đơn.",
+          "unknown_item": "Một sản phẩm không còn trong danh mục",
+          "from_return": "từ đơn trả hàng {{number}}",
+          "from_exchange": "từ đơn đổi hàng {{number}}",
+          "from_claim": "từ khiếu nại {{number}}",
+          "statuses": {
+            "pending": "Đang chờ",
+            "requested": "Đã yêu cầu",
+            "confirmed": "Đã áp dụng",
+            "canceled": "Đã hủy",
+            "declined": "Bị từ chối"
+          },
+          "actions": {
+            "add_item": "Đã thêm {{quantity}} × {{name}}",
+            "update_item": "Đã đổi số lượng {{name}} thành {{quantity}}",
+            "remove_item": "Đã xóa {{name}}",
+            "receive_item": "Đã nhập lại kho {{quantity}} × {{name}}",
+            "add_fulfillment": "Đã gửi {{quantity}} × {{name}} để thay thế",
+            "add_discount": "Đã thêm giảm giá “{{label}}” ({{value}})",
+            "update_discount": "Đã đổi giảm giá thành “{{label}}”, {{amount}}",
+            "update_discount_label": "Đã đổi tên giảm giá thành “{{label}}”",
+            "update_discount_amount": "Đã đổi giảm giá thành {{amount}}",
+            "remove_discount": "Đã xóa giảm giá “{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "Để trống để mặc định số dư chưa thanh toán.",
           "capture_immediately": "Chụp ngay lập tức",

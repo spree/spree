@@ -112,6 +112,24 @@ export function useOrderFees(orderId: string) {
 }
 
 /**
+ * Keyed under the order, so anything that refreshes the order — saving an
+ * edit, receiving a return — refreshes its change history too.
+ */
+export function useOrderChanges(orderId: string, page: number) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'order_changes', page),
+    queryFn: () =>
+      adminClient.orders.orderChanges.list(orderId, {
+        page,
+        limit: 10,
+        sort: '-created_at',
+        expand: ['actions.variant'],
+      }),
+    enabled: !!orderId,
+  })
+}
+
+/**
  * Ransack predicates go in flat: the SDK wraps them into `q[...]` itself, so a
  * nested `q` becomes `q[q]=[object Object]`, which Ransack ignores — and an
  * unfiltered list is every commission line in the store, rendered against

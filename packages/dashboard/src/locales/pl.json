@@ -3306,6 +3306,33 @@
         "order_group_help": "To zamówienie zostało złożone razem z innymi w ramach jednego zakupu.",
         "order_group_part_of": "Część większego zakupu",
         "order_group_view_all": "Zobacz wszystkie zamówienia z tego zakupu",
+        "order_changes": {
+          "title": "Zmiany zamówienia",
+          "empty": "Brak zmian od złożenia zamówienia.",
+          "unknown_item": "Produkt, którego nie ma już w katalogu",
+          "from_return": "ze zwrotu {{number}}",
+          "from_exchange": "z wymiany {{number}}",
+          "from_claim": "z reklamacji {{number}}",
+          "statuses": {
+            "pending": "Oczekująca",
+            "requested": "Zgłoszona",
+            "confirmed": "Zastosowana",
+            "canceled": "Anulowana",
+            "declined": "Odrzucona"
+          },
+          "actions": {
+            "add_item": "Dodano {{quantity}} × {{name}}",
+            "update_item": "Zmieniono ilość {{name}} na {{quantity}}",
+            "remove_item": "Usunięto {{name}}",
+            "receive_item": "Przyjęto na stan {{quantity}} × {{name}}",
+            "add_fulfillment": "Wysłano {{quantity}} × {{name}} jako zamiennik",
+            "add_discount": "Dodano rabat „{{label}}” ({{value}})",
+            "update_discount": "Zmieniono rabat na „{{label}}”, {{amount}}",
+            "update_discount_label": "Zmieniono nazwę rabatu na „{{label}}”",
+            "update_discount_amount": "Zmieniono rabat na {{amount}}",
+            "remove_discount": "Usunięto rabat „{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "Pozostaw puste, aby użyć domyślnie pozostałego salda.",
           "capture_immediately": "Pobierz natychmiast",

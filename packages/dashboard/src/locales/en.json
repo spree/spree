@@ -3276,6 +3276,33 @@
         "order_group_help": "This order was placed alongside others in one checkout.",
         "order_group_part_of": "Part of a larger purchase",
         "order_group_view_all": "View all orders in this purchase",
+        "order_changes": {
+          "title": "Order changes",
+          "empty": "No changes since the order was placed.",
+          "unknown_item": "An item no longer in the catalog",
+          "from_return": "from return {{number}}",
+          "from_exchange": "from exchange {{number}}",
+          "from_claim": "from claim {{number}}",
+          "statuses": {
+            "pending": "Pending",
+            "requested": "Requested",
+            "confirmed": "Applied",
+            "canceled": "Canceled",
+            "declined": "Declined"
+          },
+          "actions": {
+            "add_item": "Added {{quantity}} × {{name}}",
+            "update_item": "Changed {{name}} to a quantity of {{quantity}}",
+            "remove_item": "Removed {{name}}",
+            "receive_item": "Restocked {{quantity}} × {{name}}",
+            "add_fulfillment": "Shipped {{quantity}} × {{name}} as a replacement",
+            "add_discount": "Added the discount “{{label}}” ({{value}})",
+            "update_discount": "Changed a discount to “{{label}}”, {{amount}}",
+            "update_discount_label": "Renamed a discount to “{{label}}”",
+            "update_discount_amount": "Changed a discount to {{amount}}",
+            "remove_discount": "Removed the discount “{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "Leave blank to default to the outstanding balance.",
           "capture_immediately": "Capture immediately",

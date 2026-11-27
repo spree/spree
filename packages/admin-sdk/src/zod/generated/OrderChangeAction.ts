@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { VariantSchema } from './Variant';
 
 export const OrderChangeActionSchema = z.object({
   id: z.string(),
@@ -17,6 +18,7 @@ export const OrderChangeActionSchema = z.object({
   discount_id: z.string().nullable(),
   fulfillment_id: z.string().nullable(),
   delivery_method_id: z.string().nullable(),
+  get variant() { return VariantSchema.optional(); },
 });
 
 export type OrderChangeAction = z.infer<typeof OrderChangeActionSchema>;

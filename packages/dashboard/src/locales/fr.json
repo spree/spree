@@ -3277,6 +3277,33 @@
         "order_group_help": "Cette commande a été passée avec d’autres lors d’un même paiement.",
         "order_group_part_of": "Fait partie d'un achat plus large",
         "order_group_view_all": "Voir toutes les commandes de cet achat",
+        "order_changes": {
+          "title": "Modifications de la commande",
+          "empty": "Aucune modification depuis la passation de la commande.",
+          "unknown_item": "Un article qui n’est plus au catalogue",
+          "from_return": "du retour {{number}}",
+          "from_exchange": "de l’échange {{number}}",
+          "from_claim": "de la réclamation {{number}}",
+          "statuses": {
+            "pending": "En attente",
+            "requested": "Demandée",
+            "confirmed": "Appliquée",
+            "canceled": "Annulée",
+            "declined": "Refusée"
+          },
+          "actions": {
+            "add_item": "{{quantity}} × {{name}} ajouté",
+            "update_item": "Quantité de {{name}} passée à {{quantity}}",
+            "remove_item": "{{name}} retiré",
+            "receive_item": "{{quantity}} × {{name}} remis en stock",
+            "add_fulfillment": "{{quantity}} × {{name}} expédié en remplacement",
+            "add_discount": "Remise « {{label}} » ({{value}}) ajoutée",
+            "update_discount": "Remise modifiée en « {{label}} », {{amount}}",
+            "update_discount_label": "Remise renommée en « {{label}} »",
+            "update_discount_amount": "Remise modifiée à {{amount}}",
+            "remove_discount": "Remise « {{label}} » retirée"
+          }
+        },
         "payment_form": {
           "amount_help": "Laissez vide pour utiliser par défaut le solde restant dû.",
           "capture_immediately": "Capturer immédiatement",

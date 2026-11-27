@@ -40,6 +40,8 @@ module Spree
           end
 
           prefixed_id_attributes :fulfillment, :delivery_method
+
+          one :variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('variant') }
         end
       end
     end

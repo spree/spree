@@ -3275,6 +3275,33 @@
         "order_group_help": "この注文は、1 回のチェックアウトでほかの注文と一緒に行われました。",
         "order_group_part_of": "大きな購入の一部",
         "order_group_view_all": "この購入のすべての注文を見る",
+        "order_changes": {
+          "title": "注文の変更",
+          "empty": "注文確定以降の変更はありません。",
+          "unknown_item": "カタログにない商品",
+          "from_return": "返品 {{number}} より",
+          "from_exchange": "交換 {{number}} より",
+          "from_claim": "クレーム {{number}} より",
+          "statuses": {
+            "pending": "保留中",
+            "requested": "依頼済み",
+            "confirmed": "適用済み",
+            "canceled": "キャンセル済み",
+            "declined": "却下"
+          },
+          "actions": {
+            "add_item": "{{name}} を {{quantity}} 点追加",
+            "update_item": "{{name}} の数量を {{quantity}} に変更",
+            "remove_item": "{{name}} を削除",
+            "receive_item": "{{name}} を {{quantity}} 点再入庫",
+            "add_fulfillment": "{{name}} を {{quantity}} 点交換品として発送",
+            "add_discount": "割引「{{label}}」({{value}})を追加",
+            "update_discount": "割引を「{{label}}」、{{amount}} に変更",
+            "update_discount_label": "割引の名前を「{{label}}」に変更",
+            "update_discount_amount": "割引を {{amount}} に変更",
+            "remove_discount": "割引「{{label}}」を削除"
+          }
+        },
         "payment_form": {
           "amount_help": "空欄なら未払いの残高になります。",
           "capture_immediately": "すぐに確定",

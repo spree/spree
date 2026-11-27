@@ -3276,6 +3276,33 @@
         "order_group_help": "Diese Bestellung wurde zusammen mit anderen in einem Checkout aufgegeben.",
         "order_group_part_of": "Teil eines größeren Einkaufs",
         "order_group_view_all": "Alle Bestellungen dieses Einkaufs anzeigen",
+        "order_changes": {
+          "title": "Bestelländerungen",
+          "empty": "Keine Änderungen seit Aufgabe der Bestellung.",
+          "unknown_item": "Ein Artikel, der nicht mehr im Katalog ist",
+          "from_return": "aus Retoure {{number}}",
+          "from_exchange": "aus Umtausch {{number}}",
+          "from_claim": "aus Reklamation {{number}}",
+          "statuses": {
+            "pending": "Ausstehend",
+            "requested": "Angefragt",
+            "confirmed": "Angewendet",
+            "canceled": "Storniert",
+            "declined": "Abgelehnt"
+          },
+          "actions": {
+            "add_item": "{{quantity}} × {{name}} hinzugefügt",
+            "update_item": "Menge von {{name}} auf {{quantity}} geändert",
+            "remove_item": "{{name}} entfernt",
+            "receive_item": "{{quantity}} × {{name}} wieder eingelagert",
+            "add_fulfillment": "{{quantity}} × {{name}} als Ersatz versendet",
+            "add_discount": "Rabatt „{{label}}“ ({{value}}) hinzugefügt",
+            "update_discount": "Rabatt in „{{label}}“, {{amount}} geändert",
+            "update_discount_label": "Rabatt in „{{label}}“ umbenannt",
+            "update_discount_amount": "Rabatt auf {{amount}} geändert",
+            "remove_discount": "Rabatt „{{label}}“ entfernt"
+          }
+        },
         "payment_form": {
           "amount_help": "Leer lassen, um standardmäßig den offenen Saldo zu verwenden.",
           "capture_immediately": "Sofort einziehen",

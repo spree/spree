@@ -3300,6 +3300,33 @@
         "order_group_help": "تم تقديم هذا الطلب مع طلبات أخرى في عملية دفع واحدة.",
         "order_group_part_of": "جزء من عملية شراء أكبر",
         "order_group_view_all": "عرض كل الطلبات في عملية الشراء هذه",
+        "order_changes": {
+          "title": "تغييرات الطلب",
+          "empty": "لا توجد تغييرات منذ تقديم الطلب.",
+          "unknown_item": "منتج لم يعد في الكتالوج",
+          "from_return": "من المرتجع {{number}}",
+          "from_exchange": "من الاستبدال {{number}}",
+          "from_claim": "من المطالبة {{number}}",
+          "statuses": {
+            "pending": "قيد الانتظار",
+            "requested": "مطلوب",
+            "confirmed": "مُطبَّق",
+            "canceled": "ملغى",
+            "declined": "مرفوض"
+          },
+          "actions": {
+            "add_item": "أُضيف {{quantity}} × {{name}}",
+            "update_item": "تغيّرت كمية {{name}} إلى {{quantity}}",
+            "remove_item": "أُزيل {{name}}",
+            "receive_item": "أُعيد إلى المخزون {{quantity}} × {{name}}",
+            "add_fulfillment": "شُحن {{quantity}} × {{name}} كبديل",
+            "add_discount": "أُضيف الخصم «{{label}}» ({{value}})",
+            "update_discount": "تغيّر خصم إلى «{{label}}»، {{amount}}",
+            "update_discount_label": "أُعيدت تسمية خصم إلى «{{label}}»",
+            "update_discount_amount": "تغيّر خصم إلى {{amount}}",
+            "remove_discount": "أُزيل الخصم «{{label}}»"
+          }
+        },
         "payment_form": {
           "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
           "capture_immediately": "التقط على الفور",

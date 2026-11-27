@@ -30,13 +30,19 @@ RSpec.describe 'Admin Order Changes API', type: :request, swagger_doc: 'api-refe
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., actions.variant). Use dot notation for nested expand (max 4 levels).'
       filter_parameters_for
 
       response '200', 'order changes listed' do
+        let(:expand) { 'actions.variant' }
+
         before { requested_change }
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['data'].pluck('id')).to eq([requested_change.prefixed_id])
+          change = JSON.parse(response.body)['data'].sole
+          expect(change['id']).to eq(requested_change.prefixed_id)
+          expect(change['actions'].first['variant']['id']).to eq(line_item.variant.prefixed_id)
         end
       end
     end

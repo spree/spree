@@ -196,8 +196,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
       expect(json_response['data'].length).to eq(2)
     end
 
+    it 'names the variant of a line the change removed' do
+      removed = order.line_items.second.variant
+      Spree::OrderChanges::Apply.call(order: order, actions: [{ kind: 'remove_item', line_item: order.line_items.second }])
+
+      get :index, params: { order_id: order.prefixed_id, expand: 'actions.variant', sort: '-created_at' }, as: :json
+
+      action = json_response['data'].first['actions'].sole
+      expect(action['kind']).to eq('remove_item')
+      expect(action['variant']).to include('id' => removed.prefixed_id, 'product_name' => removed.product.name)
+    end
+
     it_behaves_like 'a list without N+1 queries' do
-      subject { get :index, params: { order_id: order.prefixed_id }, as: :json }
+      subject { get :index, params: { order_id: order.prefixed_id, expand: 'actions.variant' }, as: :json }
     end
   end
 

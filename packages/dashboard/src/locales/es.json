@@ -2988,6 +2988,33 @@
         "order_group_help": "Este pedido se realizó junto con otros en una misma finalización de compra.",
         "order_group_part_of": "Parte de una compra mayor",
         "order_group_view_all": "Ver todos los pedidos de esta compra",
+        "order_changes": {
+          "title": "Cambios en el pedido",
+          "empty": "No hay cambios desde que se realizó el pedido.",
+          "unknown_item": "Un artículo que ya no está en el catálogo",
+          "from_return": "de la devolución {{number}}",
+          "from_exchange": "del cambio {{number}}",
+          "from_claim": "de la reclamación {{number}}",
+          "statuses": {
+            "pending": "Pendiente",
+            "requested": "Solicitado",
+            "confirmed": "Aplicado",
+            "canceled": "Cancelado",
+            "declined": "Rechazado"
+          },
+          "actions": {
+            "add_item": "Se añadió {{quantity}} × {{name}}",
+            "update_item": "Se cambió la cantidad de {{name}} a {{quantity}}",
+            "remove_item": "Se eliminó {{name}}",
+            "receive_item": "Se repuso {{quantity}} × {{name}}",
+            "add_fulfillment": "Se envió {{quantity}} × {{name}} como reemplazo",
+            "add_discount": "Se añadió el descuento «{{label}}» ({{value}})",
+            "update_discount": "Se cambió un descuento a «{{label}}», {{amount}}",
+            "update_discount_label": "Se renombró un descuento a «{{label}}»",
+            "update_discount_amount": "Se cambió un descuento a {{amount}}",
+            "remove_discount": "Se eliminó el descuento «{{label}}»"
+          }
+        },
         "payment_form": {
           "amount_help": "Dejalo en blanco para usar el saldo pendiente.",
           "capture_immediately": "Capturar de inmediato",

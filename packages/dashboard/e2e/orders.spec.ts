@@ -703,7 +703,7 @@ test.describe('placed order editing', () => {
 
     await page.goto(orderUrl)
     await addDiscount('Goodwill')
-    await expect(page.getByText('Goodwill')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('Goodwill', { exact: true })).toBeVisible({ timeout: 15_000 })
 
     const changes = await adminRequest<{ data: { status: string; actions: { kind: string }[] }[] }>(
       page,
@@ -730,6 +730,47 @@ test.describe('placed order editing', () => {
     await expect(page.getByText(/another change to this order is in progress/i)).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  // The order page is where a merchant asks "who changed this, and when?",
+  // so every change is listed there, a waiting one included.
+  test('lists the changes made to the order on its page', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+    const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
+
+    await page.goto(orderUrl)
+    const history = page
+      .locator('[data-slot="section"]')
+      .filter({ has: page.getByText('Order changes', { exact: true }) })
+    await expect(history.getByText(/no changes since the order was placed/i)).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.goto(`${orderUrl}/edit`)
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toHaveValue('1', { timeout: 15_000 })
+    await quantity.fill('2')
+    await expect(page.getByTestId('order-balance-change')).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
+
+    await expect(history.getByText(/to a quantity of 2$/)).toBeVisible({ timeout: 15_000 })
+    await expect(history.getByText(/^applied$/i)).toBeVisible()
+
+    const { items } = await adminRequest<{ items: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}?expand=items`,
+    )
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/order_changes`, {
+      actions: [{ kind: 'update_item', line_item_id: items[0].id, quantity: 5 }],
+    })
+
+    await page.reload()
+    await expect(history.getByText(/to a quantity of 5$/)).toBeVisible({ timeout: 15_000 })
+    await expect(history.getByText(/^requested$/i)).toBeVisible()
   })
 })
 

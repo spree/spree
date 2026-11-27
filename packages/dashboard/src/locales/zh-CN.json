@@ -3267,6 +3267,33 @@
         "order_group_help": "该订单与其他订单在同一次结账中下单。",
         "order_group_part_of": "属于一次更大的购买",
         "order_group_view_all": "查看本次购买的所有订单",
+        "order_changes": {
+          "title": "订单变更",
+          "empty": "下单后没有任何变更。",
+          "unknown_item": "已不在目录中的商品",
+          "from_return": "来自退货 {{number}}",
+          "from_exchange": "来自换货 {{number}}",
+          "from_claim": "来自索赔 {{number}}",
+          "statuses": {
+            "pending": "待处理",
+            "requested": "已请求",
+            "confirmed": "已应用",
+            "canceled": "已取消",
+            "declined": "已拒绝"
+          },
+          "actions": {
+            "add_item": "添加了 {{quantity}} × {{name}}",
+            "update_item": "将 {{name}} 的数量改为 {{quantity}}",
+            "remove_item": "移除了 {{name}}",
+            "receive_item": "重新入库 {{quantity}} × {{name}}",
+            "add_fulfillment": "作为替换发出 {{quantity}} × {{name}}",
+            "add_discount": "添加了折扣“{{label}}”（{{value}}）",
+            "update_discount": "将折扣改为“{{label}}”，{{amount}}",
+            "update_discount_label": "将折扣重命名为“{{label}}”",
+            "update_discount_amount": "将折扣改为 {{amount}}",
+            "remove_discount": "移除了折扣“{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "留空则默认为未结清的余额。",
           "capture_immediately": "立即扣款",
