@@ -18,7 +18,7 @@ module Spree
         cart = nil
         failed = nil
         # One transaction, so fields the update refuses leave no empty cart behind.
-        ApplicationRecord.transaction do
+        ApplicationRecord.transaction(requires_new: true) do
           cart = store.carts.create!(
             customer: customer,
             market: @params.delete(:market) || Spree::Current.market,

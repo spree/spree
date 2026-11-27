@@ -152,7 +152,7 @@ module Spree
         answered = cart.custom_fields.unscope(:includes).select(:custom_field_definition_id)
         other_cart.custom_fields.unscope(:includes).where.not(custom_field_definition_id: answered).
           update_all(resource_id: cart.id, updated_at: Time.current)
-        cart.custom_fields.reset
+        cart.reset_custom_fields
       end
 
       def destroy_drained_cart

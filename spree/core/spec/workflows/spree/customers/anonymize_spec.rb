@@ -562,6 +562,15 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(guest_order.last_ip_address).to be_nil
     end
 
+    it 'erases what the shopper typed into its checkout fields' do
+      definition = create(:custom_field_definition, :for_order, store: store, key: 'gift_message', storefront_writable: true)
+      guest_order.set_custom_field(definition, 'Happy birthday, Sam')
+
+      result
+
+      expect(guest_order.reload.custom_fields).to be_empty
+    end
+
     it 'redacts the address that came with it' do
       address = guest_order.ship_address
 

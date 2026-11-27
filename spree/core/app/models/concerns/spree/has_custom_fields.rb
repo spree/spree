@@ -189,7 +189,8 @@ module Spree
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
         # An empty list is a value for JSON, but no choice at all for a choice field.
         if value_blank?(value) || (value == [] && custom_field.is_a?(Spree::CustomFields::Choice))
-          custom_field.destroy if custom_field.persisted?
+          # Through the association, so a loaded list drops the row too.
+          custom_fields.destroy(custom_field) if custom_field.persisted?
           return nil
         end
 
@@ -210,7 +211,15 @@ module Spree
         return if rows.empty?
 
         Spree::CustomField.insert_all!(rows)
+        reset_custom_fields
+      end
+
+      # Forgets the values read so far, after a bulk write that went around the association.
+      #
+      # @return [void]
+      def reset_custom_fields
         custom_fields.reset
+        storefront_custom_fields.reset
         @filled_custom_field_definition_ids = nil
       end
 

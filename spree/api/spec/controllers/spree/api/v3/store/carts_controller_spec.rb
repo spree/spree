@@ -739,6 +739,17 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(order.reload.custom_fields).to be_empty
       end
 
+      it 'writes nothing when a later value breaks its rules' do
+        patch :update, params: { id: order.prefixed_id, customer_note: 'Leave at the door',
+                                 custom_fields: [{ key: 'checkout.gift_message', value: 'Happy birthday' },
+                                                 { key: 'checkout.delivery_date', value: 'next week' }] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'custom_fields[1].value')).to be_present
+        expect(order.reload.custom_fields).to be_empty
+        expect(order.customer_note).to be_nil
+      end
+
       it 'creates no cart when the fields are refused' do
         expect do
           post :create, params: { custom_fields: [{ key: 'checkout.unknown', value: 'x' }] }, as: :json

@@ -8,7 +8,9 @@ module Spree
         @params = params.to_h.deep_symbolize_keys
         was_in_checkout = cart.in_checkout?
 
-        ApplicationRecord.transaction do
+        # Its own savepoint: callers hold the cart's row lock in an outer
+        # transaction, which would otherwise commit a refused update's writes.
+        ApplicationRecord.transaction(requires_new: true) do
           assign_cart_attributes
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)

@@ -108,7 +108,7 @@ module Spree
               @cart = result.value
               render_cart(status: :created)
             else
-              render_result_failure(result, code: ERROR_CODES[:validation_error])
+              render_result_failure(result, code: ERROR_CODES[:processing_error])
             end
           end
 
