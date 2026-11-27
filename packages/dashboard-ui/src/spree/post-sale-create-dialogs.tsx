@@ -205,6 +205,7 @@ export function CreateClaimDialog({
                             step="any"
                             min="0"
                             value={amounts[line.id] ?? ''}
+                            placeholder={line.paidFor?.(chosenQuantity)}
                             onChange={(event) => {
                               setAmounts({ ...amounts, [line.id]: event.target.value })
                               // Clearing the field hands it back to the quantity.
@@ -247,7 +248,9 @@ export function CreateClaimDialog({
                 items: chosen.map(([id, quantity]) => ({
                   line_item_id: id,
                   quantity,
-                  refund_amount: amounts[id] || undefined,
+                  // An untouched amount is only an estimate of what was paid;
+                  // leaving it out lets the server record the exact figure.
+                  refund_amount: (typedAmounts[id] && amounts[id]) || undefined,
                 })),
                 memo: memo.trim() || undefined,
               })

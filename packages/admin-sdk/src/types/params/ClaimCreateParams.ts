@@ -9,6 +9,7 @@ export type ClaimCreateParams = {
     send_replacement?: boolean
     /** Defaults to the variant that was bought. */
     replacement_variant_id?: string
+    /** Tax included. Defaults to what was paid for these units. */
     refund_amount?: string
   }[]
   /** One of the store's claim reasons. */

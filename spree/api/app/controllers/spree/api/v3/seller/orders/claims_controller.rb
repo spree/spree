@@ -26,7 +26,8 @@ module Spree
                 item.attribute :replacement_variant_id, :id,
                   nullable: true,
                   description: "One of this seller's own variants."
-                item.attribute :refund_amount, :decimal, nullable: true
+                item.attribute :refund_amount, :decimal, blank: true, nullable: true,
+                                                         description: 'Tax included. Defaults to what was paid for these units.'
               end
               body.attribute :reason_id, :id, nullable: true
               body.attribute :memo, :string, nullable: true

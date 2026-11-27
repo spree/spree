@@ -25,6 +25,8 @@ module Spree
       # from the raw params itself. `format:` documents a string's format
       # (`email`, `uri`). `deprecated: 'Use country_code. Removed in 6.5.'`
       # keeps a field working while the API reference and the SDK types flag it.
+      # `blank: true` on a `decimal` documents that an empty string is accepted
+      # and means no amount was given.
       class RequestSchema
         KINDS = {
           string: { type: :string },
@@ -69,11 +71,11 @@ module Spree
 
         class Field
           attr_reader :name, :kind, :array, :required, :nullable, :description, :example, :enum, :open, :only, :schema,
-                      :permit, :format, :deprecated
+                      :permit, :format, :deprecated, :blank
 
           def initialize(name, kind, array: false, required: false, nullable: false, description: nil,
                          example: nil, enum: nil, open: false, only: nil, schema: nil, permit: true, format: nil,
-                         deprecated: nil)
+                         deprecated: nil, blank: false)
             raise ArgumentError, "deprecated: says what to use instead (#{name})" if deprecated == true
 
             raise ArgumentError, "open: needs an enum: list of the built-in values (#{name})" if open && enum.nil?
@@ -82,6 +84,7 @@ module Spree
               raise ArgumentError, "required: must be true, false or :create (#{name})"
             end
             raise ArgumentError, "only: must be :create or :update (#{name})" if only && !only.in?(ACTIONS)
+            raise ArgumentError, "blank: applies to a :decimal (#{name})" if blank && kind != :decimal
 
             @name = name.to_sym
             @kind = kind
@@ -97,6 +100,7 @@ module Spree
             @permit = permit
             @format = format
             @deprecated = deprecated
+            @blank = blank
           end
 
           # @param action [Symbol, nil]
@@ -472,6 +476,7 @@ module Spree
 
           schema = KINDS.fetch(field.kind).dup
           schema[:format] = field.format if field.format
+          schema[:pattern] = "^(#{schema[:pattern][1..-2]})?$" if field.blank
           return schema unless field.enum
           return schema.merge(enum: field.enum) unless field.open
 

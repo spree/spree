@@ -24,6 +24,28 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result.value).to be_open
     end
 
+    # V-3828: left at zero, resolving without an amount refunded nothing.
+    it 'offers what the customer paid when a line is given no refund amount' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1 }]).value
+      line = claim.claim_line_items.first
+
+      expect(line.refund_amount).to be_positive
+      expect(line.refund_amount).to eq(line.paid_amount)
+      expect(claim.refund_total).to eq(line.paid_amount)
+    end
+
+    it 'treats a blank refund amount as none given' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: '' }]).value
+
+      expect(claim.refund_total).to eq(claim.claim_line_items.first.paid_amount)
+    end
+
+    it 'keeps a refund amount of zero it was given' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: 0 }]).value
+
+      expect(claim.refund_total).to eq(0)
+    end
+
     it 'records the reason it was given' do
       reason = create(:claim_reason, store: store)
 
@@ -80,6 +102,15 @@ RSpec.describe 'Spree::Claims workflows' do
 
     it 'refuses an unknown resolution' do
       expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'apologize')).to be_failure
+    end
+
+    it 'refuses to resolve a claim a second time' do
+      first = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'store_credit')
+      second = Spree::Claims::Resolve.call(claim: claim.reload, resolution: 'refund', refund_method: 'store_credit')
+
+      expect(first).to be_success
+      expect(second).to be_failure
+      expect(Spree::StoreCredit.where(originator: claim).count).to eq(1)
     end
 
     # Unguarded, an unrecognised method falls through internal_refund? to the
@@ -223,6 +254,84 @@ RSpec.describe 'Spree::Claims workflows' do
       claim.reload
     end
 
+    # Two requests racing: the second passes its own check, then the first
+    # resolves the claim before the second writes anything.
+    it 'changes nothing for a resolve that loses a race to another' do
+      claim = approved_claim(refund_amount: 27.5)
+      line = claim.claim_line_items.first
+      line.variant.stock_levels.first&.set_count_on_hand(10)
+      snapshot = nil
+      paused = false
+
+      allow_any_instance_of(Spree::Claims::Resolve).to receive(:ensure_resolvable).and_wrap_original do |original|
+        original.call
+        next if paused
+
+        paused = true
+        winner = Spree::Claims::Resolve.call(claim: Spree::Claim.find(claim.id), resolution: 'refund_and_replacement',
+                                             amount: 10, replacement_line_item_ids: [line.id])
+        expect(winner).to be_success
+        snapshot = race_state(claim)
+      end
+
+      loser = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', replacement_line_item_ids: [])
+
+      expect(loser).to be_failure
+      expect(race_state(claim)).to eq(snapshot)
+    end
+
+    it 'refuses a resolve while another holds the claim, and writes nothing' do
+      claim = approved_claim(refund_amount: 27.5)
+      claim.update_columns(resolution: 'refund', updated_at: Time.current)
+      before = race_state(claim)
+
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+      expect(result.error.value).to eq(:resolution_in_progress)
+      expect(race_state(claim)).to eq(before)
+      expect(claim.reload.resolution).to eq('refund')
+    end
+
+    it 'takes over a hold left by a resolve that died' do
+      claim = approved_claim(refund_amount: 27.5)
+      claim.update_columns(resolution: 'refund', updated_at: (Spree::Claims::Resolve::RESERVATION_TTL + 1.minute).ago)
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')).to be_success
+    end
+
+    it 'hands the claim back when the resolve fails' do
+      claim = approved_claim(refund_amount: 27.5)
+      before = race_state(claim)
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')).to be_failure
+      expect(claim.reload).to have_attributes(status: 'approved', resolution: nil)
+      expect(race_state(claim)).to eq(before)
+    end
+
+    # The provider may quote the credit over the network, which must never
+    # happen inside a transaction the workflow opened.
+    it 'asks the tax provider outside the transaction' do
+      claim = approved_claim(refund_amount: 27.5)
+      depth_outside = ApplicationRecord.connection.open_transactions
+      depths = []
+      allow_any_instance_of(order.tax_provider.class).to receive(:estimate_refund).and_wrap_original do |original, *args, **kwargs|
+        depths << ApplicationRecord.connection.open_transactions
+        original.call(*args, **kwargs)
+      end
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')).to be_success
+      expect(depths).to eq([depth_outside])
+    end
+
+    def race_state(claim)
+      {
+        credits: Spree::StoreCredit.where(originator: claim).pluck(:amount),
+        replacements: claim.order.fulfillment_items.where(replacement: true).count,
+        flags: Spree::ClaimLineItem.where(claim_id: claim.id).pluck(:send_replacement),
+        tax_rows: Spree::TaxLine.where(claim_line_item_id: claim.claim_line_items.select(:id)).order(:id).pluck(:amount)
+      }
+    end
+
     it 'lets the refund reach the price and its tax' do
       claim = approved_claim(refund_amount: 27.5)
 
@@ -266,8 +375,10 @@ RSpec.describe 'Spree::Claims workflows' do
       claim = approved_claim(refund_amount: 0)
       line_item.variant.stock_levels.first&.set_count_on_hand(10)
 
-      Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement',
+                                           replacement_line_item_ids: claim.claim_line_items.ids)
 
+      expect(result).to be_success
       expect(claim.credited_tax_total).to eq(0)
     end
 
