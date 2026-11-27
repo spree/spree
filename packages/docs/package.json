@@ -40,7 +40,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.2"
   },
   "engines": {
     "node": ">=18.0.0"
