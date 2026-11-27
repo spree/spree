@@ -201,7 +201,7 @@ module Spree
       # number, they are shopper input, so an order staff key in is never
       # blocked on them.
       def missing_custom_field_requirements
-        return [] if keyed_in_by_staff? || !@cart.respond_to?(:required_storefront_writable_custom_field_definitions)
+        return [] if keyed_in_by_staff?
 
         required = @cart.required_storefront_writable_custom_field_definitions
         return [] if required.empty?
@@ -211,8 +211,9 @@ module Spree
                  else
                    @cart.custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
                  end
+        step = custom_field_step
         required.reject { |definition| filled.include?(definition.id) }.map do |definition|
-          req(custom_field_step, definition.full_key, I18n.t('spree.checkout_requirements.custom_field_required', label: definition.label),
+          req(step, definition.full_key, I18n.t('spree.checkout_requirements.custom_field_required', label: definition.label),
               code: 'custom_field_required')
         end
       end
@@ -223,8 +224,7 @@ module Spree
       def custom_field_step
         return 'payment' unless @cart.is_a?(Spree::Cart)
 
-        steps = @cart.checkout_steps - %w[complete]
-        steps.include?('payment') ? 'payment' : steps.last || 'address'
+        @cart.has_checkout_step?('payment') ? 'payment' : @cart.final_checkout_step
       end
 
       # Narrower than {Spree::Purchase::QuantityRules#staff_initiated?} on

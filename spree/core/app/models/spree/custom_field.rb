@@ -35,6 +35,12 @@ module Spree
       false
     end
 
+    # Whether shoppers may fill in a field of this type. JSON and rich text
+    # are structure and markup a storefront form cannot collect.
+    def self.storefront_writable?
+      false
+    end
+
     # Rules a definition of this type may set in `validations`, besides
     # `required`, which every type takes.
     #

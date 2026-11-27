@@ -1,4 +1,4 @@
-import { formatCustomFieldValue } from '@spree/dashboard-core'
+import { formatCustomFieldDisplayValue } from '@spree/dashboard-core'
 import { Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
 import type { Order } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
@@ -26,9 +26,7 @@ export function CheckoutDetailsCard({ order }: { order: Order }) {
             <div key={field.id} className="flex flex-col gap-0.5">
               <dt className="text-sm text-muted-foreground">{field.label}</dt>
               <dd className="text-base whitespace-pre-line">
-                {field.field_type === 'choice'
-                  ? field.display_value
-                  : formatCustomFieldValue(field.value, field.field_type, timezone)}
+                {formatCustomFieldDisplayValue(field, timezone)}
               </dd>
             </div>
           ))}

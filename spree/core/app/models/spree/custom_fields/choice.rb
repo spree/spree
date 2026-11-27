@@ -4,6 +4,10 @@ module Spree
     # definition allows `multiple` (stored as a JSON array). The stored value
     # is the choice's `value`, so relabelling a choice changes no data.
     class Choice < Spree::CustomField
+      def self.storefront_writable?
+        true
+      end
+
       before_validation :wrap_single_value, if: :multiple_choices?
       before_validation :unwrap_single_value, unless: :multiple_choices?
 

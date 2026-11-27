@@ -191,9 +191,8 @@ module Spree
       # @param source [Spree::HasCustomFields] a cart completing into this order, or a sibling order
       # @return [void]
       def copy_custom_fields_from!(source)
-        rows = source.custom_fields.map do |custom_field|
-          custom_field.attributes.slice('type', 'custom_field_definition_id', 'value').
-            merge('resource_type' => self.class.polymorphic_name, 'resource_id' => id)
+        rows = source.custom_fields.unscope(:includes).pluck(:type, :custom_field_definition_id, :value).map do |type, definition_id, value|
+          { type: type, custom_field_definition_id: definition_id, value: value, resource_type: self.class.polymorphic_name, resource_id: id }
         end
         return if rows.empty?
 

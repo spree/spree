@@ -206,14 +206,15 @@ module Spree
         # pass `admin: true` to send every value.
         #
         # @param admin [Boolean] whether to send every value rather than only storefront visible ones
+        # @param association [Symbol] the storefront values to send, for an audience that sees fewer
         # @return [void]
-        def self.expandable_custom_fields(admin: false)
+        def self.expandable_custom_fields(admin: false, association: :storefront_custom_fields)
           if admin
             many :custom_fields,
                  resource: proc { Spree.api.admin_custom_field_serializer },
                  if: proc { expand?('custom_fields') }
           else
-            many :storefront_custom_fields,
+            many association,
                  key: :custom_fields,
                  resource: proc { Spree.api.custom_field_serializer },
                  if: proc { expand?('custom_fields') }

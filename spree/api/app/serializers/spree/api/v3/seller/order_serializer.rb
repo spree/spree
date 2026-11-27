@@ -94,9 +94,7 @@ module Spree
           # What the shopper filled in at checkout (a delivery date, a gift
           # message), which the seller needs to ship. Admin-only fields stay
           # the operator's.
-          many :storefront_writable_custom_fields, key: :custom_fields,
-                                                   resource: proc { Spree.api.custom_field_serializer },
-                                                   if: proc { expand?('custom_fields') }
+          expandable_custom_fields association: :storefront_writable_custom_fields
         end
       end
     end

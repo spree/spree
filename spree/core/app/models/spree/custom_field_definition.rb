@@ -159,11 +159,6 @@ module Spree
       ['Spree::Order', Spree.customer_class.to_s]
     end
 
-    # Field types a shopper may write. JSON and rich text are structure and
-    # markup a storefront form cannot collect, and an anonymous guest should
-    # not be able to store either.
-    STOREFRONT_WRITABLE_FIELD_TYPES = %w[short_text long_text number boolean date date_time choice].freeze
-
     # Returns the full key with namespace
     # @return [String] eg. custom.id
     def full_key
@@ -228,7 +223,7 @@ module Spree
         errors.add(:storefront_writable, :resource_not_storefront_writable,
                    message: I18n.t('spree.errors.messages.custom_field_resource_not_storefront_writable'))
       end
-      unless STOREFRONT_WRITABLE_FIELD_TYPES.include?(field_type)
+      unless field_type_class&.storefront_writable?
         errors.add(:storefront_writable, :field_type_not_storefront_writable,
                    message: I18n.t('spree.errors.messages.custom_field_type_not_storefront_writable'))
       end

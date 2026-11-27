@@ -47,3 +47,18 @@ export function formatCustomFieldValue(
       return String(value)
   }
 }
+
+/**
+ * A custom field value as an API returns it, as read-only text. A choice
+ * shows its labels from `display_value`, since the field carries no
+ * definition to look them up in.
+ */
+export function formatCustomFieldDisplayValue(
+  field: { value: unknown; field_type: string; display_value: string },
+  timezone: string,
+): string {
+  if (field.field_type === 'choice' && !isBlankCustomFieldValue(field.value)) {
+    return field.display_value
+  }
+  return formatCustomFieldValue(field.value, field.field_type, timezone)
+}
