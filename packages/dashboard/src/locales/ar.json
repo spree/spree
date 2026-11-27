@@ -597,8 +597,10 @@
           "regex_mismatch": "لا يطابق التنسيق المطلوب",
           "less_than_min": "يجب أن تكون {{min}} على الأقل",
           "greater_than_max": "يجب أن تكون {{max}} كحد أقصى",
+          "invalid_number": "أدخل رقمًا",
           "before_min": "يجب أن يكون في {{min}} أو بعده",
           "after_max": "يجب أن يكون في {{max}} أو قبله",
+          "invalid_date_time": "أدخل تاريخًا ووقتًا صالحين",
           "choice_not_offered": "{{value}} ليس من الخيارات"
         },
         "manage_in_settings": "الإدارة في الإعدادات",

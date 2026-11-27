@@ -590,8 +590,10 @@
           "regex_mismatch": "Không khớp với định dạng yêu cầu",
           "less_than_min": "Phải ít nhất là {{min}}",
           "greater_than_max": "Phải tối đa là {{max}}",
+          "invalid_number": "Nhập một số",
           "before_min": "Phải vào hoặc sau {{min}}",
           "after_max": "Phải vào hoặc trước {{max}}",
+          "invalid_date_time": "Nhập ngày giờ hợp lệ",
           "choice_not_offered": "{{value}} không phải là một lựa chọn"
         },
         "manage_in_settings": "Quản lý trong cài đặt",

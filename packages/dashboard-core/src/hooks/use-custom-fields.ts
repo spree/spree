@@ -32,14 +32,27 @@ export function useCustomFields(ownerType: CustomFieldOwnerType, ownerId: string
   })
 }
 
+// Every page, so forms check the required fields of a resource with more
+// definitions than fit on one.
 export function useCustomFieldDefinitions(resourceType: string) {
   return useQuery({
     queryKey: definitionsKey(resourceType),
-    queryFn: () =>
-      adminClient.customFieldDefinitions.list({
-        limit: 100,
-        resource_type_eq: resourceType,
-      }),
+    queryFn: async () => {
+      const list = (page: number) =>
+        adminClient.customFieldDefinitions.list({
+          page,
+          limit: 100,
+          resource_type_eq: resourceType,
+        })
+      const first = await list(1)
+      const data = [...first.data]
+      for (let page = first.meta.next; page != null; ) {
+        const next = await list(page)
+        data.push(...next.data)
+        page = next.meta.next
+      }
+      return { ...first, data }
+    },
     enabled: !!resourceType,
   })
 }

@@ -588,8 +588,10 @@
           "regex_mismatch": "不符合要求的格式",
           "less_than_min": "必须至少为 {{min}}",
           "greater_than_max": "必须最多为 {{max}}",
+          "invalid_number": "请输入数字",
           "before_min": "必须在 {{min}} 当天或之后",
           "after_max": "必须在 {{max}} 当天或之前",
+          "invalid_date_time": "请输入有效的日期和时间",
           "choice_not_offered": "{{value}} 不是可选项之一"
         },
         "manage_in_settings": "在设置中管理",

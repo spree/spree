@@ -590,8 +590,10 @@
           "regex_mismatch": "必要な形式と一致しません",
           "less_than_min": "{{min}}以上である必要があります",
           "greater_than_max": "{{max}}以下である必要があります",
+          "invalid_number": "数値を入力してください",
           "before_min": "{{min}}以降である必要があります",
           "after_max": "{{max}}以前である必要があります",
+          "invalid_date_time": "有効な日時を入力してください",
           "choice_not_offered": "{{value}}は選択肢にありません"
         },
         "manage_in_settings": "設定で管理",

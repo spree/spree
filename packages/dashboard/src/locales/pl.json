@@ -600,8 +600,10 @@
           "regex_mismatch": "Nie pasuje do wymaganego formatu",
           "less_than_min": "Musi wynosić co najmniej {{min}}",
           "greater_than_max": "Może wynosić najwyżej {{max}}",
+          "invalid_number": "Wpisz liczbę",
           "before_min": "Musi przypadać {{min}} lub później",
           "after_max": "Musi przypadać {{max}} lub wcześniej",
+          "invalid_date_time": "Wpisz poprawną datę i godzinę",
           "choice_not_offered": "{{value}} nie jest jedną z opcji"
         },
         "manage_in_settings": "Zarządzaj w ustawieniach",

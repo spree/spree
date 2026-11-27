@@ -208,19 +208,20 @@ function valuesEqual(a: unknown, b: unknown): boolean {
 }
 
 // The rules the server checks on the values being written, plus `required`,
-// which it leaves to us. A value saved before a rule changed stays as it is
-// until it is edited, as on the server. Returns whether any value was refused,
-// after naming the fields in a toast.
+// which it leaves to us and which only fields on show must meet. A value saved
+// before a rule changed stays as it is until it is edited, as on the server.
+// Returns whether any value was refused, after naming the fields in a toast.
 function rejectInvalidValues(
   definitions: CustomFieldDefinition[],
   values: Record<string, unknown>,
   isChanged: (definition: CustomFieldDefinition) => boolean,
+  isShown: (definition: CustomFieldDefinition) => boolean,
   t: ReturnType<typeof useTranslation>['t'],
 ): boolean {
   const invalid = definitions.filter((def) =>
     isChanged(def)
-      ? customFieldValueError(def, values[def.id], { checkRequired: true })
-      : def.validations?.required && isBlank(values[def.id]),
+      ? customFieldValueError(def, values[def.id], { checkRequired: isShown(def) })
+      : isShown(def) && def.validations?.required && isBlank(values[def.id]),
   )
   if (invalid.length === 0) return false
 
@@ -340,13 +341,17 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
         })
         return false
       }
-      const checked = fresh ? schemaDefinitions(fresh.data, definitionIds) : definitions
+      // Every definition, because a value edited before the product's type
+      // changed is still sent even though its field is no longer shown.
+      const all = fresh?.data ?? allDefinitions
+      const shown = new Set(schemaDefinitions(all, definitionIds).map((def) => def.id))
       const current = valuesByDefinitionId(cfForm.getValues('custom_fields'))
       const saved = valuesByDefinitionId(cfForm.formState.defaultValues?.custom_fields)
       return !rejectInvalidValues(
-        checked,
+        all,
         current,
         (def) => !valuesEqual(current[def.id], saved[def.id]),
+        (def) => shown.has(def.id),
         t,
       )
     }
@@ -354,7 +359,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     return () => {
       formSubmitChecks.delete(cfForm.control)
     }
-  }, [cfForm, definitions, definitionsResponse, definitionIds, refetchDefinitions, t])
+  }, [cfForm, allDefinitions, definitionsResponse, definitionIds, refetchDefinitions, t])
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
@@ -515,7 +520,15 @@ export function useCustomFieldsDraft(
         return true
       }
 
-      if (rejectInvalidValues(definitions, values, (def) => changedDefinitions.includes(def), t)) {
+      if (
+        rejectInvalidValues(
+          definitions,
+          values,
+          (def) => changedDefinitions.includes(def),
+          () => true,
+          t,
+        )
+      ) {
         setShowRequiredErrors(true)
         return false
       }

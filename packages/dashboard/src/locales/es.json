@@ -5915,8 +5915,10 @@
           "regex_mismatch": "No tiene el formato requerido",
           "less_than_min": "Debe ser al menos {{min}}",
           "greater_than_max": "Debe ser como máximo {{max}}",
+          "invalid_number": "Introduce un número",
           "before_min": "Debe ser el {{min}} o posterior",
           "after_max": "Debe ser el {{max}} o anterior",
+          "invalid_date_time": "Introduce una fecha y hora válidas",
           "choice_not_offered": "{{value}} no es una de las opciones"
         },
         "manage_in_settings": "Gestionar en configuración",

@@ -48,6 +48,13 @@ describe('customFieldValueError', () => {
     ).not.toBeNull()
   })
 
+  it('refuses numbers and date-times the server cannot read', () => {
+    expect(customFieldValueError(definition('number'), Number.POSITIVE_INFINITY)).not.toBeNull()
+    expect(customFieldValueError(definition('number'), 'abc')).not.toBeNull()
+    expect(customFieldValueError(definition('date_time'), 'not a date')).not.toBeNull()
+    expect(customFieldValueError(definition('date_time'), '2026-10-12T08:00:00Z')).toBeNull()
+  })
+
   it('checks text against the whole pattern, leaving patterns JavaScript cannot read to the server', () => {
     const code = definition('short_text', { regex: '[A-Z]{3}-\\d{4}' })
 

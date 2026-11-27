@@ -590,8 +590,10 @@
           "regex_mismatch": "Ne respecte pas le format requis",
           "less_than_min": "Doit être au moins {{min}}",
           "greater_than_max": "Doit être au plus {{max}}",
+          "invalid_number": "Saisissez un nombre",
           "before_min": "Doit être le {{min}} ou après",
           "after_max": "Doit être le {{max}} ou avant",
+          "invalid_date_time": "Saisissez une date et une heure valides",
           "choice_not_offered": "{{value}} ne fait pas partie des choix"
         },
         "manage_in_settings": "Gérer dans les paramètres",

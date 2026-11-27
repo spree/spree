@@ -307,7 +307,7 @@ export function customFieldValueError(
     }
     case 'number': {
       const number = Number(value)
-      if (Number.isNaN(number)) return null
+      if (!Number.isFinite(number)) return message('invalid_number')
       if (min != null && number < Number(min)) return message('less_than_min', { min })
       if (max != null && number > Number(max)) return message('greater_than_max', { max })
       return null
@@ -317,6 +317,7 @@ export function customFieldValueError(
       // Dates compare as ISO text, date-times as instants.
       const at = (iso: string | number) =>
         definition.field_type === 'date' ? String(iso) : Date.parse(String(iso))
+      if (Number.isNaN(at(String(value)))) return message('invalid_date_time')
       if (min != null && at(String(value)) < at(min)) return message('before_min', { min })
       if (max != null && at(String(value)) > at(max)) return message('after_max', { max })
       return null
