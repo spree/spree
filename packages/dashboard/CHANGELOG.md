@@ -16,7 +16,7 @@
 
 - [#15239](https://github.com/spree/spree/pull/15239) [`275757a`](https://github.com/spree/spree/commit/275757add1e1954c6cabe2a9539fe82aa8a867fb) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removing someone from staff, or clearing all their roles, now also refreshes the Staff page's pending invitations. The API revokes that person's other pending invitations for the store, so they leave the list together with the teammate.
 
-- [#15313](https://github.com/spree/spree/pull/15313) [`9c0c36d`](https://github.com/spree/spree/commit/9c0c36d8efc3231aac36ea0df2c9f5fd8816bd51) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `StoreSetupFields` takes its `countries` as `Country[]` from `@spree/admin-sdk`, the type `auth.setupCountries()` now returns, in place of the removed `SetupCountry`.
+- [#15313](https://github.com/spree/spree/pull/15313) [`9c0c36d`](https://github.com/spree/spree/commit/9c0c36d8efc3231aac36ea0df2c9f5fd8816bd51) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `StoreSetupFields` takes its `countries` as `Country[]` from `@spree/admin-sdk`, the type `auth.setupCountries()` now returns, in place of the removed `SetupCountry`. A host app that builds this list itself passes `Country` objects and reads the country code from `iso` instead of `code`.
 
 ## 6.0.6
 
