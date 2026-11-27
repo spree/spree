@@ -29,7 +29,8 @@ module Spree
           # Compiled alone first, so a stray `)` cannot close the anchoring group.
           Regexp.new(source)
           regex = Regexp.new("\\A(?:#{source})\\z", timeout: 0.1)
-          regex if Regexp.linear_time?(regex)
+          # `linear_time?` needs Ruby 3.3; without it no pattern can be proven safe.
+          regex if Regexp.respond_to?(:linear_time?) && Regexp.linear_time?(regex)
         rescue RegexpError
           nil
         end

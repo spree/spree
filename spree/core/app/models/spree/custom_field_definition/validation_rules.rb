@@ -61,6 +61,7 @@ module Spree
         return unless rules.is_a?(Hash)
 
         rules = rules.deep_stringify_keys.compact
+        rules.delete('regex') if rules['regex'] == ''
         BOUND_RULES.each do |rule|
           next unless rules.key?(rule) && field_type_class
 

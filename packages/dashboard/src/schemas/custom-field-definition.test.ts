@@ -54,6 +54,7 @@ describe('customFieldValueError', () => {
     expect(customFieldValueError(code, 'ABC-1234')).toBeNull()
     expect(customFieldValueError(code, 'xABC-1234')).not.toBeNull()
     expect(customFieldValueError(definition('short_text', { regex: '(?i)abc' }), 'zzz')).toBeNull()
+    expect(customFieldValueError(definition('long_text', { regex: '.*$\\n.*' }), 'a\nb')).toBeNull()
   })
 
   it('refuses a value that is not one of the choices', () => {

@@ -215,7 +215,7 @@ function validationsToParams(
     if (min.trim()) rules.min = min.trim()
     if (max.trim()) rules.max = max.trim()
   }
-  if (boundKind === 'length' && regex) rules.regex = regex
+  if (boundKind === 'length' && regex.trim()) rules.regex = regex
   if (values.field_type === 'choice') {
     rules.choices = choices.map((choice) => ({
       value: choice.value.trim(),
@@ -340,7 +340,8 @@ export function customFieldValueError(
 function regexMismatch(source: string | null, value: string): boolean {
   if (!source) return false
   try {
-    return !new RegExp(`^(?:${source})$`, 'u').test(value)
+    // `m` gives `^` and `$` Ruby's line meaning; the lookarounds stand in for `\A` and `\z`.
+    return !new RegExp(`(?<![\\s\\S])(?:${source})(?![\\s\\S])`, 'mu').test(value)
   } catch {
     return false
   }
