@@ -38,6 +38,25 @@ module SpreeStripe
       units
     end
 
+    # The largest amount Stripe will take that is not more than `units`:
+    # rounded down to the step the currency moves in (0.010 for three-decimal
+    # currencies, whole units for ISK and UGX, and for HUF and TWD payouts).
+    # For figures Spree computes rather than records, such as a share of a
+    # converted charge, where rounding down is the safe direction.
+    #
+    # @param units [Integer] minor units as Stripe counts them
+    # @param currency [String]
+    # @param payout [Boolean] a payout or transfer rather than a charge
+    # @return [Integer]
+    def floor_to_step(units, currency, payout: false)
+      code = currency.to_s.upcase
+      step = if THREE_DECIMAL.include?(code) then 10
+             elsif WHOLE_IN_HUNDREDTHS.include?(code) || (payout && WHOLE_PAYOUTS.include?(code)) then 100
+             else 1
+             end
+      units.to_i - (units.to_i % step)
+    end
+
     # @param units [Integer] as Stripe reports it
     # @param currency [String]
     # @return [BigDecimal]
