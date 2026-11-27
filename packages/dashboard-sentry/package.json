@@ -40,7 +40,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@sentry/react": "^11.13.0"
+    "@sentry/react": "^11.17.0"
   },
   "peerDependencies": {
     "@spree/dashboard-core": ">=6.0.7 <7.0.0-0",
