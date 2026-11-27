@@ -1228,6 +1228,8 @@ en:
     privacy_policy: Privacy Policy
     processing: Processing
     product: Product
+    product_import_invalid_price: "%{column} %{message}, got %{value}."
+    product_import_price_missing: price is missing. A row that creates a product or a variant needs a price.
     product_import_unknown_option_type: The marketplace has no option type named %{name}.
     product_import_unknown_option_value: "%{option_type} has no value named %{value}."
     product_import_unknown_stock_location: You have no stock location named %{name}.

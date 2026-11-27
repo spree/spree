@@ -59,6 +59,34 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
     end
 
+    ['not-a-price', '12,50 EUR'].each do |price|
+      context "with a price of #{price}" do
+        let(:row_data) { csv_row_hash('slug' => 'unreadable-kettle', 'name' => 'Unreadable Kettle', 'price' => price) }
+
+        it 'fails the row naming the price instead of saving a wrong amount' do
+          expect { described_class.new(row) }.to raise_error(ArgumentError, "price must be a number like 16.50, got #{price}.")
+          expect(Spree::Product.find_by(slug: 'unreadable-kettle')).to be_nil
+        end
+      end
+    end
+
+    {
+      { 'price' => '-5.00' } => 'price must be greater than or equal to 0, got -5.00.',
+      { 'price' => '1000000000000000000' } => /\Aprice must be less than or equal to .+, got 1000000000000000000\.\z/,
+      { 'price' => '10.00', 'compare_at_price' => '-1' } => 'compare_at_price must be greater than or equal to 0, got -1.'
+    }.each do |prices, message|
+      context "with prices the price model refuses (#{prices.values.join(' / ')})" do
+        let(:row_data) { csv_row_hash({ 'slug' => 'refused-kettle', 'name' => 'Refused Kettle' }.merge(prices)) }
+
+        before { import.mappings.find_by(schema_field: 'compare_at_price')&.update(file_column: 'compare_at_price') }
+
+        it 'fails the row before the product is written' do
+          expect { described_class.new(row) }.to raise_error(ArgumentError, message)
+          expect(Spree::Product.find_by(slug: 'refused-kettle')).to be_nil
+        end
+      end
+    end
+
     it 'stores the units the file declared alongside the measurements' do
       default_variant = product.default_variant
 
@@ -248,6 +276,24 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       it 'leaves the existing channel publication untouched' do
         expect { subject.process! }.not_to change { existing_product.reload.channels.to_a }
       end
+
+      context 'with an empty price' do
+        before { row_data['price'] = '' }
+
+        it 'updates the product and keeps the price it has' do
+          expect { subject.process! }.not_to change { existing_product.default_variant.reload.price_in('USD').amount }
+          expect(existing_product.reload.name).to eq 'Denim Shirt'
+        end
+      end
+    end
+
+    context 'with an empty price' do
+      before { row_data['price'] = '' }
+
+      it 'fails the row and creates no product' do
+        expect { subject }.to raise_error(ArgumentError, /\Aprice is missing/)
+        expect(Spree::Product.find_by(slug: 'denim-shirt')).to be_nil
+      end
     end
 
     # Slugs are unique across the installation, so the row cannot claim it —
@@ -312,6 +358,24 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(size_option_type).to be_present
       expect(color_option_type.option_values.find_by(label: 'Blue')).to be_present
       expect(size_option_type.option_values.find_by(label: 'XS')).to be_present
+    end
+
+    context 'with an empty price' do
+      let(:row_data) { super().merge('price' => '') }
+
+      it 'fails the row instead of creating a variant with no price' do
+        expect { subject }.to raise_error(ArgumentError, /\Aprice is missing/)
+        expect(product.variants.find_by(sku: 'DENIM-SHIRT-XS-BLUE')).to be_nil
+      end
+
+      context 'when the variant already exists' do
+        let!(:existing_variant) { create(:variant, product: product, sku: 'DENIM-SHIRT-XS-BLUE', price: 50.99) }
+
+        it 'updates the variant and keeps the price it has' do
+          expect(variant).to eq existing_variant
+          expect(variant.price_in('USD').amount).to eq BigDecimal('50.99')
+        end
+      end
     end
 
     context 'when an existing option value contains the imported one as a substring' do
@@ -770,6 +834,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         csv_row_hash(
           'slug' => 'denim-shirt',
           'name' => 'Denim Shirt',
+          'price' => '62.99',
           'option1_name' => 'Color',
           'option1_value' => 'Blue'
         )
