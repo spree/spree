@@ -1,5 +1,11 @@
 # @spree/dashboard-core
 
+## 6.0.7
+
+### Patch Changes
+
+- [#15240](https://github.com/spree/spree/pull/15240) [`99daac6`](https://github.com/spree/spree/commit/99daac661d33c8b1a54f145a9b3689b558f0d11b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Editing a stock location in the seller panel no longer turns customer pickup off. `PanelStockLocation` now requires the pickup setting, pickup stock policy, internal name, backorderable default and "propagate all variants" setting, so the shared form opens with the stored values instead of saving defaults over them.
+
 ## 6.0.6
 
 ### Patch Changes

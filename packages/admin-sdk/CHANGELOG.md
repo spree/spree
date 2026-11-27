@@ -1,5 +1,35 @@
 # @spree/admin-sdk
 
+## 6.0.7
+
+### Patch Changes
+
+- [#15331](https://github.com/spree/spree/pull/15331) [`627f0f6`](https://github.com/spree/spree/commit/627f0f6e8c8802664abe2d41e86c9c454a8c3dba) Thanks [@bardrop](https://github.com/bardrop)! - A retried request now waits for a `Retry-After` header given as an HTTP date (`Retry-After: Wed, 21 Oct 2026 07:28:00 GMT`). Before, the SDK read the date as no delay and retried at once. A header it cannot read falls back to the usual backoff.
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`6cdc30d`](https://github.com/spree/spree/commit/6cdc30d5bc2b1ed1f417743169b7439e54352f01) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `DeliveryMethod.deleted_at` is now typed `string | null`. The Admin API has always returned `null` for a delivery method that is not deleted; the type said it was always a string.
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`ae0e83a`](https://github.com/spree/spree/commit/ae0e83add5ef76f59e066248cc1ccb6a64c2db3d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `ResourceTypeDefinition`, `PaymentMethodType`, `IntegrationTypeDefinition` and `SetupStatus` are now generated from the API's serializers. Their shape is unchanged.
+  
+  Responses that were typed inline now have a generated type: `BulkProductResult`, `ProductMembershipResult`, `BulkStockLevelResult`, `CalculatorType`, `Tag`, `IntegrationConnectionResult` and `PasswordResetAcknowledgement`. Every bulk product action returns `BulkProductResult`: `product_count` is always there, and the figures only some actions send (`category_count`, `collection_count`, `channel_count`, `tag_count`, `status`, `removed`, `skipped_in_review_count`) are optional. Adding and removing products on a category, collection, price list or catalog returns `ProductMembershipResult`, with `added_count` and `removed_count` optional.
+  
+  `permissions.list()` and `emailTemplates.list()` return the standard pagination `meta` (`page`, `limit`, `count`, `pages` and the rest). Both still return every row in one page.
+  
+  `CompanyMembership` and `CompanyInvitation` accept `expand: ['company']`.
+
+- [#15326](https://github.com/spree/spree/pull/15326) [`ef3d2d5`](https://github.com/spree/spree/commit/ef3d2d5b865d222cc9f1b66d242e20794bd11b0e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `PaymentFilters` now accepts `requested` for `status_eq`, `status_in` and the other status filters, so you can list payments waiting for the payment provider to confirm a capture or void.
+  
+  `CreditCardFilters` and `CreditCardSort` now accept `payment_method_id`, so you can list a customer's saved cards for one payment method.
+
+- [#15323](https://github.com/spree/spree/pull/15323) [`6edb91d`](https://github.com/spree/spree/commit/6edb91d19aba80d846983e09452dd6527662763f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The types of `client.reporting.query()` results (`ReportingResult`, `ReportingRow`, `ReportingMetricValue`, `ReportingDimensionValue`) are now generated from the API's serializers, so they match what the API returns. In `ReportingMetricValue`, `value` and `previous` are a decimal string for money, decimal and percent metrics (`"110.00"`) and a number for integer metrics, and `growth` is a decimal string such as `"12.5"` or `null`; all three were typed as `number`. `value` can also be `null` in `totals`, and a dimension value in a `ReportingRow` can be `null` for a group that has none. Convert a value before calculating with it, and never parse a money string into a float. `ReportingResultMeta` is exported as its own type, and the matching Zod schemas are in `@spree/admin-sdk/zod`.
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`9c0c36d`](https://github.com/spree/spree/commit/9c0c36d8efc3231aac36ea0df2c9f5fd8816bd51) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `auth.setupCountries()` now returns `Country` objects: read the country code from `iso` instead of `code`. `currency` and `locales` are unchanged, and every `Country` the Admin API returns now carries them. The `SetupCountry` type is removed; use `Country`.
+  
+  `webhookEvents.list()` returns the standard pagination `meta` (`page`, `limit`, `count`, `pages` and the rest) instead of `{ count }` alone. It still returns every event unless you pass `limit`.
+  
+  `TranslatableResource` and `TranslationCoverage` are now generated from the API's serializers. Their shape is unchanged, except that a translatable field's `type` is typed `string`.
+
+- [#14467](https://github.com/spree/spree/pull/14467) [`0ade431`](https://github.com/spree/spree/commit/0ade431d2215ad38c59bd72c4d01cc485a400eba) Thanks [@mad-eel](https://github.com/mad-eel)! - `taxProviders.taxCodes(id, { q })` searches a tax engine's own tax codes, and `TaxProviderOption` gains `tax_code_lookup`, true when the engine offers that search. Adds the `TaxCodeOption` type.
+
 ## 6.0.6
 
 ### Patch Changes

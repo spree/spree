@@ -49546,15 +49546,15 @@ paths:
           content:
             application/json:
               example:
-                spree_version: 6.0.6
+                spree_version: 6.0.7
                 sections:
                 - key: platform
                   title: Spree
                   rows:
                   - label: Version
-                    value: 6.0.6
+                    value: 6.0.7
                   - label: Gems
-                    value: spree_api 6.0.6, spree_core 6.0.6
+                    value: spree_api 6.0.7, spree_core 6.0.7
                   - label: Other gems built on Spree
                     value: '0'
                 - key: runtime
@@ -49593,14 +49593,14 @@ paths:
                 generated_at: '2026-01-15T12:00:00.000Z'
                 markdown: |-
                   <details>
-                  <summary>Spree 6.0.6 diagnostics (2026-01-15T12:00:00Z)</summary>
+                  <summary>Spree 6.0.7 diagnostics (2026-01-15T12:00:00Z)</summary>
 
                   **Spree**
 
                   | | |
                   | --- | --- |
-                  | Version | 6.0.6 |
-                  | Gems | spree_api 6.0.6, spree_core 6.0.6 |
+                  | Version | 6.0.7 |
+                  | Gems | spree_api 6.0.7, spree_core 6.0.7 |
                   | Other gems built on Spree | 0 |
 
                   **Runtime**
@@ -49633,7 +49633,7 @@ paths:
                   None recorded.
 
                   </details>
-                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.0.6%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.0.6%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.0.6%2C%20spree_core%206.0.6%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.10%20%28x86_64-linux%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.1.3%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20postgresql%2018.6%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
+                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.0.7%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.0.7%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.0.7%2C%20spree_core%206.0.7%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.10%20%28x86_64-linux%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.1.3%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20postgresql%2018.6%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
                 issue_prefilled: true
               schema:
                 "$ref": "#/components/schemas/Diagnostics"
@@ -51647,7 +51647,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.6
+                current_version: 6.0.7
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true

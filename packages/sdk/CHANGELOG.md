@@ -1,5 +1,19 @@
 # @spree/sdk
 
+## 6.0.7
+
+### Patch Changes
+
+- [#15326](https://github.com/spree/spree/pull/15326) [`ef3d2d5`](https://github.com/spree/spree/commit/ef3d2d5b865d222cc9f1b66d242e20794bd11b0e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `CartFilters` and `CartSort` types for the filters and sort fields `GET /carts` accepts: `email`, `token`, `id`, `completed_at`, `created_at` and `updated_at`. The API reference listed the order filters for this endpoint by mistake.
+  
+  `CreditCardFilters` and `CreditCardSort` now accept `payment_method_id`, so you can list a customer's saved cards for one payment method.
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`727aa3f`](https://github.com/spree/spree/commit/727aa3fabc56a16dc43121a59e9f50350139b9b6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `CompanyMembership` and `CompanyInvitation` can expand `company`. `companyInvitations.lookup()` takes `params` as its second argument, as other reads do, so pass `{ expand: ['company'] }` to get the company; request options move to the third argument. `company_name` and `store_name` on the lookup are deprecated and removed in 6.5: read `company.name` from the expand and the store's name from `store.get()`.
+
+- [#15309](https://github.com/spree/spree/pull/15309) [`0f0ed28`](https://github.com/spree/spree/commit/0f0ed28e0c76a7065f2e71f8160c10e1aeb9b43c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `Fulfillment` now includes `pickup_location`: where the customer collects a pickup delivery. It is the counter chosen at checkout, which can differ from `stock_location` when the order ships there from a warehouse. It is `null` unless the delivery is a pickup.
+
+- [#15331](https://github.com/spree/spree/pull/15331) [`627f0f6`](https://github.com/spree/spree/commit/627f0f6e8c8802664abe2d41e86c9c454a8c3dba) Thanks [@bardrop](https://github.com/bardrop)! - A retried request now waits for a `Retry-After` header given as an HTTP date (`Retry-After: Wed, 21 Oct 2026 07:28:00 GMT`). Before, the SDK read the date as no delay and retried at once. A header it cannot read falls back to the usual backoff.
+
 ## 6.0.6
 
 ### Patch Changes

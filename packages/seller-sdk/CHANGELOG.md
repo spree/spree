@@ -1,5 +1,15 @@
 # @spree/seller-sdk
 
+## 6.0.7
+
+### Patch Changes
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`ae0e83a`](https://github.com/spree/spree/commit/ae0e83add5ef76f59e066248cc1ccb6a64c2db3d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `BulkProductResult` is now generated from the API's serializer; its shape is unchanged. `PasswordResetAcknowledgement` is new and types the answer to a password reset request.
+
+- [#15331](https://github.com/spree/spree/pull/15331) [`627f0f6`](https://github.com/spree/spree/commit/627f0f6e8c8802664abe2d41e86c9c454a8c3dba) Thanks [@bardrop](https://github.com/bardrop)! - A retried request now waits for a `Retry-After` header given as an HTTP date (`Retry-After: Wed, 21 Oct 2026 07:28:00 GMT`). Before, the SDK read the date as no delay and retried at once. A header it cannot read falls back to the usual backoff.
+
+- [#15240](https://github.com/spree/spree/pull/15240) [`99daac6`](https://github.com/spree/spree/commit/99daac661d33c8b1a54f145a9b3689b558f0d11b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `StockLocation` now includes `pickup_enabled`, `pickup_stock_policy`, `admin_name`, `backorderable_default` and `propagate_all_variants`, which the Seller API now returns. Before, a client that read a location and saved it back reset these settings to their defaults.
+
 ## 6.0.6
 
 ### Patch Changes

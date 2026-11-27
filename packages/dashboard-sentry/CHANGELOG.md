@@ -1,5 +1,9 @@
 # @spree/dashboard-sentry
 
+## 6.0.7
+
+Released with Spree 6.0.7, with no changes of its own.
+
 ## 6.0.6
 
 ### Patch Changes
