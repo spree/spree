@@ -285,6 +285,8 @@ module Spree
       self.class.where(id: id).update_all(column => next_value, updated_at: now)
       self[column] = [self[column] + value, 0].max
       self.updated_at = now
+      # Already written, so the instance stays clean for a later `with_lock`.
+      clear_attribute_changes([column, :updated_at])
       variant.touch
     end
 

@@ -226,6 +226,30 @@ describe 'stock transfer lifecycle', type: :model do
       expect(destination_on_hand).to eq(11)
     end
 
+    it 'stops expecting a short line once an over-delivery on another line closes the trip' do
+      over_variant = create(:variant)
+      short_variant = create(:variant)
+      source.restock(over_variant, 6)
+      source.restock(short_variant, 10)
+      trip = Spree::StockTransfers::Create.call(
+        store: store, source_location: source, destination_location: destination,
+        items: [{ variant: over_variant, quantity_shipped: 5 }, { variant: short_variant, quantity_shipped: 10 }]
+      ).value
+      Spree::StockTransfers::MarkInTransit.call(stock_transfer: trip)
+      lines = trip.reload.items.index_by(&:variant_id)
+
+      result = Spree::StockTransfers::Receive.call(
+        stock_transfer: trip,
+        items: [{ item: lines[over_variant.id], quantity_accepted: 6 }, { item: lines[short_variant.id], quantity_accepted: 4 }]
+      )
+
+      expect(result).to be_success
+      expect(trip.reload).to be_over_received
+      expect(destination.stock_level(over_variant.id)).to have_attributes(count_on_hand: 6, incoming_count: 0)
+      expect(destination.stock_level(short_variant.id)).to have_attributes(count_on_hand: 4, incoming_count: 0)
+      expect(Spree::StockLevels::Recount.call.value).to be_empty
+    end
+
     # Two operators receiving two boxes at once, which the destination's
     # tablet makes as easy as a double-tap: each adds its own count to the
     # total it reads, and the lock makes the second read the first's write.

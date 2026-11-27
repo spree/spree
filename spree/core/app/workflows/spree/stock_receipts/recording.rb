@@ -20,9 +20,7 @@ module Spree
         # other way, so it cannot cross with the lock
         # `StockLevel#adjust_count_on_hand` takes underneath.
         receivable.with_lock do
-          # The caller resolved these before the lock, so their running totals
-          # may predate a delivery that has since committed.
-          items&.each { |item| item[:item]&.reload }
+          reload_lines
 
           step :ensure_receivable
           step :normalize_items
@@ -41,6 +39,24 @@ module Spree
         success(stock_receipt.reload)
       end
 
+      # The caller resolved the lines before the lock, so their running totals
+      # may predate a delivery that has since committed. Read again in one
+      # query rather than one per line, through the document so each line
+      # holds it already and touching it on save costs no query. A line of
+      # another document is read on its own, for `line_belongs?` to refuse;
+      # one of another type, sharing an id with one of these, is left as given.
+      def reload_lines
+        line_class = receivable.items.klass
+        lines = Array(items).filter_map { |item| item[:item] if item[:item].is_a?(line_class) }
+        return if lines.empty?
+
+        fresh = receivable.items.includes(:variant).where(id: lines.map(&:id)).index_by(&:id)
+        @items = items.map do |item|
+          line = item[:item]
+          line.is_a?(line_class) ? item.merge(item: fresh.fetch(line.id) { line.reload }) : item
+        end
+      end
+
       # Nothing named means the whole outstanding balance arrived intact.
       #
       # Sorted by variant once, here, because every later step walks this list
@@ -50,7 +66,7 @@ module Spree
       def normalize_items
         @normalized_items =
           if items.nil?
-            receivable.items.select { |line| line.outstanding.positive? }.map do |line|
+            receivable.items.includes(:variant).select { |line| line.outstanding.positive? }.map do |line|
               { line: line, quantity_accepted: line.outstanding, quantity_rejected: 0 }
             end
           else
@@ -123,15 +139,40 @@ module Spree
       # What this delivery settled — accepted or refused — is no longer on its
       # way. Inside the document lock with the restock below, so no read in
       # between shows the units both incoming and on hand, or neither.
+      #
+      # An over-shipment closes the document with other lines still short;
+      # nothing more will arrive against it, so their balance leaves the
+      # destination's incoming figure too. Done here, in the same pass and in
+      # variant order, rather than after the restock: a short line's variant
+      # may sort before one this delivery already locked, and taking its row
+      # afterwards would cross with a delivery locking the two the other way.
       def uncount_landed_units
-        destination = receivable.destination_location
-
+        lines = {}
+        withdrawals = Hash.new(0)
         @normalized_items.each do |entry|
-          landed = entry[:incoming_before] - entry[:line].incoming
-          next if landed.zero?
-
-          destination.stock_level_or_create(entry[:line].variant).adjust_incoming_count(-landed)
+          lines[entry[:line].variant_id] = entry[:line]
+          withdrawals[entry[:line].variant_id] += entry[:incoming_before] - entry[:line].incoming
         end
+
+        if closing_with_this_delivery?
+          receivable.items.includes(:variant).find_each do |line|
+            lines[line.variant_id] ||= line
+            withdrawals[line.variant_id] += line.incoming
+          end
+        end
+
+        withdrawals.sort.each do |variant_id, units|
+          next if units.zero?
+
+          destination_level_for(lines[variant_id]).adjust_incoming_count(-units)
+        end
+      end
+
+      # Whether the lines as this delivery left them close a document whose
+      # awaited units were counted as incoming.
+      def closing_with_this_delivery?
+        receivable.items.reset
+        receivable.incoming? && Spree::Receivable::CLOSED_STATUSES.include?(receivable.status_after_receive)
       end
 
       # Only accepted units land. The receipt is the cause, and brings the
@@ -143,8 +184,19 @@ module Spree
           next unless entry[:quantity_accepted].positive?
 
           destination.restock(entry[:line].variant, entry[:quantity_accepted], stock_receipt,
-                              unit_cost: unit_cost_for(entry[:line]))
+                              unit_cost: unit_cost_for(entry[:line]), stock_level: destination_level_for(entry[:line]))
         end
+      end
+
+      # The destination's levels for every line in this delivery, read in one
+      # query and created where the warehouse has never held the SKU.
+      def destination_level_for(line)
+        @destination_levels ||= begin
+          destination = receivable.destination_location
+          variant_ids = @normalized_items.map { |entry| entry[:line].variant_id }
+          destination.stock_levels.includes(:variant).where(variant_id: variant_ids).index_by(&:variant_id)
+        end
+        @destination_levels[line.variant_id] ||= receivable.destination_location.stock_level_or_create(line.variant)
       end
 
       # `received_at` is stamped only when the document actually closes, in

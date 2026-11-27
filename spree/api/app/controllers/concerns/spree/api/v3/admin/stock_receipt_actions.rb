@@ -85,14 +85,31 @@ module Spree
             sent = items_payload(%i[id quantity_accepted quantity_rejected rejection_reason notes])
             return nil if sent.nil?
 
+            lines = lines_for_receipt(sent.pluck(:id))
             sent.map do |item|
               {
-                item: @parent.items.find_by_prefix_id!(item[:id]),
+                item: lines.fetch(item[:id]),
                 quantity_accepted: item[:quantity_accepted],
                 quantity_rejected: item[:quantity_rejected],
                 rejection_reason: item[:rejection_reason],
                 notes: item[:notes]
               }
+            end
+          end
+
+          # Every named line read through the document in one query, keyed by
+          # the prefixed id the payload sent. One that is not the document's
+          # is a 404, as a single lookup would make it.
+          #
+          # @param prefixed_ids [Array<String>]
+          # @return [Hash{String => ActiveRecord::Base}]
+          def lines_for_receipt(prefixed_ids)
+            line_class = @parent.items.klass
+            decoded = prefixed_ids.index_with { |prefixed_id| line_class.decode_prefixed_id(prefixed_id) }
+            found = @parent.items.where(id: decoded.values.compact).index_by(&:id)
+
+            decoded.transform_values do |id|
+              found[id] || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{line_class.name}", line_class.name))
             end
           end
 
