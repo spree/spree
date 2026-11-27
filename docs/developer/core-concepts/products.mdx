@@ -1076,7 +1076,7 @@ Like products, categories and collections are published per [channel](/developer
 
 Hiding a category hides its subcategories too: a category shows on a channel only while it and every parent category are published there. Its products stay visible in search and in other categories, but filtering by a hidden category returns nothing, and it is left out of a product's `categories` and of the category facet.
 
-A new category or collection is published on every active channel of the store, unless the request sends its own `publications`. This happens whichever way it is created, imports included. To stage one before launch, give it a future `published_at`. A channel created later starts with no categories or collections; publish them from the channel.
+A new category or collection is published on every active channel of the store, unless the request sends its own `publications`. The Admin API, the dashboard and CSV import do this through `Spree.category_create_workflow` and `Spree.collection_create_workflow`; code that creates one with `create!` must publish it itself. To stage one before launch, give it a future `published_at`. A channel created later starts with no categories or collections; publish them from the channel.
 
 <CodeGroup>
 

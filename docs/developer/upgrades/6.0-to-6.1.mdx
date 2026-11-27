@@ -40,12 +40,17 @@ description: Guide to upgrading a Spree 6.0 application to Spree 6.1
 
 The Store API serves a category or collection only on channels where it is published. Unpublishing a category hides its subcategories too. After the backfill every existing category and collection is published on every active channel, so shoppers see no change.
 
-A new category or collection is published on every active channel unless it is created with `publications`, however it is created. A channel created after the upgrade starts with none. Publish them from the channel:
+New categories and collections created through the Admin API, the dashboard, CSV import, `Spree.category_create_workflow` or `Spree.collection_create_workflow` are published on every active channel unless the request sends `publications`. Code that creates them with `create!` directly must go through the workflow or publish them itself, or they are invisible on every storefront:
 
-```ruby server/app/services/my_app/channel_setup.rb
-channel.publish_records(Spree::Category, store.categories.ids)
-channel.publish_records(Spree::Collection, store.collections.ids)
+```ruby server/app/services/my_app/category_importer.rb
+result = Spree.category_create_workflow.call(store: store, attributes: { name: 'Shirts', parent: clothing })
+category = result.value
+
+# Or, for records created some other way
+store.channels.active.publish_records(Spree::Category, category_ids)
 ```
+
+A channel created after the upgrade starts with none. Publish them from the channel with `channel.publish_records(Spree::Category, ids)`.
 
 The Store API also stops filtering products by a hidden category: `q[in_category]` and `q[in_categories]` skip categories that are not published on the channel, and a product's `categories` leave them out.
 

@@ -25,10 +25,8 @@ module Spree
       # @param name [Symbol] the publications association, as the API names it
       # @param events [Boolean] whether publishing sends `<record>.published`
       #   and unpublishing `<record>.unpublished`, with the channel id
-      # @param publish_on_active_channels [Boolean] whether a record created
-      #   without a publications set goes live on every active channel of its store
       # @return [void]
-      def publishable_on_channels(name, events: false, publish_on_active_channels: false)
+      def publishable_on_channels(name, events: false)
         has_many :channels, -> { distinct }, through: name, class_name: 'Spree::Channel'
 
         self.publications_association = name
@@ -44,11 +42,6 @@ module Spree
             apply_publications_now if persisted?
           end
         end
-
-        return unless publish_on_active_channels
-
-        after_create :publish_on_active_channels, unless: :publications_assigned?
-        after_create_commit :announce_active_channel_publications, unless: :publications_assigned?
       end
 
       # Records published on the channel with their window open.
@@ -172,20 +165,6 @@ module Spree
       return if value.blank?
 
       Spree::Channel.decode_own_prefixed_id(value.to_s) || value
-    end
-
-    def publish_on_active_channels
-      @active_channels = store.channels.active.to_a
-      Spree::Channel.where(id: @active_channels.map(&:id)).publish_records(self.class, id, publish_events: false)
-    end
-
-    def announce_active_channel_publications
-      return unless channel_publication_events
-
-      @active_channels&.each do |channel|
-        publish_event("#{event_prefix}.published", nil, { channel_id: channel.prefixed_id })
-      end
-      @active_channels = nil
     end
   end
 end

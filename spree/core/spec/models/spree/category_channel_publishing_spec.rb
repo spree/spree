@@ -5,33 +5,6 @@ RSpec.describe Spree::Category, 'channel publishing', type: :model do
   let(:channel) { store.default_channel }
   let!(:pos) { create(:channel, store: store, code: 'pos', name: 'POS') }
 
-  describe 'on create' do
-    it 'goes live on every active channel of its store' do
-      create(:channel, store: store, code: 'closed', name: 'Closed', active: false)
-
-      expect(create(:category, store: store).channels).to contain_exactly(channel, pos)
-    end
-
-    it 'takes the publications set instead when one is given' do
-      category = create(:category, store: store, publications: [{ channel_id: pos.prefixed_id }])
-
-      expect(category.channels).to contain_exactly(pos)
-    end
-
-    it 'announces each channel once the record commits', events: true do
-      Spree::Events.reset!
-      published = []
-      Spree::Events.subscribe('category.published', async: false) { |event| published << event.metadata['channel_id'] }
-      Spree::Events.activate!
-
-      create(:category, store: store)
-
-      expect(published).to contain_exactly(channel.prefixed_id, pos.prefixed_id)
-    ensure
-      Spree::Events.reset!
-    end
-  end
-
   describe '.published_on' do
     let!(:parent) { create(:category, store: store) }
     let!(:child) { create(:category, store: store, parent: parent) }

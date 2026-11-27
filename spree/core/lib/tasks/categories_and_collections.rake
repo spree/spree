@@ -44,83 +44,80 @@ namespace :spree do
       end
 
       begin
-        # A migrated collection goes live on every active channel when created;
-        # it was already public as a category, so there is nothing to announce.
-        Spree::Events.disable do
-          ApplicationRecord.transaction do
-            collection = Spree::Collection.new(
-              name: category[:name],
-              permalink: category[:permalink],
-              automatic: true,
-              rules_match_policy: category.rules_match_policy,
-              sort_order: category.sort_order,
-              position: category.position,
-              store_id: store_id,
-              meta_title: category[:meta_title],
-              meta_description: category[:meta_description],
-              meta_keywords: category[:meta_keywords],
-              metadata: category.metadata
+        ApplicationRecord.transaction do
+          collection = Spree::Collection.new(
+            name: category[:name],
+            permalink: category[:permalink],
+            automatic: true,
+            rules_match_policy: category.rules_match_policy,
+            sort_order: category.sort_order,
+            position: category.position,
+            store_id: store_id,
+            meta_title: category[:meta_title],
+            meta_description: category[:meta_description],
+            meta_keywords: category[:meta_keywords],
+            metadata: category.metadata
+          )
+          # Membership is copied verbatim below, so don't rebuild it from the rules.
+          collection.marked_for_regenerate_products = false
+          collection.save!(validate: false)
+          Spree::Channel.where(store_id: store_id).active.publish_records(Spree::Collection, collection.id, publish_events: false)
+
+          # Table-backend translations (collection_translations has no pretty_name;
+          # description is ActionText, moved separately below).
+          Spree::Category::Translation.where(spree_category_id: category.id).find_each do |translation|
+            Spree::Collection::Translation.create!(
+              spree_collection_id: collection.id,
+              locale: translation.locale,
+              name: translation.name,
+              permalink: translation.permalink,
+              meta_title: translation.meta_title,
+              meta_description: translation.meta_description,
+              meta_keywords: translation.meta_keywords
             )
-            # Membership is copied verbatim below, so don't rebuild it from the rules.
-            collection.marked_for_regenerate_products = false
-            collection.save!(validate: false)
-
-            # Table-backend translations (collection_translations has no pretty_name;
-            # description is ActionText, moved separately below).
-            Spree::Category::Translation.where(spree_category_id: category.id).find_each do |translation|
-              Spree::Collection::Translation.create!(
-                spree_collection_id: collection.id,
-                locale: translation.locale,
-                name: translation.name,
-                permalink: translation.permalink,
-                meta_title: translation.meta_title,
-                meta_description: translation.meta_description,
-                meta_keywords: translation.meta_keywords
-              )
-            end
-
-            # Move (not copy) the polymorphic records that `category.destroy!` would
-            # otherwise purge/destroy: ActionText description, images, custom fields, slugs.
-            move_polymorphic.call(ActionText::RichText, :record_type, :record_id, category, collection)
-            move_polymorphic.call(ActiveStorage::Attachment, :record_type, :record_id, category, collection, name: %w[image square_image])
-            move_polymorphic.call(Spree::CustomField, :resource_type, :resource_id, category, collection)
-            move_polymorphic.call(FriendlyId::Slug, :sluggable_type, :sluggable_id, category, collection)
-
-            # Rules -> collection_rules (remap the STI type; insert_all bypasses the
-            # regenerate-on-create callback since membership is copied directly).
-            rule_rows = Spree::TaxonRule.where(taxon_id: category.id).map do |rule|
-              {
-                collection_id: collection.id,
-                type: rule.type.sub('Spree::TaxonRules::', 'Spree::CollectionRules::'),
-                value: rule.value,
-                match_policy: rule.match_policy,
-                created_at: Time.current,
-                updated_at: Time.current
-              }
-            end
-            Spree::CollectionRule.insert_all(rule_rows) if rule_rows.any?
-
-            # Materialized membership: product_categories -> product_collections.
-            membership_rows = Spree::ProductCategory.where(category_id: category.id).map do |product_category|
-              {
-                collection_id: collection.id,
-                product_id: product_category.product_id,
-                source: 'rule',
-                position: product_category.position,
-                created_at: Time.current,
-                updated_at: Time.current
-              }
-            end
-            product_ids = membership_rows.map { |row| row[:product_id] }.uniq
-            Spree::ProductCollection.insert_all(membership_rows) if membership_rows.any?
-
-            # insert_all bypasses the counter caches — recompute them.
-            Spree::Collection.reset_counters(collection.id, :product_collections)
-            product_ids.each { |id| Spree::Product.reset_counters(id, :product_collections) }
-
-            # Drop the automatic category (its product_categories + taxon_rules cascade).
-            category.destroy!
           end
+
+          # Move (not copy) the polymorphic records that `category.destroy!` would
+          # otherwise purge/destroy: ActionText description, images, custom fields, slugs.
+          move_polymorphic.call(ActionText::RichText, :record_type, :record_id, category, collection)
+          move_polymorphic.call(ActiveStorage::Attachment, :record_type, :record_id, category, collection, name: %w[image square_image])
+          move_polymorphic.call(Spree::CustomField, :resource_type, :resource_id, category, collection)
+          move_polymorphic.call(FriendlyId::Slug, :sluggable_type, :sluggable_id, category, collection)
+
+          # Rules -> collection_rules (remap the STI type; insert_all bypasses the
+          # regenerate-on-create callback since membership is copied directly).
+          rule_rows = Spree::TaxonRule.where(taxon_id: category.id).map do |rule|
+            {
+              collection_id: collection.id,
+              type: rule.type.sub('Spree::TaxonRules::', 'Spree::CollectionRules::'),
+              value: rule.value,
+              match_policy: rule.match_policy,
+              created_at: Time.current,
+              updated_at: Time.current
+            }
+          end
+          Spree::CollectionRule.insert_all(rule_rows) if rule_rows.any?
+
+          # Materialized membership: product_categories -> product_collections.
+          membership_rows = Spree::ProductCategory.where(category_id: category.id).map do |product_category|
+            {
+              collection_id: collection.id,
+              product_id: product_category.product_id,
+              source: 'rule',
+              position: product_category.position,
+              created_at: Time.current,
+              updated_at: Time.current
+            }
+          end
+          product_ids = membership_rows.map { |row| row[:product_id] }.uniq
+          Spree::ProductCollection.insert_all(membership_rows) if membership_rows.any?
+
+          # insert_all bypasses the counter caches — recompute them.
+          Spree::Collection.reset_counters(collection.id, :product_collections)
+          product_ids.each { |id| Spree::Product.reset_counters(id, :product_collections) }
+
+          # Drop the automatic category (its product_categories + taxon_rules cascade).
+          category.destroy!
         end
       rescue => e
         # Isolate failures (e.g. a permalink collision) to the offending category —

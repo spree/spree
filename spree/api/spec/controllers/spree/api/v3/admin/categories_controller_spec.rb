@@ -76,6 +76,16 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(created_category.parent_id).to eq(category.id)
     end
 
+    it 'publishes the new category on every active channel unless a set is given' do
+      pos = create(:channel, store: store, code: 'pos', name: 'POS')
+
+      post :create, params: { name: 'Shirts' }, as: :json
+      expect(created_category.channels).to contain_exactly(store.default_channel, pos)
+
+      post :create, params: { name: 'Hats', publications: [{ channel_id: pos.prefixed_id }] }, as: :json
+      expect(Spree::Category.find_by_prefix_id(json_response['id']).channels).to contain_exactly(pos)
+    end
+
     it 'creates a top-level category (no parent, owned by the store) when no parent is given' do
       post :create, params: { name: 'Footwear' }, as: :json
 

@@ -60,7 +60,7 @@ module Spree
     has_many :publications, class_name: 'Spree::CategoryPublication', dependent: :destroy, inverse_of: :category
     include Spree::ChannelPublishable
 
-    publishable_on_channels :publications, events: true, publish_on_active_channels: true
+    publishable_on_channels :publications, events: true
     has_many :promotion_rules, through: :promotion_rule_categories, class_name: 'Spree::PromotionRule'
 
     #

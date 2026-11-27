@@ -7,9 +7,21 @@ FactoryBot.define do
 
     parent { nil }
 
-    # A new category goes live on every active channel; an empty set keeps it off all of them.
+    # Mirrors Spree.category_create_workflow: live on every active channel
+    # unless the attributes carry a publications set.
+    transient do
+      published { true }
+    end
+
+    after(:create) do |category, evaluator|
+      next unless evaluator.published && !category.publications_assigned?
+
+      category.store.channels.active.publish_records(Spree::Category, category.id, publish_events: false)
+      category.publications.reset
+    end
+
     trait :unpublished do
-      publications { [] }
+      published { false }
     end
 
     trait :with_description do

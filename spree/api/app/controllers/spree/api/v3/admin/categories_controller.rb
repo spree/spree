@@ -95,6 +95,10 @@ module Spree
             Spree.api.admin_category_serializer
           end
 
+          def create_workflow
+            Spree.category_create_workflow
+          end
+
           # Categories exclude automatic (rule-based) rows, which still live in
           # spree_categories until the Phase 4 migration moves them to Collections.
           # No-op after migration; the .manual scope is removed in 6.3.

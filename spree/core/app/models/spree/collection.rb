@@ -65,7 +65,7 @@ module Spree
     has_many :publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :collection
     include Spree::ChannelPublishable
 
-    publishable_on_channels :publications, events: true, publish_on_active_channels: true
+    publishable_on_channels :publications, events: true
 
     has_many :promotion_rule_collections, class_name: 'Spree::PromotionRuleCollection', dependent: :delete_all
     has_many :exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all, inverse_of: :collection

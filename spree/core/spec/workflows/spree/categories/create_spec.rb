@@ -1,0 +1,63 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Categories::Create do
+  let(:store) { @default_store }
+  let!(:pos) { create(:channel, store: store, name: 'POS', code: 'pos') }
+  let!(:retired) { create(:channel, store: store, name: 'Retired', code: 'retired', active: false) }
+
+  subject(:result) { described_class.call(store: store, attributes: attributes) }
+
+  context 'without publications' do
+    let(:attributes) { { name: 'Shirts' } }
+
+    it 'publishes on every active channel of the store' do
+      expect(result).to be_success
+      expect(result.value.reload.channels).to contain_exactly(store.default_channel, pos)
+    end
+
+    it 'publishes category.published once per channel' do
+      events = []
+      allow_any_instance_of(Spree::Category).to receive(:publish_event) { |_category, name, _payload, metadata| events << [name, metadata[:channel_id]] }
+
+      result
+
+      expect(events).to contain_exactly(['category.published', store.default_channel.prefixed_id], ['category.published', pos.prefixed_id])
+    end
+  end
+
+  context 'with a parent' do
+    let(:parent) { create(:category, store: store) }
+    let(:attributes) { { name: 'Shirts', parent: parent } }
+
+    it 'publishes the child on every active channel too' do
+      expect(result.value.reload.parent).to eq(parent)
+      expect(result.value.channels).to contain_exactly(store.default_channel, pos)
+    end
+  end
+
+  context 'with publications' do
+    let(:attributes) { { name: 'Staged', publications: [{ channel_id: pos.prefixed_id, published_at: 1.week.from_now }] } }
+
+    it 'publishes only where the payload says' do
+      expect(result.value.reload.channels).to contain_exactly(pos)
+      expect(result.value.reload.publications.first.published_at).to be > Time.current
+    end
+  end
+
+  context 'with an empty publications set' do
+    let(:attributes) { { name: 'Draft', publications: [] } }
+
+    it 'creates the category unpublished' do
+      expect(result.value.reload.publications).to be_empty
+    end
+  end
+
+  context 'when the category is invalid' do
+    let(:attributes) { { name: '' } }
+
+    it 'fails without publishing' do
+      expect(result).to be_failure
+      expect(Spree::CategoryPublication.count).to eq(0)
+    end
+  end
+end
