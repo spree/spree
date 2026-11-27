@@ -52,6 +52,7 @@ end
 - No defaults on string or status columns (the creating workflow sets them); integer, decimal and boolean columns do carry defaults.
 - Must run on PostgreSQL, MySQL and SQLite: guard JSON with `t.respond_to?(:jsonb) ? t.jsonb(...) : t.json(...)`. One `metadata` JSON column per table; `preferences` columns are JSON, secrets are `:password` preferences in an encrypted `secret_preferences` text column (`docs/plans/6.0-json-preferences.md`).
 - Data transformations go in rake tasks, never migrations. Soft delete is `paranoia` plus a `deleted_at` column.
+- Don't write specs for migrations. Check a migration by running it against the dummy app's database and reading the resulting schema.
 
 ## API controllers (`spree/api`)
 
