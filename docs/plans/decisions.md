@@ -1,3 +1,13 @@
+## 2026-11-27: Shopper custom field writes — where required is enforced, and what the first pull request covers
+
+**Context:** Part 3 of the custom fields roadmap lets shoppers write order and customer fields. Three flows create a customer account (Store self-registration, the checkout account box and company invitation acceptance), and only one of them renders the fields. The plan also listed the storefront checkout with the API work, but the storefront lives in its own repository.
+
+**Decision:** Only `POST /store/customers` refuses a missing required storefront-writable customer field. The other two flows create the account without the fields, and an account update cannot blank a required one. The Part 3 pull request ships the API, the SDKs, the admin dashboard and the seller panel (a read-only list of the fields on the seller order page); the storefront form follows in spree/storefront.
+
+**Consequences:** An account created from checkout or an invitation can lack a required customer field until the shopper fills it in. Shoppers cannot fill fields in on the reference storefront until its follow-up ships, though the API and the SDK support it.
+
+**Plans amended:** `6.0-6.1-custom-fields-roadmap.md` (Shopper writes).
+
 ## 2026-11-27: Custom field text definitions take a regex rule
 
 **Context:** The custom fields roadmap ruled out regular-expression rules on 2026-10-06, because a merchant's pattern could backtrack catastrophically on every write. Merchants still need formats a length or a choice list cannot express, and Shopify's metafields offer a regex rule.
