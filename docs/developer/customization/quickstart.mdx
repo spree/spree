@@ -1,39 +1,39 @@
 ---
 title: Quickstart
 og:title: Spree Customization Quickstart
-description: Recommended ways to customize the Spree backend — environment configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
+description: Recommended ways to customize the Spree backend, grouped by what they ask of you — configure without code, integrate from outside against the prebuilt image, or eject to run Ruby inside Spree.
 ---
 
-Spree is designed to be customized without forking it. This guide presents the options **in order of recommendation** — start at the top and only move down when a simpler option doesn't fit.
+import WorksOnPrebuiltImage from '/snippets/works-on-prebuilt-image.mdx'
+import RequiresEject from '/snippets/requires-eject.mdx'
+
+Spree is designed to be customized without forking it. The options fall into three tiers. Within each tier they are listed **in order of recommendation** — start at the top and only move down when a simpler option doesn't fit.
+
+| Tier | What it means | Needs `spree eject` |
+|---|---|---|
+| [Configure](#configure) | No code. Settings and data. | No |
+| [Integrate](#integrate) | Your code runs outside Spree, in any language. | No |
+| [Eject](#eject) | Your Ruby runs inside Spree. | Yes |
 
 <Note>
 Business logic is extended through **workflow hooks** rather than by replacing classes wholesale, and the admin is a React application with its own extension points rather than a Rails engine extended through partials.
 </Note>
 
-## Quick reference
+<Info>
+**Customizing the admin?** This page covers the backend — models, API and business logic. The admin is a separate React application with its own extension points. See [Dashboard Customization](/developer/dashboard/customization/quickstart).
+</Info>
+
+## Configure
+
+<WorksOnPrebuiltImage />
+
+Change settings and data. There is no code to write and nothing to build.
 
 | What you want to do | Recommended approach |
 |---|---|
 | Change store settings (currency, markets, languages) | [Store settings](#store-settings) |
 | Change installation settings (limits, expiries, hosting) | [Configuration](#configuration) |
-| Run your own logic inside checkout, cancellation, refunds | [Workflow hooks](#workflow-hooks) |
-| Block an operation from happening | [Workflow hooks](#workflow-hooks) — `validate` |
-| React after something happened (sync, notifications) | [Events & subscribers](#events-and-subscribers) |
-| Add or reorder checkout steps | [Checkout registry](#checkout-steps) |
-| Swap tax, delivery rate, search or fulfillment behavior | [Providers](#providers) |
-| Add searchable/filterable fields | [Search & filtering](#search-and-filtering) |
-| Use your own user model or identity provider | [Authentication](#authentication) |
-| Notify external services | [Webhooks](#webhooks) |
-| Replace a whole workflow or service | [Dependencies](#dependencies) |
-| Add associations/validations to models | [Decorators](#decorators) (last resort) |
-
-<Tip>
-**Not writing Ruby?** Environment variables configure the application, and webhooks, the Admin API, the TypeScript SDKs, the MCP server and dashboard plugins cover most integrations without it. See [Extending Spree without Ruby](/developer/customization/extend-without-ruby).
-</Tip>
-
-<Info>
-**Customizing the admin?** This page covers the backend — models, API and business logic. The admin is a separate React application with its own extension points. See [Dashboard Customization](/developer/dashboard/customization/quickstart).
-</Info>
+| Store your own data on products, orders or customers | [Custom fields, metadata and external references](#custom-fields-metadata-and-external-references) |
 
 <AccordionGroup>
   <Accordion title="Store settings" defaultOpen>
@@ -53,6 +53,107 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 
     See [Configuration](/developer/customization/configuration) for every variable and its default.
   </Accordion>
+  <Accordion title="Custom fields, metadata and external references">
+    **Best for:** storing your own data on products, orders, customers and other records.
+
+    | Option | Use it for |
+    |---|---|
+    | [Custom fields](/developer/core-concepts/metafields) | Structured, typed attributes that staff manage in the dashboard |
+    | [Metadata](/developer/customization/metadata) | Unstructured key-value data written by integrations |
+    | [External references](/developer/core-concepts/external-references) | The IDs your other systems use for a record |
+
+    All three are set in the dashboard or through the API.
+  </Accordion>
+</AccordionGroup>
+
+## Integrate
+
+<WorksOnPrebuiltImage />
+
+Write code that runs outside Spree, in any language, and talks to it over HTTP. Spree keeps running from the prebuilt image as it is. See [Extending Spree without Ruby](/developer/customization/extend-without-ruby) for the full guide.
+
+| What you want to do | Recommended approach |
+|---|---|
+| React after something happened (sync, notifications) | [Webhooks](#webhooks) |
+| Notify external services | [Webhooks](#webhooks) |
+| Read and change the store from your own services | [Admin API](#admin-api) |
+| Build a storefront or a mobile app | [Store API](#store-api) |
+| Call the APIs from TypeScript | [TypeScript SDKs](#typescript-sdks) |
+| Let an AI agent work in the back office | [MCP server](#mcp-server) |
+| Add a screen, a column or a widget to the admin | [Dashboard plugins](#dashboard-plugins) |
+
+<AccordionGroup>
+  <Accordion title="Webhooks">
+    **Best for:** reacting *after* something happened — syncing to ERPs, CRMs and fulfillment systems, notifications, audit logging.
+
+    Webhooks are the default way to react to an event. Spree sends an HTTP POST to your service, which can be written in any language.
+
+    Configure them in the dashboard under **Settings → Webhooks**, or through the Admin API.
+
+    A webhook tells you something happened. It can't stop it or change it.
+
+    See [Webhooks](/developer/core-concepts/webhooks) and [Events](/developer/core-concepts/events) for what Spree announces.
+  </Accordion>
+  <Accordion title="Admin API">
+    **Best for:** reading and changing the store from your own services — imports, reports, data pipelines and integrations.
+
+    The Admin API is the back office as a REST API. Integrations authenticate with a secret API key that carries scopes. Writes run the same workflows as the dashboard.
+
+    See [Admin API](/api-reference/admin-api/introduction) and [Extending Spree without Ruby](/developer/customization/extend-without-ruby#the-admin-api).
+  </Accordion>
+  <Accordion title="Store API">
+    **Best for:** building a storefront or a mobile app.
+
+    The Store API serves the catalog, carts, checkout and customer accounts to your own frontend.
+
+    See [Store API](/api-reference/store-api/introduction).
+  </Accordion>
+  <Accordion title="TypeScript SDKs">
+    **Best for:** calling the APIs from TypeScript with typed clients.
+
+    | Package | API |
+    |---|---|
+    | [`@spree/sdk`](/developer/sdk/quickstart) | Store API, and verifying webhooks |
+    | [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | Admin API |
+
+    See [Extending Spree without Ruby](/developer/customization/extend-without-ruby#the-typescript-sdks).
+  </Accordion>
+  <Accordion title="MCP server">
+    **Best for:** letting an AI agent read and change the store on a person's behalf.
+
+    Your store serves an MCP server at `/api/v3/admin/mcp`, with nothing extra to deploy.
+
+    See [MCP Server](/developer/mcp/overview).
+  </Accordion>
+  <Accordion title="Dashboard plugins">
+    **Best for:** adding your own screens, navigation entries, table columns and widgets to the admin.
+
+    The admin dashboard is a React application. You extend it in TypeScript, and your screens talk to the Admin API.
+
+    See [Dashboard Customization](/developer/dashboard/customization/quickstart) and [dashboard plugins](/developer/dashboard/plugins/overview).
+  </Accordion>
+</AccordionGroup>
+
+## Eject
+
+<RequiresEject />
+
+Write Ruby that runs inside Spree. The prebuilt image cannot load your Ruby code, so every option in this tier requires [`spree eject`](/developer/cli/quickstart#spree-eject), which switches the project to building the backend from your own `server/` directory. Use this tier when the change has to happen inside Spree's process — see [When to use Ruby instead](/developer/customization/extend-without-ruby#when-to-use-ruby-instead).
+
+| What you want to do | Recommended approach |
+|---|---|
+| Run your own logic inside checkout, cancellation, refunds | [Workflow hooks](#workflow-hooks) |
+| Block an operation from happening | [Workflow hooks](#workflow-hooks) — `validate` |
+| React after something happened, inside Spree | [Event subscribers](#event-subscribers) |
+| Add or reorder checkout steps | [Checkout registry](#checkout-steps) |
+| Swap tax, delivery rate, search or fulfillment behavior | [Providers](#providers) |
+| Add searchable/filterable fields | [Search & filtering](#search-and-filtering) |
+| Use your own user model or identity provider | [Authentication](#authentication) |
+| Add an API endpoint or change a response | [API customization](#api-customization) |
+| Replace a whole workflow or service | [Dependencies](#dependencies) |
+| Add associations/validations to models | [Decorators](#decorators) (last resort) |
+
+<AccordionGroup>
   <Accordion title="Workflow hooks">
     **Best for:** running your own logic *inside* a core flow — checkout completion, order cancellation, refunds, fulfillment creation.
 
@@ -86,8 +187,10 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 
     See [Services & Workflows](/developer/customization/workflows) for the full list of flows and their hooks.
   </Accordion>
-  <Accordion title="Events and subscribers">
-    **Best for:** reacting *after* something happened — syncing to external systems, notifications, audit logging.
+  <Accordion title="Event subscribers">
+    **Best for:** reacting *after* something happened when the reaction belongs inside the Spree application itself.
+
+    A subscriber is the in-process alternative to a [webhook](#webhooks). Use a webhook when the thing reacting is a separate system.
 
     ```ruby app/subscribers/spree/order_placed_subscriber.rb
     module Spree
@@ -106,7 +209,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 
     **Events or hooks?** A hook runs *inside* the flow and can influence or block it. An event fires *after* the fact and cannot. Reach for an event unless you need to change the outcome.
 
-    See [Events](/developer/core-concepts/events).
+    See [Events](/developer/core-concepts/events#reacting-inside-spree).
   </Accordion>
   <Accordion title="Checkout steps">
     **Best for:** adding, removing or reordering checkout steps.
@@ -174,12 +277,12 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 
     See [Authentication](/developer/providers/sso).
   </Accordion>
-  <Accordion title="Webhooks">
-    **Best for:** notifying external services — ERPs, CRMs, fulfillment systems — without writing Ruby.
+  <Accordion title="API customization">
+    **Best for:** adding your own API endpoints, or changing the JSON an existing endpoint returns.
 
-    Configure them in the dashboard under **Settings → Webhooks**, or through the Admin API.
+    Endpoints are Rails controllers and responses are built by serializers, so both are Ruby.
 
-    See [Webhooks](/developer/core-concepts/webhooks).
+    See [Customizing the Spree API](/developer/customization/api).
   </Accordion>
   <Accordion title="Dependencies">
     **Best for:** replacing an entire workflow or service with your own class.
@@ -204,7 +307,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 
       **Do not use decorators for:**
       - Logic inside a core flow → use [workflow hooks](#workflow-hooks)
-      - After-save callbacks → use [events](#events-and-subscribers)
+      - After-save callbacks → use [event subscribers](#event-subscribers)
       - External service sync → use [webhooks](#webhooks)
       - Replacing a service → use [dependencies](#dependencies)
       - Admin UI changes → use [dashboard customization](/developer/dashboard/customization/quickstart)
@@ -242,7 +345,7 @@ These three overlap, and picking the wrong one is the most common source of upgr
     Use a **workflow hook**. Only `validate` hooks can stop an operation, and only they run early enough to do so safely — before money moves.
   </Step>
   <Step title="Do you just need to know it happened?">
-    Use an **event subscriber**. It's decoupled, testable, and survives upgrades untouched.
+    Use a **webhook** when the thing reacting is a separate system, or an **event subscriber** when the reaction belongs inside Spree. Both are decoupled, testable, and survive upgrades untouched.
   </Step>
   <Step title="Do you need the flow to do something fundamentally different?">
     Use **dependencies** to replace the class — and accept that you now own keeping it current.
