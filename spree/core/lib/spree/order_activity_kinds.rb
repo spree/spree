@@ -14,7 +14,13 @@ module Spree
   #     { order: order, details: { points: event.payload['points'] } }
   #   end
   class OrderActivityKinds
-    Kind = Struct.new(:event_name, :category, :builder, keyword_init: true)
+    Kind = Struct.new(:category, :builder, keyword_init: true)
+
+    POST_SALE_EVENTS = {
+      'return' => %w[return.requested return.received return.refunded return.canceled],
+      'exchange' => %w[exchange.requested exchange.received exchange.fulfilled exchange.canceled],
+      'claim' => %w[claim.opened claim.resolved claim.denied claim.canceled]
+    }.freeze
 
     def initialize
       @kinds = {}
@@ -28,7 +34,7 @@ module Spree
     def register(event_name, category:, &builder)
       raise ArgumentError, 'A builder block is required' unless builder
 
-      @kinds[event_name.to_s] = Kind.new(event_name: event_name.to_s, category: category.to_s, builder: builder)
+      @kinds[event_name.to_s] = Kind.new(category: category.to_s, builder: builder)
     end
 
     # @param event_name [String]
@@ -40,16 +46,6 @@ module Spree
     # @return [Kind, nil]
     def [](event_name)
       @kinds[event_name.to_s]
-    end
-
-    # @return [Array<String>]
-    def event_names
-      @kinds.keys
-    end
-
-    # @return [Array<String>] every category, comments included
-    def categories
-      (@kinds.values.map(&:category) + ['comments']).uniq
     end
 
     private
@@ -67,8 +63,7 @@ module Spree
         order = Spree::Order.find_by_prefix_id(event.payload['id'])
         next unless order
 
-        payments = order.payments.includes(:payment_method, :source).map { |payment| payment_details(payment) }
-        { order: order, details: { total: money(order.total, order.currency), currency: order.currency, payments: payments } }
+        { order: order, details: { total: money(order.total, order.currency) } }
       end
 
       %w[order.approved order.canceled].each do |name|
@@ -129,14 +124,15 @@ module Spree
     end
 
     def register_post_sale_kinds
-      %w[return exchange claim].each do |prefix|
-        post_sale_events(prefix).each do |name|
+      POST_SALE_EVENTS.each do |prefix, names|
+        names.each do |name|
           register(name, category: 'returns') do |event|
             record = "Spree::#{prefix.camelize}".constantize.find_by_prefix_id(event.payload['id'])
             next unless record&.order
 
-            { order: record.order, order_change: post_sale_change(name, record),
-              details: { "#{prefix}_id": record.prefixed_id, number: record.number } }
+            # The restock or replacements the step made, which its event names.
+            change = record.order_changes.find_by_prefix_id(event.metadata['order_change_id']) if event.metadata['order_change_id']
+            { order: record.order, order_change: change, details: { "#{prefix}_id": record.prefixed_id, number: record.number } }
           end
         end
       end
@@ -152,29 +148,13 @@ module Spree
       { order: order, details: details.compact }
     end
 
-    def post_sale_events(prefix)
-      {
-        'return' => %w[return.requested return.received return.refunded return.canceled],
-        'exchange' => %w[exchange.requested exchange.received exchange.fulfilled exchange.canceled],
-        'claim' => %w[claim.opened claim.resolved claim.denied claim.canceled]
-      }.fetch(prefix)
-    end
-
-    # The change set the step just confirmed: the restock on receipt, the
-    # replacements on fulfillment or resolution.
-    def post_sale_change(event_name, record)
-      return unless event_name.end_with?('.received', '.fulfilled', '.resolved')
-
-      record.order_changes.where(status: 'confirmed').order(:confirmed_at, :id).last
-    end
-
     def payment_details(payment)
       {
         payment_id: payment.prefixed_id,
         payment_method: payment.payment_method&.name,
         amount: money(payment.amount, payment.currency),
-        brand: payment.source.try(:cc_type).presence,
-        last_digits: payment.source.try(:last_digits).presence,
+        brand: payment.source.try(:brand).presence,
+        last4: payment.source.try(:last4).presence,
         transaction_id: payment.response_code.presence
       }.compact
     end

@@ -79,6 +79,15 @@ module Spree
               render_result(Spree.order_change_cancel_workflow.call(order_change: @resource, canceled_by: current_actor))
             end
 
+            # What the variant payload reads, loaded only when it is expanded.
+            # The order timeline expands the same actions.
+            def self.variant_includes
+              [:product, :prices, :external_references,
+               { stock_levels: [:stock_location, :active_stock_reservations] },
+               { option_values: :option_type },
+               { primary_media: [{ attachment_attachment: :blob }, { poster_attachment: :blob }] }]
+            end
+
             protected
 
             def model_class
@@ -91,20 +100,12 @@ module Spree
 
             def collection_includes
               actions = [:fulfillment, :delivery_method]
-              actions << { variant: variant_includes } if expand_list.include?('actions.variant')
+              actions << { variant: self.class.variant_includes } if expand_list.include?('actions.variant')
 
               [:order, :return, :exchange, :claim, { actions: actions }] + (%w[requested_by confirmed_by canceled_by] & expand_list).map(&:to_sym)
             end
 
             private
-
-            # What the variant payload reads, loaded only when it is expanded.
-            def variant_includes
-              [:product, :prices, :external_references,
-               { stock_levels: [:stock_location, :active_stock_reservations] },
-               { option_values: :option_type },
-               { primary_media: [{ attachment_attachment: :blob }, { poster_attachment: :blob }] }]
-            end
 
             def ensure_actions_are_objects
               return if Array(params[:actions]).all?(ActionController::Parameters)

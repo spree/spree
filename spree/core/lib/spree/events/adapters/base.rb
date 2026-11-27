@@ -114,7 +114,9 @@ module Spree
           Spree::Event.new(
             name: event_name,
             payload: payload,
-            metadata: metadata
+            # Stamped when published, so a subscriber running later still
+            # knows who acted (docs/plans/6.1-order-timeline.md).
+            metadata: Spree::Event.actor_metadata.merge((metadata || {}).deep_stringify_keys)
           )
         end
 

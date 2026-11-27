@@ -33,18 +33,11 @@ module Spree
     attribute :name, :string
     attribute :store_id, :integer, default: -> { Spree::Current.store&.id }
     attribute :payload, default: -> { {}.freeze }
-    attribute :metadata, default: -> { { 'spree_version' => Spree.version }.merge(actor_metadata).freeze }
+    attribute :metadata, default: -> { { 'spree_version' => Spree.version }.freeze }
     attribute :created_at, :datetime, default: -> { Time.current }
 
     validates :name, presence: true
     validates :store_id, presence: true
-
-    # A default is computed when first read, and the actor is whoever is
-    # acting when the event is built, not when a subscriber reads it.
-    def initialize(...)
-      super
-      metadata
-    end
 
     def name=(value)
       super(value.to_s.freeze) if value
@@ -54,22 +47,29 @@ module Spree
       super((value || {}).deep_stringify_keys.freeze)
     end
 
-    # `actor_id` and `actor_type` name who acted, as the prefixed id and
-    # actor kind the API uses, because webhook deliveries send the metadata.
     def metadata=(value)
-      base = { 'spree_version' => Spree.version }.merge(self.class.actor_metadata)
+      base = { 'spree_version' => Spree.version }
       super(base.merge((value || {}).deep_stringify_keys).freeze)
     end
 
-    # The actor this event's metadata names, if it still exists.
+    # The actor this event's metadata names, if it still exists. One acting
+    # in this request or job is already loaded.
     #
     # @return [Object, nil]
     def actor
+      return if metadata['actor_id'].blank?
+
+      current = Spree::Current.actor
+      return current if current.respond_to?(:prefixed_id) && current.prefixed_id == metadata['actor_id']
+
       type = Spree::Base.polymorphic_type_for(metadata['actor_type'], Spree.actor_classes)
       type&.safe_constantize&.find_by_prefix_id(metadata['actor_id'])
     end
 
-    # @return [Hash] the current actor's prefixed id and kind, or nothing
+    # Who is acting, as the prefixed id and actor kind the API uses: webhook
+    # deliveries send the metadata.
+    #
+    # @return [Hash] `actor_id` and `actor_type`, or nothing
     def self.actor_metadata
       actor = Spree::Current.actor
       return {} unless actor.respond_to?(:actor_kind) && actor.respond_to?(:prefixed_id)

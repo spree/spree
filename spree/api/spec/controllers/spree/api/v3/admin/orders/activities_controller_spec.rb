@@ -118,7 +118,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ActivitiesController, type: :contr
 
       delete :destroy, params: { order_id: order.prefixed_id, id: entry.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(entry.reload).to be_present
     end
   end
 end

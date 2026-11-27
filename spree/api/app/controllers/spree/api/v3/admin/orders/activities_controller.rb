@@ -15,8 +15,7 @@ module Spree
 
             # POST /api/v3/admin/orders/:order_id/activities
             def create
-              @resource = @parent.activities.new(kind: Spree::OrderActivity::COMMENT, category: 'comments',
-                                                 body: permitted_params[:body], actor: current_actor)
+              @resource = @parent.activities.comments.new(body: permitted_params[:body], actor: current_actor)
               authorize_resource!(@resource, :create)
 
               save_and_render(@resource, status: :created)
@@ -24,10 +23,9 @@ module Spree
 
             # DELETE /api/v3/admin/orders/:order_id/activities/:id
             #
-            # Only a comment, and only by whoever wrote it: every other entry
-            # is a record of something that happened.
+            # Only by whoever wrote it; the model refuses anything but a comment.
             def destroy
-              unless @resource.comment? && @resource.actor == current_actor
+              if @resource.comment? && @resource.actor != current_actor
                 return render_error(code: ERROR_CODES[:access_denied], message: I18n.t('spree.order_activity_not_deletable'),
                                     status: :forbidden)
               end
@@ -48,8 +46,10 @@ module Spree
             def collection_includes
               includes = []
               includes << :actor if expand_list.include?('actor')
-              includes << { order_change: [:order, { actions: [:fulfillment, :delivery_method, :variant] }] } if expand_list.any? do |e|
-                e.start_with?('order_change')
+              if expand_list.any? { |expand| expand.start_with?('order_change') }
+                actions = [:fulfillment, :delivery_method]
+                actions << { variant: OrderChangesController.variant_includes } if expand_list.include?('order_change.actions.variant')
+                includes << { order_change: [:order, :return, :exchange, :claim, { actions: actions }] }
               end
               includes
             end

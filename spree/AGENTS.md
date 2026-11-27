@@ -93,7 +93,7 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 
 `record.publish_event('order.completed')`; subscribers in `app/subscribers/spree/` subclass `Spree::Subscriber`. Payloads use Store serializers only — never a hand-built hash or an Admin serializer; extras go in `metadata` (`docs/plans/6.0-typed-webhook-events.md`).
 
-A step a merchant should see on an order publishes an event, and the order timeline records it (`docs/plans/6.1-order-timeline.md`). Metadata keys `actor_id` and `actor_type` are reserved for the actor, which `publish_event` copies from `Spree::Current.actor`. A background job acting for a staff member or an API key sets `Spree::Current.actor`, or its timeline entries name no one.
+A step a merchant should see on an order publishes an event, and the order timeline records it (`docs/plans/6.1-order-timeline.md`). Metadata keys `actor_id` and `actor_type` are reserved for the actor, which every published event copies from `Spree::Current.actor`. A background job acting for a staff member or an API key sets `Spree::Current.actor`, or its timeline entries name no one.
 
 ## MCP and agent tools
 

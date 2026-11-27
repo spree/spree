@@ -1,13 +1,5 @@
 import type { Order, OrderActivity } from '@spree/admin-sdk'
-import {
-  type ActivityKind,
-  Can,
-  Subject,
-  useActivityKinds,
-  useAuth,
-  useMoneyLocale,
-  usePermissions,
-} from '@spree/dashboard-core'
+import { type ActivityKind, Can, Subject, useActivityKinds, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -17,21 +9,20 @@ import {
   SectionHeader,
   SectionTitle,
   Textarea,
-  useConfirm,
 } from '@spree/dashboard-ui'
 import { CircleIcon, HistoryIcon } from '@spree/dashboard-ui/icons'
 import { activeDateLocale } from '@spree/dashboard-ui/lib/date-locale'
-import { format } from 'date-fns'
+import { parseISO } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  useDeleteOrderComment,
   useOrderActivities,
   useOrderComment,
   useRequestedOrderChange,
   useSettleOrderChange,
 } from '../../../hooks/use-order'
-import { describeAction } from '../../../timeline/default'
+import { OrderChangeActions } from '../../../timeline/default'
 import { ActorLabel } from '../actor-label'
 
 /**
@@ -42,6 +33,7 @@ import { ActorLabel } from '../actor-label'
 export function OrderTimeline({ order }: { order: Order }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
+  const { timezone } = useStore()
   const { data, isLoading } = useOrderActivities(order.id, page)
   const activities = data?.data ?? []
   const onLastPage = !data?.meta || data.meta.page >= data.meta.pages
@@ -66,12 +58,17 @@ export function OrderTimeline({ order }: { order: Order }) {
           {isLoading ? (
             <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
           ) : (
-            groupByDay(activities).map(([day, entries]) => (
+            groupByDay(activities, timezone).map(([day, entries]) => (
               <div key={day} className="flex flex-col gap-2">
                 <h3 className="font-medium text-muted-foreground text-sm">{day}</h3>
                 <ul className="flex flex-col gap-3">
                   {entries.map((activity) => (
-                    <TimelineEntry key={activity.id} activity={activity} order={order} />
+                    <TimelineEntry
+                      key={activity.id}
+                      activity={activity}
+                      order={order}
+                      timezone={timezone}
+                    />
                   ))}
                 </ul>
               </div>
@@ -91,11 +88,15 @@ export function OrderTimeline({ order }: { order: Order }) {
   )
 }
 
-function groupByDay(activities: OrderActivity[]): [string, OrderActivity[]][] {
-  const locale = activeDateLocale()
+/** A date or time as the store keeps it, in the admin's language. */
+function storeTime(iso: string, timezone: string, pattern: string) {
+  return formatInTimeZone(parseISO(iso), timezone, pattern, { locale: activeDateLocale() })
+}
+
+function groupByDay(activities: OrderActivity[], timezone: string): [string, OrderActivity[]][] {
   const days = new Map<string, OrderActivity[]>()
   for (const activity of activities) {
-    const day = format(new Date(activity.created_at), 'PPP', { locale })
+    const day = storeTime(activity.created_at, timezone, 'PPP')
     days.set(day, [...(days.get(day) ?? []), activity])
   }
   return [...days]
@@ -106,28 +107,17 @@ const FALLBACK_KIND: ActivityKind = {
   Summary: ({ activity }) => <>{activity.kind}</>,
 }
 
-function TimelineEntry({ activity, order }: { activity: OrderActivity; order: Order }) {
-  const { t } = useTranslation()
-  const { user } = useAuth()
-  const confirm = useConfirm()
-  const deleteComment = useDeleteOrderComment(order.id)
+function TimelineEntry({
+  activity,
+  order,
+  timezone,
+}: {
+  activity: OrderActivity
+  order: Order
+  timezone: string
+}) {
   const kind = useActivityKinds().get(activity.kind) ?? FALLBACK_KIND
   const Icon = kind.icon ?? CircleIcon
-  const { permissions } = usePermissions()
-  const ownComment =
-    activity.kind === 'comment' &&
-    !!user &&
-    activity.actor_id === user.id &&
-    permissions.can('update', Subject.Order)
-
-  async function handleDelete() {
-    const confirmed = await confirm({
-      message: t('admin.orders.detail.timeline.delete_comment_confirm'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (confirmed) deleteComment.mutate(activity.id)
-  }
 
   return (
     <li className="flex gap-3 text-base" data-kind={activity.kind}>
@@ -140,7 +130,7 @@ function TimelineEntry({ activity, order }: { activity: OrderActivity; order: Or
             <kind.Summary activity={activity} order={order} />
           </span>
           <time className="shrink-0 text-muted-foreground text-sm" dateTime={activity.created_at}>
-            {format(new Date(activity.created_at), 'p', { locale: activeDateLocale() })}
+            {storeTime(activity.created_at, timezone, 'p')}
           </time>
         </div>
         {activity.actor && (
@@ -149,17 +139,6 @@ function TimelineEntry({ activity, order }: { activity: OrderActivity; order: Or
           </span>
         )}
         {kind.Details && <kind.Details activity={activity} order={order} />}
-        {ownComment && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="self-start"
-            disabled={deleteComment.isPending}
-            onClick={handleDelete}
-          >
-            {t('admin.orders.detail.timeline.delete_comment')}
-          </Button>
-        )}
       </div>
     </li>
   )
@@ -199,7 +178,6 @@ function CommentForm({ orderId }: { orderId: string }) {
 
 function RequestedChange({ order }: { order: Order }) {
   const { t } = useTranslation()
-  const moneyLocale = useMoneyLocale()
   const { data: change } = useRequestedOrderChange(order.id)
   const settle = useSettleOrderChange(order.id)
   if (!change) return null
@@ -217,11 +195,7 @@ function RequestedChange({ order }: { order: Order }) {
           </p>
         )}
       </div>
-      <ul className="flex flex-col gap-0.5 text-muted-foreground">
-        {change.actions.map((action) => (
-          <li key={action.id}>{describeAction(action, order.currency, moneyLocale, t)}</li>
-        ))}
-      </ul>
+      <OrderChangeActions change={change} order={order} />
       <div className="flex gap-2">
         <Button
           size="sm"

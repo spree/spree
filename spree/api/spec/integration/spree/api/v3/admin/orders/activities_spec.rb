@@ -103,7 +103,15 @@ RSpec.describe 'Admin Order Activities API', type: :request, swagger_doc: 'api-r
         run_test!
       end
 
-      response '403', 'not a comment this caller wrote' do
+      response '403', 'a comment someone else wrote' do
+        let(:id) { create(:order_activity, order: order, actor: create(:admin_user)).prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '422', 'not a comment' do
         let(:id) { create(:order_activity, order: order, kind: 'order.placed', category: 'order', body: nil).prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'

@@ -93,11 +93,20 @@ RSpec.describe Spree::OrderActivitySubscriber, events: true do
     return_record = create(:return, order: order)
     change = Spree::OrderChanges::Apply.call(order: order, post_sale_record: return_record,
                                              actions: [{ kind: 'receive_item', variant: line_item.variant, quantity: 1 }]).value
-    publish(return_record, 'return.received')
+    return_record.publish_event('return.received', nil, order_change_id: change.prefixed_id)
 
     expect(order.activities.reload.map(&:kind)).to eq(['return.received'])
     expect(order.activities.sole).to have_attributes(order_change: change, category: 'returns')
     expect(order.activities.sole.details).to include('number' => return_record.number)
+  end
+
+  it 'shows the restock a received return made on the return’s entry' do
+    return_record = create(:approved_return, store: store)
+    Spree::Returns::Receive.call(return_record: return_record)
+
+    entry = return_record.order.activities.find_by!(kind: 'return.received')
+    expect(entry.order_change).to eq(return_record.order_changes.sole)
+    expect(entry.order_change.actions.map(&:kind)).to eq(['receive_item'])
   end
 
   it 'leaves nothing behind for a step that rolls back' do

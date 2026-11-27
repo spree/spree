@@ -28,22 +28,12 @@ module Spree
           details: attributes[:details].presence,
           kind: event.name,
           category: kind.category,
-          actor: actor_for(event),
+          actor: event.actor,
           created_at: event.created_at
         )
       end
     rescue StandardError => e
       Rails.error.report(e, source: 'spree.order_activities', context: { event: event.name })
-    end
-
-    private
-
-    # Published in this request, the actor is already loaded.
-    def actor_for(event)
-      current = Spree::Current.actor
-      return current if current.respond_to?(:prefixed_id) && current.prefixed_id == event.metadata['actor_id']
-
-      event.actor
     end
   end
 end

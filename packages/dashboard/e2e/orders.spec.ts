@@ -781,7 +781,9 @@ test.describe('placed order editing', () => {
     })
     await page.reload()
     const requested = page.getByTestId('requested-order-change')
-    await expect(requested.getByText(/requested a change$/)).toBeVisible({ timeout: 15_000 })
+    await expect(requested.getByText('A change is waiting to be applied')).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(requested.getByText(/to a quantity of 5$/)).toBeVisible()
 
     await requested.getByRole('button', { name: /^apply change$/i }).click()

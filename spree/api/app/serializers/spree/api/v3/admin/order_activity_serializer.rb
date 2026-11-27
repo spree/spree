@@ -13,7 +13,9 @@ module Spree
 
           attributes :kind, :category, :body, :details, created_at: :iso8601
 
-          prefixed_id_attributes :order_change
+          attribute :order_change_id do |activity|
+            Spree::OrderChange.prefixed_id_for(activity.order_change_id)
+          end
 
           actor_attributes :actor
 

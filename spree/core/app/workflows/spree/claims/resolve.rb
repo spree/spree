@@ -48,7 +48,7 @@ module Spree
 
         step :recalculate_order
         run_hooks :after_resolve
-        claim.publish_event('claim.resolved')
+        claim.publish_event('claim.resolved', nil, { order_change_id: @order_change&.prefixed_id }.compact)
         success(claim.reload)
       end
 

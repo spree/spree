@@ -113,7 +113,7 @@ export function useOrderFees(orderId: string) {
 
 /**
  * Keyed under the order, so anything that refreshes the order — saving an
- * edit, receiving a return — refreshes its change history too.
+ * edit, receiving a return — refreshes its timeline too.
  */
 export function useOrderActivities(orderId: string, page: number) {
   return useQuery({
@@ -146,7 +146,8 @@ export function useRequestedOrderChange(orderId: string) {
 export function useOrderComment(orderId: string) {
   return useResourceMutation({
     mutationFn: (body: string) => adminClient.orders.activities.create(orderId, { body }),
-    invalidate: [orderQueryKey(orderId)],
+    // A comment changes nothing else on the order.
+    invalidate: [['orders', orderId, 'activities']],
     successMessage: false,
     showValidationErrors: true,
   })
@@ -155,7 +156,8 @@ export function useOrderComment(orderId: string) {
 export function useDeleteOrderComment(orderId: string) {
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.orders.activities.delete(orderId, id),
-    invalidate: [orderQueryKey(orderId)],
+    // A comment changes nothing else on the order.
+    invalidate: [['orders', orderId, 'activities']],
     successMessage: i18n.t('admin.orders.detail.timeline.comment_deleted'),
   })
 }

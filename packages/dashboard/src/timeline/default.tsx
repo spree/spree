@@ -1,11 +1,15 @@
-import type { OrderChangeAction } from '@spree/admin-sdk'
+import type { Order, OrderChange, OrderChangeAction } from '@spree/admin-sdk'
 import {
   type ActivityKind,
   type ActivityProps,
   activityRegistry,
+  Can,
   formatAmount,
+  Subject,
+  useAuth,
   useMoneyLocale,
 } from '@spree/dashboard-core'
+import { Button, useConfirm } from '@spree/dashboard-ui'
 import {
   BanIcon,
   CircleCheckIcon,
@@ -18,7 +22,9 @@ import {
   TruckIcon,
 } from '@spree/dashboard-ui/icons'
 import type { TFunction } from 'i18next'
+import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDeleteOrderComment } from '../hooks/use-order'
 import { variantLabel } from '../lib/variant-label'
 
 /**
@@ -39,10 +45,8 @@ function KindSummary({ activity, order }: ActivityProps) {
     return value ? formatAmount(value, order.currency, moneyLocale) : ''
   }
   const brand = detail(activity, 'brand')
-  const lastDigits = detail(activity, 'last_digits')
-  const method = lastDigits
-    ? `${brand} •••• ${lastDigits}`.trim()
-    : detail(activity, 'payment_method')
+  const last4 = detail(activity, 'last4')
+  const method = last4 ? `${brand} •••• ${last4}`.trim() : detail(activity, 'payment_method')
   const sentence = t(`admin.orders.detail.timeline.kinds.${activity.kind.replace('.', '_')}`, {
     amount: money('amount'),
     total: money('total'),
@@ -57,6 +61,52 @@ function CommentSummary({ activity }: ActivityProps) {
   return <span className="whitespace-pre-wrap">{activity.body}</span>
 }
 
+/** Its author can delete a comment; no other entry can be removed. */
+function CommentDetails({ activity, order }: ActivityProps) {
+  const { t } = useTranslation()
+  const { user } = useAuth()
+  const confirm = useConfirm()
+  const deleteComment = useDeleteOrderComment(order.id)
+  if (!user || activity.actor_id !== user.id) return null
+
+  async function handleDelete() {
+    const confirmed = await confirm({
+      message: t('admin.orders.detail.timeline.delete_comment_confirm'),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (confirmed) deleteComment.mutate(activity.id)
+  }
+
+  return (
+    <Can I="update" a={Subject.Order}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="self-start"
+        disabled={deleteComment.isPending}
+        onClick={handleDelete}
+      >
+        {t('admin.orders.detail.timeline.delete_comment')}
+      </Button>
+    </Can>
+  )
+}
+
+/** What a change does, line by line. */
+export function OrderChangeActions({ change, order }: { change: OrderChange; order: Order }) {
+  const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
+
+  return (
+    <ul className="flex flex-col gap-0.5 text-muted-foreground">
+      {change.actions.map((action) => (
+        <li key={action.id}>{describeAction(action, order.currency, moneyLocale, t)}</li>
+      ))}
+    </ul>
+  )
+}
+
 /** What an order change did, line by line, and how it moved the total. */
 function OrderChangeDetails({ activity, order }: ActivityProps) {
   const { t } = useTranslation()
@@ -66,11 +116,7 @@ function OrderChangeDetails({ activity, order }: ActivityProps) {
 
   return (
     <div className="flex flex-col gap-0.5 text-muted-foreground">
-      <ul className="flex flex-col gap-0.5">
-        {change.actions.map((action) => (
-          <li key={action.id}>{describeAction(action, order.currency, moneyLocale, t)}</li>
-        ))}
-      </ul>
+      <OrderChangeActions change={change} order={order} />
       {change.previous_total && change.new_total && change.previous_total !== change.new_total && (
         <p>
           {t('admin.orders.detail.timeline.total_moved', {
@@ -95,7 +141,7 @@ function PaymentDetails({ activity }: ActivityProps) {
   )
 }
 
-export function describeAction(
+function describeAction(
   action: OrderChangeAction,
   currency: string,
   moneyLocale: string,
@@ -129,51 +175,54 @@ export function describeAction(
   })
 }
 
+function group(
+  icon: ComponentType<{ className?: string }>,
+  names: string[],
+  Details?: ActivityKind['Details'],
+): ActivityKind[] {
+  return names.map((kind) => ({ kind, icon, Summary: KindSummary, Details }))
+}
+
 const kinds: ActivityKind[] = [
-  { kind: 'comment', icon: MessageSquareIcon, Summary: CommentSummary },
-  { kind: 'order.placed', icon: ShoppingCartIcon, Summary: KindSummary },
-  { kind: 'order.approved', icon: CircleCheckIcon, Summary: KindSummary },
-  { kind: 'order.canceled', icon: BanIcon, Summary: KindSummary },
-  ...['payment.completed', 'payment.capture_failed', 'payment.voided', 'payment.void_failed'].map(
-    (kind) => ({ kind, icon: CreditCardIcon, Summary: KindSummary, Details: PaymentDetails }),
+  { kind: 'comment', icon: MessageSquareIcon, Summary: CommentSummary, Details: CommentDetails },
+  ...group(ShoppingCartIcon, ['order.placed']),
+  ...group(CircleCheckIcon, ['order.approved']),
+  ...group(BanIcon, ['order.canceled']),
+  ...group(
+    CreditCardIcon,
+    ['payment.completed', 'payment.capture_failed', 'payment.voided', 'payment.void_failed'],
+    PaymentDetails,
   ),
-  ...['payment.refunded', 'refund.requested', 'refund.failed'].map((kind) => ({
-    kind,
-    icon: RotateCcwIcon,
-    Summary: KindSummary,
-    Details: PaymentDetails,
-  })),
-  ...['fulfillment.fulfilled', 'fulfillment.canceled'].map((kind) => ({
-    kind,
-    icon: TruckIcon,
-    Summary: KindSummary,
-  })),
-  { kind: 'fulfillment.delivered', icon: PackageCheckIcon, Summary: KindSummary },
-  ...['order_change.requested', 'order_change.confirmed', 'order_change.canceled'].map((kind) => ({
-    kind,
-    icon: PencilIcon,
-    Summary: KindSummary,
-    Details: OrderChangeDetails,
-  })),
-  ...[
-    'return.requested',
-    'return.received',
-    'return.refunded',
-    'return.canceled',
-    'exchange.requested',
-    'exchange.received',
-    'exchange.fulfilled',
-    'exchange.canceled',
-    'claim.opened',
-    'claim.resolved',
-    'claim.denied',
-    'claim.canceled',
-  ].map((kind) => ({
-    kind,
-    icon: RotateCcwIcon,
-    Summary: KindSummary,
-    Details: OrderChangeDetails,
-  })),
+  ...group(
+    RotateCcwIcon,
+    ['payment.refunded', 'refund.requested', 'refund.failed'],
+    PaymentDetails,
+  ),
+  ...group(TruckIcon, ['fulfillment.fulfilled', 'fulfillment.canceled']),
+  ...group(PackageCheckIcon, ['fulfillment.delivered']),
+  ...group(
+    PencilIcon,
+    ['order_change.requested', 'order_change.confirmed', 'order_change.canceled'],
+    OrderChangeDetails,
+  ),
+  ...group(
+    RotateCcwIcon,
+    [
+      'return.requested',
+      'return.received',
+      'return.refunded',
+      'return.canceled',
+      'exchange.requested',
+      'exchange.received',
+      'exchange.fulfilled',
+      'exchange.canceled',
+      'claim.opened',
+      'claim.resolved',
+      'claim.denied',
+      'claim.canceled',
+    ],
+    OrderChangeDetails,
+  ),
 ]
 
 for (const kind of kinds) activityRegistry.register(kind)

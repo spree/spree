@@ -21,13 +21,18 @@ module Spree
     validates :kind, :category, presence: true
     validates :body, presence: true, length: { maximum: 5_000 }, if: :comment?
 
-    scope :comments, -> { where(kind: COMMENT) }
+    scope :comments, -> { where(kind: COMMENT, category: 'comments') }
 
     self.whitelisted_ransackable_attributes = %w[kind category created_at]
 
     # @return [Boolean]
     def comment?
       kind == COMMENT
+    end
+
+    # Every other entry records something that happened.
+    def can_be_deleted?
+      comment?
     end
   end
 end
