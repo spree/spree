@@ -22,6 +22,10 @@ module Spree
         end
 
         cart.recalculate_totals!
+        # A saved address copied on sign-in builds no delivery, and an earlier
+        # advance may have built one and stopped at the rate choice, so connect
+        # the free shipping the cart qualifies for whenever it has a delivery.
+        cart.apply_free_shipping_promotions if cart.is_a?(Spree::Cart)
         success(cart)
       end
 
