@@ -33,11 +33,18 @@ module Spree
     attribute :name, :string
     attribute :store_id, :integer, default: -> { Spree::Current.store&.id }
     attribute :payload, default: -> { {}.freeze }
-    attribute :metadata, default: -> { { 'spree_version' => Spree.version }.freeze }
+    attribute :metadata, default: -> { { 'spree_version' => Spree.version }.merge(actor_metadata).freeze }
     attribute :created_at, :datetime, default: -> { Time.current }
 
     validates :name, presence: true
     validates :store_id, presence: true
+
+    # A default is computed when first read, and the actor is whoever is
+    # acting when the event is built, not when a subscriber reads it.
+    def initialize(...)
+      super
+      metadata
+    end
 
     def name=(value)
       super(value.to_s.freeze) if value
@@ -47,9 +54,27 @@ module Spree
       super((value || {}).deep_stringify_keys.freeze)
     end
 
+    # `actor_id` and `actor_type` name who acted, as the prefixed id and
+    # actor kind the API uses, because webhook deliveries send the metadata.
     def metadata=(value)
-      base = { 'spree_version' => Spree.version }
+      base = { 'spree_version' => Spree.version }.merge(self.class.actor_metadata)
       super(base.merge((value || {}).deep_stringify_keys).freeze)
+    end
+
+    # The actor this event's metadata names, if it still exists.
+    #
+    # @return [Object, nil]
+    def actor
+      type = Spree::Base.polymorphic_type_for(metadata['actor_type'], Spree.actor_classes)
+      type&.safe_constantize&.find_by_prefix_id(metadata['actor_id'])
+    end
+
+    # @return [Hash] the current actor's prefixed id and kind, or nothing
+    def self.actor_metadata
+      actor = Spree::Current.actor
+      return {} unless actor.respond_to?(:actor_kind) && actor.respond_to?(:prefixed_id)
+
+      { 'actor_id' => actor.prefixed_id, 'actor_type' => actor.actor_kind }
     end
 
     # Returns the store where the event originated

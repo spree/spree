@@ -10,6 +10,9 @@ module Spree
           # resolves @current_api_key before authorize_api_key_scope! reads it —
           # otherwise the scope guard short-circuits on a nil key and never runs.
           before_action :authenticate_admin!
+          # Every event this request publishes names who acted
+          # (docs/plans/6.1-order-timeline.md).
+          before_action { Spree::Current.actor = current_actor }
 
           include Spree::Api::V3::ScopedAuthorization
           include Spree::Api::V3::StrictMoneyParams

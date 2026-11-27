@@ -15,6 +15,13 @@ FactoryBot.define do
     end
   end
 
+  factory :order_activity, class: Spree::OrderActivity do
+    association :order, factory: :completed_order_with_totals
+    kind { 'comment' }
+    category { 'comments' }
+    body { 'Customer asked to hold the parcel until Monday.' }
+  end
+
   factory :order_change_action, class: Spree::OrderChangeAction do
     order_change
     kind { 'add_item' }

@@ -627,6 +627,16 @@ module Spree
     @model_extensions ||= ModelExtensions.new
   end
 
+  # Which events reach an order's timeline and what each records.
+  #
+  # @example
+  #   Spree.order_activity_kinds.register('loyalty.points_awarded', category: 'loyalty') { |event| ... }
+  #
+  # @return [Spree::OrderActivityKinds]
+  def self.order_activity_kinds
+    @order_activity_kinds ||= OrderActivityKinds.new
+  end
+
   class << self
     # Dynamic methods for core dependencies
     #
@@ -749,6 +759,7 @@ require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
 require 'spree/core/model_extensions'
+require 'spree/order_activity_kinds'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
