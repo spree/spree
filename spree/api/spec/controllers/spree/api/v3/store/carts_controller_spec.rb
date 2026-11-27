@@ -656,6 +656,43 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
     end
 
+    context 'when company repricing fails inside the API order lock' do
+      let(:store) { create(:store) }
+      let(:company) { create(:company, store: store) }
+
+      before do
+        create(:company_membership, company: company, customer: user)
+        create(:company_membership, company: create(:company, store: store), customer: user)
+      end
+
+      it 'refuses the change without persisting the company or unconfirmed prices' do
+        previous_prices = order.line_items.pluck(:price)
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).and_raise(Spree::Tax::ProviderUnavailable.new('owned outage'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+        expect(order.reload.company_id).to be_nil
+        expect(order.line_items.pluck(:price)).to eq(previous_prices)
+      end
+
+      it 'rolls the company and prices back when stock cannot be reserved' do
+        order.update!(email: user.email)
+        previous_prices = order.line_items.pluck(:price)
+        allow_any_instance_of(Spree::StockReservations::Reserve).to receive(:build_targets).
+          and_raise(Spree::StockReservations::InsufficientStockError.new(nil, 'Stock cannot be reserved'))
+
+        patch :update, params: { id: order.prefixed_id, company_id: company.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(order.reload.company_id).to be_nil
+        expect(order.line_items.pluck(:price)).to eq(previous_prices)
+      end
+    end
+
     # The token proves the caller holds the cart, not the account whose
     # address book a typed address lands in.
     context 'with only the guest token on a customer-owned cart' do
