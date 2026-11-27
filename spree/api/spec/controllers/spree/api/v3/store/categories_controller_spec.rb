@@ -318,6 +318,33 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
     end
   end
 
+  describe 'channel publishing' do
+    let(:pos) { create(:channel, store: store, code: 'pos', name: 'POS') }
+
+    before { child_category.update!(publications: [{ channel_id: pos.prefixed_id }]) }
+
+    it 'leaves out a category unpublished from the channel and its subtree' do
+      get :index
+
+      expect(json_response['data'].pluck('id')).to include(category.prefixed_id)
+      expect(json_response['data'].pluck('id')).not_to include(child_category.prefixed_id, grandchild_category.prefixed_id)
+    end
+
+    it 'answers not found for an unpublished category and its subcategories' do
+      get :show, params: { id: child_category.permalink }
+      expect(response).to have_http_status(:not_found)
+
+      get :show, params: { id: grandchild_category.prefixed_id }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'leaves unpublished children out of an expanded category' do
+      get :show, params: { id: category.prefixed_id, expand: 'children' }
+
+      expect(json_response['children']).to be_empty
+    end
+  end
+
   describe 'locale and currency headers' do
     context 'x-spree-locale header' do
       before do

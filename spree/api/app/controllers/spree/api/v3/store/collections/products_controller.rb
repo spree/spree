@@ -9,7 +9,7 @@ module Spree
           # and the collection's sort_order is the default when the request omits `sort`.
           class ProductsController < Spree::Api::V3::Store::ProductsController
             include Spree::Api::V3::Store::PermalinkLookup
-            include Spree::Api::V3::Store::StorefrontCollections
+            include Spree::Api::V3::Store::StorefrontVisibility
 
             protected
 

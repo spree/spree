@@ -59,16 +59,9 @@ module Spree
               rule.attribute :preferences, :hash,
                              description: 'Values for the settings schema of the rule type, from the rule types endpoint.'
             end
-            # Applied by the model's sync setter (Spree::Collection#publications=).
-            body.attribute :publications, :array,
-                           as: 'CollectionPublicationParams',
-                           description: PUBLICATIONS_DESCRIPTION do |publication|
-              publication.attribute :channel_id, :id, example: 'ch_abc123'
-              publication.attribute :published_at, :datetime,
-                                    nullable: true, description: 'When the collection goes live on the channel. Null means immediately.'
-              publication.attribute :unpublished_at, :datetime,
-                                    nullable: true, description: 'When the collection comes down from the channel. Null means never.'
-            end
+            # Applied by the model's set writer (Spree::ChannelPublishable).
+            body.attribute :publications, :array, of: Spree::Api::V3::Admin::PublicationRequestSchema,
+                                                  description: PUBLICATIONS_DESCRIPTION
             body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
               description: 'Custom field values, each validated against its definition.'
           end

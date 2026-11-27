@@ -5,7 +5,7 @@ module Spree
         class CollectionsController < ResourceController
           include Spree::Api::V3::HttpCaching
           include Spree::Api::V3::Store::PermalinkLookup
-          include Spree::Api::V3::Store::StorefrontCollections
+          include Spree::Api::V3::Store::StorefrontVisibility
 
           protected
 

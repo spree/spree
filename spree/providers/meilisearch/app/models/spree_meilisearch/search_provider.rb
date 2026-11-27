@@ -713,7 +713,7 @@ module SpreeMeilisearch
     def build_category_facet(distribution)
       prefixed_ids = distribution.keys
       raw_ids = prefixed_ids.filter_map { |pid| Spree::Category.decode_prefixed_id(pid) }
-      categories = Spree::Category.where(id: raw_ids).index_by(&:prefixed_id)
+      categories = Spree::Category.where(id: raw_ids & Spree::Current.storefront_category_ids.to_a).index_by(&:prefixed_id)
 
       {
         id: 'categories',

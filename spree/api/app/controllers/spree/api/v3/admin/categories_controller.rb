@@ -36,6 +36,11 @@ module Spree
             body.attribute :square_image_signed_id, :string,
               nullable: true,
               description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
+            # Applied by the model's set writer (Spree::ChannelPublishable).
+            body.attribute :publications, :array, of: Spree::Api::V3::Admin::PublicationRequestSchema,
+                                                  description: 'The complete set of channels the category is published on. ' \
+                                                               'Channels left out are unpublished, and so are its subcategories there. ' \
+                                                               'Omit on create to publish on every active channel.'
             body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
               description: 'Custom field values, each validated against its definition.'
           end

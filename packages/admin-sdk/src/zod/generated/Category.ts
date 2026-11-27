@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import type Category from '../../types/generated/Category';
+import { CategoryPublicationSchema } from './CategoryPublication';
 import { CustomFieldSchema } from './CustomField';
 
 export const CategorySchema = z.object({
@@ -34,6 +35,7 @@ export const CategorySchema = z.object({
   products_count: z.number(),
   created_at: z.string(),
   updated_at: z.string(),
+  publications: z.array(CategoryPublicationSchema).optional(),
 }) as unknown as z.ZodObject<{
   id: z.ZodType<Category['id']>;
   name: z.ZodType<Category['name']>;
@@ -65,6 +67,7 @@ export const CategorySchema = z.object({
   products_count: z.ZodType<Category['products_count']>;
   created_at: z.ZodType<Category['created_at']>;
   updated_at: z.ZodType<Category['updated_at']>;
+  publications: z.ZodOptional<z.ZodType<Exclude<Category['publications'], undefined>>>;
 }>;
 
 export type { Category };

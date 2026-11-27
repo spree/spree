@@ -5,6 +5,7 @@ module Spree
         class CategoriesController < ResourceController
           include Spree::Api::V3::HttpCaching
           include Spree::Api::V3::Store::PermalinkLookup
+          include Spree::Api::V3::Store::StorefrontVisibility
 
           protected
 
@@ -18,8 +19,9 @@ module Spree
 
           # Exclude automatic (rule-based) rows still living in spree_categories
           # until the Phase 4 migration moves them to Collections (removed in 6.3).
+          # A category not published on this channel is a 404, and so is its subtree.
           def scope
-            super.manual
+            super.manual.merge(storefront_categories)
           end
 
           def find_resource

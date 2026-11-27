@@ -242,7 +242,7 @@ module Spree
         def category_filter
           return nil if @category.nil?
 
-          children = @category.children.order(:lft).to_a
+          children = @category.children.where(id: Spree::Current.storefront_category_ids.to_a).order(:lft).to_a
           return nil if children.empty?
 
           counts = product_counts_by_child_category(children)

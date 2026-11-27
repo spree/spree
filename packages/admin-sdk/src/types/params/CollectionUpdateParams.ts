@@ -1,8 +1,8 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
-import type { CollectionPublicationParams } from './CollectionPublicationParams'
 import type { CollectionRuleParams } from './CollectionRuleParams'
 import type { CustomFieldValueParams } from './CustomFieldValueParams'
+import type { PublicationParams } from './PublicationParams'
 
 export type CollectionUpdateParams = {
   name?: string
@@ -43,7 +43,7 @@ export type CollectionUpdateParams = {
    * The complete set of channels the collection is published on. Channels left out are unpublished.
    * Omit on create to publish on every active channel.
    */
-  publications?: CollectionPublicationParams[]
+  publications?: PublicationParams[]
   /** Custom field values, each validated against its definition. */
   custom_fields?: CustomFieldValueParams[]
 }

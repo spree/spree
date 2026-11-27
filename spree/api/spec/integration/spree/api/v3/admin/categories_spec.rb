@@ -322,4 +322,142 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       end
     end
   end
+
+  path '/api/v3/admin/categories/{category_id}/publications' do
+    get 'List category publications' do
+      tags 'Categories'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Lists the sales channels a category is published on, each with its optional publishing window. ' \
+                  'A category appears on a channel\'s storefront only while it and every parent category have a publication there ' \
+                  'with an open window.'
+      admin_scope :read, :categories
+
+      admin_sdk_example 'categories/publications/list'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+
+      response '200', 'publications found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { category.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('CategoryPublication')
+
+        run_test! do |response|
+          channel_ids = JSON.parse(response.body)['data'].pluck('channel_id')
+          expect(channel_ids).to include(store.default_channel.prefixed_id)
+        end
+      end
+
+      response '404', 'category not found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { 'ctg_missing' }
+
+        schema SwaggerSchemaHelpers.ref('ErrorResponse')
+
+        run_test!
+      end
+    end
+
+    post 'Publish a category on a channel' do
+      tags 'Categories'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Publishes a category on a sales channel so shoppers on that channel can see it and the subcategories published there. ' \
+                  'Set `published_at` to schedule the launch and `unpublished_at` to take it down later; both are optional.'
+      admin_scope :write, :categories
+
+      admin_sdk_example 'categories/publications/create'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+      request_body_for
+
+      let(:unpublished) { create(:category, :unpublished, store: store) }
+
+      response '201', 'category published' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { unpublished.prefixed_id }
+        let(:body) { { channel_id: store.default_channel.prefixed_id, published_at: '2030-01-01T09:00:00Z' } }
+
+        schema SwaggerSchemaHelpers.ref('CategoryPublication')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)).to include('channel_id' => store.default_channel.prefixed_id)
+        end
+      end
+
+      response '422', 'already published on the channel' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { category.prefixed_id }
+        let(:body) { { channel_id: store.default_channel.prefixed_id } }
+
+        schema SwaggerSchemaHelpers.ref('ErrorResponse')
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/categories/{category_id}/publications/{id}' do
+    patch 'Update a category publication' do
+      tags 'Categories'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Changes when a category goes live on a channel, or when it comes down. The channel itself cannot be changed.'
+      admin_scope :write, :categories
+
+      admin_sdk_example 'categories/publications/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Category publication ID'
+      request_body_for
+
+      response '200', 'publication updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { category.prefixed_id }
+        let(:id) { category.publications.first.prefixed_id }
+        let(:body) { { unpublished_at: '2030-02-01T09:00:00Z' } }
+
+        schema SwaggerSchemaHelpers.ref('CategoryPublication')
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['unpublished_at']).to be_present
+        end
+      end
+    end
+
+    delete 'Unpublish a category from a channel' do
+      tags 'Categories'
+      security [api_key: [], bearer_auth: []]
+      description 'Takes a category off a sales channel. Shoppers on that channel stop seeing it and its subcategories straight away.'
+      admin_scope :write, :categories
+
+      admin_sdk_example 'categories/publications/delete'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Category publication ID'
+
+      response '204', 'category unpublished' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { category.prefixed_id }
+        let(:id) { category.publications.first.prefixed_id }
+
+        run_test!
+      end
+    end
+  end
 end

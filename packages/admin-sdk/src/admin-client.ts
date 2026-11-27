@@ -383,6 +383,8 @@ import type {
   CatalogProductTermsParams,
   CatalogUpdateParams,
   CategoryCreateParams,
+  CategoryPublicationCreateParams,
+  CategoryPublicationUpdateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
   ChannelAddProductsParams,
@@ -608,6 +610,7 @@ import type {
   CatalogOrderMinimum,
   CatalogProduct,
   Category,
+  CategoryPublication,
   Channel,
   Claim,
   ClaimReason,
@@ -923,6 +926,52 @@ export class AdminClient {
    * `productMembership` plus per-member reposition, for the parents whose
    * membership carries a manual order (categories, collections).
    */
+  /**
+   * The channels a category or collection is published on, nested under it,
+   * each with an optional `published_at` / `unpublished_at` window.
+   */
+  private channelPublications<Publication, CreateParams, UpdateParams>(basePath: string) {
+    return {
+      list: (
+        parentId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Publication>> =>
+        this.request<PaginatedResponse<Publication>>(
+          'GET',
+          `${basePath}/${parentId}/publications`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      create: (
+        parentId: string,
+        params: CreateParams,
+        options?: RequestOptions,
+      ): Promise<Publication> =>
+        this.request<Publication>('POST', `${basePath}/${parentId}/publications`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        parentId: string,
+        id: string,
+        params: UpdateParams,
+        options?: RequestOptions,
+      ): Promise<Publication> =>
+        this.request<Publication>('PATCH', `${basePath}/${parentId}/publications/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (parentId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `${basePath}/${parentId}/publications/${id}`, options),
+    }
+  }
+
   private positionedProductMembership(basePath: string) {
     return {
       ...this.productMembership(basePath),
@@ -5076,6 +5125,17 @@ export class AdminClient {
     /** Manual product membership + ordering within a category. */
     products: this.positionedProductMembership('/categories'),
 
+    /**
+     * The channels a category is published on, each with an optional
+     * window. A category is visible on a channel's storefront only while it
+     * and every parent category have a publication there with an open window.
+     */
+    publications: this.channelPublications<
+      CategoryPublication,
+      CategoryPublicationCreateParams,
+      CategoryPublicationUpdateParams
+    >('/categories'),
+
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.category),
 
     translations: this.parentScopedTranslations('/categories'),
@@ -5136,43 +5196,11 @@ export class AdminClient {
      * window. A collection is visible on a channel's storefront only while
      * a publication exists and its window is open.
      */
-    publications: {
-      list: (
-        collectionId: string,
-        params?: ListParams,
-        options?: RequestOptions,
-      ): Promise<PaginatedResponse<CollectionPublication>> =>
-        this.request<PaginatedResponse<CollectionPublication>>(
-          'GET',
-          `/collections/${collectionId}/publications`,
-          { ...options, params: params ? transformListParams(params) : undefined },
-        ),
-
-      create: (
-        collectionId: string,
-        params: CollectionPublicationCreateParams,
-        options?: RequestOptions,
-      ): Promise<CollectionPublication> =>
-        this.request<CollectionPublication>('POST', `/collections/${collectionId}/publications`, {
-          ...options,
-          body: params,
-        }),
-
-      update: (
-        collectionId: string,
-        id: string,
-        params: CollectionPublicationUpdateParams,
-        options?: RequestOptions,
-      ): Promise<CollectionPublication> =>
-        this.request<CollectionPublication>(
-          'PATCH',
-          `/collections/${collectionId}/publications/${id}`,
-          { ...options, body: params },
-        ),
-
-      delete: (collectionId: string, id: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/collections/${collectionId}/publications/${id}`, options),
-    },
+    publications: this.channelPublications<
+      CollectionPublication,
+      CollectionPublicationCreateParams,
+      CollectionPublicationUpdateParams
+    >('/collections'),
 
     /**
      * Products kept out of a collection whatever its rules match or a

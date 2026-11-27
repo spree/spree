@@ -1,15 +1,10 @@
 module Spree
   module Api
     module V3
-      class CollectionPublicationSerializer < BaseSerializer
-        typelize collection_id: :string,
-                 channel_id: :string,
-                 published_at: [:string, nullable: true],
-                 unpublished_at: [:string, nullable: true]
+      class CollectionPublicationSerializer < PublicationSerializer
+        typelize collection_id: :string
 
-        attributes published_at: :iso8601, unpublished_at: :iso8601
-
-        prefixed_id_attributes :collection, :channel
+        prefixed_id_attributes :collection
       end
     end
   end

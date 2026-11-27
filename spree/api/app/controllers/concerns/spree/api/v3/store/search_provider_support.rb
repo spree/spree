@@ -4,7 +4,7 @@ module Spree
       module Store
         module SearchProviderSupport
           extend ActiveSupport::Concern
-          include Spree::Api::V3::Store::StorefrontCollections
+          include Spree::Api::V3::Store::StorefrontVisibility
 
           # Matches `*_id_in`/`id_eq`/etc. and the bare `id_in`/`id_eq` on
           # the resource's primary key. Mirrors the regex on
@@ -34,6 +34,7 @@ module Spree
             if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
               filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
             end
+            filters = keep_published_categories(filters)
             @search_filters = filters.presence
           end
 
@@ -52,6 +53,24 @@ module Spree
           # as its own endpoints answer 404.
           def published_collection?(collection_id)
             storefront_collections.find_by_param(collection_id).present?
+          end
+
+          # A category not published on this channel filters to nothing, as
+          # its own endpoints answer 404. `in_categories` keeps the published
+          # ones of its list.
+          def keep_published_categories(filters)
+            keys = %w[in_category in_taxon in_categories].select { |key| filters[key].present? }
+            return filters if keys.empty?
+
+            requested = keys.flat_map { |key| Array(filters[key]).map(&:to_s) }
+            decoded = requested.index_with { |category_id| Spree::Category.decode_prefixed_id(category_id) || category_id }
+            published = storefront_categories.where(id: decoded.values).ids.to_set(&:to_s)
+            nothing = Spree::Category.prefixed_id_for(0)
+
+            keys.each_with_object(filters) do |key, kept|
+              shown = Array(filters[key]).select { |category_id| published.include?(decoded[category_id.to_s].to_s) }
+              kept[key] = key == 'in_categories' ? shown.presence || [nothing] : shown.first || nothing
+            end
           end
 
           # A `q` sent as anything but a hash (`q=foo`) filters nothing.

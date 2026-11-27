@@ -1,6 +1,7 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
 import type { CustomFieldValueParams } from './CustomFieldValueParams'
+import type { PublicationParams } from './PublicationParams'
 
 export type CategoryUpdateParams = {
   /**
@@ -26,6 +27,11 @@ export type CategoryUpdateParams = {
   image_signed_id?: string | null
   /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
   square_image_signed_id?: string | null
+  /**
+   * The complete set of channels the category is published on. Channels left out are unpublished,
+   * and so are its subcategories there. Omit on create to publish on every active channel.
+   */
+  publications?: PublicationParams[]
   /** Custom field values, each validated against its definition. */
   custom_fields?: CustomFieldValueParams[]
 }

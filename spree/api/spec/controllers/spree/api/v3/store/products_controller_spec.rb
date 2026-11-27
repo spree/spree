@@ -99,7 +99,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     let!(:scheduled) { create(:collection, :unpublished, store: store) }
 
     before do
-      store.default_channel.add_collections(scheduled.id, published_at: 1.week.from_now)
+      store.default_channel.publish_records(Spree::Collection, scheduled.id, published_at: 1.week.from_now)
       Spree::Collections::AddProducts.call(collections: [published, scheduled], products: [product])
     end
 
@@ -144,6 +144,33 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       get :index, params: { q: { in_collection: scheduled.prefixed_id } }, as: :json
 
       expect(json_response['data']).to be_empty
+    end
+  end
+
+  describe 'filtering by category' do
+    let!(:shown) { create(:category, store: store) }
+    let!(:hidden) { create(:category, :unpublished, store: store) }
+
+    before { product.update!(categories: [shown, hidden]) }
+
+    it 'lists nothing for a category not published on the channel' do
+      get :index, params: { q: { in_category: hidden.prefixed_id } }, as: :json
+
+      expect(json_response['data']).to be_empty
+    end
+
+    it 'keeps only the published categories of an in_categories list' do
+      get :index, params: { q: { in_categories: [hidden.prefixed_id] } }, as: :json
+      expect(json_response['data']).to be_empty
+
+      get :index, params: { q: { in_categories: [hidden.prefixed_id, shown.prefixed_id] } }, as: :json
+      expect(json_response['data'].pluck('id')).to eq([product.prefixed_id])
+    end
+
+    it 'leaves unpublished categories out of an expanded product' do
+      get :show, params: { id: product.slug, expand: 'categories' }, as: :json
+
+      expect(json_response['categories'].pluck('id')).to eq([shown.prefixed_id])
     end
   end
 

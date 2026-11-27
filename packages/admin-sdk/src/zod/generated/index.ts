@@ -19,6 +19,7 @@ export { CatalogProductSchema, type CatalogProduct } from './CatalogProduct';
 export { CatalogProductTermSchema, type CatalogProductTerm } from './CatalogProductTerm';
 export { CatalogQuantityRuleSchema, type CatalogQuantityRule } from './CatalogQuantityRule';
 export { CategorySchema, type Category } from './Category';
+export { CategoryPublicationSchema, type CategoryPublication } from './CategoryPublication';
 export { ChannelSchema, type Channel } from './Channel';
 export { ClaimSchema, type Claim } from './Claim';
 export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';

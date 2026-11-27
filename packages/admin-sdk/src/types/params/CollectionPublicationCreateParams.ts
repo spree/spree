@@ -3,8 +3,8 @@
 export type CollectionPublicationCreateParams = {
   /** The channel to publish on. Cannot be changed afterwards. */
   channel_id: string
-  /** When the collection goes live on the channel. Null means immediately. */
+  /** When the record goes live on the channel. Null means immediately. */
   published_at?: string | null
-  /** When the collection comes down from the channel. Null means never. */
+  /** When the record comes down from the channel. Null means never. */
   unpublished_at?: string | null
 }

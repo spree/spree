@@ -414,6 +414,8 @@ Spree::Core::Engine.add_routes do
 
           # Manual product membership + ordering within the category.
           concerns :product_membership, controller: 'categories/products', positioned: true
+          # Per-channel publishing, with an optional window. Unpublishing a category hides its subcategories too.
+          resources :publications, controller: 'categories/publications', only: [:index, :create, :update, :destroy]
         end
 
         # Collections (flat, merchandising). Reordering the collection itself is a

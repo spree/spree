@@ -5,8 +5,8 @@ export const CollectionPublicationSchema = z.object({
   id: z.string(),
   published_at: z.string().nullable(),
   unpublished_at: z.string().nullable(),
-  collection_id: z.string(),
   channel_id: z.string(),
+  collection_id: z.string(),
 });
 
 export type CollectionPublication = z.infer<typeof CollectionPublicationSchema>;
