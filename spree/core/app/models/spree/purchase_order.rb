@@ -33,7 +33,9 @@ module Spree
 
     belongs_to :supplier, class_name: 'Spree::Supplier', inverse_of: :purchase_orders,
                           counter_cache: true
-    belongs_to :destination_location, class_name: 'Spree::StockLocation'
+    # `with_deleted`, as on Spree::StockTransfer: a purchase stays readable
+    # after the warehouse it was bought for is deleted.
+    belongs_to :destination_location, -> { with_deleted }, class_name: 'Spree::StockLocation', inverse_of: false
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :items, class_name: 'Spree::PurchaseOrderItem',

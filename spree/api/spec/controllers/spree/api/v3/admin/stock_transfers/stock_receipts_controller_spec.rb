@@ -68,6 +68,20 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfers::StockReceiptsController, t
       expect(transfer.reload).to be_partially_received
     end
 
+    # The units left the source when it shipped; the source going away while
+    # they are on the road must not strand them.
+    it 'counts in everything after the source location is deleted' do
+      ship
+      source_location.destroy
+
+      post :create, params: { stock_transfer_id: transfer.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(transfer.reload).to be_received
+      expect(destination_on_hand).to eq(10)
+      expect(destination_location.stock_level(variant.id).incoming_count).to eq(0)
+    end
+
     it 'refuses a delivery against a transfer that has not shipped' do
       post :create, params: { stock_transfer_id: transfer.prefixed_id }, as: :json
 

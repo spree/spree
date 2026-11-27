@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  adminRequest,
   createInTransitTransfer,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_PRODUCT,
@@ -170,6 +171,57 @@ test.describe('stock transfers', () => {
     await expect(page.getByText('2 accepted · 0 rejected')).toBeVisible()
     await expect(page.getByText('4 accepted · 0 rejected')).toBeVisible()
     await expect(page.getByText(/receive a delivery/i)).toHaveCount(0)
+  })
+
+  // The units left the warehouse when the van went: closing that warehouse
+  // while they are on the road must not strand them at the destination.
+  test('counts in a transfer whose source warehouse was deleted on the way', async ({ page }) => {
+    const creds = await login(page)
+    const locations = await adminRequest<{ data: { id: string; name: string }[] }>(
+      page,
+      creds,
+      'get',
+      '/stock_locations?limit=100',
+    )
+    const destination = locations.data.find((l) => l.name === FIXTURE_TRANSFER_DESTINATION)
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_TRANSFER_SKU}`,
+    )
+    const variantId = variants.data[0].id
+
+    const closing = await adminRequest<{ id: string }>(page, creds, 'post', '/stock_locations', {
+      name: `E2E Closing Warehouse ${Date.now()}`,
+      kind: 'warehouse',
+    })
+    await adminRequest(page, creds, 'post', '/stock_levels/bulk_upsert', {
+      stock_levels: [{ variant_id: variantId, stock_location_id: closing.id, count_on_hand: 4 }],
+    })
+    const transfer = await adminRequest<{ id: string; number: string }>(
+      page,
+      creds,
+      'post',
+      '/stock_transfers',
+      {
+        source_location_id: closing.id,
+        destination_location_id: destination?.id,
+        items: [{ variant_id: variantId, quantity_shipped: 4 }],
+      },
+    )
+    await adminRequest(page, creds, 'patch', `/stock_transfers/${transfer.id}/mark_in_transit`)
+    await adminRequest(page, creds, 'delete', `/stock_locations/${closing.id}`)
+
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${transfer.id}`)
+    await expect(page.getByRole('heading', { name: transfer.number })).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByLabel(/^accepted$/i).fill('4')
+    await page.getByRole('button', { name: /^receive$/i }).click()
+
+    await expect(page.getByText(/^received$/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('4 received of 4 shipped')).toBeVisible()
   })
 
   // Filled by the probes in src/testing/slot-probes.tsx.

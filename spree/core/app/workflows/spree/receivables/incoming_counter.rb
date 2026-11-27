@@ -34,6 +34,9 @@ module Spree
       # transaction takes them in this order.
       def move_incoming(receivable, sign)
         destination = receivable.destination_location
+        # Its levels went with it; there is nothing left to count against.
+        return if destination.deleted?
+
         lines = receivable.items.includes(:variant).sort_by(&:variant_id)
         levels = destination.stock_levels.where(variant_id: lines.map(&:variant_id)).index_by(&:variant_id)
 

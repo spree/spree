@@ -13,7 +13,9 @@ module Spree
     publishes_lifecycle_events
 
     with_options inverse_of: :stock_levels do
-      belongs_to :stock_location, class_name: 'Spree::StockLocation'
+      # `with_deleted` for the same reason as the variant: a deleted location's
+      # levels are soft-deleted with it and still name it in the stock history.
+      belongs_to :stock_location, -> { with_deleted }, class_name: 'Spree::StockLocation'
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     has_many :stock_movements, inverse_of: :stock_level

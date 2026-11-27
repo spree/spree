@@ -344,6 +344,28 @@ module Spree
       end
     end
 
+    describe '#destroy' do
+      # The ledger outlives the warehouse: its levels are soft-deleted with it,
+      # never removed, so the movements written at them keep their shelf.
+      it 'soft-deletes its stock levels and keeps their movements' do
+        movement = subject.restock(variant, 5)
+
+        subject.destroy
+
+        expect(StockLevel.find_by(id: stock_level.id)).to be_nil
+        expect(StockLevel.with_deleted.find(stock_level.id).deleted_at).to be_present
+        expect(movement.reload.stock_level).to eq(stock_level)
+        expect(StockMovement.for_store(subject.store)).to include(movement)
+      end
+
+      it 'touches the variants it stocked' do
+        variant
+        travel(1.minute) do
+          expect { subject.destroy }.to change { variant.reload.updated_at }
+        end
+      end
+    end
+
     describe '#conditionally_touch_records' do
       let!(:variant) { subject.variants.last }
       let!(:stock_level) { subject.stock_levels.last }

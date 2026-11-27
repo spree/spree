@@ -47,10 +47,14 @@ module Spree
         'purchase_order'
       end
 
+      # A deleted destination has no shelf left to count the units onto.
       def ensure_receivable
-        return if purchase_order.ordered? || purchase_order.partially_received?
+        unless purchase_order.ordered? || purchase_order.partially_received?
+          failure(purchase_order, I18n.t('spree.purchase_order.errors.not_ordered'))
+        end
+        return unless purchase_order.destination_location.deleted?
 
-        failure(purchase_order, I18n.t('spree.purchase_order.errors.not_ordered'))
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.destination_location_deleted'))
       end
 
       def line_belongs?(line)

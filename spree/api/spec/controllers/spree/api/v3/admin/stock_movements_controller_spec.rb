@@ -87,6 +87,19 @@ RSpec.describe Spree::Api::V3::Admin::StockMovementsController, type: :controlle
       expect(row['unit_cost']).to eq('9.50')
     end
 
+    # Deleting a warehouse keeps its history: the rows written at it still
+    # list, still under its name.
+    it 'keeps the movements of a deleted stock location' do
+      deleted_location = create(:stock_location, name: 'Warehouse C')
+      deleted_movement = deleted_location.adjust(variant, 4, reason: 'Cycle count')
+      deleted_location.destroy
+
+      get :index, params: { q: { kind_eq: 'adjusted' } }, as: :json
+
+      row = json_response['data'].find { |m| m['id'] == deleted_movement.prefixed_id }
+      expect(row).to include('stock_location_id' => deleted_location.prefixed_id, 'stock_location_name' => 'Warehouse C')
+    end
+
     # spree_stock_movements carries no store of its own, so tenancy is the walk
     # through stock level → variant → product → store.
     it 'excludes movements for another store\'s products' do
