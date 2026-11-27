@@ -766,7 +766,10 @@ test.describe('placed order editing', () => {
     await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
 
     const changed = timeline.locator('li[data-kind="order_change.confirmed"]')
-    await expect(changed.getByText(/to a quantity of 2$/)).toBeVisible({ timeout: 15_000 })
+    // Saved by the signed-in admin, so the entry names them.
+    await expect(changed).toContainText(` · ${creds.admin_email}`, { timeout: 15_000 })
+    await changed.getByRole('button', { name: /^show details$/i }).click({ timeout: 15_000 })
+    await expect(changed.getByText(/to a quantity of 2$/)).toBeVisible()
     await expect(changed.getByText(/^Total .+ → .+$/)).toBeVisible()
 
     // A change requested through the API waits on top until it is applied.

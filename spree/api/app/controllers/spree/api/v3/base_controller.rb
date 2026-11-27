@@ -163,6 +163,14 @@ module Spree
           try_spree_current_user
         end
 
+        # Runs once every before_action, authentication included, has passed,
+        # in every API: each event the action publishes names who acted
+        # (docs/plans/6.1-order-timeline.md).
+        def send_action(...)
+          Spree::Current.actor = current_actor
+          super
+        end
+
         # CanCanCan ability, built from the swappable
         # `Spree::Dependencies.ability_class` (Spree::Ability by default).
         # @return [Spree::Ability]

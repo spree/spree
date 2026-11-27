@@ -24,6 +24,7 @@ import {
 import type { TFunction } from 'i18next'
 import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ActorLabel } from '../components/spree/actor-label'
 import { useDeleteOrderComment } from '../hooks/use-order'
 import { variantLabel } from '../lib/variant-label'
 
@@ -57,17 +58,13 @@ function KindSummary({ activity, order }: ActivityProps) {
   return <>{[sentence, method, detail(activity, 'tracking')].filter(Boolean).join(' · ')}</>
 }
 
-function CommentSummary({ activity }: ActivityProps) {
-  return <span className="whitespace-pre-wrap">{activity.body}</span>
-}
-
-/** Its author can delete a comment; no other entry can be removed. */
-function CommentDetails({ activity, order }: ActivityProps) {
+/** Who wrote a comment and what it says; its author can delete it. */
+function CommentSummary({ activity, order }: ActivityProps) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const confirm = useConfirm()
   const deleteComment = useDeleteOrderComment(order.id)
-  if (!user || activity.actor_id !== user.id) return null
+  const ownComment = !!user && activity.actor_id === user.id
 
   async function handleDelete() {
     const confirmed = await confirm({
@@ -79,17 +76,27 @@ function CommentDetails({ activity, order }: ActivityProps) {
   }
 
   return (
-    <Can I="update" a={Subject.Order}>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="self-start"
-        disabled={deleteComment.isPending}
-        onClick={handleDelete}
-      >
-        {t('admin.orders.detail.timeline.delete_comment')}
-      </Button>
-    </Can>
+    <div className="flex flex-col gap-1.5">
+      {activity.actor && (
+        <span className="font-medium">
+          <ActorLabel actor={activity.actor} />
+        </span>
+      )}
+      <p className="whitespace-pre-wrap rounded-lg border bg-card px-3 py-2">{activity.body}</p>
+      {ownComment && (
+        <Can I="update" a={Subject.Order}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="self-start"
+            disabled={deleteComment.isPending}
+            onClick={handleDelete}
+          >
+            {t('admin.orders.detail.timeline.delete_comment')}
+          </Button>
+        </Can>
+      )}
+    </div>
   )
 }
 
@@ -184,7 +191,7 @@ function group(
 }
 
 const kinds: ActivityKind[] = [
-  { kind: 'comment', icon: MessageSquareIcon, Summary: CommentSummary, Details: CommentDetails },
+  { kind: 'comment', icon: MessageSquareIcon, Summary: CommentSummary, namesActor: true },
   ...group(ShoppingCartIcon, ['order.placed']),
   ...group(CircleCheckIcon, ['order.approved']),
   ...group(BanIcon, ['order.canceled']),

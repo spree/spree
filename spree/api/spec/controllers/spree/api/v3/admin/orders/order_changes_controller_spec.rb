@@ -226,6 +226,15 @@ RSpec.describe Spree::Api::V3::Admin::Orders::OrderChangesController, type: :con
     end
   end
 
+  describe 'the order timeline', events: true do
+    it 'names the staff member who applied the change' do
+      post :create, params: { order_id: order.prefixed_id, confirm: true,
+                              actions: [{ kind: 'update_item', line_item_id: line_item.prefixed_id, quantity: 2 }] }, as: :json
+
+      expect(order.activities.sole.actor).to eq(admin_user)
+    end
+  end
+
   describe 'PATCH #confirm and #cancel' do
     let(:order_change) do
       Spree::OrderChanges::Apply.call(order: order, confirm: false,

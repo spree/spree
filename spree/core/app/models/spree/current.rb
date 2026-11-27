@@ -61,6 +61,8 @@ module Spree
       begin
         self.attributes = {}
         self.store = store
+        # Who is acting does not change with the store.
+        self.actor = previous[:actor]
         yield
       ensure
         self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)

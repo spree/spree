@@ -221,6 +221,13 @@ RSpec.describe Spree::Current do
   end
 
   describe '.with_store' do
+    it 'keeps who is acting, which does not change with the store' do
+      admin = create(:admin_user)
+      described_class.actor = admin
+
+      expect(described_class.with_store(create(:store)) { described_class.actor }).to eq(admin)
+    end
+
     let(:store) { create(:store, default_currency: 'GBP') }
     let(:other_store) { create(:store, default_currency: 'PLN') }
 

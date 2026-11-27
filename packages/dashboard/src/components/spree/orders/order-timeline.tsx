@@ -3,21 +3,29 @@ import {
   type ActivityKind,
   Can,
   formatStoreTime,
+  getInitials,
   Subject,
   useActivityKinds,
+  useAuth,
   useStore,
 } from '@spree/dashboard-core'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Card,
-  CardContent,
+  cn,
   Pagination,
   Section,
   SectionHeader,
   SectionTitle,
   Textarea,
+  Timeline,
+  TimelineGroup,
+  TimelineItem,
 } from '@spree/dashboard-ui'
-import { CircleIcon, HistoryIcon } from '@spree/dashboard-ui/icons'
+import { ChevronDownIcon, HistoryIcon } from '@spree/dashboard-ui/icons'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -52,46 +60,41 @@ export function OrderTimeline({ order }: { order: Order }) {
           {t('admin.orders.detail.timeline.title')}
         </SectionTitle>
       </SectionHeader>
-      <Card>
-        <CardContent className="flex flex-col gap-4 p-3">
-          {/* Applying a change and commenting both write to the order. */}
-          <Can I="update" a={Subject.Order}>
-            <RequestedChange order={order} />
-            <CommentForm orderId={order.id} />
-          </Can>
-          {isLoading ? (
-            <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
-          ) : isError ? (
-            <p className="text-destructive text-base">
-              {t('admin.orders.detail.timeline.load_failed')}
-            </p>
-          ) : (
-            groupByDay(activities, timezone).map(([day, entries]) => (
-              <div key={day} className="flex flex-col gap-2">
-                <h3 className="font-medium text-muted-foreground text-sm">{day}</h3>
-                <ul className="flex flex-col gap-3">
-                  {entries.map((activity) => (
-                    <TimelineEntry
-                      key={activity.id}
-                      activity={activity}
-                      order={order}
-                      timezone={timezone}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ))
-          )}
+      {/* Applying a change and commenting both write to the order. */}
+      <Can I="update" a={Subject.Order}>
+        <RequestedChange order={order} />
+        <CommentForm orderId={order.id} />
+      </Can>
+      {isLoading ? (
+        <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+      ) : isError ? (
+        <p className="text-destructive text-base">
+          {t('admin.orders.detail.timeline.load_failed')}
+        </p>
+      ) : (
+        <Timeline className="ml-4">
+          {groupByDay(activities, timezone).map(([day, entries]) => (
+            <TimelineGroup key={day} label={day}>
+              {entries.map((activity) => (
+                <TimelineEntry
+                  key={activity.id}
+                  activity={activity}
+                  order={order}
+                  timezone={timezone}
+                />
+              ))}
+            </TimelineGroup>
+          ))}
           {data && onLastPage && !startRecorded && (
-            <p className="text-muted-foreground text-base">
+            <p className="pl-10 text-muted-foreground text-sm">
               {t('admin.orders.detail.timeline.earlier_not_recorded')}
             </p>
           )}
-          {(data?.meta?.pages ?? 1) > 1 && data?.meta && (
-            <Pagination meta={data.meta} onPageChange={setPage} />
-          )}
-        </CardContent>
-      </Card>
+        </Timeline>
+      )}
+      {(data?.meta?.pages ?? 1) > 1 && data?.meta && (
+        <Pagination meta={data.meta} onPageChange={setPage} />
+      )}
     </Section>
   )
 }
@@ -119,36 +122,49 @@ function TimelineEntry({
   order: Order
   timezone: string
 }) {
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
   const kind = useActivityKinds().get(activity.kind) ?? FALLBACK_KIND
-  const Icon = kind.icon ?? CircleIcon
+  const Icon = kind.icon
 
   return (
-    <li className="flex gap-3 text-base" data-kind={activity.kind}>
-      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted">
-        <Icon className="size-3.5 text-muted-foreground" />
-      </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <span className="min-w-0">
-            <kind.Summary activity={activity} order={order} />
-          </span>
-          <time className="shrink-0 text-muted-foreground text-sm" dateTime={activity.created_at}>
-            {formatStoreTime(activity.created_at, timezone, 'p')}
-          </time>
-        </div>
-        {activity.actor && (
-          <span className="text-muted-foreground text-sm">
+    <TimelineItem
+      data-kind={activity.kind}
+      icon={Icon && <Icon />}
+      time={
+        <time dateTime={activity.created_at}>
+          {formatStoreTime(activity.created_at, timezone, 'p')}
+        </time>
+      }
+    >
+      <div>
+        <kind.Summary activity={activity} order={order} />
+        {activity.actor && !kind.namesActor && (
+          <span className="text-muted-foreground">
+            {' · '}
             <ActorLabel actor={activity.actor} />
           </span>
         )}
-        {kind.Details && <kind.Details activity={activity} order={order} />}
+        {kind.Details && (
+          <button
+            type="button"
+            className="ml-1 inline-flex size-5 translate-y-1 items-center justify-center rounded text-muted-foreground hover:bg-muted"
+            aria-expanded={open}
+            aria-label={t('admin.orders.detail.timeline.show_details')}
+            onClick={() => setOpen(!open)}
+          >
+            <ChevronDownIcon className={cn('size-4 transition-transform', open && 'rotate-180')} />
+          </button>
+        )}
       </div>
-    </li>
+      {open && kind.Details && <kind.Details activity={activity} order={order} />}
+    </TimelineItem>
   )
 }
 
 function CommentForm({ orderId }: { orderId: string }) {
   const { t } = useTranslation()
+  const { user } = useAuth()
   const [body, setBody] = useState('')
   const comment = useOrderComment(orderId)
 
@@ -159,23 +175,36 @@ function CommentForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <Textarea
-        value={body}
-        onChange={(event) => setBody(event.target.value)}
-        placeholder={t('admin.orders.detail.timeline.comment_placeholder')}
-        aria-label={t('admin.orders.detail.timeline.comment_placeholder')}
-        rows={2}
-      />
-      <Button
-        type="submit"
-        size="sm"
-        className="self-end"
-        disabled={!body.trim() || comment.isPending}
-      >
-        {t('admin.orders.detail.timeline.post_comment')}
-      </Button>
-    </form>
+    <div className="flex flex-col gap-2">
+      <Card className="gap-0 overflow-hidden p-0">
+        <form onSubmit={handleSubmit}>
+          <div className="flex items-start gap-3 p-3">
+            <Avatar className="size-8 rounded-md">
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt="" />}
+              <AvatarFallback className="rounded-md">
+                {getInitials(user?.full_name ?? user?.email, '?')}
+              </AvatarFallback>
+            </Avatar>
+            <Textarea
+              value={body}
+              onChange={(event) => setBody(event.target.value)}
+              placeholder={t('admin.orders.detail.timeline.comment_placeholder')}
+              aria-label={t('admin.orders.detail.timeline.comment_placeholder')}
+              rows={1}
+              className="min-h-8 resize-none border-0 p-1 shadow-none focus-visible:ring-0"
+            />
+          </div>
+          <div className="flex justify-end border-t bg-muted/50 px-3 py-2">
+            <Button type="submit" size="sm" disabled={!body.trim() || comment.isPending}>
+              {t('admin.orders.detail.timeline.post_comment')}
+            </Button>
+          </div>
+        </form>
+      </Card>
+      <p className="text-right text-muted-foreground text-sm">
+        {t('admin.orders.detail.timeline.comments_staff_only')}
+      </p>
+    </div>
   )
 }
 
@@ -186,8 +215,8 @@ function RequestedChange({ order }: { order: Order }) {
   if (!change) return null
 
   return (
-    <div
-      className="flex flex-col gap-2 rounded-md border border-dashed p-3 text-base"
+    <Card
+      className="flex flex-col gap-2 border-dashed p-3 text-base"
       data-testid="requested-order-change"
     >
       <div>
@@ -216,6 +245,6 @@ function RequestedChange({ order }: { order: Order }) {
           {t('admin.orders.detail.timeline.discard_change')}
         </Button>
       </div>
-    </div>
+    </Card>
   )
 }

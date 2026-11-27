@@ -23,7 +23,9 @@ export interface ActivityKind {
   icon?: ComponentType<{ className?: string }>
   /** One sentence saying what happened. */
   Summary: ComponentType<ActivityProps>
-  /** More to show under the sentence, when the entry has it. */
+  /** The Summary already names who did it, so the actor is not added after it. */
+  namesActor?: boolean
+  /** More to show under the sentence, behind a toggle, when the entry has it. */
   Details?: ComponentType<ActivityProps>
 }
 
