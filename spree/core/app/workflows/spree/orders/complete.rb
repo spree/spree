@@ -51,6 +51,7 @@ module Spree
 
           step :validate_order unless validated
           step :process_payments unless payment_pending || !order.payment_required?
+          step :release_unused_store_credit_holds unless payment_pending
           step :split_by_seller
           step :finalize_fulfillments
           step :place_order
@@ -96,6 +97,17 @@ module Spree
 
         failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
         failure(order, I18n.t('spree.payment_processing_failed')) unless payment_covered?
+      end
+
+      # A store credit payment the batch left unprocessed — the others already
+      # covered the order, or nothing was owed — would keep its credit held on
+      # a placed order. It is dropped and the credit given back. With
+      # +payment_pending+ the order is placed to be paid later, so its held
+      # payments stay for the merchant to capture.
+      def release_unused_store_credit_holds
+        order.payments.store_credits.checkout.each do |payment|
+          payment.invalidate! if payment.store_credit_held?
+        end
       end
 
       # Files the sale under whoever made it, dividing the order into one per

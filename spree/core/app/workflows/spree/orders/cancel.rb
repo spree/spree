@@ -176,7 +176,12 @@ module Spree
             result = Spree.payment_void_workflow.call(payment: payment)
             raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
           end
-          order.payments.store_credits.pending.each(&:void!)
+          # Store credit authorizes on its own ledger; a void here gives the
+          # held amount back to the credit.
+          order.payments.store_credits.where(status: %w[checkout pending]).each do |payment|
+            payment.release_store_credit_hold!
+            payment.void!
+          end
         end
       end
 

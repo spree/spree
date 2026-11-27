@@ -22,6 +22,18 @@ Rejected: shrinking only on item changes, which would need a second resize rule 
 
 **Consequences:** A refused request leaves the buyer's open session payable. For a moment two intents exist, but the new one's client secret is handed out only after the old ones are canceled.
 
+## 2026-11-23: Store credit applied to a draft order is held on the credit
+
+**Context:** Store credit added to an admin draft order was never held (V-3807). `StoreCredits::Apply` wrote a `checkout` payment and left the credit untouched, so the credit still read its full amount, a second draft drew on the same money, and whichever order completed second failed with "Payment could not be processed". The 2026-09-24 entry had recorded the same gap for carts ("one ordinary store credit can sit on two open carts at once") and deferred it. Triage weighed two shapes: authorize the credit when it is applied, or subtract other open orders' unheld payments when allocating.
+
+**Decision:** A store credit payment on a `Spree::Order` authorizes its amount on the credit when it is applied, under the payment's own code, so the credit shows it on hold and every reader of `amount_remaining` stops counting it. Resizing moves the hold to a new code, since the credit voids by code; invalidating, destroying or cancelling the payment's order releases it. At completion, `PaymentMethod::StoreCredit` finds the payment's hold and captures it (or, for a method that captures on dispatch, answers with it) rather than authorizing a second time. A payment's cap (`Payment#max_amount`) is its own credit's free amount plus what it already holds, not the customer's largest untouched credit. Carts are not held: a cart takes its credit moments later at completion, and a hold left by an abandoned cart would never be released. Gift card credit is not held either; the card itself is drawn down.
+
+Rejected: subtracting other orders' unheld payments when allocating. The credit would still read its full amount everywhere else — the customer's balance, the Store Credits list and the admin — and every reader would need the same subtraction.
+
+**Consequences:** A draft left open keeps its credit held until the payment is removed, the draft is deleted or the order is cancelled. Moving a draft to another customer (V-3839) must release the hold through `Payment#invalidate!` or `#release_store_credit_hold!`. The cart case recorded on 2026-09-24 stays deferred.
+
+**Plans amended:** `6.0-6.1-loyalty-gift-cards-store-credits.md` (one Constraints on Current Work bullet).
+
 ## 2026-11-23: No storefront record in core; a publishable key can be bound to several channels
 
 **Context:** A store knows its storefront through one `storefront_url` preference and its publishable keys. A hosted product needs somewhere to keep a storefront's repository, domains and deployments, and the Next.js storefront serves two channels from one deployment with one key, which the 5.6 single-channel binding can only express as an unbound key that reaches every channel. A `Spree::Storefront` record with its own keys, identity overrides and a link to its manager was drafted over 2026-11-21 to 2026-11-23, then compared with three other open-source commerce platforms: none has a storefront record in core, one binds its publishable keys to sales channels many-to-many, and all three keep hosting in a cloud console separate from the store's admin.

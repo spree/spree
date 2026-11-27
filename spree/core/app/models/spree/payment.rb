@@ -73,6 +73,7 @@ module Spree
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
+    before_destroy :release_store_credit_hold!
     # Every other change reaches the order through payment events, which the
     # order status subscriber answers. Destruction cannot: Payment is not
     # paranoid, so the row is gone by the time payment.deleted lands and its
@@ -226,12 +227,17 @@ module Spree
       true
     end
 
+    # A failed payment gives back any store credit it held. It can still be
+    # retried, so it keeps a fresh code with an eligibility event, which a
+    # retry takes against what the credit then has free.
     def failure!
+      release_store_credit_hold_for_retry!
       update!(status: 'failed')
     end
     alias failure failure!
 
     def invalidate!
+      release_store_credit_hold!
       update!(status: 'invalid')
     end
 
@@ -299,7 +305,17 @@ module Spree
       # this the order would accept a fresh charge for goods it took back.
       amount_from_order -= owner.returned_items_refund_total if owner.respond_to?(:returned_items_refund_total)
 
-      if payment_method&.store_credit?
+      if payment_method&.store_credit? && source.is_a?(Spree::StoreCredit)
+        # A payment draws on its own credit: what that credit has free, plus
+        # what this payment already holds on it.
+        held = store_credit_held? ? amount_in_database.to_d : BigDecimal('0')
+        available = source.amount_remaining + held
+        # Shrinking a saved payment never draws more from the credit: a
+        # partial capture leaves the rest of its authorization on the credit,
+        # so its free amount can be below what was just captured.
+        available = [available, amount_in_database.to_d].max if persisted? && amount_in_database
+        [available, amount_from_order].min
+      elsif payment_method&.store_credit?
         store_credits = owner.available_store_credits
         store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
       else
@@ -315,8 +331,71 @@ module Spree
     # @return [void]
     def update_store_credit_amount!(new_amount)
       return if amount == new_amount
+      return move_store_credit_hold!(new_amount) if store_credit_held?
 
       update_column(:amount, new_amount)
+      create_eligible_credit_event
+    end
+
+    # Whether this payment holds its amount on a store credit: the credit
+    # authorized it under the payment's code, and nothing has captured or
+    # released that authorization since.
+    #
+    # @return [Boolean]
+    def store_credit_held?
+      return false unless response_code.present? && source.is_a?(Spree::StoreCredit)
+
+      events = source.store_credit_events.where(authorization_code: response_code)
+      events.exists?(action: Spree::StoreCredit::AUTHORIZE_ACTION) &&
+        !events.exists?(action: [Spree::StoreCredit::CAPTURE_ACTION, Spree::StoreCredit::VOID_ACTION])
+    end
+
+    # Puts this payment's amount on hold on the customer's store credit, so no
+    # other order can spend it. An order's payment is held, a cart's never
+    # is: a cart takes its credit when it completes, moments later, and a hold
+    # left by an abandoned cart would never be released. Gift card credit is
+    # drawn down on the card itself.
+    #
+    # @return [Boolean] false when the credit no longer has the amount free
+    def hold_store_credit!
+      return true unless owner.is_a?(Spree::Order) && store_credit? && source.is_a?(Spree::StoreCredit)
+      return true if source.originator_type == 'Spree::GiftCard' || store_credit_held?
+
+      # The hold is found and released by the payment's code, so a payment
+      # recorded without one (an admin payment) gets one before it is held.
+      if response_code.blank?
+        update_column(:response_code, source.generate_authorization_code)
+        create_eligible_credit_event
+      end
+
+      source.with_lock do
+        source.authorize(amount, currency, action_authorization_code: response_code, action_originator: self).present?
+      end
+    end
+
+    # Gives a held amount back to the store credit. A no-op when nothing is held.
+    #
+    # @return [void]
+    def release_store_credit_hold!
+      return unless store_credit_held?
+
+      # Checked again under the credit's lock: StoreCredit#void does not refuse a
+      # code it already voided or captured, so two racing releases (or a
+      # release racing a capture) would each take the amount off again.
+      source.with_lock do
+        source.void(response_code, action_originator: self) if store_credit_held?
+      end
+    end
+
+    # Releases a held amount from a payment that failed and may be retried.
+    # The released code is spent, so the payment moves to a new one.
+    #
+    # @return [void]
+    def release_store_credit_hold_for_retry!
+      return unless store_credit_held?
+
+      release_store_credit_hold!
+      update_column(:response_code, source.generate_authorization_code)
       create_eligible_credit_event
     end
 
@@ -343,9 +422,14 @@ module Spree
                 update_all(amount: new_amount, updated_at: Time.current)
       return false if resized.zero?
 
+      held = store_credit? && store_credit_held?
       self.amount = new_amount
       clear_attribute_changes(%i[amount])
-      create_eligible_credit_event if store_credit?
+      if held
+        move_store_credit_hold!(new_amount)
+      elsif store_credit?
+        create_eligible_credit_event
+      end
       true
     end
 
@@ -362,6 +446,7 @@ module Spree
 
       self.status = 'void'
       clear_attribute_changes(%i[status])
+      release_store_credit_hold!
       true
     end
 
@@ -518,28 +603,19 @@ module Spree
     #   captured or when the order can take no more
     def split_uncaptured_amount
       return if uncaptured_amount <= 0
+      return split_off_remainder unless store_credit? && source.is_a?(Spree::StoreCredit)
 
-      remainder = owner.payments.new(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        status: 'pending',
-        capture_on_dispatch: true
-      )
-      # The order may now take less than the authorization left over, when its
-      # total came down after the payment was authorized.
-      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
-      if remainder.amount.positive?
-        remainder.save!
-        carry_splits_to(remainder)
-      else
-        remainder = nil
+      # Store credit makes no network call, so the leftover authorization
+      # moves to the remainder under one lock on the credit: no other order
+      # can hold it between its release and the remainder's hold, and the
+      # remainder's authorize finds the hold rather than authorizing again.
+      source.with_lock do
+        moved = release_uncaptured_store_credit!
+        remainder = split_off_remainder(response_code: (source.generate_authorization_code if moved))
+        raise ActiveRecord::RecordInvalid, source if moved && remainder && !remainder.hold_store_credit!
+
+        remainder
       end
-      # Bang: a silent failure here would leave this payment at its full amount
-      # beside a remainder that also exists, so the group would hold more money
-      # than the customer was ever charged.
-      update!(amount: captured_amount)
-      remainder
     end
 
     # Hands each order's still-uncaptured share over to the remainder payment.
@@ -667,6 +743,63 @@ module Spree
     end
 
     private
+
+    def split_off_remainder(response_code: nil)
+      remainder = owner.payments.new(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        status: 'pending',
+        capture_on_dispatch: true,
+        response_code: response_code
+      )
+      # The order may now take less than the authorization left over, when its
+      # total came down after the payment was authorized.
+      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
+      if remainder.amount.positive?
+        remainder.save!
+        carry_splits_to(remainder)
+      else
+        remainder = nil
+      end
+      # Bang: a silent failure here would leave this payment at its full amount
+      # beside a remainder that also exists, so the group would hold more money
+      # than the customer was ever charged.
+      update!(amount: captured_amount)
+      remainder
+    end
+
+    # A partial capture of store credit leaves the rest authorized under this
+    # payment's code, which nothing can capture or void any more: the credit
+    # voids by code, and a void would take off the whole original amount. The
+    # rest goes back to the credit here, for the remainder to hold.
+    #
+    # @return [Boolean] whether anything was given back
+    def release_uncaptured_store_credit!
+      return unless store_credit? && source.is_a?(Spree::StoreCredit) && response_code.present?
+
+      source.with_lock do
+        events = source.store_credit_events.where(authorization_code: response_code)
+        next unless events.exists?(action: Spree::StoreCredit::AUTHORIZE_ACTION)
+        next if events.exists?(action: Spree::StoreCredit::VOID_ACTION)
+
+        leftover = [uncaptured_amount, source.amount_authorized].min
+        next unless leftover.positive?
+
+        source.update!(action: Spree::StoreCredit::VOID_ACTION, action_amount: leftover,
+                       action_authorization_code: response_code, action_originator: self,
+                       amount_authorized: source.amount_authorized - leftover)
+      end
+    end
+
+    # Moves a held payment to a new amount. The credit voids an authorization
+    # by its code, so the new hold takes a code of its own.
+    def move_store_credit_hold!(new_amount)
+      release_store_credit_hold!
+      update_columns(amount: new_amount, response_code: source.generate_authorization_code)
+      create_eligible_credit_event
+      raise ActiveRecord::RecordInvalid, source unless hold_store_credit!
+    end
 
     # Session-created payments never pass through the gateway response path
     # that normally sets these codes, so the gateway gets asked at creation.

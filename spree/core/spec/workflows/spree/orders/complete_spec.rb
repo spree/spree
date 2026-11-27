@@ -88,6 +88,172 @@ module Spree
       expect(spare.reload).to be_checkout
     end
 
+    # V-3807: store credit applied to a draft is held on the credit, and
+    # completing the draft takes the held amount.
+    describe 'store credit held by a draft' do
+      let(:customer) { create(:customer) }
+      let!(:store_credit_method) { create(:store_credit_payment_method, store: store) }
+      let!(:credit) { create(:store_credit, customer: customer, amount: 10, store: store, created_at: 2.days.ago) }
+
+      def draft_with_total(total)
+        create(:order_with_line_items, store: store, customer: customer).tap do |draft|
+          draft.update_columns(status: 'draft', completed_at: nil, total: total, payment_total: 0)
+        end
+      end
+
+      it 'takes the held amount when the draft completes' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        result = described_class.call(order: draft.reload)
+
+        expect(result).to be_success
+        expect(draft.reload.payments.store_credits.first).to be_completed
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'keeps the hold, without holding twice, when the method captures on dispatch' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        result = described_class.call(order: draft.reload)
+
+        expect(result).to be_success
+        expect(draft.reload.payments.store_credits.first).to be_pending
+        expect(credit.reload.amount_authorized).to eq(10)
+        expect(credit.amount_used).to eq(0)
+      end
+
+      it 'captures part of a held payment authorized at completion' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+
+        result = Spree.payment_capture_workflow.call(payment: payment, amount: BigDecimal('6'))
+
+        expect(result).to be_success
+        expect(payment.reload.amount).to eq(6)
+        expect(credit.reload.amount_used).to eq(6)
+
+        # The 4 left over is held by the remainder, which can still settle it.
+        remainder = draft.payments.store_credits.where.not(id: payment.id).sole
+        expect(remainder).to be_pending
+        expect(remainder.amount).to eq(4)
+        expect(credit.amount_authorized).to eq(4)
+
+        expect(Spree.payment_capture_workflow.call(payment: remainder)).to be_success
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'moves what a partial capture leaves straight onto the remainder, with no moment it is free' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+        payment.capture_events.create!(amount: BigDecimal('6'), status: 'completed')
+        expect(credit.reload.capture(BigDecimal('6'), payment.response_code, 'USD')).to be_present
+
+        remainder = payment.reload.split_uncaptured_amount
+
+        expect(remainder.store_credit_held?).to be(true)
+        expect(credit.reload.amount_authorized).to eq(4)
+        expect(credit.amount_remaining).to eq(0)
+      end
+
+      it 'releases what is left of a partly captured held payment when its remainder is voided' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        described_class.call(order: draft.reload)
+        payment = draft.reload.payments.store_credits.first
+        Spree.payment_capture_workflow.call(payment: payment, amount: BigDecimal('6'))
+        remainder = draft.payments.store_credits.where.not(id: payment.id).sole
+
+        expect(Spree.payment_void_workflow.call(payment: remainder)).to be_success
+
+        expect(credit.reload.amount_used).to eq(6)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'retries a held payment that failed' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        payment = draft.reload.payments.store_credits.first
+        payment.failure!
+        expect(credit.reload.amount_authorized).to eq(0)
+
+        result = Spree.payment_process_workflow.call(payment: payment.reload)
+
+        expect(result).to be_success
+        expect(payment.reload).to be_completed
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'gives the credit back when other payments already covered the draft' do
+        draft = draft_with_total(BigDecimal('10'))
+        check = create(:payment, order: draft, payment_method: create(:check_payment_method, store: store),
+                                 amount: 10, response_code: nil)
+        Spree::StoreCredits::Apply.call(order: draft, amount: 10)
+        store_credit_payment = draft.reload.payments.store_credits.first
+        draft.update_columns(total: BigDecimal('10'))
+
+        expect(described_class.call(order: draft.reload)).to be_success
+
+        expect(check.reload.status).to be_in(%w[pending completed])
+        expect(store_credit_payment.reload.status).to eq('invalid')
+        expect(credit.reload.amount_authorized).to eq(0)
+        expect(credit.amount_used).to eq(0)
+      end
+
+      it 'keeps the hold for a draft placed to be paid later, and captures it then' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        expect(described_class.call(order: draft.reload, payment_pending: true)).to be_success
+        payment = draft.reload.payments.store_credits.first
+        expect(payment).to be_checkout
+        expect(credit.reload.amount_authorized).to eq(10)
+
+        expect(Spree.payment_capture_workflow.call(payment: payment)).to be_success
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'keeps the draft and its hold when completion is refused' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        Spree.hooks.register('orders.complete.validate') { |workflow| workflow.reject!('refused') }
+
+        expect(described_class.call(order: draft.reload)).to be_failure
+
+        expect(draft.reload.status).to eq('draft')
+        expect(draft.payments.store_credits.first).to be_checkout
+        expect(credit.reload.amount_authorized).to eq(10)
+      end
+
+      it 'completes each of two drafts paid from different credits' do
+        first = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: first)
+        free_credit = create(:store_credit, customer: customer, amount: 30, store: store, created_at: 1.day.ago)
+        second = draft_with_total(BigDecimal('5'))
+        Spree::StoreCredits::Apply.call(order: second)
+
+        expect(described_class.call(order: second.reload)).to be_success
+        expect(described_class.call(order: first.reload)).to be_success
+
+        expect(credit.reload.amount_used).to eq(10)
+        expect(free_credit.reload.amount_used).to eq(5)
+        expect([credit.amount_authorized, free_credit.amount_authorized]).to all(be_zero)
+      end
+    end
+
     # The path company certificates take: unpinned, it resolves live at credit.
     describe 'tax exemptions' do
       let(:draft) { create(:order_ready_to_ship, store: store).tap { |o| o.update_columns(status: 'draft', completed_at: nil) } }
