@@ -1,5 +1,13 @@
 # @spree/cli
 
+## 3.8.2
+
+### Patch Changes
+
+- [#15329](https://github.com/spree/spree/pull/15329) [`c4aa085`](https://github.com/spree/spree/commit/c4aa0859913bde02a81b5a015e7017f9f6992286) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree add avatax` installs the Spree 6 Avalara AvaTax gem, `spree_avalara`, at the project's Spree version or newer, instead of the 5.x `spree_avatax_official` extension. `spree add avalara` installs the same gem.
+
+- [#15295](https://github.com/spree/spree/pull/15295) [`1c39a7b`](https://github.com/spree/spree/commit/1c39a7b88d5ca199ff457e5f98d158d09202a349) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The read-only API key the CLI creates for itself while setting up a project no longer emails the store's admins about a new Admin API key. Keys created with `spree api-key create` still do.
+
 ## 3.8.1
 
 ### Patch Changes

@@ -1,5 +1,23 @@
 # @spree/dashboard
 
+## 6.0.7
+
+### Patch Changes
+
+- [#15302](https://github.com/spree/spree/pull/15302) [`da22aa0`](https://github.com/spree/spree/commit/da22aa0e06bff9e47128119cc920adf780c1b911) Thanks [@ifizza](https://github.com/ifizza)! - The order page's Add payment dialog asks the cards list for the chosen payment method, so another gateway's cards are not offered.
+
+- [#15341](https://github.com/spree/spree/pull/15341) [`844f7fc`](https://github.com/spree/spree/commit/844f7fc4bd6bceee07013268d14a418cc68a0347) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Create API key sheet lets an admin choose Full access (write_all) and Read all (read_all) again when the installation withholds some permissions from everyone, such as maintenance tasks turned off.
+
+- [#15307](https://github.com/spree/spree/pull/15307) [`b5f703f`](https://github.com/spree/spree/commit/b5f703f8743e4452a4020af934f4efe4d139f1c0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Changing the customer of an open order now asks for confirmation first. The dialog says the order moves to the new customer, and, when the previous customer's store credit or gift card is applied, that it is removed and returned to them, so the amount due goes back up.
+
+- [#15245](https://github.com/spree/spree/pull/15245) [`26cf815`](https://github.com/spree/spree/commit/26cf8150d7ac4ad1753dc2f451303d108aa41b93) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The gift card row in an order's "Discounts & Credit" card no longer offers Apply or Remove once the order is placed, matching the discount code row. The API refuses both on a placed order.
+
+- [#15323](https://github.com/spree/spree/pull/15323) [`6edb91d`](https://github.com/spree/spree/commit/6edb91d19aba80d846983e09452dd6527662763f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A report grouped by a dimension that has no value for some group no longer fails to render. Discounts by coupon code is the common case: promotions applied without a code form a group with no code, which now shows with an empty label.
+
+- [#15239](https://github.com/spree/spree/pull/15239) [`275757a`](https://github.com/spree/spree/commit/275757add1e1954c6cabe2a9539fe82aa8a867fb) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removing someone from staff, or clearing all their roles, now also refreshes the Staff page's pending invitations. The API revokes that person's other pending invitations for the store, so they leave the list together with the teammate.
+
+- [#15313](https://github.com/spree/spree/pull/15313) [`9c0c36d`](https://github.com/spree/spree/commit/9c0c36d8efc3231aac36ea0df2c9f5fd8816bd51) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `StoreSetupFields` takes its `countries` as `Country[]` from `@spree/admin-sdk`, the type `auth.setupCountries()` now returns, in place of the removed `SetupCountry`.
+
 ## 6.0.6
 
 ### Patch Changes

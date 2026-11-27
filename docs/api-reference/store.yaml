@@ -2284,12 +2284,23 @@ paths:
               example:
                 error:
                   code: cart_cannot_complete
-                  message: '{code: "validation_failed", errors: [{code: "email_required",
-                    step: "address", field: "email", message: "Email address is required"},
-                    {code: "delivery_method_required", step: "delivery", field: "delivery_method",
-                    message: "Select a delivery method for all fulfillments"}, {code:
-                    "payment_required", step: "payment", field: "payment", message:
-                    "Add a payment method"}]}'
+                  message: Email address is required, Select a delivery method for
+                    all fulfillments, Add a payment method
+                  details:
+                    code: validation_failed
+                    errors:
+                    - code: email_required
+                      step: address
+                      field: email
+                      message: Email address is required
+                    - code: delivery_method_required
+                      step: delivery
+                      field: delivery_method
+                      message: Select a delivery method for all fulfillments
+                    - code: payment_required
+                      step: payment
+                      field: payment
+                      message: Add a payment method
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/carts/{cart_id}/discount_codes":

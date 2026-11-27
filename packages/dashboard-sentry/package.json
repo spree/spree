@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-sentry",
   "license": "MIT",
-  "version": "6.0.6",
+  "version": "6.0.7",
   "description": "Sentry error tracking for the Spree admin dashboard and seller panel: one initDashboardSentry() call in the host's entry module.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
@@ -43,7 +43,7 @@
     "@sentry/react": "^11.13.0"
   },
   "peerDependencies": {
-    "@spree/dashboard-core": ">=6.0.6 <7.0.0-0",
+    "@spree/dashboard-core": ">=6.0.7 <7.0.0-0",
     "react": "^19.2.6"
   },
   "devDependencies": {
