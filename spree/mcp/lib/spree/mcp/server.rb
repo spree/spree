@@ -51,12 +51,15 @@ module Spree
         media_create to put an image on a product, create_import to start a
         CSV import. Storing one changes nothing by itself.
 
-        Files are MCP resources, not tool results. A finished export is one:
-        after create_export, read its contents from resources rather than
-        reporting a download path — the path is for the merchant, the
-        resource is for you. So are the documents attached to records — a
-        buyer's purchase order, a shipping label — which come back as the
-        file itself for you to read.
+        Finished exports are the only files you can read, and they are MCP
+        resources, not tool results: after create_export, read its contents
+        from resources rather than reporting a download path — the path is
+        for the merchant, the resource is for you. Documents attached to
+        records — a buyer's purchase order, a shipping label, a tax exemption
+        certificate — are not resources, and no tool returns their contents.
+        The record that carries one shows its download link; when the
+        merchant needs the document, give them that link rather than
+        offering to open the file.
       TEXT
 
       class << self
@@ -80,8 +83,7 @@ module Spree
           server
         end
 
-        # The files a client may fetch: finished exports, and the documents
-        # attached to records — a buyer's purchase order, a shipping label.
+        # The files a client may fetch: finished exports.
         #
         # A tool result has to fit the model's context; a file does not, so
         # `create_export` hands back an id rather than a file. Resources are
