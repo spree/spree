@@ -1,4 +1,4 @@
-import { usePermissions } from '@spree/dashboard-core'
+import { Action, Subject, usePermissions } from '@spree/dashboard-core'
 import { Checkbox, cn, Item, Skeleton } from '@spree/dashboard-ui'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,13 +18,12 @@ export function ScopePicker({
 }) {
   const { t } = useTranslation()
   const { data: catalog } = usePermissionCatalog()
-  const { permissionKeys } = usePermissions()
+  const { permissions, permissionKeys } = usePermissions()
   const hasWriteAll = value.includes('write_all')
   const hasReadAll = value.includes('read_all')
 
   // A staffer can only mint scopes within their own grant (the server's
-  // anti-amplification guard) — don't offer keys it would reject. A caller
-  // holding the whole catalog (admin) is unrestricted, including the aliases.
+  // anti-amplification guard) — don't offer keys it would reject.
   const blockedKeys = useMemo(() => {
     if (!catalog) return undefined
     const blocked = new Set(
@@ -32,8 +31,13 @@ export function ScopePicker({
     )
     return blocked.size > 0 ? blocked : undefined
   }, [catalog, permissionKeys])
-  const writeAllBlocked = blockedKeys !== undefined
+  // The admin role may grant either alias whatever keys it lists: an
+  // installation can withhold some from everyone (maintenance tasks turned
+  // off), so holding the whole catalog is not what makes a caller an admin.
+  const unrestricted = permissions.can(Action.Manage, Subject.All)
+  const writeAllBlocked = !unrestricted && blockedKeys !== undefined
   const readAllBlocked =
+    !unrestricted &&
     !!catalog &&
     catalog.data.some((entry) => entry.kind === 'read' && !permissionKeys.includes(entry.key))
 
