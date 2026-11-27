@@ -180,7 +180,9 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Records what arrived on an approved return. Omit `items` to receive everything as requested and resellable; send rows for a partial or damaged receipt.'
+      description 'Records what arrived on an approved return, or on a received one with units still to come. ' \
+                  'Omit `items` to receive every unit still to come as resellable; send rows for a partial or damaged receipt, ' \
+                  'naming a line twice to receive part of it as resellable and part not. Receive again as more units arrive.'
       admin_scope :write, :orders
 
       admin_sdk_example 'order-returns/receive'
@@ -194,14 +196,29 @@ RSpec.describe 'Admin Returns API', type: :request, swagger_doc: 'api-reference/
       response '200', 'return received' do
         let!(:record) { create(:approved_return, order: create(:shipped_order, store: store)) }
         let(:id) { record.prefixed_id }
+        let(:line) { record.return_line_items.first }
         let(:body) do
-          { items: [{ return_line_item_id: record.return_line_items.first.prefixed_id, quantity: 1, resellable: false }] }
+          {
+            items: [
+              { return_line_item_id: line.prefixed_id, quantity: 2, resellable: true },
+              { return_line_item_id: line.prefixed_id, quantity: 1, resellable: false }
+            ]
+          }
+        end
+
+        before do
+          line.fulfillment_item.update_columns(quantity: 3)
+          line.update!(quantity: 3)
         end
 
         schema '$ref' => '#/components/schemas/Return'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['status']).to eq('received')
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('received')
+          expect(line.reload.attributes.slice('received_quantity', 'resellable_quantity', 'resellable')).
+            to eq('received_quantity' => 3, 'resellable_quantity' => 2, 'resellable' => false)
+          expect(BigDecimal(data['refund_total'])).to eq(line.total)
         end
       end
     end

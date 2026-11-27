@@ -5,8 +5,10 @@ import {
   formatAmount,
   isPositiveMoney,
   postSaleItemRow,
+  returnAwaitsGoods,
   returnOwesNothing,
   returnRefundSummary,
+  unitsToReceive,
   useMetadataSheet,
   useMoneyLocale,
   usePermissions,
@@ -29,6 +31,7 @@ import {
   FulfillmentItemList,
   hasMetadata,
   type RefundMethod,
+  type ReturnReceiptItem,
   ReturnReceiveDialog,
   ReturnRefundDialog,
   Section,
@@ -61,7 +64,7 @@ import { useProductLink } from './variant-link'
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
 const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
-// Once goods have arrived the return can only be refunded.
+// Once goods have arrived the return can no longer be canceled.
 const RETURN_CANCELABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
 const RETURN_RECEIVED = subsetOf(RETURN_STATUSES, ['received', 'refunded'])
 
@@ -147,7 +150,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'approved' && (
+                        {returnAwaitsGoods(returnRecord) && (
                           <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
                             <PackageCheckIcon className="size-4" />
                             {t('admin.pages.orders.detail.returns.actions.receive')}
@@ -393,18 +396,20 @@ function ReturnLineBadges({ line, status }: { line: ReturnLineItem; status: stri
   const { t } = useTranslation()
   if (!RETURN_RECEIVED.includes(status)) return null
 
+  const unresellable = line.received_quantity - line.resellable_quantity
+
   return (
     <>
-      {line.received_quantity !== line.quantity && (
+      <Badge variant="outline">
+        {t('admin.pages.orders.detail.returns.received_of', {
+          received: line.received_quantity,
+          requested: line.quantity,
+        })}
+      </Badge>
+      {unresellable > 0 && (
         <Badge variant="outline">
-          {t('admin.pages.orders.detail.returns.received_of', {
-            received: line.received_quantity,
-            requested: line.quantity,
-          })}
+          {t('admin.pages.orders.detail.returns.not_resellable_count', { count: unresellable })}
         </Badge>
-      )}
-      {!line.resellable && (
-        <Badge variant="outline">{t('admin.pages.orders.detail.returns.not_resellable')}</Badge>
       )}
     </>
   )
@@ -413,8 +418,8 @@ function ReturnLineBadges({ line, status }: { line: ReturnLineItem; status: stri
 /**
  * Partial and damaged receipt is the normal case, so the dialog opens with
  * every line editable rather than hiding that behind an "advanced" toggle.
+ * Lines whose every unit has arrived are left out.
  */
-
 function ReceiveDialog({
   returnRecord,
   onClose,
@@ -422,17 +427,17 @@ function ReceiveDialog({
 }: {
   returnRecord: Return
   onClose: () => void
-  onSubmit: (
-    items: Array<{ return_line_item_id: string; quantity: number; resellable: boolean }>,
-  ) => void
+  onSubmit: (items: ReturnReceiptItem[]) => void
 }) {
   return (
     <ReturnReceiveDialog
-      lines={(returnRecord.return_line_items ?? []).map((line) => ({
-        id: line.id,
-        label: variantLabel(line.variant, line.variant_id),
-        quantity: line.quantity,
-      }))}
+      lines={(returnRecord.return_line_items ?? [])
+        .filter((line) => unitsToReceive(line) > 0)
+        .map((line) => ({
+          id: line.id,
+          label: variantLabel(line.variant, line.variant_id),
+          quantity: unitsToReceive(line),
+        }))}
       onClose={onClose}
       onSubmit={onSubmit}
     />

@@ -28159,7 +28159,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Records the goods that came back on an approved exchange. Omit `items` to receive everything as requested and resellable.
+        Records the goods that came back on an approved exchange, or on a received one with units still to come. Omit `items` to receive every unit still to come as resellable; name a line twice to receive part of it as resellable and part not.
 
         **Required scope:** `write_orders` (for API-key authentication).
       x-codeSamples:
@@ -28173,7 +28173,7 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          // Omit `items` to receive everything as requested and resellable.
+          // Omit `items` to receive every unit still to come as resellable.
           const exchange = await client.orders.exchanges.receive('or_UkLWZg9DAJ', 'exch_UkLWZg9DAJ', {
             items: [{ exchange_line_item_id: 'eli_UkLWZg9DAJ', quantity: 1, resellable: false }],
           })
@@ -32634,7 +32634,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Records what arrived on an approved return. Omit `items` to receive everything as requested and resellable; send rows for a partial or damaged receipt.
+        Records what arrived on an approved return, or on a received one with units still to come. Omit `items` to receive every unit still to come as resellable; send rows for a partial or damaged receipt, naming a line twice to receive part of it as resellable and part not. Receive again as more units arrive.
 
         **Required scope:** `write_orders` (for API-key authentication).
       x-codeSamples:
@@ -32648,13 +32648,17 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          // Omit `items` to receive everything as requested and resellable.
+          // Omit `items` to receive every unit still to come as resellable. Name a line
+          // twice to receive part of it as resellable and part not.
           const orderReturn = await client.orders.returns.receive('or_UkLWZg9DAJ', 'ret_UkLWZg9DAJ', {
-            items: [{ return_line_item_id: 'rli_UkLWZg9DAJ', quantity: 1, resellable: false }],
+            items: [
+              { return_line_item_id: 'rli_UkLWZg9DAJ', quantity: 2, resellable: true },
+              { return_line_item_id: 'rli_UkLWZg9DAJ', quantity: 1, resellable: false },
+            ],
           })
       - lang: bash
         label: Spree CLI
-        source: spree api patch /orders/{order_id}/returns/{id}/receive -d '{"items":[{"return_line_item_id":"rli_UkLWZg9DAJ","quantity":1,"resellable":false}]}'
+        source: spree api patch /orders/{order_id}/returns/{id}/receive -d '{"items":[{"return_line_item_id":"rli_UkLWZg9DAJ","quantity":2,"resellable":true},{"return_line_item_id":"rli_UkLWZg9DAJ","quantity":1,"resellable":false}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -67453,8 +67457,13 @@ components:
           type: number
         received_quantity:
           type: number
+          description: Units that have arrived so far, across every receipt
+        resellable_quantity:
+          type: number
+          description: Received units that went back into sellable stock
         resellable:
           type: boolean
+          description: Whether every received unit can be resold
         original_price:
           type: string
         new_variant_price:
@@ -67489,6 +67498,7 @@ components:
       - id
       - quantity
       - received_quantity
+      - resellable_quantity
       - resellable
       - original_price
       - new_variant_price
@@ -74638,8 +74648,13 @@ components:
           type: number
         received_quantity:
           type: number
+          description: Units that have arrived so far, across every receipt
+        resellable_quantity:
+          type: number
+          description: Received units that went back into sellable stock
         resellable:
           type: boolean
+          description: Whether every received unit can be resold
         pre_tax_amount:
           type: string
         included_tax_total:
@@ -74675,6 +74690,7 @@ components:
       - id
       - quantity
       - received_quantity
+      - resellable_quantity
       - resellable
       - pre_tax_amount
       - included_tax_total
@@ -86045,8 +86061,8 @@ components:
             required:
             - exchange_line_item_id
             - quantity
-          description: What actually arrived. Omit to receive everything as requested
-            and resellable.
+          description: What arrived. Omit to receive all units still due, resellable.
+            Name a line twice to split it.
     ExchangeUpdateParams:
       type: object
       properties:
@@ -89044,8 +89060,8 @@ components:
             required:
             - return_line_item_id
             - quantity
-          description: What actually arrived. Omit to receive everything as requested
-            and resellable; send rows for a partial or damaged receipt.
+          description: What arrived. Omit to receive all units still due, resellable.
+            Name a line twice to split it.
     ReturnRefundParams:
       type: object
       properties:

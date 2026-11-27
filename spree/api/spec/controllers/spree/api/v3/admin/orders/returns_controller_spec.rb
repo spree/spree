@@ -230,6 +230,59 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(line.reload.received_quantity).to eq(1)
       expect(line.resellable).to be(false)
     end
+
+    context 'with a line of three units' do
+      let(:line) { return_record.return_line_items.first }
+      let(:stock_level) { return_record.stock_location.stock_level_or_create(line.variant) }
+
+      before do
+        fulfillment_item.update_columns(quantity: 3)
+        line.update!(quantity: 3, pre_tax_amount: 75)
+      end
+
+      def receive_items(items)
+        patch :receive, params: {
+          order_id: order.prefixed_id, id: return_record.prefixed_id, items: items, expand: 'return_line_items'
+        }, as: :json
+      end
+
+      it 'receives part of the line as resellable and the rest as not, keeping the whole refund' do
+        expect do
+          receive_items([
+            { return_line_item_id: line.prefixed_id, quantity: 2, resellable: true },
+            { return_line_item_id: line.prefixed_id, quantity: 1, resellable: 'false' }
+          ])
+        end.to change { stock_level.reload.count_on_hand }.by(2)
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('received')
+        expect(json_response['refund_total']).to eq('75.00')
+        expect(json_response['return_line_items'].first).to include(
+          'received_quantity' => 3, 'resellable_quantity' => 2, 'resellable' => false
+        )
+      end
+
+      it 'receives the rest of the line later and refunds every unit' do
+        receive_items([{ return_line_item_id: line.prefixed_id, quantity: 1 }])
+        expect(json_response['refund_total']).to eq('25.00')
+
+        receive_items([{ return_line_item_id: line.prefixed_id, quantity: 2, resellable: false }])
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['refund_total']).to eq('75.00')
+        expect(json_response['return_line_items'].first).to include(
+          'received_quantity' => 3, 'resellable_quantity' => 1, 'resellable' => false
+        )
+      end
+
+      it 'refuses to receive more units than are still to come' do
+        receive_items([{ return_line_item_id: line.prefixed_id, quantity: 2 }])
+        receive_items([{ return_line_item_id: line.prefixed_id, quantity: 2 }])
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(line.reload.received_quantity).to eq(2)
+      end
+    end
   end
 
   describe 'PATCH #refund' do

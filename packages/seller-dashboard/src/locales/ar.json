@@ -133,7 +133,7 @@
             "memo": "ملاحظة",
             "reason": "السبب",
             "receive_title": "استلام العناصر المرتجعة",
-            "received_quantity": "المستلَم",
+            "units_to_receive": "متبقٍ للاستلام: {{count}}",
             "refund_amount": "المبلغ",
             "refund_includes_tax": "يشمل المبلغ الكامل ضريبة بقيمة {{tax}}. عند رد مبلغ أقل، تُرد الضريبة بالنسبة نفسها.",
             "refund_method": "رد المبلغ إلى",
@@ -144,7 +144,8 @@
             "refund_title": "رد مبلغ الإرجاع",
             "complete_title": "إكمال المرتجع",
             "nothing_owed": "لا يوجد أي مبلغ مستحق على هذا المرتجع، لذلك لن يُسترد أي مبلغ. يؤدي إكماله إلى إغلاق المرتجع.",
-            "resellable": "قابل لإعادة البيع"
+            "resellable": "قابل لإعادة البيع",
+            "not_resellable": "غير قابل لإعادة البيع"
           }
         }
       }
@@ -526,8 +527,8 @@
         "cancel_title": "إلغاء هذا الإرجاع؟",
         "create": "إرجاع جديد",
         "empty": "لم يُرجَع أي شيء من هذا الطلب.",
-        "not_resellable": "غير قابل لإعادة البيع",
         "partially_received": "استُلم {{received}} من {{quantity}}",
+        "not_resellable_count": "غير قابل لإعادة البيع: {{count}}",
         "receive": "استلام",
         "refund": "رد المبلغ",
         "refund_total": "إجمالي الاسترداد: {{amount}}",

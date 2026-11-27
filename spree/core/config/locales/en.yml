@@ -937,6 +937,7 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
+        received_during_fulfillment: changed while this exchange was being fulfilled. Reload it and try again.
         refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
         same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers

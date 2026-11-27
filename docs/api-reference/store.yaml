@@ -16874,8 +16874,13 @@ components:
           type: number
         received_quantity:
           type: number
+          description: Units that have arrived so far, across every receipt
+        resellable_quantity:
+          type: number
+          description: Received units that went back into sellable stock
         resellable:
           type: boolean
+          description: Whether every received unit can be resold
         original_price:
           type: string
           nullable: true
@@ -16911,6 +16916,7 @@ components:
       - id
       - quantity
       - received_quantity
+      - resellable_quantity
       - resellable
       - original_price
       - new_variant_price
@@ -22321,8 +22327,13 @@ components:
           type: number
         received_quantity:
           type: number
+          description: Units that have arrived so far, across every receipt
+        resellable_quantity:
+          type: number
+          description: Received units that went back into sellable stock
         resellable:
           type: boolean
+          description: Whether every received unit can be resold
         pre_tax_amount:
           type: string
           nullable: true
@@ -22371,6 +22382,7 @@ components:
       - id
       - quantity
       - received_quantity
+      - resellable_quantity
       - resellable
       - pre_tax_amount
       - display_pre_tax_amount

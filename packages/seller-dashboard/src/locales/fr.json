@@ -133,7 +133,7 @@
             "memo": "Note",
             "reason": "Motif",
             "receive_title": "Réceptionner les articles retournés",
-            "received_quantity": "Reçu",
+            "units_to_receive": "À réceptionner : {{count}}",
             "refund_amount": "Montant",
             "refund_includes_tax": "Le montant total comprend {{tax}} de taxes. Un montant inférieur rembourse les taxes dans la même proportion.",
             "refund_method": "Rembourser sur",
@@ -144,7 +144,8 @@
             "refund_title": "Rembourser le retour",
             "complete_title": "Clôturer le retour",
             "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
-            "resellable": "Revendable"
+            "resellable": "Revendable",
+            "not_resellable": "Non revendable"
           }
         }
       }
@@ -522,8 +523,8 @@
         "cancel_title": "Annuler ce retour ?",
         "create": "Nouveau retour",
         "empty": "Rien n’a été retourné sur cette commande.",
-        "not_resellable": "Non revendable",
         "partially_received": "{{received}} sur {{quantity}} reçus",
+        "not_resellable_count": "Non revendable : {{count}}",
         "receive": "Réceptionner",
         "refund": "Rembourser",
         "refund_total": "Total du remboursement : {{amount}}",

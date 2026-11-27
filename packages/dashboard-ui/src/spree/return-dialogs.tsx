@@ -13,7 +13,6 @@ import { Field, FieldDescription, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Switch } from '../ui/switch'
 
 /** How money goes back to the buyer. */
 export type RefundMethod = 'original_payment' | 'store_credit'
@@ -22,17 +21,38 @@ export type RefundMethod = 'original_payment' | 'store_credit'
 export type ReturnLineForReceipt = {
   id: string
   label: string
+  /** The units still to come: what was announced less what earlier receipts counted. */
   quantity: number
 }
 
-type ReceiptRow = { quantity: number; resellable: boolean }
+/** One row of a receipt. A line split between resellable and not is named twice. */
+export type ReturnReceiptItem = {
+  return_line_item_id: string
+  quantity: number
+  resellable: boolean
+}
+
+type ReceiptRow = { resellable: number; unresellable: number }
+
+/** The rows a receipt sends, leaving out any part with no units. */
+export function receiptItems(rows: Record<string, ReceiptRow>): ReturnReceiptItem[] {
+  return Object.entries(rows).flatMap(([id, row]) => [
+    ...(row.resellable > 0
+      ? [{ return_line_item_id: id, quantity: row.resellable, resellable: true }]
+      : []),
+    ...(row.unresellable > 0
+      ? [{ return_line_item_id: id, quantity: row.unresellable, resellable: false }]
+      : []),
+  ])
+}
 
 /**
- * Records what actually arrived: a quantity per line, and whether each can go
- * back on the shelf.
+ * Records what actually arrived: per line, how many units can go back on the
+ * shelf and how many cannot. Units left at zero stay outstanding and can be
+ * received later.
  *
  * Deliberately not defaulted server-side — an omitted `items` means "receive
- * everything as requested", so a partial receipt has to say so line by line.
+ * everything still to come", so a partial receipt has to say so line by line.
  * Shared by the operator's order page and the seller's.
  */
 export function ReturnReceiveDialog({
@@ -43,17 +63,40 @@ export function ReturnReceiveDialog({
 }: {
   lines: ReturnLineForReceipt[]
   onClose: () => void
-  onSubmit: (
-    items: Array<{ return_line_item_id: string; quantity: number; resellable: boolean }>,
-  ) => void
+  onSubmit: (items: ReturnReceiptItem[]) => void
   pending?: boolean
 }) {
   const { t } = useTranslation()
   const [rows, setRows] = useState<Record<string, ReceiptRow>>(() =>
     Object.fromEntries(
-      lines.map((line) => [line.id, { quantity: line.quantity, resellable: true }]),
+      lines.map((line) => [line.id, { resellable: line.quantity, unresellable: 0 }]),
     ),
   )
+  const items = receiptItems(rows)
+
+  // `min`/`max` bind the stepper only — a typed value reaches onChange
+  // unclamped. The two parts of a line share its units, so raising one takes
+  // units from the other rather than refusing the value: the dialog opens with
+  // every unit resellable, and marking one damaged must not need two edits.
+  const setPart = (line: ReturnLineForReceipt, part: keyof ReceiptRow, value: string) =>
+    setRows((current) => {
+      const row = current[line.id] ?? { resellable: 0, unresellable: 0 }
+      const otherPart: keyof ReceiptRow = part === 'resellable' ? 'unresellable' : 'resellable'
+      const count = Math.max(0, Math.min(Math.trunc(Number(value)) || 0, line.quantity))
+      return {
+        ...current,
+        [line.id]: {
+          ...row,
+          [part]: count,
+          [otherPart]: Math.min(row[otherPart], line.quantity - count),
+        },
+      }
+    })
+
+  const parts: Array<{ part: keyof ReceiptRow; label: string }> = [
+    { part: 'resellable', label: t('admin.pages.orders.detail.returns.resellable') },
+    { part: 'unresellable', label: t('admin.pages.orders.detail.returns.not_resellable') },
+  ]
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -64,53 +107,34 @@ export function ReturnReceiveDialog({
         <DialogBody className="flex flex-col gap-4">
           {lines.map((line) => (
             <div key={line.id} className="flex flex-col gap-3">
-              <span className="font-medium text-base">{line.label}</span>
-              <div className="flex flex-col gap-3">
-                <Field>
-                  <FieldLabel htmlFor={`qty-${line.id}`}>
-                    {t('admin.pages.orders.detail.returns.received_quantity')}
-                  </FieldLabel>
-                  <Input
-                    id={`qty-${line.id}`}
-                    type="number"
-                    min={0}
-                    max={line.quantity}
-                    value={rows[line.id]?.quantity ?? 0}
-                    onChange={(event) =>
-                      setRows((current) => ({
-                        ...current,
-                        [line.id]: {
-                          // `min`/`max` bind the stepper only — a typed value
-                          // reaches onChange unclamped.
-                          quantity: Math.max(
-                            0,
-                            Math.min(Number(event.target.value) || 0, line.quantity),
-                          ),
-                          resellable: current[line.id]?.resellable ?? true,
-                        },
-                      }))
-                    }
-                  />
-                </Field>
-                <Field orientation="horizontal">
-                  <FieldLabel htmlFor={`resellable-${line.id}`}>
-                    {t('admin.pages.orders.detail.returns.resellable')}
-                  </FieldLabel>
-                  <Switch
-                    id={`resellable-${line.id}`}
-                    checked={rows[line.id]?.resellable ?? true}
-                    onCheckedChange={(checked) =>
-                      setRows((current) => ({
-                        ...current,
-                        [line.id]: {
-                          quantity: current[line.id]?.quantity ?? 0,
-                          resellable: checked,
-                        },
-                      }))
-                    }
-                  />
-                </Field>
+              <div className="flex items-baseline justify-between gap-3">
+                <span id={`return-line-${line.id}`} className="font-medium text-base">
+                  {line.label}
+                </span>
+                <span className="shrink-0 text-muted-foreground text-sm">
+                  {t('admin.pages.orders.detail.returns.units_to_receive', {
+                    count: line.quantity,
+                  })}
+                </span>
               </div>
+              <fieldset
+                aria-labelledby={`return-line-${line.id}`}
+                className="grid min-w-0 grid-cols-2 gap-3"
+              >
+                {parts.map(({ part, label }) => (
+                  <Field key={part}>
+                    <FieldLabel htmlFor={`${part}-${line.id}`}>{label}</FieldLabel>
+                    <Input
+                      id={`${part}-${line.id}`}
+                      type="number"
+                      min={0}
+                      max={line.quantity}
+                      value={rows[line.id]?.[part] ?? 0}
+                      onChange={(event) => setPart(line, part, event.target.value)}
+                    />
+                  </Field>
+                ))}
+              </fieldset>
             </div>
           ))}
         </DialogBody>
@@ -120,16 +144,8 @@ export function ReturnReceiveDialog({
           </Button>
           <Button
             type="button"
-            disabled={pending}
-            onClick={() =>
-              onSubmit(
-                lines.map((line) => ({
-                  return_line_item_id: line.id,
-                  quantity: rows[line.id]?.quantity ?? 0,
-                  resellable: rows[line.id]?.resellable ?? true,
-                })),
-              )
-            }
+            disabled={pending || items.length === 0}
+            onClick={() => onSubmit(items)}
           >
             {t('admin.pages.orders.detail.returns.actions.receive')}
           </Button>

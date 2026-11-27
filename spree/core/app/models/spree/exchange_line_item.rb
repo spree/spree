@@ -7,6 +7,7 @@ module Spree
   # sale (`new_*`), each for the announced quantity.
   class ExchangeLineItem < Spree.base_class
     include Spree::PostSale::TaxedLine
+    include Spree::PostSale::ReceivedLine
 
     has_prefix_id :eli
 

@@ -2,8 +2,7 @@
 
 export type ReturnReceiveParams = {
   /**
-   * What actually arrived. Omit to receive everything as requested and resellable; send rows for a
-   * partial or damaged receipt.
+   * What arrived. Omit to receive all units still due, resellable. Name a line twice to split it.
    */
   items?: {
     return_line_item_id: string

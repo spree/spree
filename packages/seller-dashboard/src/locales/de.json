@@ -133,7 +133,7 @@
             "memo": "Notiz",
             "reason": "Grund",
             "receive_title": "Rücksendung annehmen",
-            "received_quantity": "Erhalten",
+            "units_to_receive": "Noch anzunehmen: {{count}}",
             "refund_amount": "Betrag",
             "refund_includes_tax": "Der volle Betrag enthält {{tax}} Steuern. Bei einem kleineren Betrag wird die Steuer anteilig erstattet.",
             "refund_method": "Erstatten auf",
@@ -144,7 +144,8 @@
             "refund_title": "Rücksendung erstatten",
             "complete_title": "Retoure abschließen",
             "nothing_owed": "Für diese Retoure ist nichts geschuldet, daher wird kein Geld erstattet. Mit dem Abschließen wird die Retoure geschlossen.",
-            "resellable": "Wiederverkäuflich"
+            "resellable": "Wiederverkäuflich",
+            "not_resellable": "Nicht wiederverkäuflich"
           }
         }
       }
@@ -522,8 +523,8 @@
         "cancel_title": "Diese Rücksendung abbrechen?",
         "create": "Neue Rücksendung",
         "empty": "Aus dieser Bestellung kam nichts zurück.",
-        "not_resellable": "Nicht wiederverkäuflich",
         "partially_received": "{{received}} von {{quantity}} erhalten",
+        "not_resellable_count": "Nicht wiederverkäuflich: {{count}}",
         "receive": "Annehmen",
         "refund": "Erstatten",
         "refund_total": "Erstattung gesamt: {{amount}}",

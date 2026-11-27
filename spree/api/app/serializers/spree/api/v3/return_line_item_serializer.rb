@@ -5,13 +5,14 @@ module Spree
     module V3
       class ReturnLineItemSerializer < BaseSerializer
         typelize quantity: :number,
-                 received_quantity: :number,
-                 resellable: :boolean,
+                 received_quantity: [:number, comment: 'Units that have arrived so far, across every receipt'],
+                 resellable_quantity: [:number, comment: 'Received units that went back into sellable stock'],
+                 resellable: [:boolean, comment: 'Whether every received unit can be resold'],
                  variant_id: [:string, nullable: true],
                  line_item_id: [:string, nullable: true],
                  fulfillment_item_id: [:string, nullable: true]
 
-        attributes :quantity, :received_quantity, :resellable
+        attributes :quantity, :received_quantity, :resellable_quantity, :resellable
 
         money_attributes :pre_tax_amount, :display_pre_tax_amount, :included_tax_total,
                          :additional_tax_total, :tax_total, :display_tax_total

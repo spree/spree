@@ -74,6 +74,47 @@ test.describe('post-sale', () => {
     })
   })
 
+  test('receives a return in parts, some units resellable and some not', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createShippedOrder(page, creds.accessToken, 3)
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const returns = card(page, /^returns/i)
+    await returns.getByRole('button', { name: /new return/i }).click({ timeout: 15_000 })
+    const createDialog = page.getByRole('dialog')
+    await createDialog
+      .getByRole('spinbutton', { name: new RegExp(FIXTURE_PROMO_PRODUCT) })
+      .fill('3')
+    await createDialog.getByRole('button', { name: /new return/i }).click()
+    await expect(returns.getByText(/^requested$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^returns/i, /^approve$/i)
+    await expect(returns.getByText(/^approved$/i)).toBeVisible({ timeout: 15_000 })
+
+    // One unit arrives first.
+    await recordAction(page, /^returns/i, /receive items/i)
+    let dialog = page.getByRole('dialog')
+    await dialog.getByRole('spinbutton', { name: /^resellable$/i }).fill('1')
+    await dialog.getByRole('button', { name: /receive items/i }).click()
+    await expect(returns.getByText('1 of 3 received')).toBeVisible({ timeout: 15_000 })
+
+    // The other two later, one of them damaged.
+    await recordAction(page, /^returns/i, /receive items/i)
+    dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('To receive: 2')).toBeVisible()
+    await dialog.getByRole('spinbutton', { name: /^resellable$/i }).fill('1')
+    await dialog.getByRole('spinbutton', { name: /^not resellable$/i }).fill('1')
+    await dialog.getByRole('button', { name: /receive items/i }).click()
+
+    await expect(returns.getByText('3 of 3 received')).toBeVisible({ timeout: 15_000 })
+    await expect(returns.getByText('Not resellable: 1')).toBeVisible()
+
+    // Every unit is in, so only the refund is left.
+    await returns.getByRole('button', { name: /^actions$/i }).click()
+    await expect(page.getByRole('menuitem', { name: /^refund$/i })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: /receive items/i })).toHaveCount(0)
+  })
+
   test('opens a claim for a missing item, denies it, and lists it store-wide', async ({ page }) => {
     const creds = await login(page)
     const order = await createShippedOrder(page, creds.accessToken, 1)

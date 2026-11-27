@@ -31,7 +31,7 @@ module Spree
 
             request_params 'ReturnReceiveParams', action: :receive do |body|
               body.attribute :items, :array,
-                description: 'What actually arrived. Omit to receive everything as requested and resellable.' do |item|
+                             description: 'What arrived. Omit to receive all units still due, resellable. Name a line twice to split it.' do |item|
                 item.attribute :return_line_item_id, :id, required: true
                 item.attribute :quantity, :integer, required: true
                 item.attribute :resellable, :boolean, description: 'Defaults to true.'

@@ -138,8 +138,9 @@
         "detail": {
           "returns": {
             "receive_title": "Receive returned items",
-            "received_quantity": "Received",
+            "units_to_receive": "To receive: {{count}}",
             "resellable": "Resellable",
+            "not_resellable": "Not resellable",
             "actions": {
               "receive": "Receive items",
               "refund": "Refund",
@@ -522,8 +523,8 @@
         "cancel_title": "Cancel this return?",
         "create": "New return",
         "empty": "Nothing has come back from this order.",
-        "not_resellable": "Not resellable",
         "partially_received": "{{received}} of {{quantity}} received",
+        "not_resellable_count": "Not resellable: {{count}}",
         "receive": "Receive",
         "refund": "Refund",
         "refund_total": "Refund total: {{amount}}",

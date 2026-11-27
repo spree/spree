@@ -145,6 +145,25 @@ RSpec.describe Spree::Return do
     it 'is owed the announced amount until the warehouse has counted' do
       expect(line.refund_amount).to eq(line.pre_tax_amount)
     end
+
+    describe '#resellable_quantity' do
+      before { line.update!(quantity: 3) }
+
+      it 'counts the received units that went back on the shelf' do
+        line.update!(received_quantity: 3, resellable_quantity: 2, resellable: false)
+
+        expect([line.resellable_quantity, line.unresellable_quantity, line.unreceived_quantity]).to eq([2, 1, 0])
+      end
+
+      # Lines received before the count was stored carry only the flag.
+      it 'reads a line received before the count was stored from its flag' do
+        line.update_columns(received_quantity: 2, resellable_quantity: 0, resellable: true)
+        expect([line.resellable_quantity, line.unreceived_quantity]).to eq([2, 1])
+
+        line.update_columns(resellable: false)
+        expect(line.resellable_quantity).to eq(0)
+      end
+    end
   end
   describe '#to_package' do
     let(:order) { create(:shipped_order, store: store) }
