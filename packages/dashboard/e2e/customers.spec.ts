@@ -118,6 +118,50 @@ test.describe('customers', () => {
     await expect(page.getByText('1 Main St')).toBeVisible({ timeout: 15_000 })
   })
 
+  test('keeps the other default when an address becomes the default of both kinds', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-addr-defaults-${Date.now()}@example.com`)
+
+    for (const address1 of ['1 Main St', '2 Oak Ave']) {
+      await page.getByRole('button', { name: /add address/i }).click()
+      await fillAddressForm(page, {
+        firstName: 'Pat',
+        lastName: 'Smith',
+        address1,
+        city: 'Anytown',
+        postalCode: '12345',
+        country: 'United States',
+        state: 'California',
+      })
+      await page.getByRole('button', { name: /^save$/i }).click()
+      await expect(page.getByText(address1)).toBeVisible({ timeout: 15_000 })
+    }
+
+    const row = (address1: string) => page.getByRole('row').filter({ hasText: address1 })
+    const setDefault = async (address1: string, kind: 'billing' | 'shipping') => {
+      await row(address1)
+        .getByRole('button', { name: /actions/i })
+        .click()
+      await page.getByRole('menuitem', { name: `Set as default ${kind}` }).click()
+    }
+
+    // The first address holds both; move billing to the second, then shipping.
+    await setDefault('2 Oak Ave', 'billing')
+    await expect(row('2 Oak Ave').getByText('Default billing', { exact: true })).toBeVisible()
+    await setDefault('2 Oak Ave', 'shipping')
+    await expect(row('2 Oak Ave').getByText('Default shipping', { exact: true })).toBeVisible()
+
+    await page.reload()
+    await expect(row('2 Oak Ave').getByText('Default billing', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(row('2 Oak Ave').getByText('Default shipping', { exact: true })).toBeVisible()
+    await expect(row('1 Main St').getByText(/^Default (billing|shipping)$/)).toHaveCount(0)
+  })
+
   test('marks the optional address fields and follows the country on postal code', async ({
     page,
   }) => {

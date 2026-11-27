@@ -4,6 +4,8 @@ module Spree
       module Admin
         module Customers
           class AddressesController < BaseController
+            include Spree::Api::V3::AddressDefaultFlags
+
             request_params :customer_address do |body|
               body.include_attributes Spree::Api::V3::Admin::AddressRequestSchema
               body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
@@ -80,11 +82,11 @@ module Spree
             end
 
             def default_billing_flag
-              params[:is_default_billing].to_b
+              flag_param(:is_default_billing)
             end
 
             def default_shipping_flag
-              params[:is_default_shipping].to_b
+              flag_param(:is_default_shipping)
             end
           end
         end

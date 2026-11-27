@@ -62,10 +62,17 @@ module Spree
 
           if new_address.owner.present?
             # A replacement inherits whatever the row it replaces was default
-            # for, so the owner keeps prefilling with the same site.
-            default_billing = address.is_default_billing? || default_billing
-            default_shipping = address.is_default_shipping? || default_shipping
+            # for, so the owner keeps prefilling with the same site — unless
+            # the request gives that slot up, which the old row still holds.
+            default_billing = true if default_billing.nil? && address.is_default_billing?
+            default_shipping = true if default_shipping.nil? && address.is_default_shipping?
 
+            assign_owner_default(
+              owner: new_address.owner,
+              address_id: old_address_id,
+              default_billing: (false if default_billing == false),
+              default_shipping: (false if default_shipping == false)
+            )
             assign_owner_default(
               owner: new_address.owner,
               address_id: new_address.id,

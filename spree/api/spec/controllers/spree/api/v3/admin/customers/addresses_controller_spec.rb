@@ -107,6 +107,40 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
       expect(customer.reload.bill_address_id).to eq(target_id)
     end
 
+    it 'keeps the default billing when the address becomes the default shipping too' do
+      other = create(:address, customer: customer)
+      customer.update!(bill_address_id: address.id, ship_address_id: other.id)
+
+      patch :update, params: { customer_id: customer.prefixed_id, id: address.prefixed_id, is_default_shipping: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      customer.reload
+      expect(customer.bill_address_id).to eq(address.id)
+      expect(customer.ship_address_id).to eq(address.id)
+      expect(json_response).to include('is_default_billing' => true, 'is_default_shipping' => true)
+    end
+
+    it 'keeps the default shipping when the address becomes the default billing too' do
+      other = create(:address, customer: customer)
+      customer.update!(bill_address_id: other.id, ship_address_id: address.id)
+
+      patch :update, params: { customer_id: customer.prefixed_id, id: address.prefixed_id, is_default_billing: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      customer.reload
+      expect(customer.bill_address_id).to eq(address.id)
+      expect(customer.ship_address_id).to eq(address.id)
+    end
+
+    it 'releases the default billing when the flag is false' do
+      customer.update!(bill_address_id: address.id)
+
+      patch :update, params: { customer_id: customer.prefixed_id, id: address.prefixed_id, is_default_billing: false }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(customer.reload.bill_address_id).to be_nil
+    end
+
     context 'when the address is referenced by a completed order' do
       let!(:order) { create(:completed_order_with_totals, customer: customer, ship_address: address) }
 
