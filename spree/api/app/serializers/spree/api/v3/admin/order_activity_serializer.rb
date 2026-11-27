@@ -11,7 +11,19 @@ module Spree
                    actor_id: [:string, nullable: true],
                    actor_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind']
 
-          attributes :kind, :category, :body, :details, created_at: :iso8601
+          # What identifies a payment or a refund, as opposed to its amount,
+          # which the order shows anyone who can read it.
+          PAYMENT_DETAILS = %w[payment_id payment_method brand last4 transaction_id].freeze
+          REFUND_DETAILS = %w[refund_id reason transaction_id].freeze
+
+          attributes :kind, :category, :body, created_at: :iso8601
+
+          attribute :details do |activity|
+            hidden = []
+            hidden += PAYMENT_DETAILS unless params[:payment_records]
+            hidden += REFUND_DETAILS unless params[:refund_records]
+            activity.details&.except(*hidden)
+          end
 
           attribute :order_change_id do |activity|
             Spree::OrderChange.prefixed_id_for(activity.order_change_id)

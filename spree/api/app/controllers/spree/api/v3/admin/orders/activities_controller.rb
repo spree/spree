@@ -54,6 +54,13 @@ module Spree
               includes
             end
 
+            # Entries copy payment and refund references, which only callers
+            # who may read those records see.
+            def serializer_params
+              super.merge(payment_records: holds_permission?('read_payments'),
+                          refund_records: holds_permission?('read_refunds'))
+            end
+
             # Newest first unless the caller sorts.
             def apply_collection_sort(collection)
               sort_param.present? ? collection : collection.order(created_at: :desc, id: :desc)

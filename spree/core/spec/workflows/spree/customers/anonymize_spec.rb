@@ -140,6 +140,16 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(order.activities.reload).to eq([placed])
     end
 
+    it 'deletes the comments on a guest order found by the email it rewrites' do
+      guest_order = create(:completed_order_with_totals, store: store).
+                    tap { |guest| guest.update_columns(customer_id: nil, email: 'buyer@example.com') }
+      create(:order_activity, order: guest_order, body: 'John called from 555-0100')
+
+      result
+
+      expect(guest_order.activities.reload).to be_empty
+    end
+
     it 'scrubs the personal data attached to it' do
       result
       order.reload

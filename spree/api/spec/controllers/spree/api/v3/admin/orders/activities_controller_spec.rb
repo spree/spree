@@ -28,6 +28,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ActivitiesController, type: :contr
       expect(json_response['data'].pluck('kind')).to eq(%w[order.placed comment])
     end
 
+    context 'with a key that may read orders but not payments or refunds' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_orders]) }
+      let(:headers) { api_key_headers }
+
+      it 'shows the amount but not what identifies the payment' do
+        create(:order_activity, order: order, kind: 'payment.completed', category: 'payments', body: nil,
+                                details: { 'amount' => '10.00', 'brand' => 'visa', 'last4' => '4242', 'transaction_id' => 'ch_1' })
+
+        get :index, params: { order_id: order.prefixed_id, q: { category_eq: 'payments' } }, as: :json
+
+        expect(json_response['data'].sole['details']).to eq('amount' => '10.00')
+      end
+    end
+
     it 'filters by category' do
       get :index, params: { order_id: order.prefixed_id, q: { category_eq: 'comments' } }, as: :json
 
