@@ -3293,7 +3293,6 @@
           "total_moved": "总计 {{previous}} → {{next}}",
           "transaction": "交易 {{id}}",
           "change_requested": "有一项更改等待应用",
-          "change_requested_by": "{{actor}} 请求了一项更改",
           "apply_change": "应用更改",
           "discard_change": "放弃",
           "kinds": {
@@ -3304,7 +3303,8 @@
             "payment_capture_failed": "收取 {{amount}} 失败",
             "payment_voided": "已作废 {{amount}} 的付款",
             "payment_void_failed": "作废 {{amount}} 失败",
-            "refund_created": "已退款 {{amount}}",
+            "payment_refunded": "已退款 {{amount}}",
+            "refund_requested": "已申请退款 {{amount}}",
             "refund_failed": "退款 {{amount}} 失败",
             "fulfillment_fulfilled": "发货单 {{number}} 已发货",
             "fulfillment_delivered": "发货单 {{number}} 已送达",

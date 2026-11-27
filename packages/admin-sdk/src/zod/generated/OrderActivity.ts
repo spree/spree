@@ -13,7 +13,7 @@ export const OrderActivitySchema = z.object({
   order_change_id: z.string().nullable(),
   actor_id: z.string().nullable(),
   actor_type: z.string().nullable(),
-  actor: ActorSchema.optional(),
+  actor: ActorSchema.nullable().optional(),
   order_change: OrderChangeSchema.optional(),
 });
 

@@ -3014,7 +3014,6 @@
           "total_moved": "Total {{previous}} → {{next}}",
           "transaction": "Transacción {{id}}",
           "change_requested": "Hay un cambio pendiente de aplicar",
-          "change_requested_by": "{{actor}} solicitó un cambio",
           "apply_change": "Aplicar cambio",
           "discard_change": "Descartar",
           "kinds": {
@@ -3025,7 +3024,8 @@
             "payment_capture_failed": "Falló la captura de {{amount}}",
             "payment_voided": "Pago de {{amount}} anulado",
             "payment_void_failed": "Falló la anulación de {{amount}}",
-            "refund_created": "Reembolsado {{amount}}",
+            "payment_refunded": "Reembolsado {{amount}}",
+            "refund_requested": "Reembolso de {{amount}} solicitado",
             "refund_failed": "Falló el reembolso de {{amount}}",
             "fulfillment_fulfilled": "Envío {{number}} despachado",
             "fulfillment_delivered": "Envío {{number}} entregado",

@@ -16,22 +16,34 @@ module Spree
       kind = Spree.order_activity_kinds[event.name]
       return unless kind
 
-      attributes = kind.builder.call(event)
-      return if attributes.nil? || attributes[:order].nil?
-
+      # The builder reads the database too, so it runs inside the savepoint:
+      # a failed query must not abort the step's own transaction.
       ApplicationRecord.transaction(requires_new: true) do
+        attributes = kind.builder.call(event)
+        next if attributes.nil? || attributes[:order].nil?
+
         Spree::OrderActivity.create!(
           order: attributes[:order],
           order_change: attributes[:order_change],
           details: attributes[:details].presence,
           kind: event.name,
           category: kind.category,
-          actor: event.actor,
+          actor: actor_for(event),
           created_at: event.created_at
         )
       end
     rescue StandardError => e
       Rails.error.report(e, source: 'spree.order_activities', context: { event: event.name })
+    end
+
+    private
+
+    # Published in this request, the actor is already loaded.
+    def actor_for(event)
+      current = Spree::Current.actor
+      return current if current.respond_to?(:prefixed_id) && current.prefixed_id == event.metadata['actor_id']
+
+      event.actor
     end
   end
 end

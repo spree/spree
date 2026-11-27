@@ -11,7 +11,7 @@ export const EmailTemplateDraftSchema = z.object({
   updated_at: z.string(),
   updated_by_id: z.string().nullable(),
   updated_by_type: z.string().nullable(),
-  updated_by: ActorSchema.optional(),
+  updated_by: ActorSchema.nullable().optional(),
 });
 
 export type EmailTemplateDraft = z.infer<typeof EmailTemplateDraftSchema>;

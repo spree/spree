@@ -20,7 +20,7 @@ export const RefundSchema = z.object({
   tax_amount: z.string(),
   refunder_id: z.string().nullable(),
   refunder_type: z.string().nullable(),
-  refunder: ActorSchema.optional(),
+  refunder: ActorSchema.nullable().optional(),
   get payment() { return PaymentSchema.optional(); },
 }) as unknown as z.ZodObject<{
   id: z.ZodType<Refund['id']>;

@@ -18,7 +18,7 @@ export const StockReceiptSchema = z.object({
   receivable_id: z.string(),
   received_by_id: z.string().nullable(),
   received_by_type: z.string().nullable(),
-  received_by: ActorSchema.optional(),
+  received_by: ActorSchema.nullable().optional(),
   items_count: z.number(),
   items: z.array(StockReceiptItemSchema).optional(),
 });

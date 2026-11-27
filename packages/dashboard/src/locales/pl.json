@@ -3332,7 +3332,6 @@
           "total_moved": "Suma {{previous}} → {{next}}",
           "transaction": "Transakcja {{id}}",
           "change_requested": "Zmiana czeka na zastosowanie",
-          "change_requested_by": "{{actor}} poprosił(a) o zmianę",
           "apply_change": "Zastosuj zmianę",
           "discard_change": "Odrzuć",
           "kinds": {
@@ -3343,7 +3342,8 @@
             "payment_capture_failed": "Nie udało się pobrać {{amount}}",
             "payment_voided": "Anulowano płatność {{amount}}",
             "payment_void_failed": "Nie udało się anulować {{amount}}",
-            "refund_created": "Zwrócono {{amount}}",
+            "payment_refunded": "Zwrócono {{amount}}",
+            "refund_requested": "Zlecono zwrot {{amount}}",
             "refund_failed": "Nie udało się zwrócić {{amount}}",
             "fulfillment_fulfilled": "Wysłano przesyłkę {{number}}",
             "fulfillment_delivered": "Doręczono przesyłkę {{number}}",

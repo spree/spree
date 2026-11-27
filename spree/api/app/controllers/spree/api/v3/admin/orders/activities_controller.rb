@@ -54,8 +54,9 @@ module Spree
               includes
             end
 
+            # Newest first unless the caller sorts.
             def apply_collection_sort(collection)
-              collection.order(created_at: :desc, id: :desc)
+              sort_param.present? ? collection : collection.order(created_at: :desc, id: :desc)
             end
           end
         end

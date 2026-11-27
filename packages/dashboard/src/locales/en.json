@@ -3302,7 +3302,6 @@
           "total_moved": "Total {{previous}} → {{next}}",
           "transaction": "Transaction {{id}}",
           "change_requested": "A change is waiting to be applied",
-          "change_requested_by": "{{actor}} requested a change",
           "apply_change": "Apply change",
           "discard_change": "Discard",
           "kinds": {
@@ -3313,7 +3312,8 @@
             "payment_capture_failed": "Capture of {{amount}} failed",
             "payment_voided": "Payment of {{amount}} voided",
             "payment_void_failed": "Void of {{amount}} failed",
-            "refund_created": "Refunded {{amount}}",
+            "payment_refunded": "Refunded {{amount}}",
+            "refund_requested": "Refund of {{amount}} requested",
             "refund_failed": "Refund of {{amount}} failed",
             "fulfillment_fulfilled": "Fulfillment {{number}} shipped",
             "fulfillment_delivered": "Fulfillment {{number}} delivered",

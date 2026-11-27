@@ -137,7 +137,7 @@ const kinds: ActivityKind[] = [
   ...['payment.completed', 'payment.capture_failed', 'payment.voided', 'payment.void_failed'].map(
     (kind) => ({ kind, icon: CreditCardIcon, Summary: KindSummary, Details: PaymentDetails }),
   ),
-  ...['refund.created', 'refund.failed'].map((kind) => ({
+  ...['payment.refunded', 'refund.requested', 'refund.failed'].map((kind) => ({
     kind,
     icon: RotateCcwIcon,
     Summary: KindSummary,

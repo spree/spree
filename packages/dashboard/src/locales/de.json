@@ -3302,7 +3302,6 @@
           "total_moved": "Summe {{previous}} → {{next}}",
           "transaction": "Transaktion {{id}}",
           "change_requested": "Eine Änderung wartet auf die Übernahme",
-          "change_requested_by": "{{actor}} hat eine Änderung angefordert",
           "apply_change": "Änderung übernehmen",
           "discard_change": "Verwerfen",
           "kinds": {
@@ -3313,7 +3312,8 @@
             "payment_capture_failed": "Einzug von {{amount}} fehlgeschlagen",
             "payment_voided": "Zahlung über {{amount}} storniert",
             "payment_void_failed": "Stornierung von {{amount}} fehlgeschlagen",
-            "refund_created": "{{amount}} erstattet",
+            "payment_refunded": "{{amount}} erstattet",
+            "refund_requested": "Erstattung von {{amount}} angefordert",
             "refund_failed": "Erstattung von {{amount}} fehlgeschlagen",
             "fulfillment_fulfilled": "Lieferung {{number}} versandt",
             "fulfillment_delivered": "Lieferung {{number}} zugestellt",

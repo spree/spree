@@ -21,13 +21,13 @@ export const OrderChangeSchema = z.object({
   metadata: z.record(z.string(), z.unknown()),
   requested_by_id: z.string().nullable(),
   requested_by_type: z.string().nullable(),
-  requested_by: ActorSchema.optional(),
+  requested_by: ActorSchema.nullable().optional(),
   confirmed_by_id: z.string().nullable(),
   confirmed_by_type: z.string().nullable(),
-  confirmed_by: ActorSchema.optional(),
+  confirmed_by: ActorSchema.nullable().optional(),
   canceled_by_id: z.string().nullable(),
   canceled_by_type: z.string().nullable(),
-  canceled_by: ActorSchema.optional(),
+  canceled_by: ActorSchema.nullable().optional(),
   actions: z.array(OrderChangeActionSchema),
 });
 

@@ -16,6 +16,9 @@ module Spree
           include Spree::Api::V3::SellerAuthentication
 
           before_action :authenticate_seller!
+          # Every event this request publishes names who acted
+          # (docs/plans/6.1-order-timeline.md).
+          before_action { Spree::Current.actor = current_actor }
 
           include Spree::Api::V3::ScopedAuthorization
           include Spree::Api::V3::StrictMoneyParams

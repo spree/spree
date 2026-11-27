@@ -65655,7 +65655,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         order:
           "$ref": "#/components/schemas/Order"
         refunds:
@@ -68678,7 +68683,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         updated_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - subject
@@ -68739,7 +68749,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         published_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
       required:
       - id
       - subject
@@ -68961,7 +68976,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         order:
           "$ref": "#/components/schemas/Order"
         stock_location:
@@ -72193,7 +72213,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         actor:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         order_change:
           "$ref": "#/components/schemas/OrderChange"
       required:
@@ -72618,7 +72643,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         requested_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         confirmed_by_id:
           type: string
           nullable: true
@@ -72633,7 +72663,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         confirmed_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         canceled_by_id:
           type: string
           nullable: true
@@ -72648,7 +72683,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         canceled_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         actions:
           type: array
           items:
@@ -73683,7 +73723,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         approver:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         canceler_id:
           type: string
           nullable: true
@@ -73698,7 +73743,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         canceler:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         created_by_id:
           type: string
           nullable: true
@@ -73713,7 +73763,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         cancel_reason_id:
           type: string
           nullable: true
@@ -76364,7 +76419,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         refunder:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         payment:
           "$ref": "#/components/schemas/Payment"
       required:
@@ -76715,7 +76775,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         refunded_total:
           type: string
         refundable_total:
@@ -79276,7 +79341,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         received_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         items_count:
           type: number
         items:
@@ -79761,7 +79831,12 @@ components:
           description: The values listed are the built-in ones; extensions may add
             more.
         created_by:
-          "$ref": "#/components/schemas/Actor"
+          anyOf:
+          - "$ref": "#/components/schemas/Actor"
+          - type: object
+            nullable: true
+            enum:
+            -
         originator_type:
           type: string
           nullable: true

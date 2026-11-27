@@ -3301,7 +3301,6 @@
           "total_moved": "Tổng {{previous}} → {{next}}",
           "transaction": "Giao dịch {{id}}",
           "change_requested": "Có một thay đổi đang chờ áp dụng",
-          "change_requested_by": "{{actor}} đã yêu cầu thay đổi",
           "apply_change": "Áp dụng thay đổi",
           "discard_change": "Hủy bỏ",
           "kinds": {
@@ -3312,7 +3311,8 @@
             "payment_capture_failed": "Thu {{amount}} thất bại",
             "payment_voided": "Đã hủy khoản thanh toán {{amount}}",
             "payment_void_failed": "Hủy {{amount}} thất bại",
-            "refund_created": "Đã hoàn {{amount}}",
+            "payment_refunded": "Đã hoàn {{amount}}",
+            "refund_requested": "Đã yêu cầu hoàn {{amount}}",
             "refund_failed": "Hoàn {{amount}} thất bại",
             "fulfillment_fulfilled": "Đã gửi lô hàng {{number}}",
             "fulfillment_delivered": "Đã giao lô hàng {{number}}",

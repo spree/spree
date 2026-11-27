@@ -195,10 +195,11 @@ module Spree
               Spree::Base.polymorphic_api_type(object.acted_by_type(name))
             end
 
-            # Left out rather than null when no one acted, as the type says.
+            # Expanded, it is null when no one acted.
+            typelize name => ['Actor', optional: true, nullable: true]
             one name,
                 resource: proc { Spree.api.admin_actor_serializer },
-                if: proc { |object| expand?(name.to_s) && object.public_send(name) }
+                if: proc { expand?(name.to_s) }
           end
         end
 

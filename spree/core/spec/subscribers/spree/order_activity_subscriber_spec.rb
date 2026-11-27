@@ -40,6 +40,38 @@ RSpec.describe Spree::OrderActivitySubscriber, events: true do
                                                      'amount' => Spree::Money::Rounding.format(payment.amount, order.currency))
   end
 
+  it 'records a refund once the money went back, with the refund’s own reference' do
+    payment = create(:payment, order: order, cart: nil, amount: order.total, status: 'completed', response_code: 'ch_3Pq')
+    refund = create(:refund, payment: payment, amount: 5, transaction_id: 're_9Xy')
+    publish(refund, 'refund.created')
+    payment.publish_event('payment.refunded', nil, refund_id: refund.prefixed_id)
+
+    expect(order.activities.reload.map(&:kind)).to eq(['payment.refunded'])
+    expect(order.activities.sole.details).to include('refund_id' => refund.prefixed_id, 'transaction_id' => 're_9Xy',
+                                                     'amount' => Spree::Money::Rounding.format(5, order.currency))
+  end
+
+  it 'records nothing for a change discarded before it was submitted' do
+    change = Spree::OrderChanges::Begin.call(order: order).value
+    Spree::OrderChanges::Cancel.call(order_change: change)
+
+    expect(order.activities.reload).to be_empty
+  end
+
+  it 'keeps the step’s transaction usable when a builder’s query fails' do
+    Spree.order_activity_kinds.register('order.approved', category: 'order') do
+      ActiveRecord::Base.connection.execute('SELECT * FROM no_such_table')
+    end
+    allow(Rails.error).to receive(:report)
+
+    ApplicationRecord.transaction do
+      publish(order, 'order.approved')
+      expect { order.reload }.not_to raise_error
+    end
+  ensure
+    Spree.instance_variable_set(:@order_activity_kinds, nil)
+  end
+
   it 'records a change applied in one call once, as confirmed' do
     Spree::Current.actor = admin
     change = Spree::OrderChanges::Apply.call(order: order, requested_by: admin,

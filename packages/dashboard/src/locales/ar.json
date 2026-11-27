@@ -3326,7 +3326,6 @@
           "total_moved": "الإجمالي {{previous}} ← {{next}}",
           "transaction": "المعاملة {{id}}",
           "change_requested": "يوجد تغيير بانتظار التطبيق",
-          "change_requested_by": "طلب {{actor}} تغييرًا",
           "apply_change": "تطبيق التغيير",
           "discard_change": "تجاهل",
           "kinds": {
@@ -3337,7 +3336,8 @@
             "payment_capture_failed": "فشل تحصيل {{amount}}",
             "payment_voided": "تم إبطال دفعة بقيمة {{amount}}",
             "payment_void_failed": "فشل إبطال {{amount}}",
-            "refund_created": "تم استرداد {{amount}}",
+            "payment_refunded": "تم استرداد {{amount}}",
+            "refund_requested": "تم طلب استرداد {{amount}}",
             "refund_failed": "فشل استرداد {{amount}}",
             "fulfillment_fulfilled": "تم شحن الشحنة {{number}}",
             "fulfillment_delivered": "تم تسليم الشحنة {{number}}",

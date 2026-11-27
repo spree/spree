@@ -3303,7 +3303,6 @@
           "total_moved": "Total {{previous}} → {{next}}",
           "transaction": "Transaction {{id}}",
           "change_requested": "Une modification attend d’être appliquée",
-          "change_requested_by": "{{actor}} a demandé une modification",
           "apply_change": "Appliquer la modification",
           "discard_change": "Ignorer",
           "kinds": {
@@ -3314,7 +3313,8 @@
             "payment_capture_failed": "Échec de l’encaissement de {{amount}}",
             "payment_voided": "Paiement de {{amount}} annulé",
             "payment_void_failed": "Échec de l’annulation de {{amount}}",
-            "refund_created": "{{amount}} remboursé",
+            "payment_refunded": "{{amount}} remboursé",
+            "refund_requested": "Remboursement de {{amount}} demandé",
             "refund_failed": "Échec du remboursement de {{amount}}",
             "fulfillment_fulfilled": "Expédition {{number}} envoyée",
             "fulfillment_delivered": "Expédition {{number}} livrée",

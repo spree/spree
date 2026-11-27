@@ -21,7 +21,7 @@ export const StoreCreditSchema = z.object({
   customer_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
-  created_by: ActorSchema.optional(),
+  created_by: ActorSchema.nullable().optional(),
   originator_type: z.string().nullable(),
   originator_id: z.string().nullable(),
   get customer() { return CustomerSchema.optional(); },

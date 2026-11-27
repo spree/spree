@@ -3301,7 +3301,6 @@
           "total_moved": "合計 {{previous}} → {{next}}",
           "transaction": "取引 {{id}}",
           "change_requested": "適用待ちの変更があります",
-          "change_requested_by": "{{actor}} が変更をリクエストしました",
           "apply_change": "変更を適用",
           "discard_change": "破棄",
           "kinds": {
@@ -3312,7 +3311,8 @@
             "payment_capture_failed": "{{amount}} の売上確定に失敗",
             "payment_voided": "{{amount}} の支払いを取消",
             "payment_void_failed": "{{amount}} の取消に失敗",
-            "refund_created": "{{amount}} を返金",
+            "payment_refunded": "{{amount}} を返金",
+            "refund_requested": "{{amount}} の返金をリクエスト",
             "refund_failed": "{{amount}} の返金に失敗",
             "fulfillment_fulfilled": "配送 {{number}} を発送",
             "fulfillment_delivered": "配送 {{number}} が配達完了",

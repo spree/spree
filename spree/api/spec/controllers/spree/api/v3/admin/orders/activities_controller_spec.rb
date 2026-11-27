@@ -22,6 +22,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ActivitiesController, type: :contr
       expect(json_response['data'].pluck('kind')).to eq(%w[comment order.placed])
     end
 
+    it 'sorts as the caller asks' do
+      get :index, params: { order_id: order.prefixed_id, sort: 'created_at' }, as: :json
+
+      expect(json_response['data'].pluck('kind')).to eq(%w[order.placed comment])
+    end
+
     it 'filters by category' do
       get :index, params: { order_id: order.prefixed_id, q: { category_eq: 'comments' } }, as: :json
 

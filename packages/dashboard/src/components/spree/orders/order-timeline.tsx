@@ -1,5 +1,13 @@
 import type { Order, OrderActivity } from '@spree/admin-sdk'
-import { type ActivityKind, useActivityKinds, useAuth, useMoneyLocale } from '@spree/dashboard-core'
+import {
+  type ActivityKind,
+  Can,
+  Subject,
+  useActivityKinds,
+  useAuth,
+  useMoneyLocale,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -50,8 +58,11 @@ export function OrderTimeline({ order }: { order: Order }) {
       </SectionHeader>
       <Card>
         <CardContent className="flex flex-col gap-4 p-3">
-          <RequestedChange order={order} />
-          <CommentForm orderId={order.id} />
+          {/* Applying a change and commenting both write to the order. */}
+          <Can I="update" a={Subject.Order}>
+            <RequestedChange order={order} />
+            <CommentForm orderId={order.id} />
+          </Can>
           {isLoading ? (
             <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
           ) : (
@@ -102,7 +113,12 @@ function TimelineEntry({ activity, order }: { activity: OrderActivity; order: Or
   const deleteComment = useDeleteOrderComment(order.id)
   const kind = useActivityKinds().get(activity.kind) ?? FALLBACK_KIND
   const Icon = kind.icon ?? CircleIcon
-  const ownComment = activity.kind === 'comment' && !!user && activity.actor_id === user.id
+  const { permissions } = usePermissions()
+  const ownComment =
+    activity.kind === 'comment' &&
+    !!user &&
+    activity.actor_id === user.id &&
+    permissions.can('update', Subject.Order)
 
   async function handleDelete() {
     const confirmed = await confirm({
@@ -193,13 +209,14 @@ function RequestedChange({ order }: { order: Order }) {
       className="flex flex-col gap-2 rounded-md border border-dashed p-3 text-base"
       data-testid="requested-order-change"
     >
-      <p className="font-medium">
-        {change.requested_by
-          ? t('admin.orders.detail.timeline.change_requested_by', {
-              actor: change.requested_by.label ?? t('admin.actors.unnamed'),
-            })
-          : t('admin.orders.detail.timeline.change_requested')}
-      </p>
+      <div>
+        <p className="font-medium">{t('admin.orders.detail.timeline.change_requested')}</p>
+        {change.requested_by && (
+          <p className="text-muted-foreground text-sm">
+            <ActorLabel actor={change.requested_by} />
+          </p>
+        )}
+      </div>
       <ul className="flex flex-col gap-0.5 text-muted-foreground">
         {change.actions.map((action) => (
           <li key={action.id}>{describeAction(action, order.currency, moneyLocale, t)}</li>

@@ -86,9 +86,14 @@ module Spree
         end
       end
 
-      # payment.refunded describes the same refund, so only the refund's own
-      # events are recorded.
-      %w[refund.created refund.failed].each do |name|
+      # A refund is recorded once the gateway answers: payment.refunded when
+      # the money went back (it names the refund in its metadata),
+      # refund.requested while the gateway confirms later, refund.failed when
+      # it was declined. refund.created fires before the gateway is asked.
+      register('payment.refunded', category: 'payments') do |event|
+        refund_entry(Spree::Refund.find_by_prefix_id(event.metadata['refund_id']))
+      end
+      %w[refund.requested refund.failed].each do |name|
         register(name, category: 'payments') { |event| refund_entry(Spree::Refund.find_by_prefix_id(event.payload['id'])) }
       end
     end
@@ -115,6 +120,8 @@ module Spree
           change = Spree::OrderChange.find_by_prefix_id(event.payload['id'])
           next if change.nil? || change.post_sale_record
           next if name == 'order_change.requested' && !change.requested?
+          # A set discarded before it was submitted was never a request.
+          next if name == 'order_change.canceled' && change.requested_at.nil?
 
           { order: change.order, order_change: change }
         end
@@ -139,8 +146,9 @@ module Spree
       order = refund&.order || refund&.payment&.order
       return unless order
 
+      # The refund's own reference, never the charge it returns money from.
       details = payment_details(refund.payment).merge(refund_id: refund.prefixed_id, amount: money(refund.amount, order.currency),
-                                                      reason: refund.reason&.name)
+                                                      reason: refund.reason&.name, transaction_id: refund.transaction_id.presence)
       { order: order, details: details.compact }
     end
 
