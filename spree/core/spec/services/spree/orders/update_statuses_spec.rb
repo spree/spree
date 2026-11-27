@@ -32,6 +32,49 @@ RSpec.describe Spree::Orders::UpdateStatuses do
 
       expect(order.reload.payment_status).to eq('partially_refunded')
     end
+
+    it 'reads a voided payment on a placed order as none' do
+      create(:payment, order: order, amount: order.total, status: 'void')
+
+      described_class.call(order: order)
+
+      expect(order.reload.payment_status).to eq('none')
+    end
+
+    context 'when the order is canceled' do
+      before { order.update_columns(status: 'canceled', canceled_at: Time.current) }
+
+      it 'reads captured money given back in full as refunded' do
+        payment = create(:payment, order: order, amount: order.total, status: 'completed')
+        create(:refund, payment: payment, amount: order.total)
+
+        described_class.call(order: order)
+
+        expect(order.reload.payment_status).to eq('refunded')
+      end
+
+      it 'reads captured money that was kept as paid' do
+        create(:payment, order: order, amount: order.total, status: 'completed')
+
+        described_class.call(order: order)
+
+        expect(order.reload.payment_status).to eq('paid')
+      end
+
+      it 'reads a voided payment as voided' do
+        create(:payment, order: order, amount: order.total, status: 'void')
+
+        described_class.call(order: order)
+
+        expect(order.reload.payment_status).to eq('voided')
+      end
+
+      it 'reads an order that never held a payment as none' do
+        described_class.call(order: order)
+
+        expect(order.reload.payment_status).to eq('none')
+      end
+    end
   end
 
   describe 'fulfillment status' do
@@ -65,6 +108,26 @@ RSpec.describe Spree::Orders::UpdateStatuses do
       described_class.call(order: child)
 
       expect(child.reload.payment_status).to eq('authorized')
+    end
+
+    it 'counts nothing authorized on a share whose payment was since voided' do
+      payment.update_columns(status: 'void')
+      create(:payment_split, payment: payment, order: child, authorized_amount: 40)
+
+      described_class.call(order: child)
+
+      expect(child.reload.payment_status).to eq('none')
+    end
+
+    # Canceling writes the share down rather than voiding the shared payment,
+    # and a zero share looks the same as one that never held anything.
+    it 'reads a canceled child whose share was written down before capture as none' do
+      create(:payment_split, payment: payment, order: child, authorized_amount: 0)
+      child.update_columns(status: 'canceled', canceled_at: Time.current)
+
+      described_class.call(order: child)
+
+      expect(child.reload.payment_status).to eq('none')
     end
   end
 end

@@ -34,14 +34,12 @@ module Spree
         target = quantize(order.total, precision) - refunded
         net_captured = captured - refunded
 
-        if order.canceled? && net_captured <= 0 && captured.positive?
-          'voided'
-        elsif refunded.positive? && net_captured <= 0
+        if refunded.positive? && net_captured <= 0
           'refunded'
         elsif refunded.positive?
           'partially_refunded'
         elsif captured.zero? && authorized.zero?
-          'none'
+          order.canceled? && order.payments.with_status(:void).exists? ? 'voided' : 'none'
         elsif captured.zero?
           'authorized'
         elsif net_captured > target
@@ -81,12 +79,15 @@ module Spree
           ]
         end
 
-        splits = order.payment_splits.to_a
+        splits = order.payment_splits.includes(:payment).to_a
         captured = splits.sum(&:captured_amount)
+        # A share on a payment since voided, failed or invalidated holds nothing.
+        holding = splits.reject { |split| split.payment.status.in?(Spree::Payment::INVALID_STATUSES) }
 
         # Authorized means still to draw: what the shares allow, less what has
         # already been taken against them.
-        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount) + credited]
+        authorized = holding.sum(&:authorized_amount) - holding.sum(&:captured_amount)
+        [captured, authorized, splits.sum(&:refunded_amount) + credited]
       end
 
       # Rolls the fulfillments up into one word for filtering and display.

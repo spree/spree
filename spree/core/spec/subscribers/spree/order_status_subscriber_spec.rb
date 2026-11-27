@@ -97,6 +97,19 @@ RSpec.describe Spree::OrderStatusSubscriber do
     expect(order.reload.payment_status).to be_present
   end
 
+  it "recomputes a split checkout's children when their shared payment is voided" do
+    group = create(:order_group, store: @default_store)
+    child = create(:order, store: @default_store, order_group: group, total: 40)
+    payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 40, status: 'pending')
+    create(:payment_split, payment: payment, order: child, authorized_amount: 40)
+    Spree::Orders::UpdateStatuses.call(order: child)
+    payment.update_columns(status: 'void')
+
+    event = Spree::Event.new(name: 'payment.voided', payload: { 'id' => payment.prefixed_id }, store_id: group.store_id)
+
+    expect { described_class.new.handle(event) }.to change { child.reload.payment_status }.from('authorized').to('none')
+  end
+
   it 'skips cart-owned records' do
     cart = create(:cart_with_line_items, store: @default_store)
     payment = create(:payment, order: nil, cart: cart, amount: 10)
