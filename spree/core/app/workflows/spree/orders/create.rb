@@ -45,7 +45,11 @@ module Spree
 
           add_items(order) if @params[:items].present?
           build_fulfillments(order)
+          # Promotion rules and calculators read the totals, which adding items leaves stale.
+          order.recalculate_totals!
           apply_coupon(order) if @params[:coupon_code].present?
+          # Automatic promotions the order qualifies for, as a cart gets them.
+          Spree::PromotionHandler::Cart.new(order).activate if order.line_items.any?
           order.recalculate_totals!
         end
 

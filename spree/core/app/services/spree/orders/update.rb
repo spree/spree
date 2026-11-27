@@ -36,6 +36,9 @@ module Spree
           process_items(items_param) if items_param
 
           build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
+          # Every edit, not a list of the attributes today's rules read: a rule
+          # added later (a company rule, a custom one) can read any of them.
+          activate_promotions
 
           @order.recalculate_totals!
           @order.update_statuses!
@@ -126,6 +129,14 @@ module Spree
       def build_fulfillments(keep_selection:)
         result = Spree::Orders::BuildFulfillments.call(order: @order, keep_selection: keep_selection)
         propagate_step_failure!(result, fallback: 'Failed to build shipments') if result.failure?
+      end
+
+      # Automatic promotions the order qualifies for, as a cart gets them, and
+      # those it no longer does dropped. Totals come first: rules and
+      # calculators read the item total.
+      def activate_promotions
+        @order.recalculate_totals!
+        Spree::PromotionHandler::Cart.new(@order).activate
       end
 
       # Surface why the step failed on the order, the way Orders::Create does.
