@@ -9,6 +9,12 @@ module Spree
     # Associations
     #
     has_many :custom_fields, class_name: 'Spree::CustomField', dependent: :destroy
+    has_many :product_type_custom_field_definitions, class_name: 'Spree::ProductTypeCustomFieldDefinition',
+             dependent: :destroy, inverse_of: :custom_field_definition
+    # Seller requirements that ask for this field. Without this a deleted
+    # definition left the row behind, still listed as a field sellers may fill in.
+    has_many :seller_requirement_custom_fields, class_name: 'Spree::SellerRequirementCustomField',
+             dependent: :destroy
 
     #
     # Validations

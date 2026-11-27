@@ -270,6 +270,28 @@ the store, so they were missing from that list while tags added one at a time
 were not. This stamps the record's store on every tagging without one. Safe to
 re-run at any time.
 
+### Remove product type rows left by deleted custom field definitions
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree task upgrade:remove_orphan_product_type_custom_field_definitions
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:upgrade:remove_orphan_product_type_custom_field_definitions
+```
+
+</CodeGroup>
+
+Deleting a custom field definition left the rows attaching it to product types
+and seller requirements behind, and a product type with such a row failed to load in the Admin API and
+the dashboard. Deleting a definition now removes them; this clears the ones
+left by earlier deletions. If you already ran `spree:upgrade` for 6.0, run it
+again after updating, or run this task on its own. Any row it cannot remove is
+listed with its id and the step fails, so the upgrade stops until it is
+resolved. Safe to re-run at any time.
+
 ### Move users onto the Customer and AdminUser models
 
 ```bash

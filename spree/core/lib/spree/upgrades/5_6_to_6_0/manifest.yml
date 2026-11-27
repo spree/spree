@@ -941,3 +941,14 @@ steps:
       missing from the list. This stamps the store of the record on every
       tagging without one, for each taggable that keeps its taggings per
       store. Idempotent — taggings that already carry a store are skipped.
+
+  - id: remove_orphan_product_type_custom_field_definitions
+    name: "Remove product type custom field rows left by deleted definitions"
+    task: "spree:upgrade:remove_orphan_product_type_custom_field_definitions"
+    notes: |
+      Deleting a custom field definition left the rows that attach it to
+      product types and seller requirements behind, and a product type with such a row failed to load
+      in the API and the dashboard. Deleting a definition now removes them;
+      this step clears the ones earlier deletions left. Safe to run on an
+      install that has already upgraded: re-run `spree:upgrade` and the
+      earlier steps find nothing to do. Idempotent.
