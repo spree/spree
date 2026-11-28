@@ -6215,6 +6215,118 @@ paths:
             schema:
               "$ref": "#/components/schemas/AcceptCompanyInvitationParams"
         required: true
+  "/api/v3/store/custom_field_definitions":
+    get:
+      summary: List the custom fields shoppers fill in
+      tags:
+      - Custom Fields
+      security:
+      - api_key: []
+      description: |
+        Returns the custom fields a shopper fills in, with each field's type, label and rules, so a storefront
+        can render the form and check values before sending them. Filter by `q[resource_type_eq]=order` for
+        the fields asked at checkout (written on the cart), or `customer` for the fields asked at registration
+        and in the account. Write values by `full_key` in `custom_fields` on the cart or customer. Fields the
+        merchant keeps admin-only, or only shows on the storefront, are never listed.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          // The fields to ask for at checkout, with their type, label and rules.
+          const checkoutFields = await client.customFieldDefinitions.list({
+            resource_type_eq: 'order',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[key_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `key` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `namespace` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `resource_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `key`, `namespace`, `resource_type`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: CustomFieldDefinition
+        sortable:
+        - created_at
+        - id
+        - key
+        - namespace
+        - resource_type
+        - updated_at
+      responses:
+        '200':
+          description: custom fields listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: cfdef_UkLWZg9DAJ
+                  namespace: checkout
+                  key: delivery_date
+                  full_key: checkout.delivery_date
+                  label: Delivery date
+                  field_type: date
+                  resource_type: order
+                  validations:
+                    required: true
+                    min:
+                    max:
+                    regex:
+                    multiple: false
+                    choices: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CustomFieldDefinition"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/customers/me/addresses":
     get:
       summary: List customer addresses
@@ -13091,6 +13203,7 @@ paths:
                   field_type: number
                   key: merchandising.navigation_position
                   value: '10.0'
+                  display_value: '10'
               schema:
                 "$ref": "#/components/schemas/Seller"
         '404':
@@ -13802,6 +13915,7 @@ tags:
   description: Shopping cart management
 - name: Channel
 - name: Companies
+- name: Custom Fields
 - name: Customers
   description: Customer account, addresses, saved payment methods, and order history
 - name: Delivery
@@ -15060,6 +15174,10 @@ components:
             nullable: true
             enum:
             -
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
       required:
       - id
       - market_id
@@ -16052,6 +16170,59 @@ components:
       - symbol
       - decimal_places
       x-typelizer: true
+    CustomFieldChoice:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+      required:
+      - value
+      - label
+      x-typelizer: true
+    CustomFieldDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+        namespace:
+          type: string
+        key:
+          type: string
+        full_key:
+          type: string
+          description: The `namespace.key` a value is read and written under.
+        label:
+          type: string
+        field_type:
+          type: string
+          enum:
+          - short_text
+          - long_text
+          - rich_text
+          - number
+          - boolean
+          - json
+          - date
+          - date_time
+          - choice
+        resource_type:
+          type: string
+          description: 'Shorthand of the resource the field attaches to: order or
+            customer on the Store API.'
+        validations:
+          "$ref": "#/components/schemas/CustomFieldValidations"
+      required:
+      - id
+      - namespace
+      - key
+      - full_key
+      - label
+      - field_type
+      - resource_type
+      - validations
+      x-typelizer: true
     CustomField:
       type: object
       properties:
@@ -16074,12 +16245,60 @@ components:
         key:
           type: string
         value: {}
+        display_value:
+          type: string
+          description: 'The value as plain text to show: the chosen labels of a choice
+            field, rich text without its markup. Dates stay ISO 8601.'
       required:
       - id
       - label
       - field_type
       - key
       - value
+      - display_value
+      x-typelizer: true
+    CustomFieldValidations:
+      type: object
+      properties:
+        required:
+          type: boolean
+        min:
+          anyOf:
+          - type: number
+          - type: string
+          - type: object
+            nullable: true
+            enum:
+            -
+          description: Characters for text fields, a value for number fields, an ISO
+            8601 date or date-time for date fields.
+        max:
+          anyOf:
+          - type: number
+          - type: string
+          - type: object
+            nullable: true
+            enum:
+            -
+          description: Characters for text fields, a value for number fields, an ISO
+            8601 date or date-time for date fields.
+        regex:
+          type: string
+          nullable: true
+          description: 'For text fields: a pattern the whole value must match.'
+        multiple:
+          type: boolean
+        choices:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldChoice"
+      required:
+      - required
+      - min
+      - max
+      - regex
+      - multiple
+      - choices
       x-typelizer: true
     CustomerGroup:
       type: object
@@ -24687,6 +24906,14 @@ components:
           type: object
           additionalProperties: true
           description: Write-only key-value metadata, merged with what the cart has.
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldEntryParams"
+          description: Values for the order fields shoppers fill in, listed by `GET
+            /store/custom_field_definitions?q[resource_type_eq]=order`. Each is checked
+            against its field's rules; an unknown key is refused. Fields not named
+            keep their values. The values move to the order when checkout completes.
         items:
           type: array
           items:
@@ -24865,6 +25092,21 @@ components:
           type: boolean
       required:
       - name
+    CustomFieldEntryParams:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The field as `namespace.key`, from `GET /store/custom_field_definitions`.
+          example: checkout.delivery_date
+        value:
+          description: A string for text, date and single choice fields (date-times
+            in ISO 8601), a decimal string for number fields, true or false for boolean
+            fields, and a list of values for a choice field that allows several. Blank
+            removes the value.
+          example: '2026-10-12'
+      required:
+      - key
     LineItemInputParams:
       type: object
       properties:
@@ -24926,6 +25168,15 @@ components:
           type: object
           additionalProperties: true
           description: Write-only key-value metadata.
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldEntryParams"
+          description: Values for the customer fields shoppers fill in, listed by
+            `GET /store/custom_field_definitions?q[resource_type_eq]=customer`. Each
+            is checked against its field's rules; an unknown key is refused, and a
+            required field cannot be left out at registration or blanked later. Fields
+            not named keep their values.
         terms_of_service:
           type: boolean
           description: Whether the customer ticked the storefront's terms of service
@@ -25049,6 +25300,14 @@ components:
           type: object
           additionalProperties: true
           description: Write-only key-value metadata, merged with what the cart has.
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldEntryParams"
+          description: Values for the order fields shoppers fill in, listed by `GET
+            /store/custom_field_definitions?q[resource_type_eq]=order`. Each is checked
+            against its field's rules; an unknown key is refused. Fields not named
+            keep their values. The values move to the order when checkout completes.
         items:
           type: array
           items:
@@ -25092,6 +25351,15 @@ components:
           type: object
           additionalProperties: true
           description: Write-only key-value metadata.
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldEntryParams"
+          description: Values for the customer fields shoppers fill in, listed by
+            `GET /store/custom_field_definitions?q[resource_type_eq]=customer`. Each
+            is checked against its field's rules; an unknown key is refused, and a
+            required field cannot be left out at registration or blanked later. Fields
+            not named keep their values.
     UpdateFulfillmentParams:
       type: object
       properties:
@@ -25263,6 +25531,16 @@ components:
         id: id
         name: text
         payment_method_id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    CustomFieldDefinition:
+      attributes:
+        created_at: datetime
+        id: id
+        key: text
+        namespace: text
+        resource_type: type
         updated_at: datetime
       associations: {}
       scopes: {}

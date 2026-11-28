@@ -35,6 +35,12 @@ module Spree
       false
     end
 
+    # Whether shoppers may fill in a field of this type. JSON and rich text
+    # are structure and markup a storefront form cannot collect.
+    def self.storefront_writable?
+      false
+    end
+
     # Rules a definition of this type may set in `validations`, besides
     # `required`, which every type takes.
     #
@@ -131,6 +137,7 @@ module Spree
     #
     scope :storefront_visible, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.storefront_visible) }
     scope :admin_only, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.admin_only) }
+    scope :storefront_writable, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.storefront_writable) }
     scope :with_key, ->(namespace, key) {
       joins(:custom_field_definition).
         where(Spree::CustomFieldDefinition.table_name => { namespace: namespace, key: key })
@@ -147,6 +154,12 @@ module Spree
     end
 
     def csv_value
+      text_value
+    end
+
+    # The value as plain text to show: a choice's labels, rich text without
+    # its markup. Dates stay ISO 8601, for the reader to format in their zone.
+    def display_value
       text_value
     end
 
@@ -224,6 +237,8 @@ module Spree
 
       definition_type = custom_field_definition.resource_type
       return if resource_type == definition_type
+      # A record may hold another's fields: a cart holds its order's until checkout completes.
+      return if resource_type.safe_constantize.try(:custom_field_definition_resource_type) == definition_type
       return if definition_type.safe_constantize&.base_class&.name == resource_type
 
       errors.add(:resource_type, :custom_field_definition_mismatch,

@@ -17,6 +17,11 @@ module Spree
             schema.attribute :phone, :string, example: '+1 555 123 4567'
             schema.attribute :accepts_email_marketing, :boolean
             schema.attribute :metadata, :hash, description: 'Write-only key-value metadata.'
+            schema.attribute :custom_fields, :array, of: Spree::Api::V3::Store::CustomFieldValueRequestSchema, description: <<~TEXT.squish
+              Values for the customer fields shoppers fill in, listed by `GET /store/custom_field_definitions?q[resource_type_eq]=customer`.
+              Each is checked against its field's rules; an unknown key is refused, and a required field cannot be left out
+              at registration or blanked later. Fields not named keep their values.
+            TEXT
           end
 
           request_params 'RegisterParams', action: :create do |body|
@@ -55,7 +60,10 @@ module Spree
               # without them says only that someone ticked a box.
               ip_address: request.remote_ip,
               user_agent: request.user_agent,
-              **permitted_params.except(:current_password).to_h.symbolize_keys
+              **permitted_params.except(:current_password, :custom_fields).to_h.symbolize_keys,
+              # Always a list, so a registration that names no fields is still
+              # refused when the store requires one.
+              custom_fields: permitted_params[:custom_fields] || []
             )
 
             if result.success?
@@ -84,8 +92,9 @@ module Spree
           def update
             return render_current_password_invalid if sensitive_update? && !valid_current_password?
 
-            update_params = permitted_params.except(:current_password)
+            update_params = permitted_params.except(:current_password, :custom_fields)
             current_user.consent_source = Spree::ConsentRecord::ACCOUNT
+            current_user.storefront_custom_field_values = permitted_params[:custom_fields] if permitted_params.key?(:custom_fields)
 
             if current_user.update(update_params)
               # A password change is how a customer takes a stolen session

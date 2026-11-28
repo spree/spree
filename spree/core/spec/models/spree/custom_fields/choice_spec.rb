@@ -40,6 +40,7 @@ describe Spree::CustomFields::Choice, type: :model do
       expect(custom_field.serialize_value).to eq(%w[a c])
       expect(custom_field.text_value).to eq('a, c')
       expect(custom_field.csv_value).to eq('a, c')
+      expect(custom_field.display_value).to eq('Zone A, Zone C')
     end
 
     it 'reads a CSV cell listing several choices back as a list' do

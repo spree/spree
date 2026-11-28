@@ -259,6 +259,13 @@ module Spree
           updated_at: Time.current
         }
 
+        # Custom fields on their purchases go too: what the shopper typed at
+        # checkout is about them, and so can be what staff wrote beside it.
+        # Before the scrub, which changes the email a guest purchase is found by.
+        [Spree::Order, Spree::Cart].each do |model|
+          Spree::CustomField.where(resource_type: model.polymorphic_name, resource_id: owned_purchases(model).select(:id)).delete_all
+        end
+
         # Orders carry a staff-written note that carts have no column for, so
         # each is scrubbed to the columns it actually has.
         owned_purchases(Spree::Order).update_all(scrubbed.merge(internal_note: nil))

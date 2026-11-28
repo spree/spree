@@ -688,6 +688,51 @@ export const handlers = [
     }),
   ),
 
+  // Custom fields shoppers fill in
+  http.get(`${API_PREFIX}/custom_field_definitions`, ({ request }) => {
+    const resourceType = new URL(request.url).searchParams.get('q[resource_type_eq]')
+    const definitions = [
+      {
+        id: 'cfdef_1',
+        namespace: 'checkout',
+        key: 'delivery_date',
+        full_key: 'checkout.delivery_date',
+        label: 'Delivery date',
+        field_type: 'date',
+        resource_type: 'order',
+        validations: {
+          required: true,
+          min: null,
+          max: null,
+          regex: null,
+          multiple: false,
+          choices: [],
+        },
+      },
+      {
+        id: 'cfdef_2',
+        namespace: 'profile',
+        key: 'gender',
+        full_key: 'profile.gender',
+        label: 'Gender',
+        field_type: 'choice',
+        resource_type: 'customer',
+        validations: {
+          required: false,
+          min: null,
+          max: null,
+          regex: null,
+          multiple: false,
+          choices: [{ value: 'female', label: 'Female' }],
+        },
+      },
+    ]
+    const data = definitions.filter(
+      (definition) => !resourceType || definition.resource_type === resourceType,
+    )
+    return HttpResponse.json({ data, meta: { ...paginationMeta, count: data.length } })
+  }),
+
   // Wishlists
   http.get(`${API_PREFIX}/wishlists`, () =>
     HttpResponse.json({ data: [fixtures.wishlist], meta: paginationMeta }),

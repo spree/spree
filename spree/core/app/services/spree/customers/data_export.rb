@@ -129,7 +129,7 @@ module Spree
         exported = []
 
         owned_purchases(Spree::Order).complete.with_attached_po_document.
-          includes(:bill_address, :ship_address, line_items: { variant: :product }).find_each do |order|
+          includes(:bill_address, :ship_address, :custom_fields, line_items: { variant: :product }).find_each do |order|
           exported << {
             number: order.number,
             email: order.email,
@@ -144,6 +144,7 @@ module Spree
             po_document: order.po_document.attached? ? order.po_document.filename.to_s : nil,
             last_ip_address: order.last_ip_address,
             metadata: order.metadata.presence,
+            custom_fields: custom_field_values(order),
             internal_note: order.internal_note,
             billing_address: address_hash(order.bill_address),
             shipping_address: address_hash(order.ship_address),
@@ -203,7 +204,7 @@ module Spree
       def unplaced_purchases(relation)
         exported = []
 
-        relation.includes(:bill_address, :ship_address, line_items: { variant: :product }).
+        relation.includes(:bill_address, :ship_address, :custom_fields, line_items: { variant: :product }).
           find_each do |purchase|
           extra = block_given? ? yield(purchase) : {}
 
@@ -212,6 +213,7 @@ module Spree
             currency: purchase.currency,
             item_total: purchase.item_total&.to_s,
             customer_note: purchase.customer_note,
+            custom_fields: custom_field_values(purchase),
             last_ip_address: purchase.last_ip_address,
             metadata: purchase.metadata.presence,
             billing_address: address_hash(purchase.bill_address),
@@ -302,9 +304,13 @@ module Spree
       def custom_fields
         return [] unless customer.respond_to?(:custom_fields)
 
-        customer.custom_fields.includes(:custom_field_definition).map do |field|
-          { key: field.key, value: field.serialize_value }
-        end
+        custom_field_values(customer)
+      end
+
+      # What a shopper typed at checkout (a gift message, a recipient's name)
+      # is theirs as much as the account's own fields are.
+      def custom_field_values(record)
+        record.custom_fields.map { |field| { key: field.key, value: field.serialize_value } }
       end
 
       # A VAT or business registration on the account identifies the person

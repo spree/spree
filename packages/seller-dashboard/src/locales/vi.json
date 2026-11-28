@@ -405,6 +405,9 @@
       "shipping_title": "Chỉnh sửa địa chỉ giao hàng"
     },
     "billing_address": "Địa chỉ thanh toán",
+    "checkout_details": {
+      "title": "Thông tin khi thanh toán"
+    },
     "columns": {
       "fulfillment": "Xử lý đơn hàng",
       "number": "Đặt hàng",

@@ -1,6 +1,10 @@
 module Spree
   module CustomFields
     class Number < Spree::CustomField
+      def self.storefront_writable?
+        true
+      end
+
       validates :value, numericality: true
 
       def self.searchable?

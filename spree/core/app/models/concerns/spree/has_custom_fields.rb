@@ -2,6 +2,9 @@ module Spree
   module HasCustomFields
     extend ActiveSupport::Concern
 
+    # The most a shopper may write into one field, in characters.
+    STOREFRONT_VALUE_MAX_LENGTH = 5_000
+
     module ClassMethods
       # @param key_with_namespace [String] the dotted `"namespace.key"` form
       # @param store [Spree::Store, nil] the store the definition belongs to;
@@ -14,6 +17,13 @@ module Spree
         store.custom_field_definitions.find_or_create_by!(
           namespace: namespace, key: key, resource_type: self.name
         )
+      end
+
+      # The resource type this model's definitions are declared under.
+      #
+      # @return [String]
+      def custom_field_definition_resource_type
+        name
       end
 
       def extract_namespace_and_key(key_with_namespace)
@@ -94,6 +104,48 @@ module Spree
 
       after_save :apply_pending_custom_fields, if: -> { @pending_custom_field_attrs.present? }
 
+      # Shopper writes from the Store API, as `[{ key: 'namespace.key', value: }]`.
+      # Keys resolve only among this store's storefront-writable definitions
+      # for the resource, and are never created. A blank value removes the
+      # field; fields not named are left as they are.
+      #
+      # @param entries [Array<Hash>, nil]
+      def storefront_custom_field_values=(entries)
+        # A form-encoded list arrives keyed by position.
+        entries = entries.to_h.values if entries.respond_to?(:to_h) && !entries.is_a?(Array)
+        @storefront_custom_field_entries = Array(entries)
+      end
+
+      validate :storefront_custom_field_values_must_be_writable, unless: -> { @storefront_custom_field_entries.nil? }
+      after_save :apply_storefront_custom_field_values, unless: -> { @storefront_custom_field_entries.nil? }
+
+      # @return [ActiveRecord::Relation<Spree::CustomFieldDefinition>] the
+      #   definitions a shopper may fill in on this record
+      def storefront_writable_custom_field_definitions
+        custom_field_definition_store.custom_field_definitions.storefront_writable.storefront_visible.
+          for_resource_type(self.class.custom_field_definition_resource_type)
+      end
+
+      # The definitions this record has a value for. Read once per record, like
+      # the required definitions, and forgotten whenever a value is written.
+      #
+      # @return [Array<Integer>]
+      def filled_custom_field_definition_ids
+        @filled_custom_field_definition_ids ||= if custom_fields.loaded?
+                                                  custom_fields.map(&:custom_field_definition_id)
+                                                else
+                                                  custom_fields.unscope(:includes).pluck(:custom_field_definition_id)
+                                                end
+      end
+
+      # Read once per record: every cart response works out its requirements
+      # several times over.
+      #
+      # @return [Array<Spree::CustomFieldDefinition>]
+      def required_storefront_writable_custom_field_definitions
+        @required_storefront_writable_custom_field_definitions ||= storefront_writable_custom_field_definitions.select(&:required?)
+      end
+
       scope :with_custom_field_key, ->(key_with_namespace) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
         joins(custom_fields: :custom_field_definition).
@@ -132,17 +184,43 @@ module Spree
       # @raise [ArgumentError] if `definition_or_key` doesn't resolve to a
       #   known definition.
       def set_custom_field(definition_or_key, value)
+        @filled_custom_field_definition_ids = nil
         definition_id = resolve_custom_field_definition_id(definition_or_key)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
         # An empty list is a value for JSON, but no choice at all for a choice field.
         if value_blank?(value) || (value == [] && custom_field.is_a?(Spree::CustomFields::Choice))
-          custom_field.destroy if custom_field.persisted?
+          # Through the association, so a loaded list drops the row too.
+          custom_fields.destroy(custom_field) if custom_field.persisted?
           return nil
         end
 
         custom_field.value = value
         custom_field.save!
         custom_field
+      end
+
+      # Copies another record's custom field values onto this one, as they are:
+      # a copy is not a new write, so rules changed since are not applied.
+      #
+      # @param source [Spree::HasCustomFields] a cart completing into this order, or a sibling order
+      # @return [void]
+      def copy_custom_fields_from!(source)
+        rows = source.custom_fields.unscope(:includes).pluck(:type, :custom_field_definition_id, :value).map do |type, definition_id, value|
+          { type: type, custom_field_definition_id: definition_id, value: value, resource_type: self.class.polymorphic_name, resource_id: id }
+        end
+        return if rows.empty?
+
+        Spree::CustomField.insert_all!(rows)
+        reset_custom_fields
+      end
+
+      # Forgets the values read so far, after a bulk write that went around the association.
+      #
+      # @return [void]
+      def reset_custom_fields
+        custom_fields.reset
+        storefront_custom_fields.reset
+        @filled_custom_field_definition_ids = nil
       end
 
       def get_custom_field(key_with_namespace)
@@ -241,22 +319,91 @@ module Spree
           definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id]
           next if definition_id.blank?
 
-          begin
-            set_custom_field(definition_id, attrs[:value])
-          rescue ArgumentError => e
-            # Convert an unknown / malformed definition id into a field-level
-            # validation error so the controller returns 422 with structured
-            # `details`, instead of leaking ArgumentError as a 400/500.
-            errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
-            raise ActiveRecord::RecordInvalid, self
-          rescue ActiveRecord::RecordInvalid => e
-            # A value that breaks its definition's rules is reported on this
-            # record, since `save` swallows the custom field's own error when
-            # it is raised from the after_save replay.
-            e.record.errors.each { |error| errors.add("custom_fields[#{index}].#{error.attribute}", error.message) }
-            raise ActiveRecord::RecordInvalid, self
+          write_custom_field_at!(index, definition_id, attrs[:value])
+        end
+      end
+
+      # +index+ is the entry's position in the request, for the error key.
+      def write_custom_field_at!(index, definition_or_key, value)
+        set_custom_field(definition_or_key, value)
+      rescue ArgumentError => e
+        # Convert an unknown / malformed definition id into a field-level
+        # validation error so the controller returns 422 with structured
+        # `details`, instead of leaking ArgumentError as a 400/500.
+        errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
+        raise ActiveRecord::RecordInvalid, self
+      rescue ActiveRecord::RecordInvalid => e
+        # A value that breaks its definition's rules is reported on this
+        # record, since `save` swallows the custom field's own error when
+        # it is raised from the after_save replay.
+        e.record.errors.each { |error| errors.add("custom_fields[#{index}].#{error.attribute}", error.message) }
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      # Resolves the shopper's keys before anything is saved, so an unknown
+      # key or a missing required value refuses the whole write.
+      def storefront_custom_field_values_must_be_writable
+        definitions = storefront_writable_custom_field_definitions.index_by(&:full_key)
+        @resolved_storefront_custom_fields = []
+
+        @storefront_custom_field_entries.each_with_index do |raw, index|
+          entry = raw.respond_to?(:to_h) ? raw.to_h.with_indifferent_access : {}
+          definition = definitions[entry[:key].to_s]
+
+          # Messages rather than error types: generating a message from a type
+          # reads the attribute, and these entries are no attribute of the record.
+          if definition.nil?
+            errors.add("custom_fields[#{index}].key", I18n.t('spree.errors.messages.custom_field_not_storefront_writable'))
+          elsif @resolved_storefront_custom_fields.any? { |_index, resolved, _value| resolved == definition }
+            # One entry per field, so a request writes each field once at most.
+            errors.add("custom_fields[#{index}].key", I18n.t('spree.errors.messages.custom_field_named_twice'))
+          elsif definition.required? && enforce_required_storefront_custom_fields? && storefront_value_missing?(entry[:value])
+            errors.add("custom_fields[#{index}].value", I18n.t('spree.errors.messages.custom_field_blank'))
+          elsif storefront_value_length(entry[:value]) > STOREFRONT_VALUE_MAX_LENGTH
+            # Anyone with the publishable key can write here, so a value is
+            # capped whatever rules the merchant set.
+            errors.add("custom_fields[#{index}].value",
+                       I18n.t('spree.errors.messages.custom_field_too_long', bound: STOREFRONT_VALUE_MAX_LENGTH))
+          else
+            @resolved_storefront_custom_fields << [index, definition, entry[:value]]
           end
         end
+
+        add_missing_required_storefront_custom_field_errors(definitions.values) if new_record? && enforce_required_storefront_custom_fields?
+      end
+
+      # A new record has no values yet, so every required field must be named.
+      def add_missing_required_storefront_custom_field_errors(definitions)
+        named = @resolved_storefront_custom_fields.filter_map { |_index, definition, value| definition unless storefront_value_missing?(value) }
+
+        (definitions.select(&:required?) - named).each do |definition|
+          message = I18n.t('spree.errors.messages.custom_field_required_missing', label: definition.label)
+          errors.add(:custom_fields, :required_missing, label: definition.label, message: message)
+        end
+      end
+
+      # Characters of text, or of the list a multiple choice sends.
+      def storefront_value_length(value)
+        value.is_a?(String) ? value.length : value.to_json.length
+      end
+
+      # An empty list is no choice at all, which a required field cannot keep.
+      def storefront_value_missing?(value)
+        value_blank?(value) || value == []
+      end
+
+      def apply_storefront_custom_field_values
+        resolved = @resolved_storefront_custom_fields || []
+        @storefront_custom_field_entries = nil
+        @resolved_storefront_custom_fields = nil
+
+        resolved.each { |index, definition, value| write_custom_field_at!(index, definition, value) }
+      end
+
+      # Whether a shopper's write must keep this record's required fields.
+      # An order's are a checkout requirement instead, so a cart overrides it.
+      def enforce_required_storefront_custom_fields?
+        true
       end
 
       # Resolve any of the supported reference shapes to a raw definition id.
@@ -298,10 +445,7 @@ module Spree
         # `"namespace.key"` — backend-internal callers that don't know the id;
         # auto-create the definition if missing.
         if value.include?('.')
-          namespace, key = extract_namespace_and_key(value)
-          return custom_field_definition_store.custom_field_definitions.find_or_create_by!(
-            namespace: namespace, key: key, resource_type: self.class.name
-          ).id
+          return self.class.ensure_custom_field_definition_exists!(value, store: custom_field_definition_store).id
         end
 
         # Prefixed id (`"cfdef_..."`/`"mfd_..."`). Use the canonical predicate

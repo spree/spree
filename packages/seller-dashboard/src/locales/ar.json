@@ -409,6 +409,9 @@
       "shipping_title": "تعديل عنوان الشحن"
     },
     "billing_address": "عنوان الفوترة",
+    "checkout_details": {
+      "title": "تفاصيل الدفع"
+    },
     "columns": {
       "fulfillment": "التنفيذ",
       "number": "الطلب",

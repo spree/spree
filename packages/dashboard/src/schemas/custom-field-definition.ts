@@ -4,7 +4,11 @@ import type {
   CustomFieldDefinitionUpdateParams,
   CustomFieldValidationsParams,
 } from '@spree/admin-sdk'
-import { formatStoreDate, formatStoreDateTime, i18n } from '@spree/dashboard-core'
+import {
+  formatCustomFieldValue as formatCoreCustomFieldValue,
+  i18n,
+  isBlankCustomFieldValue,
+} from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -40,6 +44,24 @@ export const SEARCHABLE_FIELD_TYPES = [
  * choice field that allows several values cannot sort.
  */
 export const SORTABLE_FIELD_TYPES = ['short_text', 'number', 'date', 'date_time', 'choice'] as const
+
+/**
+ * Field types shoppers may fill in (mirrors backend validation). Which
+ * resources take it comes from the server's resource types list.
+ */
+export const STOREFRONT_WRITABLE_FIELD_TYPES = [
+  'short_text',
+  'long_text',
+  'number',
+  'boolean',
+  'date',
+  'date_time',
+  'choice',
+] as const
+
+export function fieldTypeSupportsStorefrontWritable(fieldType: string): boolean {
+  return (STOREFRONT_WRITABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
+}
 
 export function fieldTypeSupportsSearchable(fieldType: string): boolean {
   return (SEARCHABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
@@ -138,6 +160,7 @@ export const customFieldDefinitionSchema = z
       .string()
       .min(1, { error: requiredMessage('custom_field_definition.resource_type') }),
     storefront_visible: z.boolean(),
+    storefront_writable: z.boolean(),
     searchable: z.boolean(),
     sortable: z.boolean(),
     validations: validationsSchema,
@@ -174,6 +197,7 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   field_type: 'short_text',
   resource_type: 'product',
   storefront_visible: false,
+  storefront_writable: false,
   searchable: false,
   sortable: false,
   validations: { required: false, min: '', max: '', regex: '', multiple: false, choices: [] },
@@ -190,6 +214,7 @@ export function customFieldDefinitionToFormValues(
     field_type: definition.field_type,
     resource_type: definition.resource_type,
     storefront_visible: definition.storefront_visible,
+    storefront_writable: definition.storefront_writable,
     searchable: definition.searchable,
     sortable: definition.sortable,
     validations: {
@@ -227,13 +252,7 @@ function validationsToParams(
 }
 
 /** No value to store: the API removes the field rather than saving it. */
-export function isBlank(value: unknown) {
-  return (
-    value == null ||
-    (typeof value === 'string' && value.trim() === '') ||
-    (Array.isArray(value) && value.length === 0)
-  )
-}
+export const isBlank = isBlankCustomFieldValue
 
 /** A choice's label; a value whose choice was since removed shows raw, as the server keeps it. */
 export function choiceLabel(definition: CustomFieldDefinition, choice: unknown): string {
@@ -249,33 +268,9 @@ export function formatCustomFieldValue(
   definition: CustomFieldDefinition,
   timezone: string,
 ): string {
-  const empty = i18n.t('admin.common.empty_value')
-  if (isBlank(value)) return empty
-
-  switch (definition.field_type) {
-    case 'boolean':
-      return i18n.t(value ? 'admin.common.yes' : 'admin.common.no')
-    case 'rich_text': {
-      // Plain-text preview of HTML. DOMParser handles nested/malformed tags
-      // correctly — a single-pass regex strip can leak tags via patterns like
-      // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
-      const text = new DOMParser().parseFromString(String(value), 'text/html').body.textContent
-      return text?.trim() || empty
-    }
-    case 'json':
-      return typeof value === 'string' ? value : JSON.stringify(value)
-    case 'date':
-      // A calendar day: format it as written, never shifted into a zone.
-      return formatStoreDate(`${value}T00:00:00Z`, 'UTC')
-    case 'date_time':
-      return formatStoreDateTime(String(value), timezone)
-    case 'choice':
-      return (Array.isArray(value) ? value : [value])
-        .map((choice) => choiceLabel(definition, choice))
-        .join(', ')
-    default:
-      return String(value)
-  }
+  return formatCoreCustomFieldValue(value, definition.field_type, timezone, (choice) =>
+    choiceLabel(definition, choice),
+  )
 }
 
 /**
@@ -358,6 +353,7 @@ export function customFieldDefinitionValuesToCreateParams(
     field_type: v.field_type,
     resource_type: v.resource_type,
     storefront_visible: v.storefront_visible,
+    storefront_writable: v.storefront_writable,
     searchable: v.searchable,
     sortable: v.sortable,
     validations: validationsToParams(v),
@@ -374,6 +370,7 @@ export function customFieldDefinitionValuesToUpdateParams(
     namespace: v.namespace,
     key: v.key,
     storefront_visible: v.storefront_visible,
+    storefront_writable: v.storefront_writable,
     searchable: v.searchable,
     sortable: v.sortable,
     validations: validationsToParams(v),

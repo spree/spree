@@ -146,6 +146,9 @@ module Spree
         # behind it has to as well — otherwise a buyer whose checkout splits
         # sees their reference on every order and the paperwork on only one.
         sibling.copy_po_document_from!(source_order)
+        # What the shopper filled in at checkout describes the whole purchase,
+        # and the seller who ships this part needs it as much as the others.
+        sibling.copy_custom_fields_from!(source_order)
 
         sibling.reload
       end

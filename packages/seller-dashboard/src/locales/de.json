@@ -405,6 +405,9 @@
       "shipping_title": "Lieferadresse bearbeiten"
     },
     "billing_address": "Rechnungsadresse",
+    "checkout_details": {
+      "title": "Angaben beim Checkout"
+    },
     "columns": {
       "fulfillment": "Lieferung",
       "number": "Bestellung",

@@ -5,6 +5,7 @@ import {
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
   customFieldValueError,
+  fieldTypeSupportsStorefrontWritable,
 } from './custom-field-definition'
 
 const definition = (
@@ -120,5 +121,21 @@ describe('customFieldDefinitionSchema', () => {
     expect(
       customFieldDefinitionValuesToCreateParams(CUSTOM_FIELD_DEFINITION_DEFAULTS).validations,
     ).toBeNull()
+  })
+
+  it('sends whether shoppers fill the field in, which JSON and rich text fields cannot offer', () => {
+    expect(
+      customFieldDefinitionValuesToCreateParams({
+        ...CUSTOM_FIELD_DEFINITION_DEFAULTS,
+        resource_type: 'order',
+        storefront_visible: true,
+        storefront_writable: true,
+      }).storefront_writable,
+    ).toBe(true)
+    expect(['short_text', 'json', 'rich_text'].map(fieldTypeSupportsStorefrontWritable)).toEqual([
+      true,
+      false,
+      false,
+    ])
   })
 })

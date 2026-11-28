@@ -223,6 +223,22 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(json_response['shipping_address']).to have_key('phone')
     end
 
+    it 'expands what the shopper filled in at checkout, read-only, and nothing admin-only' do
+      writable = create(:custom_field_definition, :for_order, store: store, namespace: 'checkout', key: 'gift_message',
+                                                              label: 'Gift message', storefront_writable: true)
+      visible = create(:custom_field_definition, :for_order, store: store, key: 'visible_only')
+      internal = create(:custom_field_definition, :for_order, :admin_only, store: store, key: 'internal')
+      mine.set_custom_field(writable, 'Happy birthday')
+      mine.set_custom_field(visible, 'shown on the storefront')
+      mine.set_custom_field(internal, 'fraud check')
+
+      get :show, params: { id: mine.prefixed_id, expand: 'custom_fields' }, as: :json
+
+      expect(json_response['custom_fields']).to contain_exactly(
+        a_hash_including('key' => 'checkout.gift_message', 'label' => 'Gift message', 'value' => 'Happy birthday')
+      )
+    end
+
     # A basket spanning several sellers is paid once, against the group; what
     # this order has is a share of that payment. The seller reads the share
     # and nothing about the payment behind it.

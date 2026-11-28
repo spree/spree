@@ -269,6 +269,57 @@ RSpec.describe Spree::Checkout::Requirements do
     end
   end
 
+  describe 'custom field requirement' do
+    let!(:definition) do
+      create(:custom_field_definition, :for_order, store: store, namespace: 'checkout', key: 'delivery_date',
+                                                   label: 'Delivery date', storefront_writable: true, validations: { required: true })
+    end
+
+    it 'asks for a required field shoppers fill in' do
+      expect(subject).to include(
+        a_hash_including(step: 'payment', field: 'checkout.delivery_date', code: 'custom_field_required', message: 'Delivery date is required')
+      )
+    end
+
+    it 'stops asking once the field has a value' do
+      order.set_custom_field(definition, 'Friday')
+
+      expect(subject).not_to include(a_hash_including(code: 'custom_field_required'))
+    end
+
+    it 'does not ask for a field that is optional or admin-only' do
+      definition.update!(validations: nil)
+      create(:custom_field_definition, :for_order, :admin_only, store: store, key: 'internal', validations: { required: true })
+
+      expect(subject).not_to include(a_hash_including(code: 'custom_field_required'))
+    end
+
+    it 'asks of a cart, whose values are held for the order' do
+      cart = create(:cart, store: store)
+
+      expect(described_class.new(cart).call).to include(a_hash_including(field: 'checkout.delivery_date'))
+
+      cart.set_custom_field(definition, 'Friday')
+      expect(described_class.new(cart.reload).call).not_to include(a_hash_including(field: 'checkout.delivery_date'))
+    end
+
+    it 'reports against a step that survives on a cart owing nothing' do
+      cart = create(:cart, store: store)
+      allow(cart).to receive(:payment_required?).and_return(false)
+
+      requirement = described_class.new(cart).call.find { |entry| entry[:code] == 'custom_field_required' }
+
+      expect(cart.checkout_steps).to include(requirement[:step])
+    end
+
+    it 'does not ask of staff keying the order in' do
+      order.update_columns(created_by_id: create(:admin_user).id)
+      order.reload
+
+      expect(subject).not_to include(a_hash_including(code: 'custom_field_required'))
+    end
+  end
+
   describe 'assortment requirement' do
     let(:customer) { create(:user) }
     let(:company) { create(:company, store: store) }

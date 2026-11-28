@@ -40,6 +40,18 @@ module Spree
     include Spree::Purchase::Lifecycle
     include Spree::Purchase::DeprecatedAliases
     include Spree::Purchase::Warnings
+    include Spree::HasCustomFields
+
+    # A cart holds its order's custom fields until checkout completes, so a
+    # merchant defines a field once, for orders. No definition is ever created
+    # for a cart.
+    def self.custom_field_definition_resource_type
+      'Spree::Order'
+    end
+
+    def self.ensure_custom_field_definition_exists!(key_with_namespace, **)
+      raise ArgumentError, "A cart cannot create custom field definitions: define #{key_with_namespace.inspect} for orders instead"
+    end
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -416,6 +428,12 @@ module Spree
     end
 
     private
+
+    # A missing required order field is a checkout requirement, so the
+    # shopper can still clear a value while checking out.
+    def enforce_required_storefront_custom_fields?
+      false
+    end
 
     # Correlates a payment with the payment session it was settled from, for
     # the EXISTS subqueries in +payment_session_settled?+.

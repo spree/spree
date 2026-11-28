@@ -26,6 +26,33 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(response).to have_http_status(:created)
     end
 
+    context 'with custom fields' do
+      let!(:gender) do
+        create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'gender', storefront_writable: true,
+                                                    validations: { required: true })
+      end
+
+      it 'writes them with the account' do
+        post :create, params: valid_params.merge(custom_fields: [{ key: 'profile.gender', value: 'female' }]), as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree.customer_class.find_by(email: 'newuser@example.com').get_custom_field('profile.gender').value).to eq('female')
+      end
+
+      it 'refuses a registration missing a required field, creating no account' do
+        expect { post :create, params: valid_params, as: :json }.not_to change(Spree.customer_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'refuses an unknown key, creating no account' do
+        params = valid_params.merge(custom_fields: [{ key: 'profile.gender', value: 'female' }, { key: 'profile.tier', value: 'gold' }])
+
+        expect { post :create, params: params, as: :json }.not_to change(Spree.customer_class, :count)
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     it 'returns a token' do
       post :create, params: valid_params
 
@@ -296,6 +323,33 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
   describe 'PATCH #update' do
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    context 'with custom fields' do
+      let!(:gender) do
+        create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'gender', storefront_writable: true,
+                                                    validations: { required: true })
+      end
+      let!(:nickname) do
+        create(:custom_field_definition, :for_user, store: store, namespace: 'profile', key: 'nickname', storefront_writable: true)
+      end
+
+      before { user.set_custom_field(gender, 'female') }
+
+      it 'writes the named fields and reads them back' do
+        patch :update, params: { custom_fields: [{ key: 'profile.nickname', value: 'Jo' }], expand: 'custom_fields' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['custom_fields'].map { |field| [field['key'], field['value']] }).
+          to contain_exactly(['profile.gender', 'female'], ['profile.nickname', 'Jo'])
+      end
+
+      it 'refuses blanking a required field' do
+        patch :update, params: { custom_fields: [{ key: 'profile.gender', value: '' }] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(user.reload.get_custom_field('profile.gender').value).to eq('female')
+      end
     end
 
     it 'updates the current user first name' do

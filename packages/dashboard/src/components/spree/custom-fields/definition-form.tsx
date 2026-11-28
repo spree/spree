@@ -33,6 +33,7 @@ import {
   fieldTypeLabel,
   fieldTypeSupportsSearchable,
   fieldTypeSupportsSortable,
+  fieldTypeSupportsStorefrontWritable,
   resourceTypeLabel,
 } from '../../../schemas/custom-field-definition'
 
@@ -75,6 +76,8 @@ export function DefinitionFormFields({
   const { t } = useTranslation()
   const { errors } = form.formState
   const fieldType = form.watch('field_type')
+  const resourceType = form.watch('resource_type')
+  const storefrontVisible = form.watch('storefront_visible')
   const multipleChoices = fieldType === 'choice' && form.watch('validations.multiple')
   const searchableSupported = fieldTypeSupportsSearchable(fieldType)
   // Several stored values have no single sort position.
@@ -95,6 +98,12 @@ export function DefinitionFormFields({
     value: resource_type,
     label: resourceTypeLabel(resource_type, name),
   }))
+  // Where shoppers may fill fields in, as the server decides.
+  const writableResourceTypes = new Set(
+    (resourceTypesResponse?.data ?? [])
+      .filter((entry) => entry.storefront_writable)
+      .map((entry) => entry.resource_type),
+  )
   // Types the dashboard edits come first; the rest are still definable for
   // integrations, but say so, since no screen here fills them in.
   const editableTypes = new Set<string>(DEFAULT_RESOURCE_TYPES)
@@ -167,7 +176,12 @@ export function DefinitionFormFields({
               <Select
                 items={resourceTypeItems}
                 value={field.value}
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  field.onChange(value)
+                  if (!writableResourceTypes.has(String(value))) {
+                    form.setValue('storefront_writable', false)
+                  }
+                }}
                 disabled={resourceTypeReadOnly}
               >
                 <SelectTrigger
@@ -235,6 +249,9 @@ export function DefinitionFormFields({
                 if (next !== 'choice') {
                   form.setValue('validations.multiple', false)
                 }
+                if (!fieldTypeSupportsStorefrontWritable(next)) {
+                  form.setValue('storefront_writable', false)
+                }
                 // A bound means something different for each type.
                 form.setValue('validations.min', '')
                 form.setValue('validations.max', '')
@@ -271,7 +288,26 @@ export function DefinitionFormFields({
         name="storefront_visible"
         id="cfd-storefront-visible"
         label={t('admin.fields.custom_field_definition.storefront_visible.label')}
+        onChange={(checked) => {
+          // Shoppers can only fill in a field they can see.
+          if (!checked) form.setValue('storefront_writable', false)
+        }}
       />
+      {writableResourceTypes.has(resourceType) && (
+        <SwitchRow
+          form={form}
+          name="storefront_writable"
+          id="cfd-storefront-writable"
+          label={t('admin.fields.custom_field_definition.storefront_writable.label')}
+          help={
+            resourceType === 'order'
+              ? t('admin.fields.custom_field_definition.storefront_writable.help_order')
+              : t('admin.fields.custom_field_definition.storefront_writable.help_customer')
+          }
+          disabled={!storefrontVisible || !fieldTypeSupportsStorefrontWritable(fieldType)}
+          error={errors.storefront_writable}
+        />
+      )}
       <SwitchRow
         form={form}
         name="searchable"
@@ -452,6 +488,7 @@ function SwitchRow({
   form: UseFormReturn<CustomFieldDefinitionFormValues>
   name:
     | 'storefront_visible'
+    | 'storefront_writable'
     | 'searchable'
     | 'sortable'
     | 'validations.required'

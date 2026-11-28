@@ -40,6 +40,10 @@ export type CreditCardFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id' | 'payment_method_id'>
   & Filter.TextFilters<'name'>
 
+export type CustomFieldDefinitionFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id' | 'resource_type'>
+  & Filter.TextFilters<'key' | 'namespace'>
+
 export type DataRequestFields = Filter.RangeFilters<'completed_at' | 'created_at' | 'requested_at' | 'updated_at'>
   & Filter.TextFilters<'email' | 'number'>
   & Filter.IdFilters<'id'>
@@ -271,6 +275,26 @@ export type CreditCardFilters = CreditCardFields
   & CreditCardFilterExtensions
 
 export type CreditCardSort = Filter.SortKey<'created_at' | 'id' | 'name' | 'payment_method_id' | 'updated_at' | (keyof CreditCardSortExtensions & string)>
+
+/**
+ * Filters your app adds to CustomFieldDefinition lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/sdk' {
+ *       interface CustomFieldDefinitionFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface CustomFieldDefinitionFilterExtensions {}
+
+/** Sort fields your app adds to CustomFieldDefinition lists, as keys: `{ erp_id: true }`. */
+export interface CustomFieldDefinitionSortExtensions {}
+
+export type CustomFieldDefinitionFilters = CustomFieldDefinitionFields
+  & Filter.OrFilters
+  & CustomFieldDefinitionFilterExtensions
+
+export type CustomFieldDefinitionSort = Filter.SortKey<'created_at' | 'id' | 'key' | 'namespace' | 'resource_type' | 'updated_at' | (keyof CustomFieldDefinitionSortExtensions & string)>
 
 /**
  * Filters your app adds to DataRequest lists. Generate them with `spree filters types`,

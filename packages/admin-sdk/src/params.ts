@@ -181,6 +181,8 @@ export interface CustomFieldResourceType {
   resource_type: string
   /** What a merchant calls it, e.g. "Sellers". */
   name: string
+  /** Whether shoppers may fill in its fields, as an order's at checkout. */
+  storefront_writable: boolean
 }
 
 /** A requirement kind an operator can add, and the shape of its form. */

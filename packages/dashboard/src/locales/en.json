@@ -1526,6 +1526,11 @@
           "column_label": "Storefront",
           "label": "Visible on storefront"
         },
+        "storefront_writable": {
+          "help_customer": "Asked at registration and in the customer's account. Requires the field to be visible on the storefront.",
+          "help_order": "Asked at checkout, and kept with the order. Requires the field to be visible on the storefront.",
+          "label": "Customers fill this in"
+        },
         "validations": {
           "title": "Validation",
           "help": "Checked when a value is saved. Existing values stay as they are until they are edited.",

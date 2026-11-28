@@ -405,6 +405,9 @@
       "shipping_title": "Modifier l’adresse de livraison"
     },
     "billing_address": "Adresse de facturation",
+    "checkout_details": {
+      "title": "Informations de commande"
+    },
     "columns": {
       "fulfillment": "Préparation",
       "number": "Commande",

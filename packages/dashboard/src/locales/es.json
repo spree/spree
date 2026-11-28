@@ -1541,6 +1541,11 @@
           "column_label": "Storefront",
           "label": "Visible en el storefront"
         },
+        "storefront_writable": {
+          "help_customer": "Se solicita al registrarse y en la cuenta del cliente. El campo debe ser visible en la tienda.",
+          "help_order": "Se solicita al finalizar la compra y se guarda con el pedido. El campo debe ser visible en la tienda.",
+          "label": "Lo completan los clientes"
+        },
         "validations": {
           "title": "Validación",
           "help": "Se comprueba al guardar un valor. Los valores existentes no cambian hasta que se editan.",

@@ -7,6 +7,7 @@ export const CustomFieldSchema = z.object({
   field_type: z.string(),
   key: z.string(),
   value: z.any(),
+  display_value: z.string(),
 });
 
 export type CustomField = z.infer<typeof CustomFieldSchema>;

@@ -3,6 +3,10 @@ module Spree
     # An instant, stored in UTC as `YYYY-MM-DDTHH:MM:SSZ`. Input without an
     # offset is read in the store's time zone.
     class DateTime < Spree::CustomField
+      def self.storefront_writable?
+        true
+      end
+
       include DateRules
 
       # @param input [String, Time, ::Date, nil]

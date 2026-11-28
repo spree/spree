@@ -1526,6 +1526,11 @@
           "column_label": "Boutique",
           "label": "Visible sur la boutique"
         },
+        "storefront_writable": {
+          "help_customer": "Demandé à l'inscription et dans le compte client. Le champ doit être visible sur la boutique.",
+          "help_order": "Demandé lors du paiement et conservé avec la commande. Le champ doit être visible sur la boutique.",
+          "label": "Rempli par les clients"
+        },
         "validations": {
           "title": "Validation",
           "help": "Vérifié à l'enregistrement d'une valeur. Les valeurs existantes restent inchangées jusqu'à leur modification.",

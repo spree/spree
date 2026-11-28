@@ -17,6 +17,7 @@ describe Spree::CustomFields::RichText, type: :model do
   describe '#csv_value' do
     it 'strips the markup' do
       expect(custom_field.csv_value).to eq('Rich text with formatting')
+      expect(custom_field.display_value).to eq('Rich text with formatting')
     end
 
     it 'returns an empty string when there is no value' do

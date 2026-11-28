@@ -575,6 +575,18 @@ module Spree
       end
     end
 
+    describe 'cart custom fields' do
+      it 'carries what the shopper filled in onto the order' do
+        definition = create(:custom_field_definition, :for_order, store: ready_cart.store, namespace: 'checkout',
+                                                                  key: 'gift_message', storefront_writable: true)
+        ready_cart.set_custom_field(definition, 'Happy birthday')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.reload.get_custom_field('checkout.gift_message').value).to eq('Happy birthday')
+      end
+    end
+
     describe 'the buyer purchase order' do
       it 'carries the reference onto the order' do
         ready_cart.update!(po_number: 'PO-4471')

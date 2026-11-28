@@ -320,5 +320,14 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:last_ip_address]).to eq('203.0.113.9')
       expect(exported[:metadata]).to eq('source' => 'campaign')
     end
+
+    it 'discloses what the shopper filled in at checkout' do
+      cart = create(:cart, customer: customer, store: store)
+      definition = create(:custom_field_definition, :for_order, store: store, namespace: 'checkout', key: 'gift_message',
+                                                                storefront_writable: true)
+      cart.set_custom_field(definition, 'Happy birthday, Sam')
+
+      expect(payload[:carts].first[:custom_fields]).to eq([{ key: 'gift_message', value: 'Happy birthday, Sam' }])
+    end
   end
 end

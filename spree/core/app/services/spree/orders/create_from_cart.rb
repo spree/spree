@@ -25,6 +25,7 @@ module Spree
           order = build_order(cart, customer: customer, created_by: created_by)
           order.save!
           order.copy_po_document_from!(cart)
+          order.copy_custom_fields_from!(cart)
 
           line_item_map = copy_line_items(cart, order)
           Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }

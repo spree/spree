@@ -60,6 +60,9 @@ module Spree
     publishes_event :completed, deprecated_alias_of: 'order.placed'
     publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
     include Spree::HasCustomFields
+    # What the shopper filled in at checkout: the fields a seller sees on their order.
+    has_many :storefront_writable_custom_fields, -> { includes(:custom_field_definition).storefront_writable },
+             as: :resource, class_name: 'Spree::CustomField', inverse_of: false, dependent: nil
     include Spree::Metadata
     include Spree::HasExternalReferences
     include Spree::Searchable

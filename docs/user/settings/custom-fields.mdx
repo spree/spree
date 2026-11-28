@@ -36,6 +36,7 @@ Click **Add custom field**.
 - **Applies to** - Which kind of record the field belongs to.
 - **Type** - What kind of value it holds. See below.
 - **Visible on storefront** - Whether shoppers see the value. Off unless you turn it on.
+- **Customers fill this in** - Order and customer fields only, and not for JSON or rich text fields. Your storefront asks shoppers for the value: an order field at checkout, a customer field when they register and in their account. Needs **Visible on storefront**. See [Fields customers fill in](#fields-customers-fill-in).
 - **Searchable** - Include values in storefront product text search. Not available for rich text, boolean and JSON fields.
 - **Sortable** - Allow storefront listings to sort by this field. Available for short text, number, date, date and time, and choice fields that allow one value.
 - **Validation** - Rules a value must meet. See below.
@@ -131,6 +132,22 @@ Product custom fields can be set through the product CSV. Add a column named `cu
 The import template generated for your store already ends with one column per custom field you have defined for products, so you may not need to add the columns by hand.
 
 <Warning>The column prefix is `custom_field.`. A file using the older `metafield.` prefix imports without its custom field values rather than failing, so the import looks successful and the values are silently missing.</Warning>
+
+## Fields customers fill in
+
+Some details only the shopper knows, such as a preferred delivery date, a gift message or their date of birth. Turn on **Customers fill this in** on an order or customer field, and your storefront can ask for it.
+
+- **Order fields** are asked at checkout. The answer is saved with the order, and you see it on the order's **Custom fields** card.
+- **Customer fields** are asked when the shopper registers, and they can change them in their account.
+
+When the field's validation has **Required** on:
+
+- A shopper cannot place an order without filling in a required order field. Orders your team creates in the dashboard are not held up by it.
+- A shopper cannot register without a required customer field, and cannot clear it later from their account.
+
+<Note>On a marketplace, each seller sees the order fields customers fill in on their own order, read-only, so the seller who ships knows the delivery date or the gift message. Sellers never see fields that are not filled in by customers.</Note>
+
+<Note>Your storefront has to show the field for shoppers to fill it in. A storefront built on Spree reads the list of fields from the Store API, so new fields appear without code changes once it supports them.</Note>
 
 ## How to Edit a Custom Field
 

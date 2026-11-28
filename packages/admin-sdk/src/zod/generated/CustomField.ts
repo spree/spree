@@ -7,6 +7,7 @@ export const CustomFieldSchema = z.object({
   field_type: z.string(),
   key: z.string(),
   value: z.any(),
+  display_value: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
   storefront_visible: z.boolean(),

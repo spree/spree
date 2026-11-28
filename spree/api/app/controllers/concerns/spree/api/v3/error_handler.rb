@@ -173,7 +173,9 @@ module Spree
 
         # Convenience method for service result errors
         def render_service_error(error, code: ERROR_CODES[:processing_error], status: :unprocessable_content)
-          error = error.value if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Symbol)
+          if error.is_a?(Spree::ServiceModule::ResultError) && [Symbol, ActiveModel::Errors].any? { |type| error.value.is_a?(type) }
+            error = error.value
+          end
 
           if error.is_a?(Spree::ServiceModule::ResultError) && error.value.is_a?(Hash)
             render_failure_hash(error.value, code: code, status: status)

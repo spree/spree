@@ -15,19 +15,28 @@ module Spree
           customer ||= @params.delete(:user)
         end
 
-        cart = store.carts.create!(
-          customer: customer,
-          market: @params.delete(:market) || Spree::Current.market,
-          channel: @params.delete(:channel) || Spree::Current.channel,
-          currency: @params.delete(:currency) || store.default_currency,
-          locale: @params.delete(:locale) || Spree::Current.locale
-        )
+        cart = nil
+        failed = nil
+        # One transaction, so fields the update refuses leave no empty cart behind.
+        ApplicationRecord.transaction(requires_new: true) do
+          cart = store.carts.create!(
+            customer: customer,
+            market: @params.delete(:market) || Spree::Current.market,
+            channel: @params.delete(:channel) || Spree::Current.channel,
+            currency: @params.delete(:currency) || store.default_currency,
+            locale: @params.delete(:locale) || Spree::Current.locale
+          )
 
-        # Delegate all attribute/address/item processing to Carts::Update
-        if @params.present?
-          result = Spree.carts_update_service.call(cart: cart, params: @params)
-          return result if result.failure?
+          # Delegate all attribute/address/item processing to Carts::Update
+          if @params.present?
+            result = Spree.carts_update_service.call(cart: cart, params: @params)
+            if result.failure?
+              failed = result
+              raise ActiveRecord::Rollback
+            end
+          end
         end
+        return failed if failed
 
         # Items skipped during creation are reported on the cart, and reload
         # would drop them — same carry-across as Carts::Update#try_advance.

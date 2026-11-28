@@ -8,7 +8,9 @@ module Spree
         @params = params.to_h.deep_symbolize_keys
         was_in_checkout = cart.in_checkout?
 
-        ApplicationRecord.transaction do
+        # Its own savepoint: callers hold the cart's row lock in an outer
+        # transaction, which would otherwise commit a refused update's writes.
+        ApplicationRecord.transaction(requires_new: true) do
           assign_cart_attributes
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)
@@ -51,7 +53,9 @@ module Spree
 
         failure(cart, { code: unavailable_code_for(e), message: unavailable_message_for(e) })
       rescue ActiveRecord::RecordInvalid => e
-        failure(cart, e.record.errors.full_messages.to_sentence)
+        # The errors themselves rather than their sentence, so the API can key
+        # each one to its field (`custom_fields[0].value`).
+        failure(cart, e.record.errors)
       rescue StandardError => e
         failure(cart, e.message)
       end
@@ -60,7 +64,7 @@ module Spree
       # reroute them through a plain assignment.
       CORE_ATTRIBUTES = %i[
         email customer_note po_number market_id currency locale metadata use_shipping
-        preferred_stock_location_id company_id po_document_signed_id
+        preferred_stock_location_id company_id po_document_signed_id custom_fields
       ].freeze
 
       private
@@ -99,6 +103,7 @@ module Spree
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
         assign_po_document if params.key?(:po_document_signed_id)
+        cart.storefront_custom_field_values = params[:custom_fields] if params[:custom_fields].present?
       end
 
       # Columns an extension made writable with

@@ -1526,6 +1526,11 @@
           "column_label": "Cửa hàng trực tuyến",
           "label": "Hiển thị trên cửa hàng trực tuyến"
         },
+        "storefront_writable": {
+          "help_customer": "Được hỏi khi đăng ký và trong tài khoản khách hàng. Trường phải hiển thị trên cửa hàng.",
+          "help_order": "Được hỏi khi thanh toán và lưu cùng đơn hàng. Trường phải hiển thị trên cửa hàng.",
+          "label": "Khách hàng điền"
+        },
         "validations": {
           "title": "Xác thực",
           "help": "Được kiểm tra khi lưu giá trị. Giá trị hiện có giữ nguyên cho đến khi được chỉnh sửa.",

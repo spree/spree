@@ -689,6 +689,86 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
     end
 
+    context 'with custom fields' do
+      let!(:delivery_date) do
+        create(:custom_field_definition, :for_order, :date_field, store: store, namespace: 'checkout', storefront_writable: true)
+      end
+      let!(:gift_message) do
+        create(:custom_field_definition, :for_order, store: store, namespace: 'checkout', key: 'gift_message', storefront_writable: true)
+      end
+
+      it 'writes the named fields, reads them back and leaves the others' do
+        order.set_custom_field(gift_message, 'Happy birthday')
+
+        patch :update, params: { id: order.prefixed_id, custom_fields: [{ key: 'checkout.delivery_date', value: '2026-10-12' }],
+                                 expand: 'custom_fields' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['custom_fields']).to contain_exactly(
+          a_hash_including('key' => 'checkout.delivery_date', 'value' => '2026-10-12', 'field_type' => 'date'),
+          a_hash_including('key' => 'checkout.gift_message', 'value' => 'Happy birthday')
+        )
+      end
+
+      it 'removes a field sent blank' do
+        order.set_custom_field(gift_message, 'Happy birthday')
+
+        patch :update, params: { id: order.prefixed_id, custom_fields: [{ key: 'checkout.gift_message', value: '' }] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.custom_fields).to be_empty
+      end
+
+      it 'refuses a key shoppers cannot write, without creating a definition' do
+        create(:custom_field_definition, :for_order, store: store, namespace: 'checkout', key: 'internal')
+
+        %w[checkout.internal checkout.unknown].each do |key|
+          patch :update, params: { id: order.prefixed_id, custom_fields: [{ key: key, value: 'x' }] }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+        expect(order.reload.custom_fields).to be_empty
+        expect(Spree::CustomFieldDefinition.where(key: 'unknown')).to be_empty
+      end
+
+      it "refuses a value the field's rules do not allow" do
+        patch :update, params: { id: order.prefixed_id, custom_fields: [{ key: 'checkout.delivery_date', value: 'next week' }] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'custom_fields[0].value')).to be_present
+        expect(order.reload.custom_fields).to be_empty
+      end
+
+      it 'writes nothing when a later value breaks its rules' do
+        patch :update, params: { id: order.prefixed_id, customer_note: 'Leave at the door',
+                                 custom_fields: [{ key: 'checkout.gift_message', value: 'Happy birthday' },
+                                                 { key: 'checkout.delivery_date', value: 'next week' }] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'details', 'custom_fields[1].value')).to be_present
+        expect(order.reload.custom_fields).to be_empty
+        expect(order.customer_note).to be_nil
+      end
+
+      it 'creates no cart when the fields are refused' do
+        expect do
+          post :create, params: { custom_fields: [{ key: 'checkout.unknown', value: 'x' }] }, as: :json
+        end.not_to change(Spree::Cart, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'lists a required field the cart lacks as a checkout requirement' do
+        delivery_date.update!(validations: { required: true })
+
+        get :show, params: { id: order.prefixed_id }
+
+        expect(json_response['requirements']).to include(
+          a_hash_including('field' => 'checkout.delivery_date', 'code' => 'custom_field_required')
+        )
+      end
+    end
+
     it 'updates the cart through the configured carts update service' do
       custom_service = Class.new(Spree::Carts::Update)
       allow(Spree).to receive(:carts_update_service).and_return(custom_service)

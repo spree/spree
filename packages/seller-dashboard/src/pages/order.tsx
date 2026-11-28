@@ -5,6 +5,7 @@ import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
+import { CheckoutDetailsCard } from '../components/orders/checkout-details-card'
 import { FulfillmentsCard } from '../components/orders/fulfillments-card'
 import { OrderCancelDialog } from '../components/orders/order-cancel-dialog'
 import { OrderCustomerCard, OrderSummaryCard } from '../components/orders/order-cards'
@@ -113,6 +114,7 @@ export function OrderPage() {
           <>
             <OrderCustomerCard order={order} />
             <SpecialInstructionsCard order={order} />
+            <CheckoutDetailsCard order={order} />
             <InternalNoteCard order={order} />
             <Slot name="seller.order.form_sidebar" context={{ order }} />
           </>

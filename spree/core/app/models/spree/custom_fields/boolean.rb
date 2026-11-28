@@ -1,6 +1,10 @@
 module Spree
   module CustomFields
     class Boolean < Spree::CustomField
+      def self.storefront_writable?
+        true
+      end
+
       normalizes :value, with: ->(value) { value.to_b.to_s }
 
       def csv_value

@@ -405,6 +405,9 @@
       "shipping_title": "お届け先住所を編集"
     },
     "billing_address": "請求先住所",
+    "checkout_details": {
+      "title": "チェックアウト時の入力内容"
+    },
     "columns": {
       "fulfillment": "フルフィルメント",
       "number": "注文",

@@ -2,6 +2,10 @@ module Spree
   module CustomFields
     # A calendar date, stored as `YYYY-MM-DD`.
     class Date < Spree::CustomField
+      def self.storefront_writable?
+        true
+      end
+
       include DateRules
 
       # @param input [String, ::Date, Time, nil]

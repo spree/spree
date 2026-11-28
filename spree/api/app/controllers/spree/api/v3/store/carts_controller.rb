@@ -50,6 +50,11 @@ module Spree
             schema.attribute :billing_address, :object, shape: CART_ADDRESS, description: 'A new billing address.'
             schema.attribute :metadata, :hash,
               description: 'Write-only key-value metadata, merged with what the cart has.'
+            schema.attribute :custom_fields, :array, of: Spree::Api::V3::Store::CustomFieldValueRequestSchema, description: <<~TEXT.squish
+              Values for the order fields shoppers fill in, listed by `GET /store/custom_field_definitions?q[resource_type_eq]=order`.
+              Each is checked against its field's rules; an unknown key is refused. Fields not named keep their values.
+              The values move to the order when checkout completes.
+            TEXT
             schema.attribute :items, :array,
               as: 'LineItemInputParams',
               description: 'Items to upsert: sets the quantity of a variant already in the cart, adds the others.' do |item|
@@ -103,7 +108,7 @@ module Spree
               @cart = result.value
               render_cart(status: :created)
             else
-              render_service_error(result.error.to_s)
+              render_result_failure(result, code: ERROR_CODES[:processing_error])
             end
           end
 
