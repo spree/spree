@@ -319,8 +319,19 @@ RSpec.describe Spree::Import, :job, type: :model do
     # Pinned to the installed version, not `main` — the availability check reads
     # the local db/sample_data, so the served file has to match that schema.
     it 'pins the URL to the installed Spree version' do
+      allow(Spree).to receive(:version).and_return('6.1.0.rc1')
+
       expect(Spree::Imports::Products.sample_csv_url).to eq(
-        "https://raw.githubusercontent.com/spree/spree/refs/tags/v#{Spree.version}/spree/core/db/sample_data/products.csv"
+        'https://raw.githubusercontent.com/spree/spree/refs/tags/v6.1.0.rc1/spree/core/db/sample_data/products.csv'
+      )
+    end
+
+    # A development version has no tag to point at.
+    it 'reads main on a development version' do
+      allow(Spree).to receive(:version).and_return('6.1.0.dev')
+
+      expect(Spree::Imports::Products.sample_csv_url).to eq(
+        'https://raw.githubusercontent.com/spree/spree/refs/heads/main/spree/core/db/sample_data/products.csv'
       )
     end
 
