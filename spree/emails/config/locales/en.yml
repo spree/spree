@@ -43,6 +43,14 @@ en:
         instructions: The files from your order %{number} are ready to download.
         subject: Your files are ready
     fulfillment_mailer:
+      delivered_email:
+        dear_customer: Dear %{name},
+        instructions: A package from your order %{number} has been delivered.
+        items_heading: Items in this delivery
+        let_us_know: Let us know
+        not_received: Haven't received your package?
+        subject: Your package has been delivered
+        track_information: 'Tracking Information: %{tracking}'
       fulfilled_email:
         dear_customer: Dear %{name},
         delivery_method: 'Delivery method: %{delivery_method}'

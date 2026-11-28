@@ -8,6 +8,22 @@ nb:
         greeting: Hei %{name},
         ignore_notice: Hvis du ikke ba om å tilbakestille passordet, kan du trygt se bort fra denne e-posten. Passordet ditt blir ikke endret.
         instructions: Vi mottok en forespørsel om å tilbakestille passordet ditt. Klikk på knappen nedenfor for å velge et nytt passord.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Kjære %{name},
+        instructions: En pakke fra bestillingen din %{number} er levert.
+        items_heading: Varer i denne leveransen
+        let_us_know: Gi oss beskjed
+        not_received: Har du ikke mottatt pakken din ennå?
+        subject: Pakken din er levert
+        track_information: 'Sporingsinformasjon: %{tracking}'
+      fulfilled_email:
+        dear_customer: Kjære %{name},
+        delivery_method: 'Leveringsmåte: %{delivery_method}'
+        fulfillment_summary: Oversikt over forsendelsen for bestilling
+        instructions: Bestillingen din %{number} er sendt
+        subject: Forsendelsesvarsel
+        track_information: 'Sporingsinformasjon: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hei,

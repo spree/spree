@@ -8,6 +8,22 @@ ne:
         greeting: नमस्ते %{name},
         ignore_notice: यदि तपाईंले पासवर्ड रिसेटको अनुरोध गर्नुभएको थिएन भने, तपाईं यो इमेललाई सुरक्षित रूपमा बेवास्ता गर्न सक्नुहुन्छ। तपाईंको पासवर्ड परिवर्तन हुनेछैन।
         instructions: हामीले तपाईंको पासवर्ड रिसेट गर्ने अनुरोध प्राप्त गर्‍यौं। नयाँ पासवर्ड छनोट गर्न तलको बटन क्लिक गर्नुहोस्।
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: प्रिय %{name},
+        instructions: तपाईंको अर्डर %{number} को एउटा प्याकेज डेलिभर भएको छ।
+        items_heading: यस डेलिभरीका सामानहरू
+        let_us_know: हामीलाई जानकारी दिनुहोस्
+        not_received: अझै आफ्नो प्याकेज प्राप्त गर्नुभएको छैन?
+        subject: तपाईंको प्याकेज डेलिभर भएको छ
+        track_information: 'ट्र्याकिङ जानकारी: %{tracking}'
+      fulfilled_email:
+        dear_customer: प्रिय %{name},
+        delivery_method: 'डेलिभरी विधि: %{delivery_method}'
+        fulfillment_summary: अर्डरको ढुवानी सारांश
+        instructions: तपाईंको अर्डर %{number} पठाइएको छ
+        subject: ढुवानी सूचना
+        track_information: 'ट्र्याकिङ जानकारी: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: नमस्ते,

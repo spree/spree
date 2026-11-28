@@ -8,6 +8,22 @@ lt:
         greeting: Sveiki, %{name},
         ignore_notice: Jei slaptažodžio atstatymo neprašėte, galite saugiai nepaisyti šio el. laiško. Jūsų slaptažodis nebus pakeistas.
         instructions: Gavome prašymą atstatyti jūsų slaptažodį. Spustelėkite žemiau esantį mygtuką, kad pasirinktumėte naują slaptažodį.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Gerb. %{name},
+        instructions: Siuntinys iš jūsų užsakymo %{number} pristatytas.
+        items_heading: Šios siuntos prekės
+        let_us_know: Praneškite mums
+        not_received: Dar negavote siuntinio?
+        subject: Jūsų siuntinys pristatytas
+        track_information: 'Sekimo informacija: %{tracking}'
+      fulfilled_email:
+        dear_customer: Gerb. %{name},
+        delivery_method: 'Pristatymo būdas: %{delivery_method}'
+        fulfillment_summary: Užsakymo siuntos suvestinė
+        instructions: Jūsų užsakymas %{number} išsiųstas
+        subject: Pranešimas apie išsiuntimą
+        track_information: 'Sekimo informacija: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Sveiki,

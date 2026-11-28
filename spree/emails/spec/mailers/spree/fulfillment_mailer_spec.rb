@@ -110,6 +110,15 @@ describe Spree::FulfillmentMailer, type: :mailer do
   context 'fulfilled_email' do
     let(:fulfilled_email) { described_class.fulfilled_email(fulfillment) }
 
+    context 'when the order is in German' do
+      before { order.update_column(:locale, 'de') }
+
+      it 'sends the shipped translation' do
+        expect(fulfilled_email.subject).to include('Versandbestätigung')
+        expect(fulfilled_email).to have_body_text("Ihre Bestellung #{order.number} wurde versandt")
+      end
+    end
+
     specify do
       expect(fulfilled_email).to have_body_text(order.number)
     end
@@ -169,6 +178,39 @@ describe Spree::FulfillmentMailer, type: :mailer do
         expect(message.html_part.body.to_s).to include('PO-4471')
         expect(message.text_part.body.to_s).to include('PO-4471')
       end
+    end
+  end
+
+  context 'delivered_email' do
+    let(:delivered_email) { described_class.delivered_email(fulfillment) }
+
+    it 'tells the customer a package from the order arrived' do
+      expect(delivered_email.subject).to include('Your package has been delivered', order.number)
+      expect(delivered_email).to have_body_text("Dear #{order.name}")
+      expect(delivered_email).to have_body_text("A package from your order #{order.number} has been delivered.")
+    end
+
+    it 'links the tracking page and asks to hear about a missing parcel' do
+      expect(delivered_email).to have_body_text("href=\"#{fulfillment.tracking_url}\"")
+      expect(delivered_email).to have_body_text("href=\"mailto:#{store.customer_support_email}\"")
+    end
+
+    it 'lists the items in the delivery without order totals' do
+      expect(delivered_email).to have_body_text(order.line_items.first.name)
+      expect(delivered_email).not_to have_body_text(I18n.t('spree.order_mailer.total'))
+    end
+
+    context 'when the order is in German' do
+      before { order.update_column(:locale, 'de') }
+
+      it 'sends the shipped translation' do
+        expect(delivered_email.subject).to include('Ihr Paket wurde zugestellt')
+        expect(delivered_email).to have_body_text("Ein Paket aus Ihrer Bestellung #{order.number} wurde zugestellt.")
+      end
+    end
+
+    it 'accepts a fulfillment id' do
+      expect(described_class.delivered_email(fulfillment.id).to).to eq(['test@example.com'])
     end
   end
 end

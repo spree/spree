@@ -9,6 +9,22 @@ uk:
         ignore_notice: Якщо ви не надсилали запит на скидання пароля, можете спокійно проігнорувати цей лист. Ваш пароль не буде змінено.
         instructions: Ми отримали запит на скидання вашого пароля. Натисніть кнопку нижче, щоб обрати новий пароль.
         subject: Інструкції зі скидання пароля
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Шановний(а) %{name},
+        instructions: Посилку з вашого замовлення %{number} доставлено.
+        items_heading: Товари в цій доставці
+        let_us_know: Повідомте нам
+        not_received: Ще не отримали посилку?
+        subject: Вашу посилку доставлено
+        track_information: 'Інформація для відстеження: %{tracking}'
+      fulfilled_email:
+        dear_customer: Шановний(а) %{name},
+        delivery_method: 'Спосіб доставки: %{delivery_method}'
+        fulfillment_summary: Відомості про відправлення за замовленням
+        instructions: Ваше замовлення %{number} відправлено
+        subject: Сповіщення про відправлення
+        track_information: 'Інформація для відстеження: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Вітаємо,

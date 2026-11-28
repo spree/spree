@@ -8,6 +8,22 @@ ro:
         greeting: Bună %{name},
         ignore_notice: Dacă nu ați solicitat o resetare a parolei, puteți ignora în siguranță acest e-mail. Parola dvs. nu va fi modificată.
         instructions: Am primit o solicitare de resetare a parolei dvs. Faceți clic pe butonul de mai jos pentru a alege o parolă nouă.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Dragă %{name},
+        instructions: Un colet din comanda ta %{number} a fost livrat.
+        items_heading: Produse din această livrare
+        let_us_know: Anunță-ne
+        not_received: Nu ai primit încă coletul?
+        subject: Coletul tău a fost livrat
+        track_information: 'Informații de urmărire: %{tracking}'
+      fulfilled_email:
+        dear_customer: Dragă %{name},
+        delivery_method: 'Metodă de livrare: %{delivery_method}'
+        fulfillment_summary: Rezumatul expedierii pentru comanda
+        instructions: Comanda ta %{number} a fost expediată
+        subject: Notificare de expediere
+        track_information: 'Informații de urmărire: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Bună,

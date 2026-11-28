@@ -9,6 +9,22 @@ es:
         ignore_notice: Si no solicitaste restablecer tu contraseña, puedes ignorar este correo electrónico sin problema. Tu contraseña no se cambiará.
         instructions: Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para elegir una nueva contraseña.
         subject: Instrucciones para restablecer la contraseña
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Hola %{name},
+        instructions: Se ha entregado un paquete de tu pedido %{number}.
+        items_heading: Artículos de esta entrega
+        let_us_know: Avísanos
+        not_received: "¿Todavía no has recibido tu paquete?"
+        subject: Tu paquete ha sido entregado
+        track_information: 'Información de seguimiento: %{tracking}'
+      fulfilled_email:
+        dear_customer: Hola %{name},
+        delivery_method: 'Método de envío: %{delivery_method}'
+        fulfillment_summary: Resumen del envío del pedido
+        instructions: Tu pedido %{number} ha sido enviado
+        subject: Aviso de envío
+        track_information: 'Información de seguimiento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: 'Hola:'

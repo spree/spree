@@ -9,6 +9,22 @@ nl:
         ignore_notice: Als je geen wachtwoordreset hebt aangevraagd, kun je deze e-mail veilig negeren. Je wachtwoord wordt niet gewijzigd.
         instructions: We hebben een verzoek ontvangen om je wachtwoord te resetten. Klik op de knop hieronder om een nieuw wachtwoord te kiezen.
         subject: Instructies voor het opnieuw instellen van het wachtwoord
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Beste %{name},
+        instructions: Een pakket van je bestelling %{number} is bezorgd.
+        items_heading: Artikelen in deze levering
+        let_us_know: Laat het ons weten
+        not_received: Heb je je pakket nog niet ontvangen?
+        subject: Je pakket is bezorgd
+        track_information: 'Trackinginformatie: %{tracking}'
+      fulfilled_email:
+        dear_customer: Beste %{name},
+        delivery_method: 'Verzendmethode: %{delivery_method}'
+        fulfillment_summary: Overzicht van de zending voor bestelling
+        instructions: Je bestelling %{number} is verzonden
+        subject: Verzendbevestiging
+        track_information: 'Trackinginformatie: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hoi,

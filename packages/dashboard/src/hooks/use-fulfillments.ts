@@ -32,9 +32,9 @@ function useFulfillmentMutation<TParams>(
 
   return useMutation({
     mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
-    },
+    // Pending until the order refetches, so a second click never acts on the
+    // stale order (Mark arrived counts the consignments still open).
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) }),
     onError: (error) => {
       if (!toastValidationErrors && error instanceof SpreeError && error.status === 422) return
       toastManager.add({
@@ -101,8 +101,10 @@ export function useFulfillmentActions(orderId: string) {
 
   const markDelivered = useFulfillmentMutation(
     orderId,
-    (fulfillmentId: string) =>
-      adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
+    ({ fulfillmentId, notifyCustomer }: { fulfillmentId: string; notifyCustomer: boolean }) =>
+      adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId, {
+        notify_customer: notifyCustomer,
+      }),
     { toastValidationErrors: true },
   )
 
@@ -152,8 +154,18 @@ export function useFulfillmentActions(orderId: string) {
 
   const markDeliveryDelivered = useFulfillmentMutation(
     orderId,
-    ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
-      adminClient.orders.fulfillments.deliveries.markDelivered(orderId, fulfillmentId, deliveryId),
+    ({
+      fulfillmentId,
+      deliveryId,
+      notifyCustomer,
+    }: {
+      fulfillmentId: string
+      deliveryId: string
+      notifyCustomer?: boolean
+    }) =>
+      adminClient.orders.fulfillments.deliveries.markDelivered(orderId, fulfillmentId, deliveryId, {
+        notify_customer: notifyCustomer,
+      }),
     { toastValidationErrors: true },
   )
 

@@ -8,6 +8,22 @@ da:
         greeting: Hej %{name},
         ignore_notice: Hvis du ikke har anmodet om en nulstilling af adgangskoden, kan du roligt ignorere denne e-mail. Din adgangskode bliver ikke ændret.
         instructions: Vi har modtaget en anmodning om at nulstille din adgangskode. Klik på knappen nedenfor for at vælge en ny adgangskode.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Kære %{name},
+        instructions: En pakke fra din ordre %{number} er blevet leveret.
+        items_heading: Varer i denne levering
+        let_us_know: Giv os besked
+        not_received: Har du ikke modtaget din pakke endnu?
+        subject: Din pakke er blevet leveret
+        track_information: 'Sporingsinformation: %{tracking}'
+      fulfilled_email:
+        dear_customer: Kære %{name},
+        delivery_method: 'Leveringsmetode: %{delivery_method}'
+        fulfillment_summary: Oversigt over forsendelsen for ordre
+        instructions: Din ordre %{number} er afsendt
+        subject: Forsendelsesbekræftelse
+        track_information: 'Sporingsinformation: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hej,

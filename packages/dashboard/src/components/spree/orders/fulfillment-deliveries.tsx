@@ -11,8 +11,10 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PackageCheckIcon, PencilIcon, TrashIcon } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
+import { FulfillmentMarkDeliveredDialog } from './fulfillment-mark-delivered-dialog'
 
 /**
  * The tracked consignments of one parcel. A parcel usually has one, but three
@@ -22,19 +24,32 @@ import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 export function FulfillmentDeliveries({
   orderId,
   fulfillmentId,
+  sendsDeliveredEmail,
   deliveries,
   onEdit,
 }: {
   orderId: string
   fulfillmentId: string
+  /** Whether completing the parcel emails the customer, so it asks first. */
+  sendsDeliveredEmail: boolean
   deliveries: Delivery[]
   onEdit: (delivery: Delivery) => void
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { deleteDelivery, markDeliveryDelivered } = useFulfillmentActions(orderId)
+  // The last consignment to arrive completes the parcel, which is what emails
+  // the customer — so that one asks, like Mark as delivered does.
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const openCount = deliveries.filter((delivery) => delivery.status !== 'delivered').length
 
   if (deliveries.length === 0) return null
+
+  const markArrived = (deliveryId: string, notifyCustomer?: boolean) =>
+    markDeliveryDelivered.mutate(
+      { fulfillmentId, deliveryId, notifyCustomer },
+      { onSuccess: () => setConfirmingId(null) },
+    )
 
   return (
     <CardContent className="mx-4 px-0 space-y-2 border-b border-border-subtle py-3.5 text-base">
@@ -74,7 +89,9 @@ export function FulfillmentDeliveries({
                 <DropdownMenuItem
                   disabled={markDeliveryDelivered.isPending}
                   onClick={() =>
-                    markDeliveryDelivered.mutate({ fulfillmentId, deliveryId: delivery.id })
+                    sendsDeliveredEmail && openCount === 1
+                      ? setConfirmingId(delivery.id)
+                      : markArrived(delivery.id)
                   }
                 >
                   <PackageCheckIcon className="size-4" />
@@ -118,6 +135,16 @@ export function FulfillmentDeliveries({
           </DropdownMenu>
         </div>
       ))}
+
+      {confirmingId && (
+        <FulfillmentMarkDeliveredDialog
+          checkboxId={`mark-arrived-notify-${confirmingId}`}
+          open
+          onOpenChange={(open) => !open && setConfirmingId(null)}
+          pending={markDeliveryDelivered.isPending}
+          onConfirm={(notifyCustomer) => markArrived(confirmingId, notifyCustomer)}
+        />
+      )}
     </CardContent>
   )
 }

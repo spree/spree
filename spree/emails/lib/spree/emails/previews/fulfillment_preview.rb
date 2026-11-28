@@ -9,4 +9,10 @@ class Spree::FulfillmentPreview < ActionMailer::Preview
     fulfillment.order.locale = locale if fulfillment && locale.present?
     Spree::FulfillmentMailer.fulfilled_email(fulfillment)
   end
+
+  def delivered_email
+    fulfillment = Spree::Fulfillment.delivered.last || Spree::Fulfillment.fulfilled.last
+    fulfillment.order.locale = locale if fulfillment && locale.present?
+    Spree::FulfillmentMailer.delivered_email(fulfillment)
+  end
 end

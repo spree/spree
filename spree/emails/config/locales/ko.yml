@@ -9,6 +9,22 @@ ko:
         ignore_notice: 비밀번호 재설정을 요청하지 않으셨다면 이 이메일을 무시하셔도 됩니다. 비밀번호는 변경되지 않습니다.
         instructions: 비밀번호 재설정 요청을 받았습니다. 아래 버튼을 클릭하여 새 비밀번호를 설정하세요.
         subject: 비밀번호 재설정 안내
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: "%{name}님,"
+        instructions: 주문 %{number}의 소포 배송이 완료되었습니다.
+        items_heading: 이번 배송 상품
+        let_us_know: 알려 주세요
+        not_received: 아직 소포를 받지 못하셨나요?
+        subject: 소포 배송이 완료되었습니다
+        track_information: '배송 추적 정보: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name}님,"
+        delivery_method: '배송 방법: %{delivery_method}'
+        fulfillment_summary: 주문 발송 요약
+        instructions: 주문 %{number}이(가) 발송되었습니다
+        subject: 발송 안내
+        track_information: '배송 추적 정보: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: 안녕하세요,

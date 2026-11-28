@@ -9,6 +9,22 @@ tr:
         ignore_notice: Parola sıfırlama talebinde bulunmadıysanız bu e-postayı güvenle yok sayabilirsiniz. Parolanız değiştirilmeyecektir.
         instructions: Parolanızı sıfırlamak için bir talep aldık. Yeni bir parola seçmek için aşağıdaki düğmeye tıklayın.
         subject: Parola Sıfırlama Talimatları
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Sayın %{name},
+        instructions: "%{number} numaralı siparişinizden bir paket teslim edildi."
+        items_heading: Bu teslimattaki ürünler
+        let_us_know: Bize bildirin
+        not_received: Paketinizi henüz almadınız mı?
+        subject: Paketiniz teslim edildi
+        track_information: 'Takip bilgisi: %{tracking}'
+      fulfilled_email:
+        dear_customer: Sayın %{name},
+        delivery_method: 'Teslimat yöntemi: %{delivery_method}'
+        fulfillment_summary: Siparişin gönderi özeti
+        instructions: "%{number} numaralı siparişiniz kargoya verildi"
+        subject: Kargo bildirimi
+        track_information: 'Takip bilgisi: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Merhaba,

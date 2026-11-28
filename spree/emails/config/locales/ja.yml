@@ -9,6 +9,22 @@ ja:
         ignore_notice: パスワードのリセットをリクエストしていない場合は、このメールを無視してかまいません。パスワードは変更されません。
         instructions: パスワードのリセットのリクエストを受け付けました。下のボタンをクリックして新しいパスワードを設定してください。
         subject: パスワード再設定の手順
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: "%{name} 様"
+        instructions: ご注文 %{number} のお荷物の配達が完了しました。
+        items_heading: 今回の配達の商品
+        let_us_know: お知らせください
+        not_received: まだ荷物が届いていませんか？
+        subject: お荷物の配達が完了しました
+        track_information: '追跡情報: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name} 様"
+        delivery_method: '配送方法: %{delivery_method}'
+        fulfillment_summary: ご注文の発送内容
+        instructions: ご注文 %{number} を発送しました
+        subject: 発送のお知らせ
+        track_information: '追跡情報: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: こんにちは、

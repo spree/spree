@@ -77,6 +77,7 @@ import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { FulfillmentMarkDeliveredDialog } from './fulfillment-mark-delivered-dialog'
 import { LineItemPriceSource } from './line-item-price-source'
 import { ShippingDocuments } from './shipping-documents'
 import { ShippingLabelRow } from './shipping-label-row'
@@ -420,6 +421,9 @@ const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
 const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
+// Collected in store or downloaded: the customer gets no delivered email.
+// Mirrors FulfillmentEmailSubscriber::NO_DELIVERED_EMAIL_TYPES in spree_emails.
+const NO_DELIVERED_EMAIL = ['pickup', 'digital']
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const productLink = useProductLink()
@@ -435,6 +439,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const [deliveryOpen, setDeliveryOpen] = useState(false)
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [uploadOpen, setUploadOpen] = useState(false)
+  const [markDeliveredOpen, setMarkDeliveredOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
   const metadataSheet = useMetadataSheet()
 
@@ -605,6 +610,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         <FulfillmentDeliveries
           orderId={orderId}
           fulfillmentId={fulfillment.id}
+          sendsDeliveredEmail={!NO_DELIVERED_EMAIL.includes(fulfillment.fulfillment_type)}
           deliveries={deliveries}
           onEdit={(delivery) => {
             setEditingDelivery(delivery)
@@ -689,7 +695,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                 size="sm"
                 variant={deliveries.length === 0 ? 'outline' : 'default'}
                 disabled={markDelivered.isPending}
-                onClick={() => markDelivered.mutate(fulfillment.id)}
+                onClick={() =>
+                  NO_DELIVERED_EMAIL.includes(fulfillment.fulfillment_type)
+                    ? markDelivered.mutate({ fulfillmentId: fulfillment.id, notifyCustomer: false })
+                    : setMarkDeliveredOpen(true)
+                }
               >
                 <PackageCheckIcon data-icon="inline-start" />
                 {t('admin.orders.detail.fulfillments.mark_delivered')}
@@ -727,6 +737,21 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           fulfillment={fulfillment}
           open={splitOpen}
           onOpenChange={setSplitOpen}
+        />
+      )}
+
+      {markDeliveredOpen && (
+        <FulfillmentMarkDeliveredDialog
+          checkboxId={`mark-delivered-notify-${fulfillment.id}`}
+          open={markDeliveredOpen}
+          onOpenChange={setMarkDeliveredOpen}
+          pending={markDelivered.isPending}
+          onConfirm={(notifyCustomer) =>
+            markDelivered.mutate(
+              { fulfillmentId: fulfillment.id, notifyCustomer },
+              { onSuccess: () => setMarkDeliveredOpen(false) },
+            )
+          }
         />
       )}
 

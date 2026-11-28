@@ -8,6 +8,22 @@ be:
         greeting: Прывітанне, %{name}!
         ignore_notice: Калі вы не запытвалі скід пароля, вы можаце спакойна праігнараваць гэты ліст. Ваш пароль не будзе зменены.
         instructions: Мы атрымалі запыт на скід вашага пароля. Націсніце кнопку ніжэй, каб выбраць новы пароль.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Шаноўны(ая) %{name},
+        instructions: Пасылка з вашай замовы %{number} дастаўлена.
+        items_heading: Тавары ў гэтай дастаўцы
+        let_us_know: Паведаміце нам
+        not_received: Яшчэ не атрымалі пасылку?
+        subject: Ваша пасылка дастаўлена
+        track_information: 'Інфармацыя для адсочвання: %{tracking}'
+      fulfilled_email:
+        dear_customer: Шаноўны(ая) %{name},
+        delivery_method: 'Спосаб дастаўкі: %{delivery_method}'
+        fulfillment_summary: Звесткі пра адпраўку для замовы
+        instructions: Ваша замова %{number} адпраўлена
+        subject: Апавяшчэнне аб адпраўцы
+        track_information: 'Інфармацыя для адсочвання: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Прывітанне,

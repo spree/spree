@@ -134,6 +134,21 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
     ),
     resend,
   ],
+  'spree.fulfillment_mailer.delivered_email': [
+    order,
+    variable(
+      'fulfillment',
+      [
+        'number',
+        'tracking',
+        'tracking_url',
+        'delivery_method_name',
+        'items',
+      ] as const satisfies FieldsOf<EmailFulfillment>,
+      EmailFulfillmentSchema,
+    ),
+    resend,
+  ],
   'spree.return_mailer.refunded_email': [
     order,
     variable(

@@ -9,6 +9,22 @@ ar:
         ignore_notice: إذا لم تطلب إعادة تعيين كلمة المرور، فيمكنك تجاهل هذا البريد الإلكتروني بأمان. لن يتم تغيير كلمة مرورك.
         instructions: تلقينا طلبًا لإعادة تعيين كلمة مرورك. انقر على الزر أدناه لاختيار كلمة مرور جديدة.
         subject: تعليمات إعادة تعيين كلمة المرور
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: عزيزي %{name}،
+        instructions: تم تسليم طرد من طلبك %{number}.
+        items_heading: المنتجات في هذا التسليم
+        let_us_know: أخبرنا
+        not_received: لم يصلك طردك بعد؟
+        subject: تم تسليم طردك
+        track_information: 'معلومات التتبع: %{tracking}'
+      fulfilled_email:
+        dear_customer: عزيزي %{name}،
+        delivery_method: 'طريقة التوصيل: %{delivery_method}'
+        fulfillment_summary: ملخص الشحنة للطلب
+        instructions: تم شحن طلبك %{number}
+        subject: إشعار الشحن
+        track_information: 'معلومات التتبع: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: مرحبًا،

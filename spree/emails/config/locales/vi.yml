@@ -8,6 +8,22 @@ vi:
         greeting: Chào %{name},
         ignore_notice: Nếu bạn không yêu cầu đặt lại mật khẩu, bạn có thể yên tâm bỏ qua email này. Mật khẩu của bạn sẽ không bị thay đổi.
         instructions: Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu của bạn. Nhấp vào nút bên dưới để chọn mật khẩu mới.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Xin chào %{name},
+        instructions: Một kiện hàng từ đơn hàng %{number} của bạn đã được giao.
+        items_heading: Sản phẩm trong lần giao này
+        let_us_know: Hãy cho chúng tôi biết
+        not_received: Bạn chưa nhận được kiện hàng?
+        subject: Kiện hàng của bạn đã được giao
+        track_information: 'Thông tin theo dõi: %{tracking}'
+      fulfilled_email:
+        dear_customer: Xin chào %{name},
+        delivery_method: 'Phương thức giao hàng: %{delivery_method}'
+        fulfillment_summary: Tóm tắt lô hàng của đơn hàng
+        instructions: Đơn hàng %{number} của bạn đã được gửi đi
+        subject: Thông báo giao hàng
+        track_information: 'Thông tin theo dõi: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Xin chào,

@@ -8,6 +8,22 @@ ca:
         greeting: Hola %{name},
         ignore_notice: Si no heu sol·licitat restablir la contrasenya, podeu ignorar aquest correu electrònic amb tota tranquil·litat. La vostra contrasenya no es canviarà.
         instructions: Hem rebut una sol·licitud per restablir la vostra contrasenya. Feu clic al botó de sota per triar-ne una de nova.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Benvolgut/da %{name},
+        instructions: S'ha lliurat un paquet de la teva comanda %{number}.
+        items_heading: Articles d'aquest lliurament
+        let_us_know: Fes-nos-ho saber
+        not_received: Encara no has rebut el paquet?
+        subject: El teu paquet s'ha lliurat
+        track_information: 'Informació de seguiment: %{tracking}'
+      fulfilled_email:
+        dear_customer: Benvolgut/da %{name},
+        delivery_method: 'Mètode d''enviament: %{delivery_method}'
+        fulfillment_summary: Resum de l'enviament de la comanda
+        instructions: La teva comanda %{number} s'ha enviat
+        subject: Avís d'enviament
+        track_information: 'Informació de seguiment: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hola,

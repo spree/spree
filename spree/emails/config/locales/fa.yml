@@ -8,6 +8,22 @@ fa:
         greeting: سلام %{name}،
         ignore_notice: اگر درخواست بازنشانی گذرواژه نداده‌اید، می‌توانید این ایمیل را نادیده بگیرید. گذرواژه شما تغییر نخواهد کرد.
         instructions: درخواستی برای بازنشانی گذرواژه شما دریافت کردیم. برای انتخاب گذرواژه جدید روی دکمه زیر کلیک کنید.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: "%{name} عزیز،"
+        instructions: یک بسته از سفارش %{number} شما تحویل داده شد.
+        items_heading: اقلام این تحویل
+        let_us_know: به ما اطلاع دهید
+        not_received: هنوز بسته خود را دریافت نکرده‌اید؟
+        subject: بسته شما تحویل داده شد
+        track_information: 'اطلاعات رهگیری: %{tracking}'
+      fulfilled_email:
+        dear_customer: "%{name} عزیز،"
+        delivery_method: 'روش ارسال: %{delivery_method}'
+        fulfillment_summary: خلاصه مرسوله برای سفارش
+        instructions: سفارش %{number} شما ارسال شد
+        subject: اطلاعیه ارسال
+        track_information: 'اطلاعات رهگیری: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: سلام،

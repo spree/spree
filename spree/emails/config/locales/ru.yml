@@ -9,6 +9,22 @@ ru:
         ignore_notice: Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо. Ваш пароль не будет изменён.
         instructions: Мы получили запрос на сброс вашего пароля. Нажмите кнопку ниже, чтобы выбрать новый пароль.
         subject: Инструкции по сбросу пароля
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Уважаемый(ая) %{name},
+        instructions: Посылка из вашего заказа %{number} доставлена.
+        items_heading: Товары в этой доставке
+        let_us_know: Сообщите нам
+        not_received: Ещё не получили посылку?
+        subject: Ваша посылка доставлена
+        track_information: 'Информация для отслеживания: %{tracking}'
+      fulfilled_email:
+        dear_customer: Уважаемый(ая) %{name},
+        delivery_method: 'Способ доставки: %{delivery_method}'
+        fulfillment_summary: Сведения об отправке по заказу
+        instructions: Ваш заказ %{number} отправлен
+        subject: Уведомление об отправке
+        track_information: 'Информация для отслеживания: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Здравствуйте,

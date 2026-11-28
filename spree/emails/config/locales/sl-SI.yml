@@ -8,6 +8,22 @@ sl-SI:
         greeting: Pozdravljeni %{name},
         ignore_notice: Če niste zahtevali ponastavitve gesla, lahko to e-pošto brez skrbi prezrete. Vaše geslo ne bo spremenjeno.
         instructions: Prejeli smo zahtevo za ponastavitev vašega gesla. Kliknite spodnji gumb, da izberete novo geslo.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Spoštovani %{name},
+        instructions: Paket iz vašega naročila %{number} je bil dostavljen.
+        items_heading: Izdelki v tej dostavi
+        let_us_know: Sporočite nam
+        not_received: Paketa še niste prejeli?
+        subject: Vaš paket je bil dostavljen
+        track_information: 'Podatki za sledenje: %{tracking}'
+      fulfilled_email:
+        dear_customer: Spoštovani %{name},
+        delivery_method: 'Način dostave: %{delivery_method}'
+        fulfillment_summary: Povzetek pošiljke za naročilo
+        instructions: Vaše naročilo %{number} je bilo odposlano
+        subject: Obvestilo o odpremi
+        track_information: 'Podatki za sledenje: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Pozdravljeni,

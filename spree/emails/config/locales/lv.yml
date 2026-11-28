@@ -8,6 +8,22 @@ lv:
         greeting: Sveiki, %{name}!
         ignore_notice: Ja jūs nepieprasījāt paroles atiestatīšanu, varat droši ignorēt šo e-pastu. Jūsu parole netiks mainīta.
         instructions: Mēs saņēmām pieprasījumu atiestatīt jūsu paroli. Noklikšķiniet uz zemāk esošās pogas, lai izvēlētos jaunu paroli.
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Cien. %{name},
+        instructions: Sūtījums no jūsu pasūtījuma %{number} ir piegādāts.
+        items_heading: Šīs piegādes preces
+        let_us_know: Paziņojiet mums
+        not_received: Vēl neesat saņēmis sūtījumu?
+        subject: Jūsu sūtījums ir piegādāts
+        track_information: 'Izsekošanas informācija: %{tracking}'
+      fulfilled_email:
+        dear_customer: Cien. %{name},
+        delivery_method: 'Piegādes veids: %{delivery_method}'
+        fulfillment_summary: Pasūtījuma sūtījuma kopsavilkums
+        instructions: Jūsu pasūtījums %{number} ir nosūtīts
+        subject: Paziņojums par nosūtīšanu
+        track_information: 'Izsekošanas informācija: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Sveiki,

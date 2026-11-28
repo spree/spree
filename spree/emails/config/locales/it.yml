@@ -9,6 +9,22 @@ it:
         ignore_notice: Se non hai richiesto la reimpostazione della password, puoi ignorare tranquillamente questa email. La tua password non verrà modificata.
         instructions: Abbiamo ricevuto una richiesta di reimpostazione della password. Fai clic sul pulsante qui sotto per scegliere una nuova password.
         subject: Istruzioni per la reimpostazione della password
+    fulfillment_mailer:
+      delivered_email:
+        dear_customer: Gentile %{name},
+        instructions: Un pacco del tuo ordine %{number} è stato consegnato.
+        items_heading: Articoli in questa consegna
+        let_us_know: Faccelo sapere
+        not_received: Non hai ancora ricevuto il pacco?
+        subject: Il tuo pacco è stato consegnato
+        track_information: 'Informazioni di tracciamento: %{tracking}'
+      fulfilled_email:
+        dear_customer: Gentile %{name},
+        delivery_method: 'Metodo di spedizione: %{delivery_method}'
+        fulfillment_summary: Riepilogo della spedizione per l'ordine
+        instructions: Il tuo ordine %{number} è stato spedito
+        subject: Avviso di spedizione
+        track_information: 'Informazioni di tracciamento: %{tracking}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Ciao,
