@@ -25,6 +25,14 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
     end
 
+    # A feed is quoted in the store's currency, so it speaks for the default
+    # market and must not advertise a product that market may not buy.
+    it "leaves out a product the store's default market excludes" do
+      product.update!(market_availability: 'all_except', market_ids: [store.default_market.prefixed_id])
+
+      expect(xml).not_to include("<g:item_group_id>#{product.id}</g:item_group_id>")
+    end
+
     context 'required attributes' do
       it 'includes variant id' do
         expect(xml).to include("<g:id>#{variant.id}</g:id>")

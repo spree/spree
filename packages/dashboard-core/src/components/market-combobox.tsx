@@ -1,4 +1,3 @@
-import type { Market } from '@spree/admin-sdk'
 import {
   Combobox,
   ComboboxChip,
@@ -14,6 +13,9 @@ import {
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+/** All the picker reads, so either panel's market records fit. */
+type Market = { id: string; name: string }
+
 /**
  * Searchable multi-select market picker. Value is an array of prefixed
  * market IDs; filters by name client-side against the caller-supplied
@@ -26,6 +28,7 @@ export function MarketMultiCombobox({
   value,
   onValueChange,
   placeholder,
+  ariaLabel,
   emptyText,
   disabled = false,
 }: {
@@ -34,6 +37,7 @@ export function MarketMultiCombobox({
   value: string[]
   onValueChange: (ids: string[]) => void
   placeholder?: string
+  ariaLabel?: string
   emptyText?: string
   disabled?: boolean
 }) {
@@ -70,6 +74,7 @@ export function MarketMultiCombobox({
         </ComboboxValue>
         <ComboboxChipsInput
           placeholder={placeholder ?? t('admin.components.market_combobox.search_placeholder')}
+          aria-label={ariaLabel}
           value={inputValue}
           onChange={(e) => setInputValue((e.target as HTMLInputElement).value)}
         />

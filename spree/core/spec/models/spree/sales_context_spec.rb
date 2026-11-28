@@ -4,6 +4,19 @@ RSpec.describe Spree::SalesContext do
   let(:store) { @default_store }
   let(:market) { create(:market, :eu, store: store) }
 
+  # Market availability narrows what a buyer may order, before catalogs do
+  # (docs/plans/6.1-product-market-availability.md).
+  describe '#orderable_variants' do
+    let(:product) { create(:product, store: store) }
+
+    it "leaves out a product the sale's market excludes" do
+      product.update!(market_availability: 'all_except', market_ids: [market.prefixed_id])
+
+      expect(described_class.new(store: store, market: market).orderable_variants).not_to include(product.default_variant)
+      expect(described_class.new(store: store, market: store.default_market).orderable_variants).to include(product.default_variant)
+    end
+  end
+
   describe 'validation' do
     it "takes the market's currency and default language when none is given" do
       context = described_class.new(store: store, market: market)

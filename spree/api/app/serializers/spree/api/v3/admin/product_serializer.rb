@@ -18,6 +18,8 @@ module Spree
                    delivery_profile_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
                    total_on_hand: [:number, nullable: true],
+                   market_availability: [:string, enum: Spree::Product::MARKET_AVAILABILITY_MODES, enum_type_name: 'ProductMarketAvailability'],
+                   market_ids: [:string, multi: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
@@ -28,6 +30,9 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           prefixed_id_attributes :delivery_profile
+
+          attribute :market_availability, &:market_availability_mode
+          attribute :market_ids, &:market_availability_prefixed_market_ids
 
           # The live row in the review trail: who submitted, who decided,
           # when, and what the seller was told. Expanded rather than always

@@ -35,7 +35,7 @@ module Typelizer
       ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
       EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
       OrderFulfillmentStatus OrderPaymentStatus OrderStatus PackageTypeKind PaymentSourceType
-      PayoutScheduleInterval PermissionKind PickupStockPolicy ProviderFailurePolicy PurchaseUnit
+      PayoutScheduleInterval PermissionKind PickupStockPolicy ProductMarketAvailability ProviderFailurePolicy PurchaseUnit
       SellerRequirementState SellerTransferKind ShippingLabelFormat ShippingLabelOwnerType ShippingLabelSource
       StockAvailability StockMovementKind StockReceiptLineType StockReceiptReceivableType
       StockReceiptRejectionReason StorefrontAccess TaxIdentifierSource TaxIdentifierValidationStatus

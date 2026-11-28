@@ -58,6 +58,8 @@ export const ProductSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   delivery_profile_id: z.string().nullable(),
+  market_availability: z.string(),
+  market_ids: z.array(z.string()),
   submission: ProductSubmissionSchema.nullable().optional(),
   seller_name: z.string().nullable(),
   product_type_id: z.string().nullable(),

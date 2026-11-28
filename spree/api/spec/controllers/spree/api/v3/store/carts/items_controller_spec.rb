@@ -46,6 +46,18 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
   end
 
   describe 'POST #create' do
+    # An excluded product does not exist in that market, so its variant is
+    # not found rather than refused (docs/plans/6.1-product-market-availability.md).
+    it "does not find a variant the cart's market excludes" do
+      product.update!(market_availability: 'all_except', market_ids: [order.market.prefixed_id])
+
+      expect {
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
+      }.not_to change(Spree::LineItem, :count)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'adds a line item and returns updated cart' do
       expect do
         post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }

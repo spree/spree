@@ -930,6 +930,42 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
+    describe 'market availability' do
+      let(:europe) { create(:market, store: store) }
+
+      it 'reads back what it writes' do
+        patch :update, params: { id: product.prefixed_id, market_availability: 'all_except', market_ids: [europe.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['market_availability']).to eq('all_except')
+        expect(json_response['market_ids']).to eq([europe.prefixed_id])
+        expect(product.reload.available_in_market?(europe)).to be false
+      end
+
+      it 'reads an unrestricted product as all' do
+        get :show, params: { id: product.prefixed_id }, as: :json
+
+        expect(json_response['market_availability']).to eq('all')
+        expect(json_response['market_ids']).to eq([])
+      end
+
+      it 'refuses a restricted mode without a market' do
+        patch :update, params: { id: product.prefixed_id, market_availability: 'only', market_ids: [] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(product.reload.market_availability).to be_nil
+      end
+
+      it "does not attach another store's market" do
+        foreign = create(:market, store: create(:store))
+
+        patch :update, params: { id: product.prefixed_id, market_availability: 'only', market_ids: [foreign.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(product.reload.market_ids).to be_empty
+      end
+    end
+
     it 'assigns a product type by prefixed id and returns it' do
       product_type = create(:product_type, store: store)
 

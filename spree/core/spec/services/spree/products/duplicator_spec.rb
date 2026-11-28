@@ -76,6 +76,23 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
+  # A copy that lost the restriction would be on sale where the original may not be.
+  it 'keeps the market restriction' do
+    market = create(:market, store: store)
+    product.update!(market_availability: 'all_except', market_ids: [market.prefixed_id])
+
+    expect(duplicate.value.reload.available_in_market?(market)).to be false
+  end
+
+  it 'copies a restriction whose market was deleted since' do
+    market = create(:market, store: store)
+    product.update!(market_availability: 'only', market_ids: [market.prefixed_id])
+    market.destroy
+
+    expect(duplicate).to be_success
+    expect(duplicate.value.reload.market_availability_market_ids).to eq([market.id])
+  end
+
   describe 'stock level duplication' do
     # A promise belongs to the order that made it. Copied onto the duplicate,
     # it would open holding stock for somebody else's order.
