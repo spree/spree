@@ -1,3 +1,13 @@
+## 2026-11-27: Custom field text definitions take a regex rule
+
+**Context:** The custom fields roadmap ruled out regular-expression rules on 2026-10-06, because a merchant's pattern could backtrack catastrophically on every write. Merchants still need formats a length or a choice list cannot express, and Shopify's metafields offer a regex rule.
+
+**Decision:** `short_text` and `long_text` definitions accept `validations.regex`, a pattern the whole value must match. A pattern is accepted only when `Regexp.linear_time?` passes, which refuses backreferences and the absence operator, and only up to 255 characters. Matching runs with a 0.1 s timeout as a backstop. Ruby 3.2 has no `linear_time?`, so there no pattern is accepted.
+
+**Consequences:** Replaces "No regular-expression rules" in `6.0-6.1-custom-fields-roadmap.md`. A failed match has one generic message. The dashboard checks patterns in the browser only where JavaScript reads them the same way; the server stays the final check.
+
+**Plans amended:** `6.0-6.1-custom-fields-roadmap.md` (Storage and validation, Part 5).
+
 ## 2026-11-26: A gift card stays on the cart through item changes and follows the new total
 
 **Context:** Adding, removing or changing the quantity of a cart item took the applied gift card off the cart and released its balance, with no message, so the buyer was asked to pay the whole total by card (V-3846). Reproduced on `main`: a $30 card on a $65 cart vanished when a $20 item was added, leaving $85.00 due and the card reading Used $0.00; a $150 card paying $85.00 was released when the cart fell to $25.00. The 2026-09-24 entry moved the resize into `Carts::RecalculateTotals` but kept the removal in `Carts::Recalculate`'s first step, which runs before it, so the resize never saw the card on an item change. The removal predates that resize: before 6.0 nothing resized a gift card, and taking it off was the safe choice.
@@ -43,6 +53,14 @@ Rejected: the storefront record, which only earns its place when a store has sev
 **Consequences:** Rule families now share one API shape — a new family should copy `DeliveryMethodRule`'s, not the order-routing one. Read and write names match for `rules` on both parents.
 
 **Plan:** `6.1-payment-method-rules.md`.
+
+## 2026-11-03: Custom fields 6.1 ships without the 6.0.x type patch, in several pull requests
+
+**Context:** The custom fields roadmap planned a 6.0.x patch that would ignore a definition type change with a deprecation warning, ahead of the 6.1 rejection. The 6.1 work is ready to start before `main` moves to 6.1, and the whole 6.1 scope touches every API and both dashboards.
+
+**Decision:** No 6.0.x patch. The first 6.1 pull request merges once `main` targets 6.1 and rejects a type change with 422 directly. 6.1 ships in several pull requests: the first covers fixed definition types, the hidden-by-default storefront visibility, the `date`, `date_time` and `choice` types, and validation rules. Shopper writes, emails and webhooks, translations and cleanup follow. Media external URLs move from the `external.url` custom field to an `external_url` column, not to metadata.
+
+**Consequences:** On 6.0.x, a definition's type can still be changed through the Admin API; the dashboard has never offered it. Amends the 2026-10-06 entry's 6.0.x rollout. See `6.0-6.1-custom-fields-roadmap.md`.
 
 ## 2026-11-02: Payment method rules retarget to 6.1; multiple accounts of one provider are records scoped by rules
 

@@ -84,7 +84,7 @@ module Spree
           key = custom_field.custom_field_definition.key.parameterize.underscore
           next unless OPTIONAL_ATTRIBUTES.include?(key)
 
-          append_g_element(xml, key, custom_field.value)
+          append_g_element(xml, key, custom_field.text_value)
         end
       end
 

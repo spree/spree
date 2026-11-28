@@ -45,6 +45,8 @@ docker run -d --name meilisearch \
 
 </CodeGroup>
 
+Use Meilisearch 1.15 or later. Filters on `date` and `date_time` custom fields compare text ranges, which older servers refuse.
+
 <Info>
 For local development, Meilisearch runs without authentication by default — no API key is needed. For production, set a master key (minimum 16 bytes) via `MEILI_MASTER_KEY` when starting Meilisearch. Use this master key as your `MEILISEARCH_API_KEY`.
 </Info>
