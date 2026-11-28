@@ -73,6 +73,12 @@ module Spree
         end
       end
 
+      context 'with the relevance sort' do
+        it 'treats it as no sort, having no ranking of its own' do
+          expect(provider.search_and_filter(scope: scope, query: 'blue', sort: 'relevance').products).to include(product_1, product_3)
+        end
+      end
+
       context 'with sorting' do
         subject(:result) { provider.search_and_filter(scope: scope, sort: 'name') }
 

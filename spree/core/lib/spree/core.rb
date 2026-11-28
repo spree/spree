@@ -61,6 +61,13 @@ module Spree
     ActiveRecord::Base.connection.adapter_name.match?(/mysql|trilogy/i)
   end
 
+  # Read from the configuration, so asking opens no connection.
+  #
+  # @return [Boolean]
+  def self.postgres?
+    Spree.base_class.connection_db_config.adapter.match?(/postg/i)
+  end
+
   # Class settings hold a name rather than the class itself, so a reloaded
   # class is never served stale.
   def self.resolve_class_setting(name, value, constantize)
@@ -181,15 +188,16 @@ module Spree
   end
 
   # Search provider class name. Controls product search, filtering, and faceted navigation.
+  # Unless set, PostgreSQL gets full-text search and other databases the SQL provider.
   #
   #   Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
   #
   def self.search_provider
-    @@search_provider ||= 'Spree::SearchProvider::Database'
+    @search_provider ||= postgres? ? 'Spree::SearchProvider::Postgres' : 'Spree::SearchProvider::Database'
   end
 
   def self.search_provider=(value)
-    @@search_provider = value.to_s
+    @search_provider = value.to_s
   end
 
   # Sections of the diagnostics report (see Spree::Diagnostics), as class
@@ -199,8 +207,8 @@ module Spree
   #
   # @return [Array<String>]
   def self.diagnostics_sections
-    @@diagnostics_sections ||= %w[Platform Runtime Infrastructure Preferences].
-                               map { |name| "Spree::Diagnostics::Sections::#{name}" }
+    @diagnostics_sections ||= %w[Platform Runtime Infrastructure Search Preferences].
+                              map { |name| "Spree::Diagnostics::Sections::#{name}" }
   end
 
   # Tax ID validators, keyed by registration kind.

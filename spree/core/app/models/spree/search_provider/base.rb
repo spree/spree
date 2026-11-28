@@ -3,7 +3,18 @@ module Spree
     class Base
       # Sort keys a provider accepts beyond the product's sortable
       # attributes. `price` also sorts descending as `-price`.
-      SORT_FIELDS = %w[price best_selling manual].freeze
+      SORT_FIELDS = %w[price best_selling manual relevance].freeze
+      # Best match first. A provider offers it in its sort options when it can
+      # rank a query; one that cannot treats it as no sort.
+      RELEVANCE_SORT = 'relevance'.freeze
+
+      # Facts about this provider's setup for the diagnostics report. They end
+      # up in public bug reports: never a name, URL or credential.
+      #
+      # @return [Hash{String => Proc}] label => reader
+      def self.diagnostics
+        {}
+      end
 
       attr_reader :store, :audience
 

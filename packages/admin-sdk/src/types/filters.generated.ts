@@ -1907,7 +1907,7 @@ export type ProductSearchFilters = ProductFields
   & Filter.CustomFieldValueFilters
   & ProductFilterExtensions
 
-export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string) | `cf_${string}`>
+export type ProductSearchSort = Filter.SortKey<'available_on' | 'best_selling' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'manual' | 'name' | 'price' | 'relevance' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string) | `cf_${string}`>
 
 /**
  * Filters your app adds to ProductType lists. Generate them with `spree filters types`,

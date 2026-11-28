@@ -239,6 +239,15 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       end
     end
 
+    context 'with a search query on PostgreSQL', if: Spree.postgres? do
+      it 'offers the relevance sort and makes it the default' do
+        get :index, params: { q: { search: product1.name } }
+
+        expect(json_response['sort_options'].first).to eq('id' => 'relevance', 'label' => nil)
+        expect(json_response['default_sort']).to eq('relevance')
+      end
+    end
+
     context 'with collection_id parameter' do
       let!(:collection) { create(:collection, store: store, sort_order: 'price asc') }
 

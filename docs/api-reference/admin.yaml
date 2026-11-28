@@ -38994,7 +38994,7 @@ paths:
 
           Also filters and sorts on the store's searchable custom fields, as `q[cf_<namespace>_<key>_<predicate>]` and `sort=cf_<namespace>_<key>`.
 
-          **Sort by:** `available_on`, `best_selling`, `created_at`, `description`, `discontinue_on`, `id`, `manual`, `name`, `price`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `available_on`, `best_selling`, `created_at`, `description`, `discontinue_on`, `id`, `manual`, `name`, `price`, `relevance`, `seller_id`, `slug`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Product
         sortable:
@@ -39007,6 +39007,7 @@ paths:
         - manual
         - name
         - price
+        - relevance
         - seller_id
         - slug
         - status
