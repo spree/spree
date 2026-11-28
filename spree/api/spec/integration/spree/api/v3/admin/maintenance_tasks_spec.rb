@@ -94,6 +94,9 @@ RSpec.describe 'Admin Maintenance Tasks API', type: :request, swagger_doc: 'api-
           { task_name: 'capture_methods', dry_run: true }
         end
 
+        # A store coming from 5.6, so the 6.0 step is still outstanding.
+        before { Spree::UpgradeRecord.stamp!('5.6', source: 'walk') }
+
         schema '$ref' => '#/components/schemas/MaintenanceTaskRun'
 
         run_test! do |response|

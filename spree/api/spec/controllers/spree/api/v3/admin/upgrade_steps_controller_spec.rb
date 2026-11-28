@@ -125,6 +125,9 @@ RSpec.describe Spree::Api::V3::Admin::UpgradeStepsController, type: :controller 
   end
 
   describe 'which steps an installation is shown' do
+    # Pinned so the expectations hold however many later manifests exist.
+    before { allow(Spree::Upgrade).to receive(:installed_minor_version).and_return('6.0') }
+
     # The list would otherwise grow with every release Spree ships, and a
     # store that upgraded last release would be offered steps it must never
     # run again.
