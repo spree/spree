@@ -49,7 +49,7 @@ describe Spree::Product, type: :model do
 
   describe 'gift card' do
     it 'switches off everything that does not apply to prepaid money' do
-      product = create(:product, store: store, promotionable: true, track_inventory: true)
+      product = create(:product, store: store, track_inventory: true)
       product.update!(gift_card: true)
 
       expect(product).not_to be_discountable

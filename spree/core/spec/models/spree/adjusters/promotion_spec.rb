@@ -156,7 +156,14 @@ describe Spree::Adjusters::Promotion, type: :model do
     end
 
     it 'does not count toward what a percentage takes off' do
-      expect(order.reload.amount).to eq(order.line_items.reject(&:gift_card?).sum(&:amount))
+      promo = create(:promotion, code: nil, kind: :automatic, store: store)
+      Spree::Promotion::Actions::CreateAdjustment.create!(
+        promotion: promo, calculator: Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
+      )
+      promo.activate(order: order)
+
+      others = order.line_items.reject(&:gift_card?).sum(&:amount)
+      expect(order.discounts.reload.sum(&:amount)).to eq(-(others * 0.1).round(2))
     end
   end
 
