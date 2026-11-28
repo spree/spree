@@ -23,7 +23,7 @@ module Spree
         catalog.register_scope(:orders, group: :orders, audiences: %i[store seller], resources: -> {
           [Spree::Order, Spree::OrderGroup, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
            Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
-           Spree::CustomField, Spree::DigitalLink]
+           Spree::CustomField, Spree::DigitalLink, Spree::Invoice, Spree::InvoiceRequest, Spree::OrderDocument]
         })
         catalog.register_scope(:payments, group: :orders, resources: -> { [Spree::Payment, Spree::PaymentSplit] })
         catalog.register_scope(:fulfillments, group: :orders, audiences: %i[store seller], resources: -> {

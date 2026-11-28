@@ -21,6 +21,7 @@ import { Route as OnboardingRouteImport } from './../../seller-dashboard/src/rou
 import { Route as ProfileRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/profile'
 import { Route as SettingsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings'
 import { Route as EarningsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/earnings/index'
+import { Route as InvoicesIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/invoices/index'
 import { Route as OrdersIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/orders/index'
 import { Route as OrdersOrderIdRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/orders/$orderId'
 import { Route as PayoutsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/payouts/index'
@@ -96,6 +97,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const EarningsIndexRoute = EarningsIndexRouteImport.update({
   id: '/earnings/',
   path: '/earnings/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const InvoicesIndexRoute = InvoicesIndexRouteImport.update({
+  id: '/invoices/',
+  path: '/invoices/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings/': typeof EarningsIndexRoute
+  '/$sellerId/invoices/': typeof InvoicesIndexRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
   '/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/$sellerId/products/': typeof ProductsIndexRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings': typeof EarningsIndexRoute
+  '/$sellerId/invoices': typeof InvoicesIndexRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
   '/$sellerId/payouts': typeof PayoutsIndexRoute
   '/$sellerId/products': typeof ProductsIndexRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
   '/_authenticated/$sellerId/earnings/': typeof EarningsIndexRoute
+  '/_authenticated/$sellerId/invoices/': typeof InvoicesIndexRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
   '/_authenticated/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/_authenticated/$sellerId/products/': typeof ProductsIndexRoute
@@ -292,6 +301,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/taxes'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings/'
+    | '/$sellerId/invoices/'
     | '/$sellerId/orders/'
     | '/$sellerId/payouts/'
     | '/$sellerId/products/'
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/taxes'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings'
+    | '/$sellerId/invoices'
     | '/$sellerId/orders'
     | '/$sellerId/payouts'
     | '/$sellerId/products'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/settings/taxes'
     | '/_authenticated/$sellerId/settings/team'
     | '/_authenticated/$sellerId/earnings/'
+    | '/_authenticated/$sellerId/invoices/'
     | '/_authenticated/$sellerId/orders/'
     | '/_authenticated/$sellerId/payouts/'
     | '/_authenticated/$sellerId/products/'
@@ -447,6 +459,13 @@ declare module '@tanstack/react-router' {
       path: '/earnings'
       fullPath: '/$sellerId/earnings/'
       preLoaderRoute: typeof EarningsIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/invoices/': {
+      id: '/_authenticated/$sellerId/invoices/'
+      path: '/invoices'
+      fullPath: '/$sellerId/invoices/'
+      preLoaderRoute: typeof InvoicesIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/orders/': {
@@ -602,6 +621,7 @@ interface authenticatedSellerIdRouteChildren {
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   ProductsNewRoute: typeof ProductsNewRoute
   EarningsIndexRoute: typeof EarningsIndexRoute
+  InvoicesIndexRoute: typeof InvoicesIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   PayoutsIndexRoute: typeof PayoutsIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
@@ -617,6 +637,7 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsNewRoute: ProductsNewRoute,
   EarningsIndexRoute: EarningsIndexRoute,
+  InvoicesIndexRoute: InvoicesIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   PayoutsIndexRoute: PayoutsIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,

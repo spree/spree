@@ -336,6 +336,36 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         expect(response).to have_http_status(:ok)
       end
 
+      # An admin who reads payouts makes an invoices export with commission
+      # invoices in it. The file is the store's, so a key that reads orders
+      # but not payouts must not get it.
+      context 'with an invoices export that holds commission invoices' do
+        let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_orders']) }
+        let(:invoices_export) { Spree::Exports::Invoices.create!(store: store, user: admin_user) }
+
+        before do
+          invoices_export.attachment.attach(io: StringIO.new("Number\n"), filename: 'invoices.csv', content_type: 'text/csv')
+        end
+
+        it 'refuses the download without read_payouts' do
+          expect(invoices_export.reload.preferred_includes_commission_invoices).to be(true)
+
+          get :download, params: { id: invoices_export.prefixed_id }, as: :json
+
+          expect(response).to have_http_status(:forbidden)
+        end
+
+        context 'when the key also reads payouts' do
+          let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_orders read_payouts]) }
+
+          it 'allows the download' do
+            get :download, params: { id: invoices_export.prefixed_id }, as: :json
+
+            expect(response).to have_http_status(:ok)
+          end
+        end
+      end
+
       context 'with a promotions-scoped key' do
         let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_promotions']) }
 

@@ -56,6 +56,7 @@ module Spree
         # run before the step that rewrites the email, since they match on it.
         step :remove_purchase_order_documents
         step :remove_carrier_documents
+        step :remove_buyer_order_documents
 
         committed = false
 
@@ -67,6 +68,7 @@ module Spree
           step :anonymize_account
           step :anonymize_address_book
           step :anonymize_order_addresses
+          step :anonymize_order_paperwork
           # Reads the purchases by email, so it runs before the step that
           # rewrites it.
           step :anonymize_payment_sources
@@ -241,7 +243,10 @@ module Spree
           # the order's ship address afterwards strands the old row: it is
           # still the street the parcel went to, and nothing else points at it.
           Spree::Fulfillment.where(order_id: owned_purchases(Spree::Order).select(:id)).
-            pluck(:address_id)
+            pluck(:address_id),
+          # Where the person asked for an invoice to be addressed.
+          Spree::InvoiceRequest.where(order_id: owned_purchases(Spree::Order).select(:id)).
+            pluck(:billing_address_id)
         ].flatten.compact.uniq
       end
 
@@ -304,6 +309,27 @@ module Spree
                   record_id: owned_purchases(model).select(:id)).
             find_each { |attachment| purge_after_commit(attachment) }
         end
+      end
+
+      # What the buyer uploaded to their orders from their account. Staff and
+      # seller uploads stay: they are the merchant's paperwork. Invoices are
+      # never touched — the law keeps them, and Spree::Invoice is not here.
+      def remove_buyer_order_documents
+        Spree::OrderDocument.where(order_id: owned_purchases(Spree::Order).select(:id), uploaded_by_customer: true).
+          includes(file_attachment: :blob).find_each do |document|
+            @buyer_order_document_ids = (@buyer_order_document_ids || []) << document.id
+            purge_after_commit(document.file_attachment) if document.file_attachment
+          end
+      end
+
+      # The company name and tax number the buyer asked an invoice to carry —
+      # an invoice already issued keeps them, as the law requires; the request
+      # is only how they got there — and the rows of the documents whose files
+      # remove_buyer_order_documents collected.
+      def anonymize_order_paperwork
+        Spree::InvoiceRequest.where(order_id: owned_purchases(Spree::Order).select(:id)).
+          update_all(company_name: nil, tax_id: nil, updated_at: Time.current)
+        Spree::OrderDocument.where(id: @buyer_order_document_ids).delete_all if @buyer_order_document_ids.present?
       end
 
       # A carrier label is a picture of the parcel's address: the buyer's name

@@ -363,7 +363,8 @@
     "team": "الفريق",
     "general": "عام",
     "taxes": "الضرائب",
-    "store": "المتجر"
+    "store": "المتجر",
+    "invoices": "الفواتير"
   },
   "onboarding": {
     "accept_terms": "اقبل الشروط",
@@ -415,7 +416,8 @@
       "payment": "الدفع",
       "placed": "تاريخ الطلب",
       "quantity": "الكمية",
-      "total": "الإجمالي"
+      "total": "الإجمالي",
+      "missing_invoice": "فاتورة مفقودة"
     },
     "customer": {
       "title": "العميل"
@@ -574,7 +576,11 @@
       "total": "الإجمالي"
     },
     "title": "الطلبات",
-    "tracking_label": "رقم التتبُّع"
+    "tracking_label": "رقم التتبُّع",
+    "filters": {
+      "missing_invoice": "بلا فاتورة",
+      "has_invoice": "بها فاتورة"
+    }
   },
   "payouts": {
     "columns": {
@@ -863,6 +869,20 @@
     "remittance": {
       "seller": "أنت",
       "platform": "السوق"
+    }
+  },
+  "invoices": {
+    "title": "الفواتير",
+    "subtitle": "الفواتير الصادرة باسمك وفواتير عمولة السوق الموجهة إليك.",
+    "search_placeholder": "البحث بالرقم",
+    "empty": "لا توجد فواتير بعد. ارفعها من كل طلب.",
+    "commission": "عمولة السوق",
+    "columns": {
+      "number": "الرقم",
+      "kind": "النوع",
+      "issuer": "المُصدِر",
+      "total": "الإجمالي",
+      "issued_on": "تاريخ الإصدار"
     }
   }
 }

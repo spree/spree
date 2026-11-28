@@ -53,6 +53,13 @@ export type ImportRowFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.RangeFilters<'row_number', number>
   & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed'>
 
+export type InvoiceFields = Filter.RangeFilters<'created_at' | 'issued_on' | 'sent_at' | 'supplied_on' | 'total' | 'updated_at'>
+  & Filter.IdFilters<'id' | 'issuer_id' | 'issuer_type' | 'order_id' | 'seller_payout_id'>
+  & Filter.TextFilters<'number'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
+  & Filter.EnumFilters<'kind', 'invoice' | 'receipt' | 'credit_note'>
+  & Filter.EnumFilters<'source', 'uploaded' | 'generated'>
+
 export type OptionTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'label' | 'name'>
@@ -75,6 +82,11 @@ export type OrderCancellationReasonFields = Filter.BooleanFilters<'active'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
+
+export type OrderDocumentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
+  & Filter.BooleanFilters<'customer_visible'>
+  & Filter.IdFilters<'id'>
+  & Filter.TextFilters<'label'>
 
 export type PackageTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.BooleanFilters<'default'>
@@ -369,6 +381,26 @@ export type ImportRowFilters = ImportRowFields
 export type ImportRowSort = Filter.SortKey<'created_at' | 'id' | 'row_number' | 'status' | 'updated_at' | (keyof ImportRowSortExtensions & string)>
 
 /**
+ * Filters your app adds to Invoice lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/seller-sdk' {
+ *       interface InvoiceFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface InvoiceFilterExtensions {}
+
+/** Sort fields your app adds to Invoice lists, as keys: `{ erp_id: true }`. */
+export interface InvoiceSortExtensions {}
+
+export type InvoiceFilters = InvoiceFields
+  & Filter.OrFilters
+  & InvoiceFilterExtensions
+
+export type InvoiceSort = Filter.SortKey<'created_at' | 'currency' | 'id' | 'issued_on' | 'issuer_id' | 'issuer_type' | 'kind' | 'number' | 'order_id' | 'seller_payout_id' | 'sent_at' | 'source' | 'supplied_on' | 'total' | 'updated_at' | (keyof InvoiceSortExtensions & string)>
+
+/**
  * Filters your app adds to OptionType lists. Generate them with `spree filters types`,
  * or declare them by hand in a file that has an `export`:
  *
@@ -410,6 +442,7 @@ export type OrderFilters = OrderFields
   & {
     complete?: boolean
     incomplete?: boolean
+    missing_invoice?: boolean
     partially_refunded?: boolean
     refunded?: boolean
   }
@@ -437,6 +470,26 @@ export type OrderCancellationReasonFilters = OrderCancellationReasonFields
   & OrderCancellationReasonFilterExtensions
 
 export type OrderCancellationReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof OrderCancellationReasonSortExtensions & string)>
+
+/**
+ * Filters your app adds to OrderDocument lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/seller-sdk' {
+ *       interface OrderDocumentFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface OrderDocumentFilterExtensions {}
+
+/** Sort fields your app adds to OrderDocument lists, as keys: `{ erp_id: true }`. */
+export interface OrderDocumentSortExtensions {}
+
+export type OrderDocumentFilters = OrderDocumentFields
+  & Filter.OrFilters
+  & OrderDocumentFilterExtensions
+
+export type OrderDocumentSort = Filter.SortKey<'created_at' | 'customer_visible' | 'id' | 'label' | 'updated_at' | (keyof OrderDocumentSortExtensions & string)>
 
 /**
  * Filters your app adds to PackageType lists. Generate them with `spree filters types`,

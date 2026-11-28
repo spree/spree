@@ -363,7 +363,8 @@
     "team": "团队",
     "general": "常规",
     "taxes": "税务",
-    "store": "店铺"
+    "store": "店铺",
+    "invoices": "发票"
   },
   "onboarding": {
     "accept_terms": "接受条款",
@@ -410,7 +411,8 @@
       "payment": "付款",
       "placed": "下单时间",
       "quantity": "数量",
-      "total": "合计"
+      "total": "合计",
+      "missing_invoice": "缺少发票"
     },
     "customer": {
       "title": "客户"
@@ -569,7 +571,11 @@
       "total": "合计"
     },
     "title": "订单",
-    "tracking_label": "物流单号"
+    "tracking_label": "物流单号",
+    "filters": {
+      "missing_invoice": "缺少发票",
+      "has_invoice": "已有发票"
+    }
   },
   "payouts": {
     "columns": {
@@ -848,6 +854,20 @@
     "remittance": {
       "seller": "您",
       "platform": "平台"
+    }
+  },
+  "invoices": {
+    "title": "发票",
+    "subtitle": "以你的名义开具的发票，以及平台开给你的佣金发票。",
+    "search_placeholder": "按编号搜索",
+    "empty": "暂无发票。请在各订单中上传。",
+    "commission": "平台佣金",
+    "columns": {
+      "number": "编号",
+      "kind": "类型",
+      "issuer": "开票方",
+      "total": "总额",
+      "issued_on": "开票日期"
     }
   }
 }

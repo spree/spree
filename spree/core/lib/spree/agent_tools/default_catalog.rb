@@ -134,6 +134,10 @@ module Spree
         email_template_discard_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_revert_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         email_template_restore_revision_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        invoice_create_workflow:
+          'Records a legal document that can never be edited, and by default emails it to the buyer ' \
+          'at once, after which it cannot be withdrawn: a wrong invoice stays on the order until a ' \
+          'credit note corrects it. Agents can search, read and export invoices.',
         customer_anonymize_workflow:
           'Irreversible erasure of a person\'s data under GDPR Art. 17. A deletion no one can undo ' \
           'is not something to offer a model behind one confirmation prompt.',

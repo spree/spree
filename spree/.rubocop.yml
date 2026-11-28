@@ -78,6 +78,13 @@ Style/FormatStringToken:
 Naming/PredicateMethod:
   Enabled: false
 
+# `has_*` class macros declare something on the model rather than ask a
+# question: `has_private_document :file` reads like `has_one_attached`.
+Naming/PredicatePrefix:
+  AllowedMethods:
+    - is_a?
+    - has_private_document
+
 # `product_1` and `product1` both appear in specs and fixtures.
 Naming/VariableNumber:
   Enabled: false
