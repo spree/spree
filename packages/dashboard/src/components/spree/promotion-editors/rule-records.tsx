@@ -7,12 +7,12 @@ import { EditorShell } from './editor-shell'
 import { MatchPolicyPicker } from './match-policy-picker'
 import type { PromotionRuleEditorContext, PromotionRuleFormDraft } from './types'
 
-type MatchPolicy = 'any' | 'all'
-const MATCH_POLICY_VALUES: readonly MatchPolicy[] = ['any', 'all']
+type MatchPolicy = 'any' | 'all' | 'none'
 
 interface RecordRuleConfig<T> {
   /** Locale key under `admin.promotions.rules`. */
   kind: string
+  matchPolicies: readonly MatchPolicy[]
   idsKey: 'category_ids' | 'collection_ids'
   recordsKey: 'categories' | 'collections'
   queryKey: string
@@ -23,29 +23,38 @@ interface RecordRuleConfig<T> {
 
 /**
  * The editor for a rule that names a set of records an order's products must
- * belong to — categories or collections — with an any/all match policy.
+ * belong to — categories or collections — with a match policy.
  */
 function RecordRuleEditor<T extends { id: string }>({
   draft,
   onSave,
   onClose,
-  config: { kind, idsKey, recordsKey, queryKey, search, hydrate, getOptionLabel },
+  config: {
+    kind,
+    matchPolicies: policyValues,
+    idsKey,
+    recordsKey,
+    queryKey,
+    search,
+    hydrate,
+    getOptionLabel,
+  },
 }: PromotionRuleEditorContext & { config: RecordRuleConfig<T> }) {
   const { t } = useTranslation()
   const matchPolicies = useMemo(
     () =>
-      MATCH_POLICY_VALUES.map((value) => ({
+      policyValues.map((value) => ({
         value,
         label: t(`admin.promotions.rules.${kind}.match_policy.${value}.label`),
         description: t(`admin.promotions.rules.${kind}.match_policy.${value}.description`),
       })),
-    [t, kind],
+    [t, kind, policyValues],
   )
 
   const initialMatchPolicy = ((draft.preferences?.match_policy as MatchPolicy) ??
     'any') as MatchPolicy
   const [matchPolicy, setMatchPolicy] = useState<MatchPolicy>(
-    MATCH_POLICY_VALUES.includes(initialMatchPolicy) ? initialMatchPolicy : 'any',
+    policyValues.includes(initialMatchPolicy) ? initialMatchPolicy : 'any',
   )
   const [ids, setIds] = useState<string[]>(draft[idsKey] ?? [])
   const [records, setRecords] = useState<T[]>((draft[recordsKey] ?? []) as unknown as T[])
@@ -90,6 +99,7 @@ function RecordRuleEditor<T extends { id: string }>({
  */
 const CATEGORY_RULE: RecordRuleConfig<Category> = {
   kind: 'category',
+  matchPolicies: ['any', 'all', 'none'],
   idsKey: 'category_ids',
   recordsKey: 'categories',
   queryKey: 'promotion-rule-categories',
@@ -111,6 +121,7 @@ const collectionPicker = collectionAutocompleteProps('promotion-rule-collections
  */
 const COLLECTION_RULE: RecordRuleConfig<Collection> = {
   kind: 'collection',
+  matchPolicies: ['any', 'all'],
   idsKey: 'collection_ids',
   recordsKey: 'collections',
   queryKey: collectionPicker.queryKey,

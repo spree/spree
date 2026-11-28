@@ -5,7 +5,7 @@ export type MatchPolicyOption<TValue extends string> = ChoiceCardOption<TValue>
 
 /**
  * Card-style toggle group used by promotion rules with a `match_policy`
- * preference (Product and Category → any/all/none).
+ * preference (Product and Category → any/all/none, Collection → any/all).
  */
 export function MatchPolicyPicker<TValue extends string>({
   label,
