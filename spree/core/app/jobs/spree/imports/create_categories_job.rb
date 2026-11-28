@@ -29,8 +29,19 @@ module Spree
 
           siblings.with_matching_name(category_name).first ||
             find_by_permalink(siblings, parent, category_name) ||
-            store.categories.create!(name: category_name, parent: parent)
+            create_category!(store, category_name, parent)
         end
+      end
+
+      # Through the create workflow, so an imported category passes the same
+      # :validate hook and goes live on the same channels as one typed in.
+      def create_category!(store, category_name, parent)
+        result = Spree.category_create_workflow.call(store: store, attributes: { name: category_name, parent: parent })
+        return result.value if result.success?
+        # A :validate handler's rejection carries no record, only its errors.
+        raise ActiveRecord::RecordInvalid, result.value if result.value.is_a?(ActiveRecord::Base)
+
+        raise result.error.to_s
       end
 
       # Uniqueness is on the permalink, and distinct names can normalize to the

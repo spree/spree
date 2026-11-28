@@ -3,8 +3,10 @@ import { z } from 'zod';
 
 export const CollectionRuleSchema = z.object({
   id: z.string(),
-  value: z.string().nullable(),
   match_policy: z.string(),
+  currency: z.string().nullable(),
+  value: z.string().nullable(),
+  preferences: z.record(z.string(), z.unknown()),
   type: z.string(),
 });
 

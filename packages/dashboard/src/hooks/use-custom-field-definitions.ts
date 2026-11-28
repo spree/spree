@@ -1,4 +1,4 @@
-import type { CustomFieldDefinition } from '@spree/admin-sdk'
+import type { CustomFieldDefinition, CustomFieldDefinitionFilters } from '@spree/admin-sdk'
 import { adminClient } from '@spree/dashboard-core'
 import i18n from 'i18next'
 
@@ -19,18 +19,23 @@ export function customFieldDefinitionLabel(definition: CustomFieldDefinition): s
  * form supplies.
  *
  * Scoped by `resource_type` so a picker for seller onboarding cannot offer a
- * field defined for products, which a seller has nowhere to answer.
+ * field defined for products, which a seller has nowhere to answer. `filters`
+ * narrows it further, e.g. to definitions marked for collection rules.
  */
-export function customFieldDefinitionAutocompleteProps(resourceType: string) {
+export function customFieldDefinitionAutocompleteProps(
+  resourceType: string,
+  filters: CustomFieldDefinitionFilters = {},
+) {
   return (queryKey: string) => ({
     queryKey,
     search: (q: string) =>
       adminClient.customFieldDefinitions.list({
+        ...filters,
         resource_type_eq: resourceType,
         label_or_key_cont: q,
         limit: 100,
         sort: 'key',
-        fields: ['label', 'key', 'namespace'],
+        fields: ['label', 'key', 'namespace', 'field_type'],
       }),
     hydrate: (ids: string[]) =>
       adminClient.customFieldDefinitions.list({ id_in: ids, limit: ids.length }),

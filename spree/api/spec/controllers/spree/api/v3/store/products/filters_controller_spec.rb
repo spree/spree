@@ -237,12 +237,31 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
         expect(json_response['default_sort']).to eq('manual')
       end
+
+      it 'counts nothing for an unpublished category rather than the whole store' do
+        child_taxon1.publications.delete_all
+
+        get :index, params: { category_id: child_taxon1.prefixed_id }
+
+        expect(json_response['total_count']).to eq(0)
+      end
+
+      it 'offers only the child categories this channel shows', :caching do
+        allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+        get :index, params: { category_id: category.prefixed_id }
+        child_taxon1.publications.delete_all
+
+        get :index, params: { category_id: category.prefixed_id }
+
+        category_filter = json_response['filters'].find { |f| f['type'] == 'category' }
+        expect(category_filter.to_h.fetch('options', []).pluck('name')).not_to include('Shirts')
+      end
     end
 
     context 'with collection_id parameter' do
       let!(:collection) { create(:collection, store: store, sort_order: 'price asc') }
 
-      before { Spree::ProductCollection.create!(collection: collection, product: product1) }
+      before { Spree::ProductCollection.create!(collection: collection, product: product1, source: 'manual') }
 
       it 'scopes filters to the collection' do
         get :index, params: { collection_id: collection.prefixed_id }
@@ -254,6 +273,24 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
         get :index, params: { collection_id: collection.prefixed_id }
 
         expect(json_response['default_sort']).to eq('price')
+      end
+
+      it 'counts nothing for an unpublished collection rather than the whole store' do
+        collection.publications.delete_all
+
+        get :index, params: { collection_id: collection.prefixed_id }
+
+        expect(json_response['total_count']).to eq(0)
+      end
+
+      it 'does not share cached facets with the unfiltered request', :caching do
+        collection.publications.delete_all
+        allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
+        get :index
+        get :index, params: { collection_id: collection.prefixed_id }
+
+        expect(json_response['total_count']).to eq(0)
       end
     end
 

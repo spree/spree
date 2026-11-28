@@ -56,6 +56,11 @@ module Spree
     has_many :product_types, through: :product_type_categories, class_name: 'Spree::ProductType'
 
     has_many :promotion_rule_categories, class_name: 'Spree::PromotionRuleCategory', dependent: :destroy
+
+    has_many :publications, class_name: 'Spree::CategoryPublication', dependent: :destroy, inverse_of: :category
+    include Spree::ChannelPublishable
+
+    publishable_on_channels :publications, events: true
     has_many :promotion_rules, through: :promotion_rule_categories, class_name: 'Spree::PromotionRule'
 
     #
@@ -165,6 +170,21 @@ module Spree
     # associations carry no scope; the API controllers still apply it as a
     # boundary guard against rows an install has yet to migrate.
     scope :manual, -> { where.not(automatic: true) }
+
+    # Categories published on the channel whose ancestors are all published
+    # there too: hiding a category hides its whole subtree, so a storefront
+    # never reaches a child whose parent it cannot show.
+    #
+    # @param channel [Spree::Channel, nil]
+    # @return [ActiveRecord::Relation<Spree::Category>]
+    def self.published_on(channel)
+      table = quoted_table_name
+      hidden_ancestors = unscoped.from("#{table} ancestors").select(1).
+                         where("ancestors.store_id = #{table}.store_id AND ancestors.lft < #{table}.lft AND ancestors.rgt > #{table}.rgt").
+                         where.not('ancestors.id' => Spree::CategoryPublication.published.where(channel_id: channel&.id).select(:category_id))
+
+      super.where.not(hidden_ancestors.arel.exists)
+    end
 
     def manual?
       !automatic?

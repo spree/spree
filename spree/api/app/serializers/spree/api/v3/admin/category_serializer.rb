@@ -28,6 +28,10 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('ancestors') }
 
+          many :publications,
+               resource: proc { Spree.api.admin_category_publication_serializer },
+               if: proc { expand?('publications') }
+
           expandable_custom_fields admin: true
         end
       end

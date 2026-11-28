@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { CategorySchema } from './Category';
 import { ChannelSchema } from './Channel';
+import { CollectionSchema } from './Collection';
 import { CountrySchema } from './Country';
 import { CustomerSchema } from './Customer';
 import { CustomerGroupSchema } from './CustomerGroup';
@@ -18,10 +19,12 @@ export const PromotionRuleSchema = z.object({
   preferences: z.record(z.string(), z.unknown()),
   product_ids: z.array(z.string()).nullable(),
   category_ids: z.array(z.string()).nullable(),
+  collection_ids: z.array(z.string()).nullable(),
   customer_ids: z.array(z.string()).nullable(),
   option_value_ids: z.array(z.string()).nullable(),
   products: z.array(ProductSchema).optional(),
   get categories() { return z.array(CategorySchema).optional(); },
+  collections: z.array(CollectionSchema).optional(),
   get customers() { return z.array(CustomerSchema).optional(); },
   get customer_groups() { return z.array(CustomerGroupSchema).optional(); },
   get countries() { return z.array(CountrySchema).optional(); },

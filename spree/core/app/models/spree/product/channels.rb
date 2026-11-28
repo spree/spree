@@ -11,6 +11,8 @@ module Spree
       included do
         belongs_to :store, class_name: 'Spree::Store', optional: true
 
+        include Spree::ChannelPublishable
+
         # No +dependent: :destroy+: Product uses +acts_as_paranoid+, so destroy
         # soft-deletes and publications outlive the product.
         # +inverse_of: :product+ is what wires the parent into a child built off
@@ -20,12 +22,21 @@ module Spree
         # the two in-memory caches symmetric (V-3454).
         has_many :product_publications, class_name: 'Spree::ProductPublication',
                                         inverse_of: :product, autosave: true
-        has_many :channels, -> { distinct }, through: :product_publications, class_name: 'Spree::Channel'
+        publishable_on_channels :product_publications
+
+        # Publishing changes what a product's listings and search documents show.
+        def self.refresh_after_publishing(ids)
+          products = where(id: ids)
+          products.touch_all
+          # `to_a` once: `touch_all` does not load the relation, so iterating it
+          # afterwards would re-run the query.
+          products.to_a.each(&:enqueue_search_index)
+        end
 
         # Legacy Rails admin alias. The admin form submits
         # +legacy_product_publications_attributes+ (with +_destroy+ flags and
         # +reject_if+ semantics); the v3 API submits +product_publications+
-        # and goes through the custom writer below. Two names, one table —
+        # and goes through the set writer (Spree::ChannelPublishable). Two names, one table —
         # no +dependent:+ for the same +acts_as_paranoid+ reason as above.
         has_many :legacy_product_publications, class_name: 'Spree::ProductPublication',
                                                foreign_key: :product_id,
@@ -35,7 +46,6 @@ module Spree
                                       reject_if: ->(attrs) { attrs[:channel_id].blank? }
 
         before_validation :assign_default_store, if: -> { store.nil? }
-        after_create :apply_pending_publications, if: :pending_publications?
 
         DEPRECATED_DATE_TO_PUBLICATION_FIELD.each do |legacy_attr, publication_attr|
           define_method("#{legacy_attr}=") do |value|
@@ -58,37 +68,6 @@ module Spree
         end
       end
 
-      # Returns the publication for the given channel, or nil if the product isn't published there.
-      # @param channel [Spree::Channel] the channel to find the publication for
-      # @return [Spree::ProductPublication, nil] the publication for the channel, or nil if not published
-      def publication_for(channel)
-        return nil unless channel
-
-        if read_association_in_memory?(:product_publications)
-          product_publications.find { |publication| publication.channel_id == channel.id }
-        else
-          product_publications.find_by(channel_id: channel.id)
-        end
-      end
-
-      # Syncs product publications from an array of hashes.
-      # Creates new publications, updates existing ones (matched by +:id+ or
-      # +:channel_id+), and removes ones absent from the payload. An empty
-      # array detaches the product from every channel.
-      # @param publications_params [Array<Hash>] array of publication attribute hashes
-      # @return [void]
-      def product_publications=(publications_params)
-        return super if publications_params.nil?
-        return super if publications_params.respond_to?(:first) && publications_params.first.is_a?(Spree::ProductPublication)
-
-        if new_record?
-          @pending_publications_params = publications_params
-          return
-        end
-
-        apply_product_publications(publications_params)
-      end
-
       private
 
       # Writes a legacy date column together with the matching date on every
@@ -108,73 +87,6 @@ module Spree
       # products whose `store` hasn't been assigned.
       def assignable_store
         store || Spree::Current.store || Spree::Store.default
-      end
-
-      def pending_publications?
-        @pending_publications_params.present?
-      end
-
-      def apply_pending_publications
-        return unless @pending_publications_params
-
-        apply_product_publications(@pending_publications_params)
-        @pending_publications_params = nil
-      end
-
-      def apply_product_publications(publications_params)
-        rows = publications_params.map { |publication_data| publication_data.to_h.with_indifferent_access }
-        publication_ids_in_payload = []
-
-        # The product's publications and every channel the payload names are
-        # read once, rather than a lookup per row.
-        named_channel_ids = rows.filter_map { |row| decode_publication_channel_id(row[:channel_id]) if row[:id].blank? }
-        channels_by_id = named_channel_ids.empty? ? {} : publishable_channels.where(id: named_channel_ids).index_by { |channel| channel.id.to_s }
-        product_publications.load
-
-        rows.each do |publication_data|
-          publication_id = publication_data.delete(:id)
-          channel_id = decode_publication_channel_id(publication_data[:channel_id])
-
-          if publication_id.present?
-            decoded_id = Spree::PrefixedId.prefixed_id?(publication_id) ?
-                           Spree::PrefixedId.decode_prefixed_id(publication_id) :
-                           publication_id
-            publication = product_publications.detect { |existing| existing.id.to_s == decoded_id.to_s }
-            next unless publication
-
-            # Channel is immutable; ignore any rebind attempt.
-            publication.update!(publication_data.slice(:published_at, :unpublished_at))
-            publication_ids_in_payload << publication.id
-          elsif channel_id.present?
-            # Only publish to channels owned by the product's store; ignore
-            # ids referencing another store's channel.
-            channel = channels_by_id[channel_id.to_s]
-            next unless channel
-
-            # Upsert by channel_id so repeat submissions are idempotent
-            # against the unique (product_id, channel_id) index.
-            publication = product_publications.detect { |existing| existing.channel_id == channel.id } ||
-                          product_publications.build(channel: channel)
-            publication.assign_attributes(publication_data.slice(:published_at, :unpublished_at))
-            publication.save!
-            publication_ids_in_payload << publication.id
-          end
-        end
-
-        removed = product_publications.reject { |publication| publication_ids_in_payload.include?(publication.id) }
-        product_publications.destroy(*removed) if removed.any?
-      end
-
-      def decode_publication_channel_id(value)
-        return nil if value.blank?
-        return value unless Spree::PrefixedId.prefixed_id?(value)
-
-        Spree::PrefixedId.decode_prefixed_id(value) || value
-      end
-
-      # Channels the product may be published to — those owned by its store.
-      def publishable_channels
-        assignable_store.channels
       end
     end
   end

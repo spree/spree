@@ -38,6 +38,9 @@ RSpec.describe Spree::UpgradeRecord do
 end
 
 RSpec.describe Spree::Upgrade do
+  # Pinned so the expectations hold however many later manifests exist.
+  before { allow(described_class).to receive(:installed_minor_version).and_return('6.0') }
+
   describe '.pending_steps' do
     # The list would otherwise grow with every release Spree ships, and a store
     # that upgraded last release would be offered steps it must never re-run.

@@ -125,6 +125,29 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       end
     end
 
+    context 'after a rename' do
+      let!(:renamed) { create(:category, name: 'Shoes', permalink: 'shoes') }
+
+      before { renamed.update!(permalink: 'footwear') }
+
+      it 'resolves the old permalink and returns the current one' do
+        get :show, params: { id: 'shoes' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(renamed.prefixed_id)
+        expect(json_response['permalink']).to eq(renamed.reload.permalink)
+      end
+
+      it "does not resolve another store's old permalink" do
+        foreign = create(:category, store: other_store, name: 'Hats', permalink: 'hats')
+        foreign.update!(permalink: 'caps')
+
+        get :show, params: { id: 'hats' }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'finding by prefix_id' do
       it 'returns the category by prefix_id' do
         get :show, params: { id: category.prefixed_id }
@@ -292,6 +315,33 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
         expect(json_response['error']['code']).to eq('invalid_token')
         expect(json_response['error']['message']).to be_present
       end
+    end
+  end
+
+  describe 'channel publishing' do
+    let(:pos) { create(:channel, store: store, code: 'pos', name: 'POS') }
+
+    before { child_category.update!(publications: [{ channel_id: pos.prefixed_id }]) }
+
+    it 'leaves out a category unpublished from the channel and its subtree' do
+      get :index
+
+      expect(json_response['data'].pluck('id')).to include(category.prefixed_id)
+      expect(json_response['data'].pluck('id')).not_to include(child_category.prefixed_id, grandchild_category.prefixed_id)
+    end
+
+    it 'answers not found for an unpublished category and its subcategories' do
+      get :show, params: { id: child_category.permalink }
+      expect(response).to have_http_status(:not_found)
+
+      get :show, params: { id: grandchild_category.prefixed_id }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'leaves unpublished children out of an expanded category' do
+      get :show, params: { id: category.prefixed_id, expand: 'children' }
+
+      expect(json_response['children']).to be_empty
     end
   end
 

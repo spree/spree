@@ -25,4 +25,9 @@ export type CustomFieldDefinitionCreateParams = {
    * Supported for `short_text` and `number` fields; other types are refused.
    */
   sortable?: boolean
+  /**
+   * Offer this field in collection rules. Product short text, long text, number and boolean fields
+   * only.
+   */
+  collection_condition?: boolean
 }

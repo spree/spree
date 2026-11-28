@@ -14,10 +14,21 @@ RSpec.describe Spree::Api::V3::Admin::CollectionRulesController, type: :controll
       expect(response).to have_http_status(:ok)
       types = json_response['data']
 
-      expect(types.map { |type| type['type'] }).to match_array(%w[tag sale available_on])
+      expect(types.pluck('type')).to match_array(
+        %w[tag sale available_on category product_type price in_stock title seller custom_field]
+      )
       expect(types.map { |type| type['label'] }).to all(be_present)
       # Sorted by label for stable picker ordering.
       expect(types.map { |type| type['label'] }).to eq(types.map { |type| type['label'] }.sort)
+    end
+
+    it 'lists the relations and whether a value is needed for each kind' do
+      get :types, params: {}, as: :json
+
+      by_type = json_response['data'].index_by { |type| type['type'] }
+      expect(by_type['price']).to include('match_policies' => %w[greater_than less_than], 'value_required' => true)
+      expect(by_type['in_stock']).to include('match_policies' => %w[is_equal_to is_not_equal_to], 'value_required' => false)
+      expect(by_type['category']['schema'].to_json).to include('include_descendants')
     end
 
     it 'includes a rule kind registered by a plugin' do

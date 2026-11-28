@@ -62,6 +62,15 @@ module Spree
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :collection
     has_many :products, through: :product_collections
 
+    has_many :publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :collection
+    include Spree::ChannelPublishable
+
+    publishable_on_channels :publications, events: true
+
+    has_many :promotion_rule_collections, class_name: 'Spree::PromotionRuleCollection', dependent: :delete_all
+    has_many :exclusions, class_name: 'Spree::CollectionExclusion', dependent: :delete_all, inverse_of: :collection
+    has_many :excluded_products, through: :exclusions, source: :product, class_name: 'Spree::Product'
+
     has_many :rules, class_name: 'Spree::CollectionRule', dependent: :destroy, inverse_of: :collection
     accepts_nested_attributes_for :rules, allow_destroy: true, reject_if: proc { |attributes|
       attributes['value'].blank?
@@ -97,6 +106,7 @@ module Spree
     #
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }
+    scope :with_rule_types, ->(rule_types) { where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) }
 
     #
     # Ransack
@@ -107,9 +117,13 @@ module Spree
     #
     # Automatic (rule-based) membership
     #
-    after_commit :regenerate_products, on: [:update], if: -> { automatic? && (saved_change_to_automatic? || saved_change_to_rules_match_policy?) }
+    after_commit :regenerate_products, on: [:update], if: -> { saved_change_to_rules_match_policy? && rules.exists? }
     attribute :marked_for_regenerate_products, :boolean, default: true
 
+    # `automatic` means "has rules": saving or removing a rule keeps the
+    # column in step. Membership mixes rule-matched and hand-picked products
+    # either way. Rules left on a collection that was manual before 6.1 stay
+    # inert until a rule is saved on it.
     def manual?
       !automatic?
     end
@@ -138,7 +152,37 @@ module Spree
       self.marked_for_regenerate_products = false if !frozen? && only_once
     end
 
+    # Names the source of memberships from before 6.1, which have none until
+    # the upgrade step runs: on a collection that was automatic they came
+    # from its rules. Runs before the automatic flag changes.
+    #
+    # @return [void]
+    def claim_unknown_membership_sources!
+      product_collections.where(source: nil).update_all(source: automatic? ? 'rule' : 'manual')
+    end
+
+    # Keeps `automatic` in step with the rules.
+    #
+    # @return [void]
+    def sync_automatic!
+      return if destroyed?
+
+      has_rules = rules.exists?
+      return if automatic? == has_rules
+
+      claim_unknown_membership_sources!
+      update_columns(automatic: has_rules)
+    end
+
+    # Regenerates in the background, for writes that shouldn't wait for it.
+    #
+    # @return [void]
+    def enqueue_regenerate_products
+      Spree::Collections::RegenerateProductsJob.perform_later(id) if automatic?
+    end
+
     # Products matching the automatic rules (mirrors Spree::Category#products_matching_rules).
+    # Pass `product_ids:` to evaluate only those products.
     #
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
@@ -148,6 +192,7 @@ module Spree
       storefront = opts[:storefront] || false
 
       all_products = store.products.not_archived
+      all_products = all_products.where(id: opts[:product_ids]) if opts.key?(:product_ids)
       all_products = all_products.active(currency: currency) if storefront
 
       any_rules_match_policy = rules_match_policy == 'any'
@@ -206,6 +251,7 @@ module Spree
       rules_params.each_with_index do |rule_data, index|
         data = rule_data.to_h.with_indifferent_access
         rule_id = data.delete(:id)
+        preferences = data.delete(:preferences)
         if data.key?(:type) || rule_id.blank?
           # Refused with the accepted kinds named; letting the nil through
           # answered "type can't be blank" to a caller who had sent one.
@@ -213,13 +259,19 @@ module Spree
                         raise(unknown_row_type_error(Spree::CollectionRule, data[:type], "/rules/#{index}"))
         end
 
-        record = if rule_id.present?
-                   existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||
-                     raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
+        existing = if rule_id.present?
+                     existing_by_id[Spree::CollectionRule.decode_own_prefixed_id(rule_id) || rule_id] ||
+                       raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
+                   end
+
+        # A new type is a new rule: the subclass decodes and validates its own
+        # value, so the old record is replaced rather than retyped.
+        record = if existing && (data[:type].nil? || data[:type] == existing.type)
+                   existing.tap { |rule| rule.assign_attributes(data) }
                  else
                    rules.build(data)
                  end
-        record.assign_attributes(data) if rule_id.present?
+        record.assign_preferences(preferences, pointer: "/rules/#{index}/preferences") unless preferences.nil?
         retained_ids << record.id if record.persisted?
       end
 

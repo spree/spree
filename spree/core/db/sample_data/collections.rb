@@ -3,6 +3,18 @@
 # sort. Runs after the product import so there is a catalog to draw from.
 store = Spree::Current.store
 
+# Updated on a re-run; otherwise created through the workflow, which publishes
+# it on every active channel.
+find_or_create_collection = lambda do |attributes|
+  existing = store.collections.find_by(permalink: attributes[:permalink])
+  next existing.tap { |collection| collection.update!(attributes) } if existing
+
+  result = Spree.collection_create_workflow.call(store: store, attributes: attributes)
+  raise result.error.to_s if result.failure?
+
+  result.value
+end
+
 # Each automatic collection is defined by the single rule that materializes it.
 automatic_collections = [
   {
@@ -23,12 +35,7 @@ automatic_collections = [
 ]
 
 automatic_collections.each do |attributes|
-  collection = store.collections.find_or_initialize_by(permalink: attributes[:permalink])
-  collection.name = attributes[:name]
-  collection.automatic = true
-  collection.rules_match_policy = 'all'
-  collection.sort_order = attributes[:sort_order]
-  collection.save!
+  collection = find_or_create_collection.call(attributes.slice(:permalink, :name, :sort_order).merge(rules_match_policy: 'all'))
 
   unless collection.rules.exists?(type: attributes[:rule_type])
     collection.rules.create!(
@@ -44,11 +51,7 @@ end
 # Manual: "best selling" is a sort, not a membership rule, so this is a curated
 # shelf the merchant controls, ordered by actual sales. Seeded with a slice of
 # the catalog to demonstrate curation.
-best_sellers = store.collections.find_or_initialize_by(permalink: 'best-sellers')
-best_sellers.name = 'Best Sellers'
-best_sellers.automatic = false
-best_sellers.sort_order = 'best_selling'
-best_sellers.save!
+best_sellers = find_or_create_collection.call(permalink: 'best-sellers', name: 'Best Sellers', sort_order: 'best_selling')
 
 if best_sellers.products.empty?
   Spree::Collections::AddProducts.call(

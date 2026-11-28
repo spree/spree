@@ -4,5 +4,10 @@ FactoryBot.define do
     collection
 
     position { 1 }
+    source { 'manual' }
+
+    trait :rule do
+      source { 'rule' }
+    end
   end
 end

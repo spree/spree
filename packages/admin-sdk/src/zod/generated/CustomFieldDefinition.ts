@@ -10,6 +10,7 @@ export const CustomFieldDefinitionSchema = z.object({
   storefront_visible: z.boolean(),
   searchable: z.boolean(),
   sortable: z.boolean(),
+  collection_condition: z.boolean(),
   filter_key: z.string(),
   created_at: z.string(),
   updated_at: z.string(),

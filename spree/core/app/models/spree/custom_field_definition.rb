@@ -18,6 +18,8 @@ module Spree
     validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :resource_type, :namespace] }
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
+    validate :collection_condition_must_suit_field, if: :collection_condition?
+    after_commit :regenerate_custom_field_collections, if: :collection_rules_affected?
 
     #
     # Scopes
@@ -42,7 +44,8 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable]
+    self.whitelisted_ransackable_attributes = %w[key namespace label resource_type field_type storefront_visible searchable sortable
+                                                 collection_condition]
 
     # Both columns store class names; filters take the short names clients see.
     def self.api_type_resolver(attribute)
@@ -158,6 +161,25 @@ module Spree
     end
 
     private
+
+    # A field type change alters how a rule compares the stored values.
+    def collection_rules_affected?
+      return collection_condition? if destroyed?
+
+      saved_change_to_collection_condition? || (collection_condition? && saved_change_to_field_type?)
+    end
+
+    def regenerate_custom_field_collections
+      Spree::Collection.automatic.where(store_id: store_id).with_rule_types([Spree::CollectionRules::CustomField]).
+        find_each(&:enqueue_regenerate_products)
+    end
+
+    # Collection rules compare product fields as text, numbers or booleans.
+    def collection_condition_must_suit_field
+      return if resource_type == 'Spree::Product' && field_type.in?(%w[short_text long_text number boolean])
+
+      errors.add(:collection_condition, :invalid)
+    end
 
     def valid_available_types
       self.class.available_types.map(&:to_s)

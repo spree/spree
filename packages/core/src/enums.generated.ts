@@ -36,12 +36,20 @@ export type ClaimResolution = (typeof CLAIM_RESOLUTIONS)[number]
 export const CLAIM_STATUSES = ['open', 'approved', 'resolved', 'denied', 'canceled'] as const
 export type ClaimStatus = (typeof CLAIM_STATUSES)[number] | (string & {})
 
+/** Every value of `CollectionMembershipSource`. */
+export const COLLECTION_MEMBERSHIP_SOURCES = ['manual', 'rule'] as const
+export type CollectionMembershipSource = (typeof COLLECTION_MEMBERSHIP_SOURCES)[number]
+
 /** Every value of `CollectionRuleMatchPolicy`. */
 export const COLLECTION_RULE_MATCH_POLICIES = [
   'is_equal_to',
   'is_not_equal_to',
   'contains',
   'does_not_contain',
+  'greater_than',
+  'less_than',
+  'starts_with',
+  'ends_with',
 ] as const
 export type CollectionRuleMatchPolicy = (typeof COLLECTION_RULE_MATCH_POLICIES)[number]
 

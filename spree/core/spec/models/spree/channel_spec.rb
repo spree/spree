@@ -205,6 +205,88 @@ RSpec.describe Spree::Channel, type: :model do
     end
   end
 
+  shared_examples 'publishes records on channels' do |factory, event_prefix|
+    let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:record) { create(factory, :unpublished, store: store) }
+    let(:model_class) { record.class }
+
+    describe '#publish_records' do
+      it 'publishes the records, idempotently' do
+        channel.publish_records(model_class, [record.id])
+
+        expect { channel.publish_records(model_class, [record.id]) }.not_to change { record.publications.count }
+        expect(record.publications.published.exists?(channel: channel)).to be(true)
+      end
+
+      it 'keeps an existing window when re-published without one' do
+        future = 1.day.from_now.change(usec: 0)
+        channel.publish_records(model_class, [record.id], published_at: future)
+        channel.publish_records(model_class, [record.id])
+
+        expect(record.reload.publication_for(channel).published_at).to eq(future)
+      end
+
+      context 'events', events: true do
+        before { Spree::Events.reset! }
+        after { Spree::Events.reset! }
+
+        def published_events(name)
+          published = []
+          Spree::Events.subscribe(name, async: false) { |event| published << event }
+          Spree::Events.activate!
+          yield
+          published
+        end
+
+        it 'announces each new publication once' do
+          events = published_events("#{event_prefix}.published") do
+            channel.publish_records(model_class, [record.id])
+            channel.publish_records(model_class, [record.id])
+          end
+
+          expect(events.size).to eq(1)
+          expect(events.first.payload['id']).to eq(record.prefixed_id)
+          expect(events.first.metadata['channel_id']).to eq(channel.prefixed_id)
+        end
+
+        it 'stays silent when asked to' do
+          events = published_events("#{event_prefix}.published") do
+            channel.publish_records(model_class, [record.id], publish_events: false)
+          end
+
+          expect(events).to be_empty
+        end
+
+        it 'announces each removed publication' do
+          channel.publish_records(model_class, [record.id])
+
+          expect(published_events("#{event_prefix}.unpublished") { channel.unpublish_records(model_class, [record.id]) }.size).to eq(1)
+        end
+      end
+    end
+
+    describe '#unpublish_records' do
+      it 'unpublishes the records' do
+        channel.publish_records(model_class, [record.id])
+
+        expect(channel.unpublish_records(model_class, [record.id])).to eq(1)
+        expect(record.publications.exists?(channel: channel)).to be(false)
+      end
+    end
+
+    describe '.publish_records' do
+      it 'publishes on every channel in scope' do
+        channel
+        store.channels.publish_records(model_class, record.id)
+
+        expect(record.reload.channels).to match_array(store.channels)
+      end
+    end
+  end
+
+  it_behaves_like 'publishes records on channels', :collection, 'collection'
+  it_behaves_like 'publishes records on channels', :category, 'category'
+
   describe '#remove_products' do
     let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
     let(:product) { create(:product) }

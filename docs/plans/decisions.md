@@ -6866,6 +6866,15 @@ which loads them on demand.
 
 **Plan:** `6.1-collections-merchandising.md`.
 
+## 2026-11-05 — Collection membership rows name their source; `automatic` is derived
+
+**Context:** Collections gain mixed membership: rules, hand-picked products and exclusions in one collection. Each `spree_product_collections` row now records whether it came from a rule or by hand, so regeneration can leave hand-picked rows alone. Existing rows need that value filled by an upgrade step before the column can be NOT NULL.
+
+**Decision:** `spree_product_collections.source` (`manual` or `rule`) ships nullable in 6.1 and becomes NOT NULL in 6.2, after `spree:collections:backfill_membership_sources` has had a release to run. The model requires a source and every writer, bulk inserts included, names one. `Collection#automatic` becomes "has rules": the Admin API still accepts the field but ignores it and marks it deprecated.
+
+**Consequences:** Any code or extension that inserts collection memberships must pass `source`. Clients that sent `automatic: false` to switch a collection to hand-picking now send `rules: []` to drop its rules; hand-picking works on every collection.
+
+**Plan:** `6.1-collections-merchandising.md`.
 
 ## 2026-11-11 — One anonymised diagnostics report for bug reports
 
@@ -6917,3 +6926,14 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Consequences:** Any tax provider can offer a lookup by implementing one class method. The Avalara gem's `commit_transaction_enabled` preference becomes a three-way `document_recording` choice, translated by the upgrade task. A workflow failure carrying a hash renders its messages in the Admin and Store APIs instead of the hash printed as text.
 
 **Plan:** `6.0-avalara-provider-gem.md` (Key Decision "Sales Tax Badge certification scope", Phase 8).
+
+## 2026-11-27 — Categories are published per channel; one publishing implementation for products, categories and collections
+
+**Context:** 6.1 publishes collections per channel. Categories were still public on every channel, and product and collection publishing were two copies of the same code: a sync setter on each model and a publish/unpublish pair per resource on `Channel`.
+
+**Decision:** Categories get `Spree::CategoryPublication`, a table of their own like products and collections. A category shows on a channel only while it and every ancestor are published there, so hiding a category hides its subtree. Its products stay visible: the category leaves navigation, category filters, a product's `categories` and the category facet. The three record types share one implementation: `Spree::ChannelPublication` (publication models), `Spree::ChannelPublishable` (records) and `Channel#publish_records` / `#unpublish_records`. New categories and collections publish on every active channel through their create workflows (a new `Spree.category_create_workflow`), the way products are created through theirs; the Admin API, CSV import and sample data run them. An upgrade step backfills existing categories.
+
+**Consequences:** `Channel#add_collections` / `#remove_collections` and `Spree::Api::V3::Store::StorefrontCollections` are replaced before release (`StorefrontVisibility`). Store API reads of categories go through `storefront_categories`. Ransack predicates on the product `categories` association still match hidden categories.
+
+**Plan:** `6.1-collections-merchandising.md` (Key Decisions, Constraints on Current Work).
+

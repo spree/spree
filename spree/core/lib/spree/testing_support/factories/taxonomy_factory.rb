@@ -7,7 +7,9 @@ FactoryBot.define do
     store { Spree::Store.default }
 
     after(:create) do |taxonomy|
-      Spree::Category.create!(taxonomy: taxonomy, store: taxonomy.store, name: taxonomy.name)
+      root = Spree::Category.create!(taxonomy: taxonomy, store: taxonomy.store, name: taxonomy.name)
+      # Published like any factory category, or it would hide every child.
+      taxonomy.store.channels.active.publish_records(Spree::Category, root.id, publish_events: false)
       taxonomy.reload
     end
   end

@@ -46,6 +46,11 @@ module Spree
                 buyer_catalog_fragment,
                 category&.cache_key_with_version,
                 collection&.cache_key_with_version,
+                # An unresolved category or collection narrows to nothing; never share the store-wide entry.
+                ('category_unresolved' if params[:category_id].present? && category.nil?),
+                ('collection_unresolved' if params[:collection_id].present? && collection.nil?),
+                # The category facet offers only the categories this channel shows.
+                Digest::MD5.hexdigest(Spree::Current.storefront_category_ids.sort.join(',')),
                 search_query,
                 search_filters&.sort_by(&:first)&.to_json,
                 max_updated,
@@ -74,19 +79,20 @@ module Spree
               # same product set the listing returns (coming-soon pre-orders
               # included) — narrowed to the buyer's catalogs like the listing.
               scope = storefront_products
-              scope = scope.in_category(category) if category.present?
-              scope = scope.in_collection(collection) if collection.present?
+              # An unpublished category or collection narrows to nothing, never to the whole store.
+              scope = category.present? ? scope.in_category(category) : scope.none if params[:category_id].present?
+              scope = collection.present? ? scope.in_collection(collection) : scope.none if params[:collection_id].present?
               scope
             end
 
             def category
               category_id = params[:category_id]
-              @category ||= category_id.present? ? current_store.categories.find_by_param(category_id) : nil
+              @category ||= category_id.present? ? storefront_categories.find_by_param(category_id) : nil
             end
 
             def collection
               collection_id = params[:collection_id]
-              @collection ||= collection_id.present? ? current_store.collections.find_by_param(collection_id) : nil
+              @collection ||= collection_id.present? ? storefront_collections.find_by_param(collection_id) : nil
             end
           end
         end

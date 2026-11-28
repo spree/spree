@@ -137,10 +137,11 @@ module Spree
              resource: proc { Spree.api.option_value_serializer },
              if: proc { expand?('option_values') }
 
+        # Only the categories this channel shows (Spree::Category.published_on).
         many :categories,
              proc { |categories, params|
                store_id = params[:store].id
-               categories.select { |c| c.store_id == store_id }
+               categories.select { |c| c.store_id == store_id && Spree::Current.storefront_category_ids.include?(c.id) }
              },
              resource: proc { Spree.api.category_serializer },
              if: proc { expand?('categories') }

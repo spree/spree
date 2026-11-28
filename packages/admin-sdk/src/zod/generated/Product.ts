@@ -65,6 +65,7 @@ export const ProductSchema = z.object({
   total_on_hand: z.number().nullable(),
   digital_assets: z.array(DigitalAssetSchema).optional(),
   collections: z.array(CollectionSchema).optional(),
+  collection_ids: z.array(z.string()),
   product_publications: z.array(ProductPublicationSchema).optional(),
   channels: z.array(ChannelSchema).optional(),
   product_type: ProductTypeSchema.optional(),

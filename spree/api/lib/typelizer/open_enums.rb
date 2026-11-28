@@ -31,7 +31,7 @@ module Typelizer
 
     CLOSED_LIST_NAMES = %w[
       AdminUserStatus ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
-      CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
+      CollectionMembershipSource CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
       ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
       EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
       OrderFulfillmentStatus OrderPaymentStatus OrderStatus PackageTypeKind PaymentSourceType

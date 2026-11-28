@@ -383,6 +383,8 @@ import type {
   CatalogProductTermsParams,
   CatalogUpdateParams,
   CategoryCreateParams,
+  CategoryPublicationCreateParams,
+  CategoryPublicationUpdateParams,
   CategoryRepositionParams,
   CategoryUpdateParams,
   ChannelAddProductsParams,
@@ -395,6 +397,9 @@ import type {
   ClaimResolveParams,
   ClaimUpdateParams,
   CollectionCreateParams,
+  CollectionExclusionCreateParams,
+  CollectionPublicationCreateParams,
+  CollectionPublicationUpdateParams,
   CollectionUpdateParams,
   CommissionRateCreateParams,
   CommissionRateUpdateParams,
@@ -605,10 +610,15 @@ import type {
   CatalogOrderMinimum,
   CatalogProduct,
   Category,
+  CategoryPublication,
   Channel,
   Claim,
   ClaimReason,
   Collection,
+  CollectionExclusion,
+  CollectionProduct,
+  CollectionPublication,
+  CollectionRuleTypeDefinition,
   CommissionLine,
   CommissionRate,
   Company,
@@ -917,9 +927,55 @@ export class AdminClient {
    * `productMembership` plus per-member reposition, for the parents whose
    * membership carries a manual order (categories, collections).
    */
-  private positionedProductMembership(basePath: string) {
+  /**
+   * The channels a category or collection is published on, nested under it,
+   * each with an optional `published_at` / `unpublished_at` window.
+   */
+  private channelPublications<Publication, CreateParams, UpdateParams>(basePath: string) {
     return {
-      ...this.productMembership(basePath),
+      list: (
+        parentId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Publication>> =>
+        this.request<PaginatedResponse<Publication>>(
+          'GET',
+          `${basePath}/${parentId}/publications`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      create: (
+        parentId: string,
+        params: CreateParams,
+        options?: RequestOptions,
+      ): Promise<Publication> =>
+        this.request<Publication>('POST', `${basePath}/${parentId}/publications`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        parentId: string,
+        id: string,
+        params: UpdateParams,
+        options?: RequestOptions,
+      ): Promise<Publication> =>
+        this.request<Publication>('PATCH', `${basePath}/${parentId}/publications/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (parentId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `${basePath}/${parentId}/publications/${id}`, options),
+    }
+  }
+
+  private positionedProductMembership<Row = Product>(basePath: string) {
+    return {
+      ...this.productMembership<Row>(basePath),
 
       /** Persists a drag-to-reorder; `new_position` is a 0-based index. */
       reposition: (
@@ -1411,9 +1467,9 @@ export class AdminClient {
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
 
     /**
-     * Attach every product in `ids` to every collection in `collection_ids`.
-     * Automatic collections are skipped (their membership comes from rules), so
-     * `collection_count` reports how many were actually applied.
+     * Hand-pick every product in `ids` into every collection in
+     * `collection_ids`. Products a collection's rules already matched become
+     * hand-picked in place; `collection_count` is how many collections applied.
      */
     bulkAddToCollections: (
       params: ProductBulkCollectionsParams,
@@ -5070,6 +5126,17 @@ export class AdminClient {
     /** Manual product membership + ordering within a category. */
     products: this.positionedProductMembership('/categories'),
 
+    /**
+     * The channels a category is published on, each with an optional
+     * window. A category is visible on a channel's storefront only while it
+     * and every parent category have a publication there with an open window.
+     */
+    publications: this.channelPublications<
+      CategoryPublication,
+      CategoryPublicationCreateParams,
+      CategoryPublicationUpdateParams
+    >('/categories'),
+
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.category),
 
     translations: this.parentScopedTranslations('/categories'),
@@ -5118,11 +5185,55 @@ export class AdminClient {
       this.request<void>('DELETE', `/collections/${id}`, options),
 
     /**
-     * Manual product membership + ordering within a collection. `add`, `remove`
-     * and `reposition` are rejected on an automatic collection, whose members
-     * are materialized from its rules; `list` works on both.
+     * Product membership + ordering within a collection. `list` covers
+     * rule-matched and hand-picked members; `add` hand-picks a product (a
+     * rule-matched one becomes hand-picked in place). Removing a product the
+     * rules still match brings it back on regeneration: exclude it instead.
      */
-    products: this.positionedProductMembership('/collections'),
+    /** Each row says whether the rules matched it or it was hand-picked (`membership_source`). */
+    products: this.positionedProductMembership<CollectionProduct>('/collections'),
+
+    /**
+     * The channels a collection is published on, each with an optional
+     * window. A collection is visible on a channel's storefront only while
+     * a publication exists and its window is open.
+     */
+    publications: this.channelPublications<
+      CollectionPublication,
+      CollectionPublicationCreateParams,
+      CollectionPublicationUpdateParams
+    >('/collections'),
+
+    /**
+     * Products kept out of a collection whatever its rules match or a
+     * merchant picked. Deleting an exclusion brings the product back if the
+     * rules still match.
+     */
+    exclusions: {
+      list: (
+        collectionId: string,
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CollectionExclusion>> =>
+        this.request<PaginatedResponse<CollectionExclusion>>(
+          'GET',
+          `/collections/${collectionId}/exclusions`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      create: (
+        collectionId: string,
+        params: CollectionExclusionCreateParams,
+        options?: RequestOptions,
+      ): Promise<CollectionExclusion> =>
+        this.request<CollectionExclusion>('POST', `/collections/${collectionId}/exclusions`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (collectionId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/collections/${collectionId}/exclusions/${id}`, options),
+    },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS.collection),
 
@@ -5135,8 +5246,12 @@ export class AdminClient {
    * registry-driven server-side, so plugin-registered rules appear here too.
    */
   readonly collectionRules = {
-    types: (options?: RequestOptions): Promise<{ data: ResourceTypeDefinition[] }> =>
-      this.request<{ data: ResourceTypeDefinition[] }>('GET', '/collection_rules/types', options),
+    types: (options?: RequestOptions): Promise<{ data: CollectionRuleTypeDefinition[] }> =>
+      this.request<{ data: CollectionRuleTypeDefinition[] }>(
+        'GET',
+        '/collection_rules/types',
+        options,
+      ),
   }
 
   // ============================================

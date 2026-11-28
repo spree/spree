@@ -42,7 +42,10 @@ module Spree
             resource: proc { Spree.api.category_serializer },
             if: proc { expand?('parent') }
 
+        # A shown category's parent and ancestors are shown too; its children
+        # may not be (Spree::Category.published_on).
         many :children,
+             proc { |children| children.select { |child| Spree::Current.storefront_category_ids.include?(child.id) } },
              resource: proc { Spree.api.category_serializer },
              if: proc { expand?('children') }
 

@@ -26,6 +26,7 @@ module Spree
         # quietly linking — the promotion would otherwise discount against a
         # catalog its store cannot see.
         def category_ids=(ids)
+          @eligible_category_ids = @eligible_category_ids_including_children = nil
           super(ids_within_store(ids, promotion && promotion_categories_scope))
         end
 
@@ -52,7 +53,12 @@ module Spree
         end
 
         def eligible?(order, _options = {})
-          return true if eligible_category_ids.empty?
+          # No categories picked yet matches no order, so an order-level
+          # action cannot discount everything.
+          if eligible_category_ids.empty?
+            eligibility_errors.add(:base, eligibility_error_message(:no_matching_taxons))
+            return false
+          end
 
           if exclusion?
             if order.line_items.any? && order.line_items.all? { |line_item| in_categories?(line_item) }

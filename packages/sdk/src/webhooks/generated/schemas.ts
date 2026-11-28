@@ -2,7 +2,9 @@
 import { z } from 'zod'
 import {
   CartSchema,
+  CategorySchema,
   ClaimSchema,
+  CollectionSchema,
   CompanySchema,
   CompanyInvitationSchema,
   CustomerSchema,
@@ -69,6 +71,8 @@ type WebhookEventName =
   | 'catalog.created'
   | 'catalog.deleted'
   | 'catalog.updated'
+  | 'category.published'
+  | 'category.unpublished'
   | 'claim.approved'
   | 'claim.canceled'
   | 'claim.created'
@@ -77,6 +81,8 @@ type WebhookEventName =
   | 'claim.opened'
   | 'claim.resolved'
   | 'claim.updated'
+  | 'collection.published'
+  | 'collection.unpublished'
   | 'company.created'
   | 'company.deleted'
   | 'company.updated'
@@ -343,6 +349,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'catalog.created': WebhookRecordReferenceSchema,
   'catalog.deleted': WebhookRecordReferenceSchema,
   'catalog.updated': WebhookRecordReferenceSchema,
+  'category.published': CategorySchema,
+  'category.unpublished': CategorySchema,
   'claim.approved': ClaimSchema,
   'claim.canceled': ClaimSchema,
   'claim.created': ClaimSchema,
@@ -351,6 +359,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'claim.opened': ClaimSchema,
   'claim.resolved': ClaimSchema,
   'claim.updated': ClaimSchema,
+  'collection.published': CollectionSchema,
+  'collection.unpublished': CollectionSchema,
   'company.created': CompanySchema,
   'company.deleted': CompanySchema,
   'company.updated': CompanySchema,

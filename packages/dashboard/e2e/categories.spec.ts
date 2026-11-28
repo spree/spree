@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login } from './helpers'
+import { adminApiSession, adminRequest, FIXTURE_PROMO_PRODUCT, gotoIndex, login } from './helpers'
 
 const CATEGORIES_PATH = (storeId: string) => `/${storeId}/products/categories`
 const CTA = /new category/i
@@ -34,6 +34,27 @@ async function createCategory(page: Page, name: string) {
   await expect(treeRow(page, name)).toBeVisible({ timeout: 15_000 })
 }
 
+// Unchecks the first channel the open category is published on, saves, and
+// proves the choice survives a reload.
+async function uncheckFirstPublishedChannel(page: Page) {
+  await page.getByRole('button', { name: /^manage$/i }).click()
+  const sheet = page.getByRole('dialog')
+  const published = sheet
+    .getByRole('button')
+    .filter({ has: page.getByRole('checkbox', { checked: true }) })
+  const channelName = ((await published.first().textContent()) ?? '').trim()
+  await published.first().click()
+  await sheet.getByRole('button', { name: /^done$/i }).click()
+  await page.getByRole('button', { name: /^save$/i }).click()
+  await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
+
+  await page.reload()
+  await page.getByRole('button', { name: /^manage$/i }).click()
+  await expect(
+    page.getByRole('dialog').getByRole('button', { name: channelName }).getByRole('checkbox'),
+  ).not.toBeChecked({ timeout: 15_000 })
+}
+
 test.describe('categories management', () => {
   test('creates a category', async ({ page }) => {
     const creds = await login(page)
@@ -43,6 +64,33 @@ test.describe('categories management', () => {
     await createCategory(page, name)
 
     await expect(treeRow(page, name)).toBeVisible()
+  })
+
+  test('publishes on every active channel and keeps an unchecked one off', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    const name = `E2E Category Publishing ${Date.now()}`
+    await page.locator('#category-name').fill(name)
+
+    // A new category starts on every active channel, as the server would.
+    await expect(page.getByText(/visible to customers now/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(/\/products\/categories\/(?!new(?:\?|$))/, { timeout: 15_000 })
+    await expect(page.locator('#category-name')).toHaveValue(name, { timeout: 15_000 })
+    const categoryId = page.url().match(/categories\/(ctg_[^/?]+)/)?.[1]
+
+    try {
+      await uncheckFirstPublishedChannel(page)
+    } finally {
+      // A leftover top-level row lengthens the tree the reposition test drags in.
+      if (categoryId)
+        await adminRequest(page, await adminApiSession(page), 'delete', `/categories/${categoryId}`)
+    }
   })
 
   // Filled by the probes in src/testing/slot-probes.tsx.

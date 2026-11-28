@@ -43,7 +43,14 @@ function NewCategoryPage() {
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     // Extension fields seed their blank value (`from(null)`) on create.
-    defaultValues: { ...CATEGORY_DEFAULTS, ...extensionFormValues('category', null) },
+    // `publications: null` until the Publishing card seeds every active
+    // channel: a save before channels load leaves the server's default
+    // (publish on every active channel) in charge.
+    defaultValues: {
+      ...CATEGORY_DEFAULTS,
+      publications: null,
+      ...extensionFormValues('category', null),
+    },
   })
 
   const onSubmit = async (values: CategoryFormValues) => {

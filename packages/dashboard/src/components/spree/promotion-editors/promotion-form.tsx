@@ -898,6 +898,7 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
+  const collections = nameList(draft.collections)
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
   const countries = nameList(draft.countries, countryName)
@@ -915,6 +916,12 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   else if (draft.category_ids?.length)
     parts.push(
       t('admin.promotions.rule_summary.category_count', { count: draft.category_ids.length }),
+    )
+
+  if (collections) parts.push(collections)
+  else if (draft.collection_ids?.length)
+    parts.push(
+      t('admin.promotions.rule_summary.collection_count', { count: draft.collection_ids.length }),
     )
 
   if (customers) parts.push(customers)

@@ -18,6 +18,10 @@ module Spree
                resource: proc { Spree.api.admin_collection_rule_serializer },
                if: proc { expand?('rules') }
 
+          many :publications,
+               resource: proc { Spree.api.admin_collection_publication_serializer },
+               if: proc { expand?('publications') }
+
           expandable_custom_fields admin: true
         end
       end

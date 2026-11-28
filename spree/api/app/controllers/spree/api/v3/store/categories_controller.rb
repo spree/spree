@@ -4,6 +4,8 @@ module Spree
       module Store
         class CategoriesController < ResourceController
           include Spree::Api::V3::HttpCaching
+          include Spree::Api::V3::Store::PermalinkLookup
+          include Spree::Api::V3::Store::StorefrontVisibility
 
           protected
 
@@ -17,21 +19,14 @@ module Spree
 
           # Exclude automatic (rule-based) rows still living in spree_categories
           # until the Phase 4 migration moves them to Collections (removed in 6.3).
+          # A category not published on this channel is a 404, and so is its subtree.
           def scope
-            super.manual
+            super.manual.merge(storefront_categories)
           end
 
-          # Find category by permalink or prefixed ID with i18n scope for SEO-friendly URLs
-          # Falls back to default locale if category is not found in the current locale
           def find_resource
-            id = params[:id]
-            if id.to_s.start_with?('ctg_')
-              scope.find_by_prefix_id!(id)
-            else
-              find_with_fallback_default_locale { scope.i18n.find_by!(permalink: id) }
-            end
+            find_by_id_or_permalink!(scope, params[:id])
           end
-
         end
       end
     end

@@ -5,11 +5,13 @@ export { AppliedPromotionSchema, type AppliedPromotion } from './AppliedPromotio
 export { BaseSchema, type Base } from './Base';
 export { CartSchema, type Cart } from './Cart';
 export { CategorySchema, type Category } from './Category';
+export { CategoryPublicationSchema, type CategoryPublication } from './CategoryPublication';
 export { ChannelSchema, type Channel } from './Channel';
 export { ClaimSchema, type Claim } from './Claim';
 export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { ClaimReasonSchema, type ClaimReason } from './ClaimReason';
 export { CollectionSchema, type Collection } from './Collection';
+export { CollectionPublicationSchema, type CollectionPublication } from './CollectionPublication';
 export { CompanySchema, type Company } from './Company';
 export { CompanyInvitationSchema, type CompanyInvitation } from './CompanyInvitation';
 export { CompanyMembershipSchema, type CompanyMembership } from './CompanyMembership';
@@ -79,6 +81,7 @@ export { ProductPublicationSchema, type ProductPublication } from './ProductPubl
 export { ProductSubmissionSchema, type ProductSubmission } from './ProductSubmission';
 export { ProductTypeSchema, type ProductType } from './ProductType';
 export { PromotionSchema, type Promotion } from './Promotion';
+export { PublicationSchema, type Publication } from './Publication';
 export { PurchaseOrderEventSchema, type PurchaseOrderEvent } from './PurchaseOrderEvent';
 export { RefundSchema, type Refund } from './Refund';
 export { ReturnSchema, type Return } from './Return';

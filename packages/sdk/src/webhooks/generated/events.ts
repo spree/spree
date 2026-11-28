@@ -1,7 +1,9 @@
 // This file is auto-generated from Spree's event catalog by `rake typelizer:generate`. Do not edit directly.
 import type {
   Cart,
+  Category,
   Claim,
+  Collection,
   Company,
   CompanyInvitation,
   Customer,
@@ -74,6 +76,8 @@ export interface WebhookEventMap {
   'catalog.created': WebhookRecordReference
   'catalog.deleted': WebhookRecordReference
   'catalog.updated': WebhookRecordReference
+  'category.published': Category
+  'category.unpublished': Category
   'claim.approved': Claim
   'claim.canceled': Claim
   'claim.created': Claim
@@ -82,6 +86,8 @@ export interface WebhookEventMap {
   'claim.opened': Claim
   'claim.resolved': Claim
   'claim.updated': Claim
+  'collection.published': Collection
+  'collection.unpublished': Collection
   'company.created': Company
   'company.deleted': Company
   'company.updated': Company

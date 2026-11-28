@@ -3,12 +3,15 @@ import {
   COLLECTION_RULE_MATCH_POLICIES,
   COLLECTION_SORT_ORDERS,
   type CollectionSortOrder,
+  isDecimalString,
   MATCH_POLICIES,
 } from '@spree/core'
 import { customFieldFormSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
+import { publicationsFormSchema, publicationsParam, publicationsToForm } from './publications'
 
 /**
  * Locale key for a sort order's label. The server vocabulary is
@@ -54,40 +57,77 @@ const imageFields = {
   square_image_cleared: z.boolean(),
 }
 
-const collectionRuleSchema = z.object({
+/** Built-in rule types whose value is an amount. */
+const AMOUNT_RULE_TYPES = ['price']
+
+const collectionRuleFields = z.object({
   /** Prefixed `crule_` id. Absent on a rule the merchant just added. */
   id: z.string().optional(),
   type: z.string().min(1),
-  value: z.string().min(1, { error: requiredMessage('value') }),
+  value: z.string(),
   match_policy: z.enum(COLLECTION_RULE_MATCH_POLICIES),
+  /** Price and sale rules: the currency they evaluate in; null is the store's default. */
+  currency: z.string().nullable(),
+  /** Per-type settings, e.g. `include_descendants`, `custom_field_definition_id`. */
+  preferences: z.record(z.string(), z.unknown()),
 })
 
-export type CollectionRuleFormValues = z.infer<typeof collectionRuleSchema>
+/**
+ * @param valuelessTypes rule types the types endpoint lists with
+ *   `value_required: false` (in stock), which take no value; null while
+ *   the types load, when no rule needs one
+ */
+function collectionRuleSchema(valuelessTypes: readonly string[] | null) {
+  return collectionRuleFields.superRefine((rule, ctx) => {
+    if (valuelessTypes?.includes(rule.type)) return
+    if (rule.value.trim() === '') {
+      if (valuelessTypes === null) return
+      ctx.addIssue({
+        code: 'custom',
+        path: ['value'],
+        message: requiredMessage('collection_rule.value')(),
+      })
+    } else if (AMOUNT_RULE_TYPES.includes(rule.type) && !isDecimalString(rule.value.trim())) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['value'],
+        message: i18n.t('admin.collections.rules.amount_invalid'),
+      })
+    }
+  })
+}
 
-export const collectionFormSchema = z.object({
-  /**
-   * Staged product membership, applied on Save through the nested products
-   * endpoints. Deliberately opaque: it holds SDK `Product` records so a
-   * staged addition can render before it exists server-side, and RHF's
-   * `Path<T>` must not walk that object graph (see the note on
-   * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
-   * `collectionToParams` drops it.
-   */
-  staged_products: z.custom<ProductMembershipStagingValue>(() => true),
-  name: z.string().min(1, { error: requiredMessage('name') }),
-  description: z.string(),
-  permalink: z.string(),
-  meta_title: z.string(),
-  meta_description: z.string(),
-  sort_order: z.enum(COLLECTION_SORT_ORDERS),
-  automatic: z.boolean(),
-  rules_match_policy: z.enum(MATCH_POLICIES),
-  rules: z.array(collectionRuleSchema),
-  custom_fields: z.array(customFieldFormSchema).optional(),
-  ...imageFields,
-})
+export type CollectionRuleFormValues = z.infer<typeof collectionRuleFields>
 
-export type CollectionFormValues = z.infer<typeof collectionFormSchema>
+/**
+ * The collection form schema. Which rule types take no value comes from the
+ * types endpoint, so the caller passes it in (see `useCollectionFormResolver`).
+ */
+export const collectionFormSchema = (valuelessTypes: readonly string[] | null = []) =>
+  z.object({
+    /**
+     * Staged product membership, applied on Save through the nested products
+     * endpoints. Deliberately opaque: it holds SDK `Product` records so a
+     * staged addition can render before it exists server-side, and RHF's
+     * `Path<T>` must not walk that object graph (see the note on
+     * `RuleEmbedRecord` in schemas/price-list.ts). Never sent to the API —
+     * `collectionToParams` drops it.
+     */
+    staged_products: z.custom<ProductMembershipStagingValue>(() => true),
+    name: z.string().min(1, { error: requiredMessage('name') }),
+    description: z.string(),
+    permalink: z.string(),
+    meta_title: z.string(),
+    meta_description: z.string(),
+    sort_order: z.enum(COLLECTION_SORT_ORDERS),
+    rules_match_policy: z.enum(MATCH_POLICIES),
+    rules: z.array(collectionRuleSchema(valuelessTypes)),
+    publications: publicationsFormSchema,
+    custom_fields: z.array(customFieldFormSchema).optional(),
+    ...imageFields,
+  })
+
+export type CollectionFormValues = z.infer<ReturnType<typeof collectionFormSchema>>
 
 const IMAGE_DEFAULTS = {
   image_signed_id: null,
@@ -106,16 +146,22 @@ export const COLLECTION_DEFAULTS: CollectionFormValues = {
   meta_title: '',
   meta_description: '',
   sort_order: 'manual',
-  automatic: false,
   rules_match_policy: 'all',
   rules: [],
+  publications: [],
   custom_fields: [],
   ...IMAGE_DEFAULTS,
 }
 
-/** A blank rule row, used when the merchant adds one to an automatic collection. */
+/** A blank rule row. */
 export function blankCollectionRule(): CollectionRuleFormValues {
-  return { type: DEFAULT_RULE_TYPE, value: '', match_policy: 'is_equal_to' }
+  return {
+    type: DEFAULT_RULE_TYPE,
+    value: '',
+    match_policy: 'is_equal_to',
+    currency: null,
+    preferences: {},
+  }
 }
 
 /** Hydrate the form from an API collection row. */
@@ -130,7 +176,6 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
     // (an older/newer server) would otherwise fail the form's own validation
     // and block every save, including edits that never touch the sort.
     sort_order: isKnownSortOrder(collection.sort_order) ? collection.sort_order : 'manual',
-    automatic: collection.automatic ?? false,
     rules_match_policy: collection.rules_match_policy === 'any' ? 'any' : 'all',
     rules:
       collection.rules?.map((rule) => ({
@@ -138,7 +183,10 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
         type: rule.type,
         value: rule.value ?? '',
         match_policy: knownMatchPolicy(rule.match_policy),
+        currency: rule.currency ?? null,
+        preferences: rule.preferences ?? {},
       })) ?? [],
+    publications: publicationsToForm(collection.publications),
     custom_fields:
       collection.custom_fields?.map((cf) => ({
         id: cf.id,
@@ -163,13 +211,12 @@ export function collectionToParams(values: CollectionFormValues) {
     meta_title: values.meta_title,
     meta_description: values.meta_description,
     sort_order: values.sort_order,
-    automatic: values.automatic,
     rules_match_policy: values.rules_match_policy,
-    // `rules` is a sync setter server-side: the array IS the desired rule set,
-    // so omitted rules are deleted. Only send it for automatic collections —
-    // a manual one has no rules to express, and sending [] would wipe the rules
-    // of a collection the merchant just toggled off (they come back on re-enable).
-    ...(values.automatic ? { rules: values.rules as CollectionRuleParams[] } : {}),
+    // `rules` and `publications` are sync setters server-side: each array IS
+    // the desired set, so an omitted rule or channel is removed. A collection
+    // with no rules is curated by hand only.
+    rules: values.rules as CollectionRuleParams[],
+    ...publicationsParam(values.publications),
     ...(values.custom_fields && values.custom_fields.length > 0
       ? { custom_fields: values.custom_fields }
       : {}),

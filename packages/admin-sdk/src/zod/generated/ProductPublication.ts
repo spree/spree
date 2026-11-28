@@ -5,8 +5,8 @@ export const ProductPublicationSchema = z.object({
   id: z.string(),
   published_at: z.string().nullable(),
   unpublished_at: z.string().nullable(),
-  product_id: z.string(),
   channel_id: z.string(),
+  product_id: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
 });

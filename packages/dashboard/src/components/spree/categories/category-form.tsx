@@ -23,6 +23,7 @@ import {
   FormBackedCustomFieldsProvider,
 } from '../custom-fields/custom-fields-inline'
 import { MediaRichTextEditor } from '../media-rich-text-editor'
+import { PublishingCard } from '../publishing-card'
 import { ResourceImageField } from '../resource-image-field'
 import { ResourceTranslationsCard } from '../translations/resource-translations-card'
 import { CategoryProductsCard } from './category-products-card'
@@ -120,6 +121,12 @@ export function CategorySidebar({
 
   return (
     <>
+      <PublishingCard
+        form={form}
+        name="publications"
+        seed={category ? undefined : 'active'}
+        translationNamespace="admin.categories"
+      />
       <Card>
         <CardHeader>
           <CardTitle>{t('admin.categories.images.title')}</CardTitle>

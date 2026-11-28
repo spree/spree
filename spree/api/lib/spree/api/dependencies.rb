@@ -9,7 +9,8 @@ module Spree
       STORE_SERIALIZERS =
         %i[credit_card price price_history product product_type variant media option_type option_value cart order
            order_group line_item payment payment_session payment_setup_session payment_source store_credit
-           fulfillment delivery address address_owner customer data_request customer_group country channel product_publication
+           fulfillment delivery address address_owner customer data_request customer_group country channel product_publication collection_publication
+           category_publication
            market state wishlist wishlist_item payment_method delivery_method delivery_rate freight_summary
            stock_location category collection applied_promotion discount tax_line delivery_zone delivery_zone_member
            fee digital_link gift_card currency locale policy custom_field tax_category tax_identifier
@@ -35,7 +36,8 @@ module Spree
            catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor session seller_team_member product_submission
            seller seller_requirement seller_requirement_submission seller_requirement_status commission_rate
            commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address address_owner
-           channel order_routing_rule product_publication market delivery_method delivery_method_service
+           channel order_routing_rule product_publication collection_publication collection_exclusion market delivery_method delivery_method_service
+           category_publication collection_product
            stock_location stock_reservation delivery_rate freight_summary freight_summary_line payment_method
            credit_card store_credit store_credit_event customer_group payment_source digital_asset digital_link
            store setup_task update_status diagnostics api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
@@ -44,7 +46,7 @@ module Spree
            maintenance_task_run
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations translatable_resource translation_coverage
-           resource_type_definition payment_method_type integration_type_definition calculator_type
+           resource_type_definition collection_rule_type_definition payment_method_type integration_type_definition calculator_type
            product_membership_result bulk_stock_level_result bulk_product_result setup_status
            password_reset_acknowledgement integration_connection_result tag
            email_template email_template_draft email_template_revision email_template_preview

@@ -25,6 +25,12 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       expect(store.categories.find_by(name: 'Nike').parent).to eq(brands)
     end
 
+    it 'creates them through the create workflow, so they go live on every active channel' do
+      described_class.perform_now(product.id, store.id, ['Men -> Shirts'])
+
+      expect(store.categories.find_by(name: 'Shirts').channels).to contain_exactly(store.default_channel)
+    end
+
     it 'does not create taxonomies' do
       expect {
         described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])

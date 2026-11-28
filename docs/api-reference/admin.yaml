@@ -92,7 +92,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3NmVlN2M3LWJkYzktNGM1MS1hMzFiLTEwMDYxOTc3NGZmNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.t4Ntas5E8dwfI8wxMdwcC-XVFXWzaFSAFL8_Mv4HnlU
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjIyZTljMmNiLTBiN2ItNGZmNC1hOTU0LWYxMmRiNGY1NDVhNyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.Kep3q-NRGsPRcSx0bRvFdUoEInBhAA9ou1dluD41YZI
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -103,7 +103,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -206,7 +206,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImFiN2M4YjAxLTY0MGYtNDJhZi1hZTY1LTQxY2NmOTk1YmVlMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.oXS2FwkI2rK4WOX4QUNW4oTPu7gzMmB9Y9oqsJpW7SY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImNkZTYzMjViLTA5MDktNGQ4YS1hZjMwLTEwZDc4NjU5NjhiMSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDc4NzAwfQ.j5vB_mLxk3eUwmZWrtIKxqvGd4ovnYTJFd4w6vtKksA
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -343,7 +343,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -772,7 +772,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBiZTdhM2RmLWEyYzYtNDZkOC1hNTZiLWE4NDg4MGIyZGZiNCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.Vo2RzprqsH2XBa8DaSQ6awyXqlBA5QDFA5R7ygTezXY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjMxNDk4ZjNmLWYxNGUtNGYzNy1hM2YwLWJmMjIwMGMyN2JhMCIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzY4NDgyMDAwfQ.7gH0H_8l2tKy9C1YCfkSZfmLT2G9EXriKvvjtR9yG00
                 user:
                   id: adm_UkLWZg9DAJ
                   email: admin@example.com
@@ -783,7 +783,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -899,7 +899,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -6053,6 +6053,311 @@ paths:
             schema:
               "$ref": "#/components/schemas/ProductMembershipRepositionParams"
         required: true
+  "/api/v3/admin/categories/{category_id}/publications":
+    get:
+      summary: List category publications
+      tags:
+      - Categories
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists the sales channels a category is published on, each with its optional publishing window. A category appears on a channel's storefront only while it and every parent category have a publication there with an open window.
+
+        **Required scope:** `read_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: publications } = await client.categories.publications.list('ctg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /categories/{category_id}/publications
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: category_id
+        in: path
+        required: true
+        description: Category ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: publications found
+          content:
+            application/json:
+              example:
+                data:
+                - id: ctgpub_UkLWZg9DAJ
+                  published_at:
+                  unpublished_at:
+                  channel_id: ch_UkLWZg9DAJ
+                  category_id: ctg_UkLWZg9DAJ
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CategoryPublication"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '404':
+          description: category not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Category not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Publish a category on a channel
+      tags:
+      - Categories
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Publishes a category on a sales channel so shoppers on that channel can see it and the subcategories published there. Set `published_at` to schedule the launch and `unpublished_at` to take it down later; both are optional.
+
+        **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Live on the channel from the given date; omit published_at to go live now.
+          const publication = await client.categories.publications.create('ctg_UkLWZg9DAJ', {
+            channel_id: 'ch_UkLWZg9DAJ',
+            published_at: '2026-12-01T08:00:00Z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /categories/{category_id}/publications -d '{"channel_id":"ch_UkLWZg9DAJ","published_at":"2026-12-01T08:00:00Z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: category_id
+        in: path
+        required: true
+        description: Category ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: category published
+          content:
+            application/json:
+              example:
+                id: ctgpub_gbHJdmfrXB
+                published_at: '2030-01-01T09:00:00.000Z'
+                unpublished_at:
+                channel_id: ch_UkLWZg9DAJ
+                category_id: ctg_gbHJdmfrXB
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CategoryPublication"
+        '422':
+          description: already published on the channel
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Category has already been taken
+                  details:
+                    category_id:
+                    - value: ctg_UkLWZg9DAJ
+                      code: taken
+                      message: has already been taken
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CategoryPublicationCreateParams"
+        required: true
+  "/api/v3/admin/categories/{category_id}/publications/{id}":
+    patch:
+      summary: Update a category publication
+      tags:
+      - Categories
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Changes when a category goes live on a channel, or when it comes down. The channel itself cannot be changed.
+
+        **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const publication = await client.categories.publications.update(
+            'ctg_UkLWZg9DAJ',
+            'ctgpub_UkLWZg9DAJ',
+            { unpublished_at: '2027-01-15T00:00:00Z' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /categories/{category_id}/publications/{id} -d '{"unpublished_at":"2027-01-15T00:00:00Z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: category_id
+        in: path
+        required: true
+        description: Category ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Category publication ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: publication updated
+          content:
+            application/json:
+              example:
+                id: ctgpub_UkLWZg9DAJ
+                published_at:
+                unpublished_at: '2030-02-01T09:00:00.000Z'
+                channel_id: ch_UkLWZg9DAJ
+                category_id: ctg_UkLWZg9DAJ
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CategoryPublication"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CategoryPublicationUpdateParams"
+        required: true
+    delete:
+      summary: Unpublish a category from a channel
+      tags:
+      - Categories
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes a category off a sales channel. Shoppers on that channel stop seeing it and its subcategories straight away.
+
+        **Required scope:** `write_categories` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.categories.publications.delete('ctg_UkLWZg9DAJ', 'ctgpub_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /categories/{category_id}/publications/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: category_id
+        in: path
+        required: true
+        description: Category ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Category publication ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: category unpublished
   "/api/v3/admin/categories/{category_id}/custom_fields":
     get:
       summary: List category custom fields
@@ -7207,6 +7512,8 @@ paths:
                   description_html: ''
                   image_url:
                   square_image_url:
+                  image_alt:
+                  square_image_alt:
                   automatic: false
                   rules_match_policy: all
                   metadata: {}
@@ -7297,6 +7604,8 @@ paths:
                 description_html: ''
                 image_url:
                 square_image_url:
+                image_alt:
+                square_image_alt:
                 automatic: true
                 rules_match_policy: any
                 metadata: {}
@@ -7398,6 +7707,8 @@ paths:
                 description_html: ''
                 image_url:
                 square_image_url:
+                image_alt:
+                square_image_alt:
                 automatic: false
                 rules_match_policy: all
                 metadata: {}
@@ -7480,6 +7791,8 @@ paths:
                 description_html: ''
                 image_url:
                 square_image_url:
+                image_alt:
+                square_image_alt:
                 automatic: false
                 rules_match_policy: all
                 metadata: {}
@@ -7785,7 +8098,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Product"
+                      "$ref": "#/components/schemas/CollectionProduct"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:
@@ -8024,6 +8337,55 @@ paths:
             application/json:
               example:
                 data:
+                - type: category
+                  label: Category
+                  description: Products in a category, optionally including its subcategories
+                  schema:
+                    type: object
+                    properties:
+                      include_descendants:
+                        type: boolean
+                        default: false
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  value_required: true
+                  uses_currency: false
+                - type: custom_field
+                  label: Custom field
+                  description: Products whose custom field matches a value
+                  schema:
+                    type: object
+                    properties:
+                      custom_field_definition_id:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  - contains
+                  - does_not_contain
+                  - starts_with
+                  - ends_with
+                  - greater_than
+                  - less_than
+                  value_required: true
+                  uses_currency: false
+                - type: in_stock
+                  label: In stock
+                  description: Products with a variant that can be sold now
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  value_required: false
+                  uses_currency: false
                 - type: sale
                   label: On sale
                   description: Products currently discounted below their compare-at
@@ -8032,6 +8394,37 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  - contains
+                  - does_not_contain
+                  value_required: true
+                  uses_currency: true
+                - type: price
+                  label: Price
+                  description: Products with a variant priced above or below an amount
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  match_policies:
+                  - greater_than
+                  - less_than
+                  value_required: true
+                  uses_currency: true
+                - type: product_type
+                  label: Product type
+                  description: Products of a product type
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  value_required: true
+                  uses_currency: false
                 - type: available_on
                   label: Recently published
                   description: Products published within the last N days
@@ -8039,6 +8432,25 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  - contains
+                  - does_not_contain
+                  value_required: true
+                  uses_currency: false
+                - type: seller
+                  label: Seller
+                  description: Products a marketplace seller lists
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  value_required: true
+                  uses_currency: false
                 - type: tag
                   label: Tag
                   description: Products carrying a matching tag
@@ -8046,15 +8458,567 @@ paths:
                     type: object
                     properties: {}
                     additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  - contains
+                  - does_not_contain
+                  value_required: true
+                  uses_currency: false
+                - type: title
+                  label: Title
+                  description: Products whose name matches a text
+                  schema:
+                    type: object
+                    properties: {}
+                    additionalProperties: false
+                  match_policies:
+                  - is_equal_to
+                  - is_not_equal_to
+                  - contains
+                  - does_not_contain
+                  - starts_with
+                  - ends_with
+                  value_required: true
+                  uses_currency: false
               schema:
                 type: object
                 properties:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/ResourceTypeDefinition"
+                      "$ref": "#/components/schemas/CollectionRuleTypeDefinition"
                 required:
                 - data
+  "/api/v3/admin/collections/{collection_id}/publications":
+    get:
+      summary: List collection publications
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists the sales channels a collection is published on, each with its optional publishing window. A collection appears on a channel's storefront only while a publication exists and its window is open.
+
+        **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: publications } = await client.collections.publications.list('coll_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/publications
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: publications found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cpub_UkLWZg9DAJ
+                  published_at:
+                  unpublished_at:
+                  channel_id: ch_UkLWZg9DAJ
+                  collection_id: coll_UkLWZg9DAJ
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CollectionPublication"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '404':
+          description: collection not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Collection not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Publish a collection on a channel
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Publishes a collection on a sales channel so shoppers on that channel can see it. Set `published_at` to schedule the launch and `unpublished_at` to take it down later; both are optional.
+
+        **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Live on the channel from the given date; omit published_at to go live now.
+          const publication = await client.collections.publications.create('coll_UkLWZg9DAJ', {
+            channel_id: 'ch_UkLWZg9DAJ',
+            published_at: '2026-12-01T08:00:00Z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections/{collection_id}/publications -d '{"channel_id":"ch_UkLWZg9DAJ","published_at":"2026-12-01T08:00:00Z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: collection published
+          content:
+            application/json:
+              example:
+                id: cpub_gbHJdmfrXB
+                published_at: '2030-01-01T09:00:00.000Z'
+                unpublished_at:
+                channel_id: ch_UkLWZg9DAJ
+                collection_id: coll_gbHJdmfrXB
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CollectionPublication"
+        '422':
+          description: already published on the channel
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Collection has already been taken
+                  details:
+                    collection_id:
+                    - value: coll_UkLWZg9DAJ
+                      code: taken
+                      message: has already been taken
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CollectionPublicationCreateParams"
+        required: true
+  "/api/v3/admin/collections/{collection_id}/publications/{id}":
+    patch:
+      summary: Update a collection publication
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Changes when a collection goes live on a channel, or when it comes down. The channel itself cannot be changed.
+
+        **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const publication = await client.collections.publications.update(
+            'coll_UkLWZg9DAJ',
+            'cpub_UkLWZg9DAJ',
+            { unpublished_at: '2027-01-15T00:00:00Z' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /collections/{collection_id}/publications/{id} -d
+          '{"unpublished_at":"2027-01-15T00:00:00Z"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Collection publication ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: publication updated
+          content:
+            application/json:
+              example:
+                id: cpub_UkLWZg9DAJ
+                published_at:
+                unpublished_at: '2030-02-01T09:00:00.000Z'
+                channel_id: ch_UkLWZg9DAJ
+                collection_id: coll_UkLWZg9DAJ
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/CollectionPublication"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CollectionPublicationUpdateParams"
+        required: true
+    delete:
+      summary: Unpublish a collection from a channel
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Takes a collection off a sales channel. Shoppers on that channel stop seeing it straight away.
+
+        **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.collections.publications.delete('coll_UkLWZg9DAJ', 'cpub_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{collection_id}/publications/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Collection publication ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: collection unpublished
+  "/api/v3/admin/collections/{collection_id}/exclusions":
+    get:
+      summary: List collection exclusions
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lists the products kept out of a collection, whatever its rules match or a merchant picked.
+
+        **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: exclusions } = await client.collections.exclusions.list('coll_UkLWZg9DAJ', {
+            expand: ['product'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/exclusions -d '{"expand":["product"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Pass `product` to embed each excluded product.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exclusions found
+          content:
+            application/json:
+              example:
+                data:
+                - id: cexcl_UkLWZg9DAJ
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  collection_id: coll_UkLWZg9DAJ
+                  product_id: prod_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CollectionExclusion"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Exclude a product from a collection
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Keeps a product out of a collection even when the collection rules match it, and removes it if it is already in. Adding the product to the collection by hand later lifts the exclusion.
+
+        **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Keeps the product out, whatever the rules match or a merchant picked.
+          const exclusion = await client.collections.exclusions.create('coll_UkLWZg9DAJ', {
+            product_id: 'prod_UkLWZg9DAJ',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections/{collection_id}/exclusions -d '{"product_id":"prod_UkLWZg9DAJ"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: product excluded
+          content:
+            application/json:
+              example:
+                id: cexcl_UkLWZg9DAJ
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                collection_id: coll_UkLWZg9DAJ
+                product_id: prod_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/CollectionExclusion"
+        '422':
+          description: product already excluded
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Product has already been taken
+                  details:
+                    product_id:
+                    - value: prod_UkLWZg9DAJ
+                      code: taken
+                      message: has already been taken
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CollectionExclusionCreateParams"
+        required: true
+  "/api/v3/admin/collections/{collection_id}/exclusions/{id}":
+    delete:
+      summary: Lift a collection exclusion
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Lets an excluded product back into a collection. The collection is regenerated, so the product returns if its rules still match.
+
+        **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.collections.exclusions.delete('coll_UkLWZg9DAJ', 'cexcl_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{collection_id}/exclusions/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: collection_id
+        in: path
+        required: true
+        description: Collection ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Collection exclusion ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: exclusion lifted
   "/api/v3/admin/collections/{collection_id}/custom_fields":
     get:
       summary: List collection custom fields
@@ -11158,6 +12122,7 @@ paths:
 
           | Attribute | Kind | Predicates |
           |---|---|---|
+          | `collection_condition` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `field_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
@@ -11170,10 +12135,11 @@ paths:
           | `storefront_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `created_at`, `field_type`, `id`, `key`, `label`, `namespace`, `resource_type`, `searchable`, `sortable`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `collection_condition`, `created_at`, `field_type`, `id`, `key`, `label`, `namespace`, `resource_type`, `searchable`, `sortable`, `storefront_visible`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: CustomFieldDefinition
         sortable:
+        - collection_condition
         - created_at
         - field_type
         - id
@@ -11200,6 +12166,7 @@ paths:
                   storefront_visible: true
                   searchable: false
                   sortable: false
+                  collection_condition: false
                   filter_key: cf_specs_fabric
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -11212,6 +12179,7 @@ paths:
                   storefront_visible: true
                   searchable: false
                   sortable: false
+                  collection_condition: false
                   filter_key: cf_custom_order_notes
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -11294,6 +12262,7 @@ paths:
                 storefront_visible: true
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_origin
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -11374,6 +12343,7 @@ paths:
                 storefront_visible: true
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -11437,6 +12407,7 @@ paths:
                 storefront_visible: false
                 searchable: false
                 sortable: false
+                collection_condition: false
                 filter_key: cf_specs_fabric
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -24447,7 +25418,7 @@ paths:
               example:
                 data:
                 - kind: media
-                  name: Product 483397
+                  name: Product 523397
                   owner_type: product
                   owner_id: prod_UkLWZg9DAJ
                   field: attachment
@@ -29709,8 +30680,8 @@ paths:
                   preorder_ships_at:
                   quantity: 2
                   currency: USD
-                  name: Product 849180
-                  slug: product-849180
+                  name: Product 889180
+                  slug: product-889180
                   options_text: 'Size: S'
                   price: '10.00'
                   total: '20.00'
@@ -29831,8 +30802,8 @@ paths:
                 preorder_ships_at:
                 quantity: 3
                 currency: USD
-                name: Product 8699
-                slug: product-8699
+                name: Product 9099
+                slug: product-9099
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '59.97'
@@ -29957,8 +30928,8 @@ paths:
                 preorder_ships_at:
                 quantity: 2
                 currency: USD
-                name: Product 872714
-                slug: product-872714
+                name: Product 912714
+                slug: product-912714
                 options_text: 'Size: S'
                 price: '10.00'
                 total: '20.00'
@@ -30064,8 +31035,8 @@ paths:
                 preorder_ships_at:
                 quantity: 5
                 currency: USD
-                name: Product 889758
-                slug: product-889758
+                name: Product 929758
+                slug: product-929758
                 options_text: 'Size: S'
                 price: '19.99'
                 total: '99.95'
@@ -32439,7 +33410,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2002493 can be returned
+                  message: Only 1 of Product 2042493 can be returned
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -35993,12 +36964,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1163365
+                  name: Product 1203365
                   thumbnail_url:
                   price_list_variants:
                   - id: variant_UkLWZg9DAJ
                     label:
-                    sku: SKU-137
+                    sku: SKU-141
                     currency: USD
                     source: base
                     break_count: 1
@@ -39020,8 +39991,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1376550
-                  slug: product-1376550
+                  name: Product 1416550
+                  slug: product-1416550
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -39066,6 +40037,7 @@ paths:
                   product_type_id:
                   tax_category_id: taxcat_UkLWZg9DAJ
                   total_on_hand: 0
+                  collection_ids: []
                 meta:
                   page: 1
                   limit: 25
@@ -39210,6 +40182,7 @@ paths:
                 product_type_id:
                 tax_category_id:
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -39301,8 +40274,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1412061
-                slug: product-1412061
+                name: Product 1452061
+                slug: product-1452061
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -39345,6 +40318,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -39413,7 +40387,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-1435339
+                slug: product-1475339
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -39466,6 +40440,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -39607,8 +40582,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: COPY OF Product 1472357
-                slug: copy-of-product-1472357
+                name: COPY OF Product 1512357
+                slug: copy-of-product-1512357
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -39663,6 +40638,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/admin/products/bulk_status_update":
@@ -40313,8 +41289,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1628682
-                slug: product-1628682
+                name: Product 1668682
+                slug: product-1668682
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -40366,6 +41342,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -40436,8 +41413,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1654387
-                slug: product-1654387
+                name: Product 1694387
+                slug: product-1694387
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -40494,6 +41471,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -40555,8 +41533,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1674119
-                slug: product-1674119
+                name: Product 1714119
+                slug: product-1714119
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -40616,6 +41594,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -40682,8 +41661,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1714768
-                slug: product-1714768
+                name: Product 1754768
+                slug: product-1754768
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -40735,6 +41714,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -40801,8 +41781,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 1752527
-                slug: product-1752527
+                name: Product 1792527
+                slug: product-1792527
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -40866,6 +41846,7 @@ paths:
                 product_type_id:
                 tax_category_id: taxcat_UkLWZg9DAJ
                 total_on_hand: 0
+                collection_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -41634,6 +42615,7 @@ paths:
                     currency: USD
                   product_ids:
                   category_ids:
+                  collection_ids:
                   customer_ids:
                   option_value_ids:
                 meta:
@@ -41713,6 +42695,7 @@ paths:
                   currency: EUR
                 product_ids:
                 category_ids:
+                collection_ids:
                 customer_ids:
                 option_value_ids:
               schema:
@@ -41795,6 +42778,7 @@ paths:
                   currency: GBP
                 product_ids:
                 category_ids:
+                collection_ids:
                 customer_ids:
                 option_value_ids:
               schema:
@@ -42498,6 +43482,7 @@ paths:
                         enum:
                         - any
                         - all
+                        - none
                         default: any
                     additionalProperties: false
                 - type: channel
@@ -42514,6 +43499,19 @@ paths:
                           pattern: "^ch_[A-Za-z0-9]+$"
                           x-spree-prefix: ch
                         default: []
+                    additionalProperties: false
+                - type: collection
+                  label: Collections
+                  description: Order includes products in specified collections
+                  schema:
+                    type: object
+                    properties:
+                      match_policy:
+                        type: string
+                        enum:
+                        - any
+                        - all
+                        default: any
                     additionalProperties: false
                 - type: country
                   label: Country
@@ -43228,8 +44226,8 @@ paths:
                   purchase_order_id: po_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 1849018
-                  variant_sku: SKU-221
+                  variant_name: Product 1889018
+                  variant_sku: SKU-225
                   options_text: 'Size: S'
                   thumbnail_url:
                 supplier:
@@ -50016,15 +51014,15 @@ paths:
           content:
             application/json:
               example:
-                spree_version: 6.0.7
+                spree_version: 6.1.0.dev
                 sections:
                 - key: platform
                   title: Spree
                   rows:
                   - label: Version
-                    value: 6.0.7
+                    value: 6.1.0.dev
                   - label: Gems
-                    value: spree_api 6.0.7, spree_core 6.0.7
+                    value: spree_api 6.1.0.dev, spree_core 6.1.0.dev
                   - label: Other gems built on Spree
                     value: '0'
                 - key: runtime
@@ -50063,14 +51061,14 @@ paths:
                 generated_at: '2026-01-15T12:00:00.000Z'
                 markdown: |-
                   <details>
-                  <summary>Spree 6.0.7 diagnostics (2026-01-15T12:00:00Z)</summary>
+                  <summary>Spree 6.1.0.dev diagnostics (2026-01-15T12:00:00Z)</summary>
 
                   **Spree**
 
                   | | |
                   | --- | --- |
-                  | Version | 6.0.7 |
-                  | Gems | spree_api 6.0.7, spree_core 6.0.7 |
+                  | Version | 6.1.0.dev |
+                  | Gems | spree_api 6.1.0.dev, spree_core 6.1.0.dev |
                   | Other gems built on Spree | 0 |
 
                   **Runtime**
@@ -50103,7 +51101,7 @@ paths:
                   None recorded.
 
                   </details>
-                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.0.7%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.0.7%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.0.7%2C%20spree_core%206.0.7%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.10%20%28x86_64-linux%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.1.3%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20postgresql%2018.6%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
+                issue_url: https://github.com/spree/spree/issues/new?template=bug_report.yml&environment=%3Cdetails%3E%0A%3Csummary%3ESpree%206.1.0.dev%20diagnostics%20%282026-01-15T12%3A00%3A00Z%29%3C%2Fsummary%3E%0A%0A%2A%2ASpree%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Version%20%7C%206.1.0.dev%20%7C%0A%7C%20Gems%20%7C%20spree_api%206.1.0.dev%2C%20spree_core%206.1.0.dev%20%7C%0A%7C%20Other%20gems%20built%20on%20Spree%20%7C%200%20%7C%0A%0A%2A%2ARuntime%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Ruby%20%7C%204.0.10%20%28x86_64-linux%29%20%7C%0A%7C%20Rails%20%7C%208.1.4.1%20%7C%0A%7C%20Environment%20%7C%20test%20%7C%0A%7C%20Operating%20system%20%7C%20Linux%206.8.0%20x86_64%20%7C%0A%7C%20Web%20server%20%7C%20Puma%208.1.3%20%7C%0A%0A%2A%2AInfrastructure%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20Database%20%7C%20postgresql%2018.6%20%7C%0A%7C%20Queue%20adapter%20%7C%20test%20%7C%0A%7C%20Cache%20store%20%7C%20null_store%20%7C%0A%7C%20File%20storage%20%7C%20test%20%7C%0A%0A%2A%2ADashboard%2A%2A%0A%0A%7C%20%7C%20%7C%0A%7C%20---%20%7C%20---%20%7C%0A%7C%20%40spree%2Fdashboard%20%7C%206.0.4%20%7C%0A%0A%2A%2ARecent%20errors%2A%2A%0A%0ANone%20recorded.%0A%0A%3C%2Fdetails%3E
                 issue_prefilled: true
               schema:
                 "$ref": "#/components/schemas/Diagnostics"
@@ -52117,7 +53115,7 @@ paths:
           content:
             application/json:
               example:
-                current_version: 6.0.7
+                current_version: 6.1.0.dev
                 enabled: true
                 checked_at: '2026-10-03T04:00:00.000Z'
                 update_available: true
@@ -54343,8 +55341,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 2135410
-                  variant_sku: SKU-260
+                  variant_name: Product 2175410
+                  variant_sku: SKU-264
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -54363,8 +55361,8 @@ paths:
                   reserved_count: 0
                   incoming_count: 0
                   purchasable_count: 0
-                  variant_name: Product 2135410
-                  variant_sku: SKU-261
+                  variant_name: Product 2175410
+                  variant_sku: SKU-265
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Jong Schamberger
@@ -54383,8 +55381,8 @@ paths:
                   reserved_count: 2
                   incoming_count: 20
                   purchasable_count: 35
-                  variant_name: Product 2135410
-                  variant_sku: SKU-261
+                  variant_name: Product 2175410
+                  variant_sku: SKU-265
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   stock_location_name: Pilar Stokes
@@ -54573,8 +55571,8 @@ paths:
                 reserved_count: 0
                 incoming_count: 0
                 purchasable_count: 25
-                variant_name: Product 2169378
-                variant_sku: SKU-267
+                variant_name: Product 2209378
+                variant_sku: SKU-271
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 stock_location_name: Gilbert Marquardt
@@ -55478,8 +56476,8 @@ paths:
                   stock_location_id: sloc_UkLWZg9DAJ
                   stock_location_name: Mona Hegmann
                   variant_id: variant_gbHJdmfrXB
-                  variant_name: Product 2178513
-                  variant_sku: SKU-268
+                  variant_name: Product 2218513
+                  variant_sku: SKU-272
                   order_id:
                   fulfillment_id:
                   return_id:
@@ -55593,8 +56591,8 @@ paths:
                 stock_location_id: sloc_UkLWZg9DAJ
                 stock_location_name: Chrystal Sauer
                 variant_id: variant_gbHJdmfrXB
-                variant_name: Product 2192954
-                variant_sku: SKU-272
+                variant_name: Product 2232954
+                variant_sku: SKU-276
                 order_id:
                 fulfillment_id:
                 return_id:
@@ -56146,8 +57144,8 @@ paths:
                   stock_transfer_id: st_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  variant_name: Product 2262176
-                  variant_sku: SKU-285
+                  variant_name: Product 2302176
+                  variant_sku: SKU-289
                   options_text: 'Size: S'
                   thumbnail_url:
                 source_location:
@@ -58359,7 +59357,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-312
+                  sku: SKU-316
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -58414,11 +59412,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2396804
+                  product_name: Product 2436804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-313
+                  sku: SKU-317
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -58485,7 +59483,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2396804
+                  product_name: Product 2436804
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -58643,7 +59641,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2401771
+                product_name: Product 2441771
                 delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Variant"
@@ -58657,7 +59655,7 @@ paths:
                   message: SKU has already been taken
                   details:
                     sku:
-                    - value: SKU-317
+                    - value: SKU-321
                       code: taken
                       message: has already been taken
                       specific: false
@@ -58745,7 +59743,7 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-319
+                sku: SKU-323
                 options_text: 'Size: S'
                 track_inventory: true
                 media_count: 0
@@ -58812,7 +59810,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2424025
+                product_name: Product 2464025
                 delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Variant"
@@ -58954,7 +59952,7 @@ paths:
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 2445672
+                product_name: Product 2485672
                 delivery_profile_id: fp_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Variant"
@@ -59247,7 +60245,7 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-326
+                  sku: SKU-330
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -59302,11 +60300,11 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2463647
+                  product_name: Product 2503647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-327
+                  sku: SKU-331
                   options_text: 'Size: S'
                   track_inventory: true
                   media_count: 0
@@ -59373,7 +60371,7 @@ paths:
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 2463647
+                  product_name: Product 2503647
                   delivery_profile_id: fp_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -60007,7 +61005,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 disabled_at:
-                secret_key: 507fa8041773b106ae4242f7458a20bdbf22bcda1eaaafaafe5199e035271094
+                secret_key: f44b508d518f47b9d42ae8a67ba913f7f7c4ee25be2e4dda1fbc06370fe29854
                 last_delivery_at:
                 recent_delivery_count: 0
                 recent_failure_count: 0
@@ -60583,6 +61581,18 @@ paths:
                   credential: false
                   deprecated: false
                   replaced_by:
+                - name: category.published
+                  group: category
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: category.unpublished
+                  group: category
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
                 - name: claim.approved
                   group: claim
                   credential_permission:
@@ -60627,6 +61637,18 @@ paths:
                   replaced_by:
                 - name: claim.updated
                   group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: collection.published
+                  group: collection
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: collection.unpublished
+                  group: collection
                   credential_permission:
                   credential: false
                   deprecated: false
@@ -62169,12 +63191,12 @@ paths:
                   replaced_by:
                 meta:
                   page: 1
-                  limit: 271
-                  count: 271
+                  limit: 275
+                  count: 275
                   pages: 1
                   from: 1
-                  to: 271
-                  in: 271
+                  to: 275
+                  in: 275
                   previous:
                   next:
               schema:
@@ -64434,6 +65456,34 @@ components:
       - products_count
       - pricing_strategy
       x-typelizer: true
+    CategoryPublication:
+      type: object
+      properties:
+        id:
+          type: string
+        published_at:
+          type: string
+          nullable: true
+        unpublished_at:
+          type: string
+          nullable: true
+        channel_id:
+          type: string
+        category_id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - published_at
+      - unpublished_at
+      - channel_id
+      - category_id
+      - created_at
+      - updated_at
+      x-typelizer: true
     Category:
       type: object
       properties:
@@ -64509,6 +65559,10 @@ components:
           type: string
         updated_at:
           type: string
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CategoryPublication"
       required:
       - id
       - name
@@ -64775,14 +65829,285 @@ components:
       - created_by_id
       - created_by_type
       x-typelizer: true
+    CollectionExclusion:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        collection_id:
+          type: string
+        product_id:
+          type: string
+        product:
+          "$ref": "#/components/schemas/Product"
+      required:
+      - id
+      - created_at
+      - updated_at
+      - collection_id
+      - product_id
+      x-typelizer: true
+    CollectionProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        preorder_ships_at:
+          type: string
+          nullable: true
+        purchasable:
+          type: boolean
+        preorder:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        description_html:
+          type: string
+          nullable: true
+        default_variant_id:
+          type: string
+        buy_box_variant_id:
+          type: string
+          nullable: true
+        thumbnail_url:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        price:
+          anyOf:
+          - "$ref": "#/components/schemas/Price"
+          - type: object
+            nullable: true
+            enum:
+            -
+        original_price:
+          anyOf:
+          - "$ref": "#/components/schemas/Price"
+          - type: object
+            nullable: true
+            enum:
+            -
+        seller_id:
+          type: string
+          nullable: true
+        seller:
+          "$ref": "#/components/schemas/Seller"
+        primary_media:
+          "$ref": "#/components/schemas/Media"
+        media:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Media"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Variant"
+        default_variant:
+          "$ref": "#/components/schemas/Variant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionType"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
+        categories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Category"
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        prior_price:
+          anyOf:
+          - "$ref": "#/components/schemas/PriceHistory"
+          - type: object
+            nullable: true
+            enum:
+            -
+        external_references:
+          type: object
+        translations:
+          type: object
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - draft
+            - active
+            - archived
+            - proposed
+            - rejected
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        metadata:
+          type: object
+        deleted_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        delivery_profile_id:
+          type: string
+          nullable: true
+        submission:
+          anyOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          - type: object
+            nullable: true
+            enum:
+            -
+        seller_name:
+          type: string
+          nullable: true
+        product_type_id:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
+          nullable: true
+        total_on_hand:
+          type: number
+          nullable: true
+        digital_assets:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DigitalAsset"
+        collections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Collection"
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: Collections the product is hand-picked into; rule memberships
+            are left out.
+        product_publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ProductPublication"
+        channels:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Channel"
+        product_type:
+          "$ref": "#/components/schemas/ProductType"
+        membership_source:
+          type: string
+          description: "`rule` when the collection rules matched the product, `manual`
+            when it was hand-picked"
+          enum:
+          - manual
+          - rule
+      required:
+      - id
+      - name
+      - slug
+      - meta_title
+      - meta_description
+      - meta_keywords
+      - variant_count
+      - available_on
+      - preorder_ships_at
+      - purchasable
+      - preorder
+      - in_stock
+      - backorderable
+      - available
+      - description
+      - description_html
+      - default_variant_id
+      - buy_box_variant_id
+      - thumbnail_url
+      - tags
+      - price
+      - original_price
+      - seller_id
+      - external_references
+      - status
+      - metadata
+      - deleted_at
+      - created_at
+      - updated_at
+      - delivery_profile_id
+      - seller_name
+      - product_type_id
+      - tax_category_id
+      - total_on_hand
+      - collection_ids
+      - membership_source
+      x-typelizer: true
+    CollectionPublication:
+      type: object
+      properties:
+        id:
+          type: string
+        published_at:
+          type: string
+          nullable: true
+        unpublished_at:
+          type: string
+          nullable: true
+        channel_id:
+          type: string
+        collection_id:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - published_at
+      - unpublished_at
+      - channel_id
+      - collection_id
+      - created_at
+      - updated_at
+      x-typelizer: true
     CollectionRule:
       type: object
       properties:
         id:
           type: string
-        value:
-          type: string
-          nullable: true
         match_policy:
           type: string
           enum:
@@ -64790,15 +66115,71 @@ components:
           - is_not_equal_to
           - contains
           - does_not_contain
+          - greater_than
+          - less_than
+          - starts_with
+          - ends_with
+        currency:
+          type: string
+          nullable: true
+        value:
+          type: string
+          nullable: true
+          description: A prefixed id for rule types that name a record.
+        preferences:
+          type: object
         type:
           type: string
-          description: 'Rule type. Built-in: tag, available_on, sale. Extensions may
-            register more.'
+          description: 'Rule type. Built-in: tag, available_on, sale, category, product_type,
+            price, in_stock, title, seller, custom_field. Extensions may register
+            more.'
       required:
       - id
-      - value
       - match_policy
+      - currency
+      - value
+      - preferences
       - type
+      x-typelizer: true
+    CollectionRuleTypeDefinition:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The value to send as `type`, e.g. flat_rate
+        label:
+          type: string
+        description:
+          type: string
+          nullable: true
+        schema:
+          allOf:
+          - "$ref": "#/components/schemas/PreferenceSchema"
+          description: JSON Schema of the type's `preferences`
+        superseded:
+          type: boolean
+          description: Present, and true, only on a type something better has replaced.
+            Existing records keep working; stop offering it for new ones.
+        match_policies:
+          type: array
+          items:
+            type: string
+          description: The `match_policy` values a rule of this type accepts
+        value_required:
+          type: boolean
+          description: A rule of this type needs a `value`
+        uses_currency:
+          type: boolean
+          description: Evaluated in a `currency`, the store's default when the rule
+            names none
+      required:
+      - type
+      - label
+      - description
+      - schema
+      - match_policies
+      - value_required
+      - uses_currency
       x-typelizer: true
     Collection:
       type: object
@@ -64833,6 +66214,8 @@ components:
           nullable: true
         products_count:
           type: number
+          description: Members of the collection in every market. A market-correct
+            count is the listing endpoint `meta.count`.
         description:
           type: string
         description_html:
@@ -64841,6 +66224,12 @@ components:
           type: string
           nullable: true
         square_image_url:
+          type: string
+          nullable: true
+        image_alt:
+          type: string
+          nullable: true
+        square_image_alt:
           type: string
           nullable: true
         custom_fields:
@@ -64866,6 +66255,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CollectionRule"
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CollectionPublication"
       required:
       - id
       - name
@@ -64880,6 +66273,8 @@ components:
       - description_html
       - image_url
       - square_image_url
+      - image_alt
+      - square_image_alt
       - automatic
       - rules_match_policy
       - metadata
@@ -66478,6 +67873,8 @@ components:
           type: boolean
         sortable:
           type: boolean
+        collection_condition:
+          type: boolean
         filter_key:
           type: string
         created_at:
@@ -66498,6 +67895,7 @@ components:
       - storefront_visible
       - searchable
       - sortable
+      - collection_condition
       - filter_key
       - created_at
       - updated_at
@@ -73764,9 +75162,9 @@ components:
         unpublished_at:
           type: string
           nullable: true
-        product_id:
-          type: string
         channel_id:
+          type: string
+        product_id:
           type: string
         created_at:
           type: string
@@ -73776,8 +75174,8 @@ components:
       - id
       - published_at
       - unpublished_at
-      - product_id
       - channel_id
+      - product_id
       - created_at
       - updated_at
       x-typelizer: true
@@ -73944,6 +75342,12 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Collection"
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: Collections the product is hand-picked into; rule memberships
+            are left out.
         product_publications:
           type: array
           items:
@@ -73989,6 +75393,7 @@ components:
       - product_type_id
       - tax_category_id
       - total_on_hand
+      - collection_ids
       x-typelizer: true
     ProductSubmission:
       type: object
@@ -74182,7 +75587,7 @@ components:
           type: string
           description: 'Rule type. Built-in: currency, country, channel, market, item_total,
             product, customer, customer_group, first_order, customer_logged_in, one_use_per_user,
-            category, option_value. Extensions may register more.'
+            category, collection, option_value. Extensions may register more.'
         promotion_id:
           type: string
         preferences:
@@ -74193,6 +75598,11 @@ components:
             type: string
           nullable: true
         category_ids:
+          type: array
+          items:
+            type: string
+          nullable: true
+        collection_ids:
           type: array
           items:
             type: string
@@ -74215,6 +75625,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Category"
+        collections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Collection"
         customers:
           type: array
           items:
@@ -74248,6 +75662,7 @@ components:
       - preferences
       - product_ids
       - category_ids
+      - collection_ids
       - customer_ids
       - option_value_ids
       x-typelizer: true
@@ -83257,6 +84672,7 @@ components:
           enum:
           - any
           - all
+          - none
           default: any
       additionalProperties: false
     PromotionRuleChannelPreferences:
@@ -83270,6 +84686,16 @@ components:
             pattern: "^ch_[A-Za-z0-9]+$"
             x-spree-prefix: ch
           default: []
+      additionalProperties: false
+    PromotionRuleCollectionPreferences:
+      type: object
+      properties:
+        match_policy:
+          type: string
+          enum:
+          - any
+          - all
+          default: any
       additionalProperties: false
     PromotionRuleCountryPreferences:
       type: object
@@ -83394,6 +84820,7 @@ components:
       anyOf:
       - "$ref": "#/components/schemas/PromotionRuleCategoryPreferences"
       - "$ref": "#/components/schemas/PromotionRuleChannelPreferences"
+      - "$ref": "#/components/schemas/PromotionRuleCollectionPreferences"
       - "$ref": "#/components/schemas/PromotionRuleCountryPreferences"
       - "$ref": "#/components/schemas/PromotionRuleCurrencyPreferences"
       - "$ref": "#/components/schemas/PromotionRuleCustomerPreferences"
@@ -83410,6 +84837,7 @@ components:
       x-spree-preferences-by-type:
         category: "#/components/schemas/PromotionRuleCategoryPreferences"
         channel: "#/components/schemas/PromotionRuleChannelPreferences"
+        collection: "#/components/schemas/PromotionRuleCollectionPreferences"
         country: "#/components/schemas/PromotionRuleCountryPreferences"
         currency: "#/components/schemas/PromotionRuleCurrencyPreferences"
         customer: "#/components/schemas/PromotionRuleCustomerPreferences"
@@ -84721,6 +86149,13 @@ components:
           description: A `signed_id` from `files.upload()` for the square image, or
             null to remove it.
           nullable: true
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PublicationParams"
+          description: The complete set of channels the category is published on.
+            Channels left out are unpublished, and so are its subcategories there.
+            Omit on create to publish on every active channel.
         custom_fields:
           type: array
           items:
@@ -84728,6 +86163,38 @@ components:
           description: Custom field values, each validated against its definition.
       required:
       - name
+    CategoryPublicationCreateParams:
+      type: object
+      properties:
+        channel_id:
+          type: string
+          description: The channel to publish on. Cannot be changed afterwards.
+          example: ch_abc123
+        published_at:
+          type: string
+          format: date-time
+          description: When the record goes live on the channel. Null means immediately.
+          nullable: true
+        unpublished_at:
+          type: string
+          format: date-time
+          description: When the record comes down from the channel. Null means never.
+          nullable: true
+      required:
+      - channel_id
+    CategoryPublicationUpdateParams:
+      type: object
+      properties:
+        published_at:
+          type: string
+          format: date-time
+          description: When the record goes live on the channel. Null means immediately.
+          nullable: true
+        unpublished_at:
+          type: string
+          format: date-time
+          description: When the record comes down from the channel. Null means never.
+          nullable: true
     CategoryRepositionParams:
       type: object
       properties:
@@ -84783,6 +86250,13 @@ components:
           description: A `signed_id` from `files.upload()` for the square image, or
             null to remove it.
           nullable: true
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PublicationParams"
+          description: The complete set of channels the category is published on.
+            Channels left out are unpublished, and so are its subcategories there.
+            Omit on create to publish on every active channel.
         custom_fields:
           type: array
           items:
@@ -85026,8 +86500,10 @@ components:
           nullable: true
         automatic:
           type: boolean
-          description: When true, membership is materialized from `rules` instead
-            of curated by hand.
+          description: 'Ignored. Membership combines `rules`, hand-picked products
+            and exclusions. Deprecated: Ignored: a collection is automatic while it
+            has `rules`. Send `rules: []` to remove them. Removed in 6.2.'
+          deprecated: true
         rules_match_policy:
           type: string
           enum:
@@ -85054,6 +86530,13 @@ components:
             "$ref": "#/components/schemas/CollectionRuleParams"
           description: The complete desired rule set. Entries with an `id` update,
             entries without one are created, and existing rules left out are removed.
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PublicationParams"
+          description: The complete set of channels the collection is published on.
+            Channels left out are unpublished. Omit on create to publish on every
+            active channel.
         custom_fields:
           type: array
           items:
@@ -85061,6 +86544,47 @@ components:
           description: Custom field values, each validated against its definition.
       required:
       - name
+    CollectionExclusionCreateParams:
+      type: object
+      properties:
+        product_id:
+          type: string
+          description: The product to keep out of the collection.
+          example: prod_abc123
+      required:
+      - product_id
+    CollectionPublicationCreateParams:
+      type: object
+      properties:
+        channel_id:
+          type: string
+          description: The channel to publish on. Cannot be changed afterwards.
+          example: ch_abc123
+        published_at:
+          type: string
+          format: date-time
+          description: When the record goes live on the channel. Null means immediately.
+          nullable: true
+        unpublished_at:
+          type: string
+          format: date-time
+          description: When the record comes down from the channel. Null means never.
+          nullable: true
+      required:
+      - channel_id
+    CollectionPublicationUpdateParams:
+      type: object
+      properties:
+        published_at:
+          type: string
+          format: date-time
+          description: When the record goes live on the channel. Null means immediately.
+          nullable: true
+        unpublished_at:
+          type: string
+          format: date-time
+          description: When the record comes down from the channel. Null means never.
+          nullable: true
     CollectionRuleParams:
       type: object
       properties:
@@ -85075,6 +86599,8 @@ components:
           example: tag
         value:
           type: string
+          description: 'What the rule compares against: a prefixed id for the category,
+            product type and seller types.'
           example: summer
         match_policy:
           type: string
@@ -85083,7 +86609,24 @@ components:
           - is_not_equal_to
           - contains
           - does_not_contain
+          - greater_than
+          - less_than
+          - starts_with
+          - ends_with
+          description: The relation. Each rule type accepts the `match_policies` the
+            rule types endpoint lists for it.
           example: contains
+        currency:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
+          description: 'For `price` and `sale` rules: the currency they evaluate in.
+            Null means the default currency of the store.'
+          nullable: true
+        preferences:
+          type: object
+          additionalProperties: true
+          description: Values for the settings schema of the rule type, from the rule
+            types endpoint.
     CollectionUpdateParams:
       type: object
       properties:
@@ -85118,8 +86661,10 @@ components:
           nullable: true
         automatic:
           type: boolean
-          description: When true, membership is materialized from `rules` instead
-            of curated by hand.
+          description: 'Ignored. Membership combines `rules`, hand-picked products
+            and exclusions. Deprecated: Ignored: a collection is automatic while it
+            has `rules`. Send `rules: []` to remove them. Removed in 6.2.'
+          deprecated: true
         rules_match_policy:
           type: string
           enum:
@@ -85146,6 +86691,13 @@ components:
             "$ref": "#/components/schemas/CollectionRuleParams"
           description: The complete desired rule set. Entries with an `id` update,
             entries without one are created, and existing rules left out are removed.
+        publications:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PublicationParams"
+          description: The complete set of channels the collection is published on.
+            Channels left out are unpublished. Omit on create to publish on every
+            active channel.
         custom_fields:
           type: array
           items:
@@ -85557,6 +87109,10 @@ components:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
             Supported for `short_text` and `number` fields; other types are refused.
+        collection_condition:
+          type: boolean
+          description: Offer this field in collection rules. Product short text, long
+            text, number and boolean fields only.
       required:
       - key
       - field_type
@@ -85595,6 +87151,10 @@ components:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
             Supported for `short_text` and `number` fields; other types are refused.
+        collection_condition:
+          type: boolean
+          description: Offer this field in collection rules. Product short text, long
+            text, number and boolean fields only.
     CustomFieldUpdateParams:
       type: object
       properties:
@@ -88761,8 +90321,8 @@ components:
           type: array
           items:
             type: string
-          description: Manual collections this product belongs to. Automatic collections
-            are kept as they are, since their rules decide membership.
+          description: Collections this product is hand-picked into. Memberships created
+            by collection rules are kept.
         metadata:
           type: object
           additionalProperties: true
@@ -89067,8 +90627,8 @@ components:
           type: array
           items:
             type: string
-          description: Manual collections this product belongs to. Automatic collections
-            are kept as they are, since their rules decide membership.
+          description: Collections this product is hand-picked into. Memberships created
+            by collection rules are kept.
         metadata:
           type: object
           additionalProperties: true
@@ -89292,6 +90852,11 @@ components:
           items:
             type: string
           description: For the `category` rule.
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: For the `collection` rule.
         customer_ids:
           type: array
           items:
@@ -89322,6 +90887,11 @@ components:
           items:
             type: string
           description: For the `category` rule.
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: For the `collection` rule.
         customer_ids:
           type: array
           items:
@@ -89346,6 +90916,11 @@ components:
           items:
             type: string
           description: For the `category` rule.
+        collection_ids:
+          type: array
+          items:
+            type: string
+          description: For the `collection` rule.
         customer_ids:
           type: array
           items:
@@ -89414,6 +90989,22 @@ components:
             "$ref": "#/components/schemas/PromotionActionDraftParams"
           description: The actions the promotion should have, matched the same way
             as `rules`.
+    PublicationParams:
+      type: object
+      properties:
+        channel_id:
+          type: string
+          example: ch_abc123
+        published_at:
+          type: string
+          format: date-time
+          description: When the record goes live on the channel. Null means immediately.
+          nullable: true
+        unpublished_at:
+          type: string
+          format: date-time
+          description: When the record comes down from the channel. Null means never.
+          nullable: true
     PurchaseOrderCancelParams:
       type: object
       properties:
@@ -91936,6 +93527,7 @@ components:
       scopes: {}
     CustomFieldDefinition:
       attributes:
+        collection_condition: boolean
         created_at: datetime
         field_type: type
         id: id
