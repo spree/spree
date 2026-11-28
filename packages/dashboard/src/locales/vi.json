@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "ví dụ: Thẻ tín dụng (Sọc)"
         },
-        "provider_configuration": "Cấu hình nhà cung cấp",
         "storefront_visible": {
           "label": "Hiển thị trên cửa hàng trực tuyến"
         },
@@ -4556,6 +4555,7 @@
             "description": "Cài đặt tiện ích nhà cung cấp thanh toán để nhận thẻ và ví điện tử."
           },
           "manual_title": "Phương thức thanh toán thủ công",
+          "add_another_account": "Thêm tài khoản {{provider}} khác",
           "add_manual": "Thêm phương thức thủ công",
           "manual_empty": {
             "title": "Chưa có phương thức thanh toán thủ công",
@@ -4571,7 +4571,11 @@
               "description": "Kích hoạt một phương thức thanh toán và hiển thị nó trên cửa hàng để thấy ở đây."
             }
           },
-          "test_gateway": "Cổng thử nghiệm"
+          "test_gateway": "Cổng thử nghiệm",
+          "availability_notice": {
+            "title": "Cung cấp mỗi phương thức ở nơi phù hợp",
+            "description": "Khi cấu hình, hãy giới hạn phương thức thanh toán cho một số thị trường, kênh, nhóm khách hàng hoặc công ty, hoặc cho một khoảng tổng đơn hàng trong mục Phạm vi áp dụng. Ví dụ: dùng một tài khoản Stripe riêng cho mỗi thị trường, hoặc chỉ cho người mua sỉ thanh toán bằng hóa đơn."
+          }
         },
         "storefront": {
           "title": "Cửa hàng & thanh toán",
@@ -4653,6 +4657,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "Thêm điều kiện",
+        "changed_elsewhere": "Người khác đã thay đổi các điều kiện này kể từ khi bạn mở phương thức thanh toán này. Hãy đóng và mở lại để xem các thay đổi.",
+        "description": "Chỉ cung cấp phương thức thanh toán này khi thanh toán trên cửa hàng nếu mọi điều kiện đều được đáp ứng. Các khoản thanh toán ghi nhận trong bảng điều khiển bỏ qua chúng.",
+        "empty": "Không có điều kiện — phương thức thanh toán này được hiển thị ở mọi lần thanh toán.",
+        "fields": {
+          "max_totals": "Tổng đơn hàng tối đa",
+          "min_totals": "Tổng đơn hàng tối thiểu"
+        },
+        "remove": "Xóa điều kiện {{name}}",
+        "summary": {
+          "max_totals": "tối đa {{amount}}",
+          "min_totals": "từ {{amount}}"
+        },
+        "title": "Phạm vi áp dụng"
+      },
       "create_description": "Chọn một nhà cung cấp và định cấu hình thông tin đăng nhập của nó.",
       "create_label": "Tạo phương thức thanh toán",
       "delete_confirm": {
@@ -4666,6 +4686,8 @@
         "updated": "Đã cập nhật phương thức thanh toán"
       },
       "provider_description": "Nhà cung cấp: {{provider}}",
+      "provider_installed": "{{provider}} · đã cài {{count}}",
+      "set_up_title": "Thiết lập {{provider}}",
       "status": {
         "disabled": "Đã tắt"
       },

@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "ex. Carte de crédit (Stripe)"
         },
-        "provider_configuration": "Configuration du fournisseur",
         "storefront_visible": {
           "label": "Visible sur la boutique"
         },
@@ -4559,6 +4558,7 @@
             "description": "Installez une extension de prestataire de paiement pour accepter les cartes et portefeuilles."
           },
           "manual_title": "Méthodes de paiement manuelles",
+          "add_another_account": "Ajouter un autre compte {{provider}}",
           "add_manual": "Ajouter une méthode manuelle",
           "manual_empty": {
             "title": "Aucune méthode de paiement manuelle",
@@ -4574,7 +4574,11 @@
               "description": "Activez une méthode de paiement et affichez-la sur la boutique pour la voir ici."
             }
           },
-          "test_gateway": "Passerelle de test"
+          "test_gateway": "Passerelle de test",
+          "availability_notice": {
+            "title": "Proposez chaque moyen là où il convient",
+            "description": "Limitez un moyen de paiement à certains marchés, canaux, groupes de clients ou entreprises, ou à une plage de montants de commande, dans Disponibilité lors de sa configuration. Par exemple, utilisez un compte Stripe distinct par marché, ou réservez le paiement sur facture aux acheteurs grossistes."
+          }
         },
         "storefront": {
           "title": "Boutique et paiement",
@@ -4673,6 +4677,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "Ajouter une condition",
+        "changed_elsewhere": "Quelqu'un d'autre a modifié ces conditions depuis que vous avez ouvert ce moyen de paiement. Fermez-le et rouvrez-le pour voir ses modifications.",
+        "description": "Proposer ce moyen de paiement au paiement de la boutique uniquement lorsque toutes les conditions sont remplies. Les paiements saisis dans le tableau de bord les ignorent.",
+        "empty": "Aucune condition : ce moyen de paiement est proposé à chaque paiement.",
+        "fields": {
+          "max_totals": "Total de commande maximum",
+          "min_totals": "Total de commande minimum"
+        },
+        "remove": "Retirer la condition {{name}}",
+        "summary": {
+          "max_totals": "jusqu’à {{amount}}",
+          "min_totals": "à partir de {{amount}}"
+        },
+        "title": "Disponibilité"
+      },
       "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
       "create_label": "Créer un moyen de paiement",
       "delete_confirm": {
@@ -4686,6 +4706,8 @@
         "updated": "Moyen de paiement mis à jour"
       },
       "provider_description": "Fournisseur : {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} installé(s)",
+      "set_up_title": "Configurer {{provider}}",
       "status": {
         "disabled": "Désactivé"
       },

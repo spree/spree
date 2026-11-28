@@ -1,5 +1,8 @@
 import { Can, PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   Empty,
@@ -14,7 +17,13 @@ import {
   SectionTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { BanknoteIcon, CreditCardIcon, ListOrderedIcon, PlusIcon } from '@spree/dashboard-ui/icons'
+import {
+  BanknoteIcon,
+  CreditCardIcon,
+  InfoIcon,
+  ListOrderedIcon,
+  PlusIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +39,10 @@ import { usePaymentMethods, usePaymentMethodTypes } from '../../../../hooks/use-
 import { useStoreSettings } from '../../../../hooks/use-store-settings'
 import { filterPaymentMethodProviderTypes } from '../../../../schemas/payment-method'
 
-/** `new` names the provider to set up, or `manual` for the store's own methods. */
+/**
+ * `new` names the provider to set up, including another account of one the
+ * store already has, or `manual` for the store's own methods.
+ */
 const MANUAL = 'manual'
 
 const paymentsSearchSchema = z.object({
@@ -55,7 +67,7 @@ function PaymentsPage() {
   const canReorder = permissions.can('update', Subject.PaymentMethod)
   const canEditStore = permissions.can('update', Subject.Store)
 
-  const { data: methodsResponse, isLoading } = usePaymentMethods()
+  const { data: methodsResponse, isLoading } = usePaymentMethods({ expand: ['rules'] })
   const { data: typesResponse } = usePaymentMethodTypes({ enabled: canCreate })
   const { data: store } = useStoreSettings()
 
@@ -70,7 +82,10 @@ function PaymentsPage() {
     () => filterPaymentMethodProviderTypes(typesResponse?.data ?? []),
     [typesResponse],
   )
-  const availableProviders = addableTypes.filter((type) => type.third_party && !type.superseded)
+  const providerTypes = addableTypes.filter((type) => type.third_party && !type.superseded)
+  // A provider the store already has is listed by its records, each of which
+  // offers another account of it.
+  const availableProviders = providerTypes.filter((type) => type.installed_count === 0)
   const canAddManual = canCreate && addableTypes.some((type) => !type.third_party)
 
   const updateSearch = (patch: Partial<PaymentsSearch>) =>
@@ -83,7 +98,7 @@ function PaymentsPage() {
     })
   const closeSheets = () => updateSearch({ edit: undefined, new: undefined, order: undefined })
 
-  const settingUpProvider = availableProviders.find((type) => type.type === search.new)
+  const settingUpProvider = providerTypes.find((type) => type.type === search.new)
   const addManual = () => updateSearch({ new: MANUAL })
 
   return (
@@ -101,6 +116,14 @@ function PaymentsPage() {
           ) : undefined
         }
       />
+
+      <Alert variant="info">
+        <InfoIcon />
+        <AlertTitle>{t('admin.pages.settings.payments.availability_notice.title')}</AlertTitle>
+        <AlertDescription>
+          {t('admin.pages.settings.payments.availability_notice.description')}
+        </AlertDescription>
+      </Alert>
 
       <Section>
         <SectionHeader>
@@ -128,6 +151,8 @@ function PaymentsPage() {
             available={availableProviders}
             onConfigure={(id) => updateSearch({ edit: id })}
             onSetUp={(type) => updateSearch({ new: type })}
+            addAccountTypes={canCreate ? providerTypes : []}
+            onAddAccount={(type) => updateSearch({ new: type })}
           />
         )}
       </Section>

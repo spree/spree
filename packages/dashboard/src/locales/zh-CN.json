@@ -1794,7 +1794,6 @@
         "name": {
           "placeholder": "例如：信用卡 (Stripe)"
         },
-        "provider_configuration": "服务商配置",
         "storefront_visible": {
           "label": "在店面显示"
         },
@@ -4545,6 +4544,7 @@
             "description": "安装支付服务商扩展以接受银行卡和电子钱包。"
           },
           "manual_title": "手动付款方式",
+          "add_another_account": "再添加一个 {{provider}} 账户",
           "add_manual": "添加手动付款方式",
           "manual_empty": {
             "title": "没有手动付款方式",
@@ -4560,7 +4560,11 @@
               "description": "启用一种付款方式并在店面显示，即可在此列出。"
             }
           },
-          "test_gateway": "测试网关"
+          "test_gateway": "测试网关",
+          "availability_notice": {
+            "title": "在合适的场景提供每种支付方式",
+            "description": "配置支付方式时，可在“可用范围”中将其限定于特定市场、渠道、客户组或公司，或某个订单金额区间。例如，为每个市场使用单独的 Stripe 账户，或仅向批发买家提供发票付款。"
+          }
         },
         "storefront": {
           "title": "店面与结账",
@@ -4659,6 +4663,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "添加条件",
+        "changed_elsewhere": "自您打开此支付方式以来，其他人已更改了这些条件。请关闭后重新打开以查看其更改。",
+        "description": "仅在满足所有条件时，才在店铺结账时提供此支付方式。在后台录入的付款不受这些条件限制。",
+        "empty": "没有条件 — 此支付方式在每次结账时都会提供。",
+        "fields": {
+          "max_totals": "最高订单金额",
+          "min_totals": "最低订单金额"
+        },
+        "remove": "移除“{{name}}”条件",
+        "summary": {
+          "max_totals": "不超过 {{amount}}",
+          "min_totals": "不低于 {{amount}}"
+        },
+        "title": "可用范围"
+      },
       "create_description": "选择服务商并配置其凭据。",
       "create_label": "创建支付方式",
       "delete_confirm": {
@@ -4672,6 +4692,8 @@
         "updated": "支付方式已更新"
       },
       "provider_description": "服务商：{{provider}}",
+      "provider_installed": "{{provider}} · 已安装 {{count}} 个",
+      "set_up_title": "设置 {{provider}}",
       "status": {
         "disabled": "已禁用"
       },

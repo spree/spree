@@ -6,8 +6,8 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
   Input,
-  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -17,8 +17,9 @@ import {
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
-import { Controller, type UseFormReturn } from 'react-hook-form'
+import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { PaymentMethodConditions } from './payment-method-conditions'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,
@@ -32,6 +33,7 @@ interface ProviderOption {
   type: string
   label: string
   schema: PreferenceSchema
+  installed_count?: number
 }
 
 interface PaymentMethodFormProps {
@@ -83,6 +85,8 @@ export function PaymentMethodForm({
   const storeCaptureMethod = paymentMethod?.capture_method
     ? null
     : paymentMethod?.resolved_capture_method
+  // Conditions only decide storefront checkout, so an admin-only method has none to set.
+  const storefrontVisible = useWatch({ control: form.control, name: 'storefront_visible' })
 
   const slotContext: PaymentMethodEditorContext = {
     mode,
@@ -95,7 +99,7 @@ export function PaymentMethodForm({
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-6">
       {mode === 'create' && !providerLocked && (
         <Field>
           <FieldLabel htmlFor="type">{t('admin.fields.payment_method.type.label')}</FieldLabel>
@@ -108,13 +112,6 @@ export function PaymentMethodForm({
                 onValueChange={(next) => {
                   field.onChange(next)
                   onProviderTypeChange?.(next)
-                  // Prefill the Name field with the provider's label —
-                  // but only if the admin hasn't typed something
-                  // themselves yet.
-                  const label = providerTypes.find((t) => t.type === next)?.label
-                  if (label && !form.formState.dirtyFields.name) {
-                    form.setValue('name', label, { shouldDirty: false })
-                  }
                 }}
               >
                 <SelectTrigger id="type" aria-invalid={!!form.formState.errors.type}>
@@ -131,9 +128,14 @@ export function PaymentMethodForm({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {providerTypes.map((t) => (
-                    <SelectItem key={t.type} value={t.type}>
-                      {t.label}
+                  {providerTypes.map((entry) => (
+                    <SelectItem key={entry.type} value={entry.type}>
+                      {entry.installed_count
+                        ? t('admin.payment_methods.provider_installed', {
+                            provider: entry.label,
+                            count: entry.installed_count,
+                          })
+                        : entry.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -144,33 +146,37 @@ export function PaymentMethodForm({
         </Field>
       )}
 
-      <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
-
       {providerType && <Slot name={paymentMethodGuideSlot(providerType)} context={slotContext} />}
 
       {providerType &&
       (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
-        <Item variant="outline" className="flex-col items-stretch gap-2">
-          <h3 className="text-base font-medium">
-            {t('admin.fields.payment_method.provider_configuration')}
-          </h3>
-          {customFormRegistered ? (
-            // A plugin has taken over — render the registered editor
-            // instead of the generic preferences form. Plugin owns its
-            // own dirty state and submission inside `onPreferencesChange`.
-            <Slot name={paymentMethodFormSlot(providerType)} context={slotContext} />
-          ) : (
-            <PreferencesForm
-              schema={preferenceSchema}
-              values={preferences}
-              onChange={onPreferencesChange}
-              redactPasswords={mode === 'edit'}
-            />
-          )}
-        </Item>
+        customFormRegistered ? (
+          // A plugin has taken over — render the registered editor
+          // instead of the generic preferences form. Plugin owns its
+          // own dirty state and submission inside `onPreferencesChange`.
+          <Slot name={paymentMethodFormSlot(providerType)} context={slotContext} />
+        ) : (
+          <PreferencesForm
+            schema={preferenceSchema}
+            values={preferences}
+            onChange={onPreferencesChange}
+            redactPasswords={mode === 'edit'}
+          />
+        )
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}
+
+      {providerType && <FieldSeparator />}
+
+      <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
+
+      {providerType && storefrontVisible && (
+        <>
+          <FieldSeparator />
+          <PaymentMethodConditions form={form} />
+        </>
+      )}
     </div>
   )
 }

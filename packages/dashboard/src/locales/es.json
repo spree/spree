@@ -888,6 +888,7 @@
             "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
           },
           "manual_title": "Métodos de pago manuales",
+          "add_another_account": "Añadir otra cuenta de {{provider}}",
           "add_manual": "Añadir método manual",
           "manual_empty": {
             "title": "No hay métodos de pago manuales",
@@ -903,7 +904,11 @@
               "description": "Activa un método de pago y muéstralo en la tienda para que aparezca aquí."
             }
           },
-          "test_gateway": "Pasarela de prueba"
+          "test_gateway": "Pasarela de prueba",
+          "availability_notice": {
+            "title": "Ofrece cada método donde corresponda",
+            "description": "Limita un método de pago a ciertos mercados, canales, grupos de clientes o empresas, o a un rango de totales de pedido, en Disponibilidad al configurarlo. Por ejemplo, usa una cuenta de Stripe distinta para cada mercado u ofrece el pago con factura solo a compradores mayoristas."
+          }
         },
         "storefront": {
           "title": "Tienda y checkout",
@@ -1825,7 +1830,6 @@
         "name": {
           "placeholder": "p. ej., Tarjeta de crédito (Stripe)"
         },
-        "provider_configuration": "Configuración del proveedor",
         "storefront_visible": {
           "label": "Visible en el storefront"
         },
@@ -6100,6 +6104,22 @@
       "tax_inclusive": "Incluido"
     },
     "payment_methods": {
+      "conditions": {
+        "add": "Añadir condición",
+        "changed_elsewhere": "Otra persona ha cambiado estas condiciones desde que abriste este método de pago. Ciérralo y vuelve a abrirlo para ver sus cambios.",
+        "description": "Ofrece este método de pago en el checkout de la tienda solo cuando se cumplen todas las condiciones. Los pagos registrados en el panel las ignoran.",
+        "empty": "Sin condiciones: este método de pago se ofrece en todos los checkouts.",
+        "fields": {
+          "max_totals": "Total máximo del pedido",
+          "min_totals": "Total mínimo del pedido"
+        },
+        "remove": "Quitar la condición {{name}}",
+        "summary": {
+          "max_totals": "hasta {{amount}}",
+          "min_totals": "desde {{amount}}"
+        },
+        "title": "Disponibilidad"
+      },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
       "delete_confirm": {
@@ -6113,6 +6133,8 @@
         "updated": "Método de pago actualizado"
       },
       "provider_description": "Proveedor: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} instalados",
+      "set_up_title": "Configurar {{provider}}",
       "status": {
         "disabled": "Deshabilitado"
       },

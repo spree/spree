@@ -45,9 +45,9 @@ async function seedCheck(page: Page, creds: E2ELoginSession, name: string) {
   })
 }
 
-// The lifecycle tests install providers through the pickers, which offer each
-// one once per store, so they run in order against the shared database and
-// each removes what it added.
+// A provider's Connect row shows only while the store has none of it, so the
+// lifecycle tests run in order against the shared database and each removes
+// what it added.
 test.describe.configure({ mode: 'serial' })
 
 test.describe('payments', () => {
@@ -57,6 +57,8 @@ test.describe('payments', () => {
 
     await expect(page.getByRole('heading', { name: /^manual payment methods$/i })).toBeVisible()
     await expect(page.getByRole('heading', { name: /^payment capture$/i })).toBeVisible()
+    // The page points merchants at limiting a method to where it fits.
+    await expect(page.getByText(/offer each method where it fits/i)).toBeVisible()
     // Core ships one outside provider (Bogus) and seeds store credit, a
     // method the store handles itself.
     await expect(methodRow(page, 'Bogus')).toBeVisible()
@@ -73,6 +75,29 @@ test.describe('payments', () => {
     await expect(page.getByText(/tax by shipping address/i)).toHaveCount(0)
   })
 
+  test('outlines the form while a payment method loads', async ({ page }) => {
+    const creds = await login(page)
+    await openPayments(page, creds.store_id)
+
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    await page.route(/\/api\/v3\/admin\/payment_methods\/pm_[^/?]+(\?|$)/, async (route) => {
+      await held
+      await route.continue()
+    })
+    await methodRow(page, 'Store Credit')
+      .getByRole('button', { name: /^configure$/i })
+      .click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('status')).toBeVisible()
+    release()
+    await expect(dialog.getByRole('status')).toHaveCount(0, { timeout: 15_000 })
+    await expect(dialog.locator('#name')).toBeVisible()
+  })
+
   test('sets up a provider from its row, keeping its secret on edit', async ({ page }) => {
     const creds = await login(page)
     await openPayments(page, creds.store_id)
@@ -81,17 +106,31 @@ test.describe('payments', () => {
     await methodRow(page, 'Bogus')
       .getByRole('button', { name: /^connect$/i })
       .click()
-    await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /^set up bogus$/i })).toBeVisible()
 
     await page.locator('#name').fill(name)
     await page.locator('#preference-dummy_key').fill('E2EPUBLIC')
     await page.locator('#preference-dummy_secret_key').fill('e2e-secret-9876')
-    await page.getByRole('button', { name: /create payment method/i }).click()
+    // An outside provider is connected; a manual method is created.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^connect$/i })
+      .click()
 
     // Set up, the provider's row carries the method's own name.
     const row = methodRow(page, name)
     await expect(row).toBeVisible({ timeout: 15_000 })
     await expect(methodRow(page, 'Bogus')).toHaveCount(0)
+
+    // A test gateway says so once, not also under its provider's name.
+    await expect(row.getByText(/^test gateway$/i)).toBeVisible()
+    await expect(row.getByText('Bogus', { exact: true })).toHaveCount(0)
+
+    // Each provider's accounts share a card. A second simulated account has
+    // nothing to tell apart, so a test gateway's card never offers one.
+    const providerCard = page.locator('[data-provider="bogus"]')
+    await expect(providerCard.locator(`[data-payment-method="${name}"]`)).toBeVisible()
+    await expect(providerCard.getByRole('button', { name: /^add another/i })).toHaveCount(0)
 
     // The plain setting comes back as typed, the secret only as a mask.
     await row.getByRole('button', { name: /^configure$/i }).click()
@@ -150,6 +189,137 @@ test.describe('payments', () => {
     await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
     await deleteFromSheet(page)
     await expect(updatedRow).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('prefills a name no method uses, once every matching name has loaded', async ({ page }) => {
+    const creds = await login(page)
+    // Hold the lookup of names like the provider's, so the sheet opens first.
+    let release: () => void = () => {}
+    const released = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    await page.route(
+      (url) =>
+        url.pathname.endsWith('/api/v3/admin/payment_methods') &&
+        url.searchParams.has('q[name_i_cont]'),
+      async (route) => {
+        await released
+        // Two pages, so a name only the second one holds still counts.
+        const page = Number(new URL(route.request().url()).searchParams.get('page') ?? 1)
+        await route.fulfill({
+          json: { data: [{ name: page === 1 ? 'Check' : 'check 2' }], meta: { page, pages: 2 } },
+        })
+      },
+    )
+    await openPayments(page, creds.store_id)
+
+    await page.getByRole('button', { name: /add manual method/i }).click()
+    await page.locator('#type').click()
+    await page.getByRole('option', { name: 'Check' }).click()
+    await expect(page.locator('#name')).toHaveValue('')
+
+    release()
+    await expect(page.locator('#name')).toHaveValue('Check 3')
+  })
+
+  test('adds checkout conditions to a payment method', async ({ page }) => {
+    const creds = await login(page)
+    const method = await seedCheck(page, creds, `E2E Conditions ${Date.now()}`)
+    await openPayments(page, creds.store_id)
+
+    const row = methodRow(page, method.name)
+    await row.getByRole('button', { name: /^configure$/i }).click()
+    await expect(page.getByText(/no conditions/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Order total' }).click()
+    await page.getByLabel('Minimum order total (USD)').fill('5000')
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Company' }).click()
+
+    // The store's markets are listed as soon as the picker opens, without typing.
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Market' }).click()
+    await page.getByPlaceholder('Search by name…').click()
+    await expect(page.getByRole('option').first()).toBeVisible()
+    await page.keyboard.press('Escape')
+    await page.getByRole('button', { name: /^remove the market condition$/i }).click()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    // The list names each condition, so two accounts of one provider can be
+    // told apart there, and a manual method is not labelled with its kind.
+    await expect(row.getByText('Order total: from $5,000.00')).toBeVisible()
+    // Each condition shows its record's icon in place of its kind's name.
+    await expect(row.getByTitle('Order total: from $5,000.00').locator('svg')).toBeVisible()
+    await expect(row.getByText('Company', { exact: true })).toBeVisible()
+    await expect(row.getByText('Check', { exact: true })).toHaveCount(0)
+
+    await page.reload()
+    await row.getByRole('button', { name: /^configure$/i }).click()
+    await expect(page.getByLabel('Minimum order total (USD)')).toHaveValue('5000.00', {
+      timeout: 15_000,
+    })
+    // A condition is removed rather than switched off.
+    await expect(page.getByRole('switch', { name: /turn company on or off/i })).toHaveCount(0)
+    await page.getByRole('button', { name: /^remove the order total condition$/i }).click()
+
+    // An admin-only method has no storefront checkout to set conditions for.
+    await page.getByRole('switch', { name: /visible in storefront/i }).click()
+    await expect(page.getByRole('dialog').getByText('Availability', { exact: true })).toHaveCount(0)
+    await page.getByRole('switch', { name: /visible in storefront/i }).click()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    const rules = await adminRequest<{ data: { type: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/payment_methods/${method.id}/rules`,
+    )
+    expect(rules.data).toEqual([expect.objectContaining({ type: 'company_rule' })])
+    await expect(row.getByText('Order total: from $5,000.00')).toHaveCount(0)
+
+    await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
+  })
+
+  test('keeps a condition someone else added while the sheet was open', async ({ page }) => {
+    const creds = await login(page)
+    const method = await seedCheck(page, creds, `E2E Stale Conditions ${Date.now()}`)
+    await openPayments(page, creds.store_id)
+
+    await methodRow(page, method.name)
+      .getByRole('button', { name: /^configure$/i })
+      .click()
+    await expect(page.getByText(/no conditions/i)).toBeVisible({ timeout: 15_000 })
+
+    // Another admin saves a condition after this sheet loaded.
+    await adminRequest(page, creds, 'post', `/payment_methods/${method.id}/rules`, {
+      type: 'company_rule',
+    })
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Order total' }).click()
+    await page.getByLabel('Minimum order total (USD)').fill('5000')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByRole('alert')).toContainText(/someone else changed these conditions/i)
+    const rules = await adminRequest<{ data: { type: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/payment_methods/${method.id}/rules`,
+    )
+    expect(rules.data.map((rule) => rule.type)).toEqual(['company_rule'])
+
+    await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
   })
 
   test('orders the methods checkout offers', async ({ page }) => {

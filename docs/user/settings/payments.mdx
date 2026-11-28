@@ -15,9 +15,11 @@ To manage them, navigate to **Settings → Payments**, under the **Selling** gro
 
 The page has three sections:
 
-- **Payment providers** - Outside providers that process cards and wallets, such as Stripe. Each has a card with its logo and status: **Active**, **Disabled** or **Not connected**. The switch on a card turns a connected provider on or off.
+- **Payment providers** - Outside providers that process cards and wallets, such as Stripe. Each connected provider has its own card, with a row for each of its accounts showing its logo and status: **Active**, **Disabled** or **Not connected**. The switch on a row turns that account on or off.
 - **Manual payment methods** - Methods your store handles itself, such as Check and Store Credit. Each row shows the method's name, its description, and badges for its status and for **Admin only** methods.
 - **Payment capture** - When customers are charged, for every method that doesn't set its own. See [When to Charge Customers](#when-to-charge-customers) below.
+
+A note at the top of the page reminds you that each method can be limited to where it fits. A method limited under **Availability** lists its conditions on its row, each with the icon of what it checks: a globe for a market, a tower for a channel. For example, a globe with **Europe**, or **from $500.00** for an order total.
 
 ## Ordering Methods at Checkout
 
@@ -49,13 +51,13 @@ The provider decides what actually processes the payment, and which settings app
 
 ### Provider configuration
 
-Third-party providers need credentials before they will work. The fields differ by provider, and they appear in the panel as soon as you choose one.
+Third-party providers need credentials before they will work. The fields differ by provider, and they appear at the top of the panel as soon as you choose one, above the method's name and visibility.
 
-![The Provider configuration section, with the credential fields a provider needs](/docs/images/user/settings/payments/3-provider-configuration.png)
+![The credential fields a provider needs, at the top of the panel](/docs/images/user/settings/payments/3-provider-configuration.png)
 
 Enter the keys from your provider's own dashboard. Stored credentials are not shown back to you afterwards, and each has a **Replace** button for rotating a key later.
 
-Manual methods have no configuration section, because nothing is being processed elsewhere.
+Manual methods have no credential fields, because nothing is being processed elsewhere.
 
 ### Naming and visibility
 
@@ -63,10 +65,10 @@ These settings decide how a method is displayed:
 
 - **Name** - What customers see at checkout, such as "Credit card" or "Pay by invoice".
 - **Description** - The customer-facing description shown at checkout, useful for explaining what happens next on anything other than a card payment.
-- **Visible on storefront** - On by default. When off, only staff see this option, which is what you want for methods used on back-office orders and manual entry.
+- **Visible in storefront** - On by default. When off, only staff see this option, which is what you want for methods used on back-office orders and manual entry.
 - **Active** - On by default. Inactive methods are hidden from checkout entirely.
 
-<Note>**Visible on storefront** and **Active** do different jobs. Turning off **Visible on storefront** keeps a method available to your team; turning off **Active** withdraws it from everyone.</Note>
+<Note>**Visible in storefront** and **Active** do different jobs. Turning off **Visible in storefront** keeps a method available to your team; turning off **Active** withdraws it from everyone.</Note>
 
 ### When to charge customers
 
@@ -89,11 +91,33 @@ Which one suits depends on how quickly you fulfil:
 
 <Warning>Reserved amounts do not hold indefinitely. Card authorisations expire after a period set by the card network, so **On dispatch** and **Manually** need the order fulfilled or the payment taken within that window, or the reservation lapses and has to be retaken.</Warning>
 
+### Availability
+
+The **Availability** section of a method's panel decides when customers are offered it at checkout. A method with no conditions is offered at every checkout. Add one with **Add condition**:
+
+| Condition | Offers the method only… |
+|---|---|
+| **Channel** | On the sales channels you pick, such as invoice payment on the wholesale storefront only. |
+| **Market** | In the markets you pick. |
+| **Order total** | When the order total is within a minimum and maximum, set separately for each currency. A currency left blank is not limited. |
+| **Customer group** | To signed-in customers in the groups you pick. Guests never see it. |
+| **Company** | To orders placed for a company. Pick companies to narrow it to those companies and their divisions. |
+
+A **Channel**, **Market** or **Customer group** condition with nothing picked does not limit the method, and a **Customer group** condition left empty also lets guests through. Every condition must be met for the method to appear. To stop using a condition, remove it. **Availability** only appears while **Visible in storefront** is on, because a method only your team sees has no checkout to limit.
+
+<Note>Conditions apply to customers checking out on your storefront. Your team can still record any active method against an order in the dashboard.</Note>
+
+### Running two accounts with one provider
+
+You can add the same provider more than once, for example a Stripe account for Europe and another for the United States. Once a provider is connected, click **Add another account** at the bottom of its card, for example **Add another Stripe account**. Give each method a **Market** condition with its own markets, and make sure no market is in both. Each row lists its markets, so you can tell the accounts apart. A market listed in both would show customers two identical options at checkout.
+
+<Warning>If your marketplace pays sellers through Stripe Connect, only one Stripe method can be active at a time.</Warning>
+
 Click **Create payment method** when you are done.
 
 ## How to Edit a Payment Method
 
-Click **Configure** on a provider's card, or click a manual method's row, to update the name, description, visibility, status or credentials. The edit panel shows the provider in its subtitle rather than as a dropdown.
+Click **Configure** on a provider's card, or click a manual method's row, to update the name, description, visibility, status, credentials or availability. The edit panel shows the provider in its subtitle rather than as a dropdown.
 
 The provider cannot be changed once a method exists. If you need a different provider, create a new method and disable the old one.
 

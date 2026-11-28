@@ -162,7 +162,7 @@ module Spree
         })
 
         catalog.register_scope(:settings, group: :settings, resources: -> {
-          [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
+          [Spree::Store, Spree::PaymentMethod, Spree::PaymentMethodRule, Spree::Gateway,
            Spree::DeliveryZone, Spree::DeliveryZoneMember,
            Spree::StockLocation, Spree::DeliveryProfile,
            Spree::Market, Spree::TaxCategory, Spree::TaxRate,

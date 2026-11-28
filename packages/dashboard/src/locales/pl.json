@@ -1817,7 +1817,6 @@
         "name": {
           "placeholder": "np. Karta kredytowa (Stripe)"
         },
-        "provider_configuration": "Konfiguracja dostawcy",
         "storefront_visible": {
           "label": "Widoczna w sklepie"
         },
@@ -4613,6 +4612,7 @@
             "description": "Zainstaluj rozszerzenie dostawcy płatności, aby przyjmować karty i portfele."
           },
           "manual_title": "Ręczne metody płatności",
+          "add_another_account": "Dodaj kolejne konto {{provider}}",
           "add_manual": "Dodaj metodę ręczną",
           "manual_empty": {
             "title": "Brak ręcznych metod płatności",
@@ -4628,7 +4628,11 @@
               "description": "Aktywuj metodę płatności i pokaż ją w sklepie, aby pojawiła się tutaj."
             }
           },
-          "test_gateway": "Bramka testowa"
+          "test_gateway": "Bramka testowa",
+          "availability_notice": {
+            "title": "Oferuj każdą metodę tam, gdzie pasuje",
+            "description": "Ogranicz metodę płatności do wybranych rynków, kanałów, grup klientów lub firm albo do zakresu wartości zamówienia w sekcji Dostępność podczas jej konfiguracji. Na przykład prowadź osobne konto Stripe dla każdego rynku albo oferuj płatność na fakturę tylko klientom hurtowym."
+          }
         },
         "storefront": {
           "title": "Sklep i kasa",
@@ -4727,6 +4731,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "Dodaj warunek",
+        "changed_elsewhere": "Ktoś inny zmienił te warunki, odkąd otworzono tę metodę płatności. Zamknij ją i otwórz ponownie, aby zobaczyć zmiany.",
+        "description": "Oferuj tę metodę płatności w kasie sklepu tylko wtedy, gdy spełnione są wszystkie warunki. Płatności przyjmowane w panelu je pomijają.",
+        "empty": "Brak warunków — ta metoda płatności jest oferowana przy każdym zamówieniu.",
+        "fields": {
+          "max_totals": "Maksymalna wartość zamówienia",
+          "min_totals": "Minimalna wartość zamówienia"
+        },
+        "remove": "Usuń warunek {{name}}",
+        "summary": {
+          "max_totals": "do {{amount}}",
+          "min_totals": "od {{amount}}"
+        },
+        "title": "Dostępność"
+      },
       "create_description": "Wybierz dostawcę i skonfiguruj jego dane uwierzytelniające.",
       "create_label": "Utwórz metodę płatności",
       "delete_confirm": {
@@ -4740,6 +4760,8 @@
         "updated": "Zaktualizowano metodę płatności"
       },
       "provider_description": "Dostawca: {{provider}}",
+      "provider_installed": "{{provider}} · zainstalowano: {{count}}",
+      "set_up_title": "Skonfiguruj {{provider}}",
       "status": {
         "disabled": "Wyłączona"
       },

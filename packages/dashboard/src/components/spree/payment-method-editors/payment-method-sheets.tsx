@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
+import type { PaymentMethod, PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
 import {
+  adminClient,
   defaultPreferences,
   mapSpreeErrorsToForm,
   RecordMetadataSection,
@@ -10,12 +11,14 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  Separator,
   Sheet,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Skeleton,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -25,10 +28,12 @@ import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,
   usePaymentMethod,
+  usePaymentMethodNames,
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
 import {
+  defaultPaymentMethodName,
   filterPaymentMethodProviderTypes,
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
@@ -80,9 +85,8 @@ export function CreatePaymentMethodSheet({
   // sees and submits a real value — `CurrencySelect` only displays the
   // fallback now (it no longer commits via onChange).
   const { defaultCurrency } = useStore()
-
   const createDefaults: PaymentMethodFormValues = initialType
-    ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type, name: initialType.label }
+    ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
     initialType ? defaultPreferences(initialType.schema, { currency: defaultCurrency }) : {}
@@ -99,10 +103,24 @@ export function CreatePaymentMethodSheet({
     () => providerTypes.find((t) => t.type === providerType)?.schema,
     [providerTypes, providerType],
   )
+  // An outside provider is connected, as in the integrations gallery; a
+  // method the store handles itself is simply created.
+  const connectsProvider =
+    initialType?.third_party ?? providerTypes.find((t) => t.type === providerType)?.third_party
+
+  // Prefill the Name field from the provider, numbered past the names the
+  // store already uses, once those have loaded — unless the admin typed one.
+  const providerLabel =
+    initialType?.label ?? providerTypes.find((t) => t.type === providerType)?.label
+  const { data: takenNames } = usePaymentMethodNames(providerLabel)
+  useEffect(() => {
+    if (!providerLabel || !takenNames || form.getFieldState('name').isDirty) return
+    form.setValue('name', defaultPaymentMethodName(providerLabel, takenNames))
+  }, [providerLabel, takenNames, form])
 
   function handleProviderTypeChange(next: string) {
-    const nextSchema = providerTypes.find((t) => t.type === next)?.schema
-    setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
+    const entry = providerTypes.find((t) => t.type === next)
+    setPreferences(defaultPreferences(entry?.schema, { currency: defaultCurrency }))
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {
@@ -129,12 +147,14 @@ export function CreatePaymentMethodSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('admin.pages.settings.payment_methods.add_sheet_title')}</SheetTitle>
-          <SheetDescription>
+          <SheetTitle>
             {initialType
-              ? t('admin.payment_methods.provider_description', { provider: initialType.label })
-              : t('admin.payment_methods.create_description')}
-          </SheetDescription>
+              ? t('admin.payment_methods.set_up_title', { provider: initialType.label })
+              : t('admin.pages.settings.payment_methods.add_sheet_title')}
+          </SheetTitle>
+          {!initialType && (
+            <SheetDescription>{t('admin.payment_methods.create_description')}</SheetDescription>
+          )}
           <SetupGuideLink
             url={providerTypes.find((entry) => entry.type === providerType)?.docs_url}
           />
@@ -171,14 +191,26 @@ export function CreatePaymentMethodSheet({
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
-                ? t('admin.actions.creating')
-                : t('admin.payment_methods.create_label')}
+                ? connectsProvider
+                  ? t('admin.actions.saving')
+                  : t('admin.actions.creating')
+                : connectsProvider
+                  ? t('admin.integrations.connect_cta')
+                  : t('admin.payment_methods.create_label')}
             </Button>
           </SheetFooter>
         </form>
       </SheetContent>
     </Sheet>
   )
+}
+
+function rulesFromRecord(paymentMethod: PaymentMethod): PaymentMethodFormValues['rules'] {
+  return (paymentMethod.rules ?? []).map((rule) => ({
+    id: rule.id,
+    type: rule.type,
+    preferences: rule.preferences ?? {},
+  }))
 }
 
 export function EditPaymentMethodSheet({
@@ -226,6 +258,7 @@ export function EditPaymentMethodSheet({
       storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
       capture_method: paymentMethod.capture_method ?? '',
+      rules: rulesFromRecord(paymentMethod),
     })
     const initialPreferences = (paymentMethod.preferences as Record<string, unknown>) ?? {}
     setPreferences(initialPreferences)
@@ -239,7 +272,20 @@ export function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = paymentMethodValuesToUpdateParams(values)
+    // Compared with what was loaded rather than read from `dirtyFields`,
+    // which a field array only fills in when something subscribes to it.
+    const loadedRules = JSON.stringify(form.formState.defaultValues?.rules ?? [])
+    const rulesChanged = JSON.stringify(values.rules) !== loadedRules
+    // `rules` replaces the whole set, so a condition someone else saved since
+    // this sheet opened would be deleted without a word. Refuse instead.
+    if (rulesChanged) {
+      const current = await adminClient.paymentMethods.get(id, { expand: ['rules'] })
+      if (JSON.stringify(rulesFromRecord(current)) !== loadedRules) {
+        form.setError('root', { message: t('admin.payment_methods.conditions.changed_elsewhere') })
+        return
+      }
+    }
+    const params = paymentMethodValuesToUpdateParams(values, { rulesChanged })
     // Read from the ref rather than the memo: a retry runs before the next
     // render recomputes it.
     const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current
@@ -250,7 +296,12 @@ export function EditPaymentMethodSheet({
       const savesRecord = form.formState.isDirty || prefsDirty
       if (savesRecord) {
         await updateMutation.mutateAsync(params)
-        form.reset(values)
+        // The saved rules carry the ids the server gave new ones, so the next
+        // save updates them rather than replacing them.
+        const rules = rulesChanged
+          ? rulesFromRecord(await adminClient.paymentMethods.get(id, { expand: ['rules'] }))
+          : values.rules
+        form.reset({ ...values, rules })
         originalPreferencesRef.current = JSON.stringify(preferences)
       }
       if (!(await customFields.save({ announce: !savesRecord }))) return
@@ -296,7 +347,7 @@ export function EditPaymentMethodSheet({
           <SetupGuideLink url={paymentMethod?.docs_url} />
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
+          <PaymentMethodFormSkeleton />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -351,5 +402,41 @@ export function EditPaymentMethodSheet({
         )}
       </SheetContent>
     </Sheet>
+  )
+}
+
+/** The edit form's outline while the method loads, so the sheet doesn't jump when it arrives. */
+function PaymentMethodFormSkeleton() {
+  const { t } = useTranslation()
+  const field = (labelWidth: string, key: string) => (
+    <div key={key} className="flex flex-col gap-2">
+      <Skeleton className={`h-4 ${labelWidth}`} />
+      <Skeleton className="h-9 w-full" />
+    </div>
+  )
+  const toggle = (labelWidth: string, key: string) => (
+    <div key={key} className="flex items-center justify-between gap-4">
+      <div className="flex flex-1 flex-col gap-1.5">
+        <Skeleton className={`h-4 ${labelWidth}`} />
+        <Skeleton className="h-3 w-3/5" />
+      </div>
+      <Skeleton className="h-5 w-9 rounded-full" />
+    </div>
+  )
+
+  return (
+    <div role="status" aria-busy className="flex flex-col gap-6 p-4">
+      <span className="sr-only">{t('admin.common.loading')}</span>
+      {field('w-28', 'key')}
+      {field('w-36', 'secret')}
+      <Separator />
+      {field('w-16', 'name')}
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-20 w-full" />
+      </div>
+      {toggle('w-32', 'storefront')}
+      {toggle('w-20', 'active')}
+    </div>
   )
 }

@@ -10,6 +10,7 @@ export const PaymentMethodTypeSchema = z.object({
   logo_url: z.string().nullable(),
   docs_url: z.string().nullable(),
   third_party: z.boolean(),
+  installed_count: z.number(),
   installed: z.boolean(),
 });
 

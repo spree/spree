@@ -1817,7 +1817,6 @@
         "name": {
           "placeholder": "مثلًا Credit card (Stripe)"
         },
-        "provider_configuration": "إعدادات المزود",
         "storefront_visible": {
           "label": "مرئي في المتجر"
         },
@@ -4593,6 +4592,7 @@
             "description": "ثبّت إضافة مزود دفع لقبول البطاقات والمحافظ."
           },
           "manual_title": "طرق الدفع اليدوية",
+          "add_another_account": "إضافة حساب {{provider}} آخر",
           "add_manual": "إضافة طريقة يدوية",
           "manual_empty": {
             "title": "لا توجد طرق دفع يدوية",
@@ -4608,7 +4608,11 @@
               "description": "فعّل طريقة دفع واعرضها في المتجر لتظهر هنا."
             }
           },
-          "test_gateway": "بوابة اختبار"
+          "test_gateway": "بوابة اختبار",
+          "availability_notice": {
+            "title": "اعرض كل طريقة حيث تناسب",
+            "description": "قيّد طريقة الدفع بأسواق أو قنوات أو مجموعات عملاء أو شركات معينة، أو بنطاق من إجماليات الطلبات، من قسم التوفر عند إعدادها. على سبيل المثال، استخدم حساب Stripe منفصلًا لكل سوق، أو اعرض الدفع بالفاتورة على مشتري الجملة فقط."
+          }
         },
         "storefront": {
           "title": "واجهة المتجر والدفع",
@@ -4707,6 +4711,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "إضافة شرط",
+        "changed_elsewhere": "غيّر شخص آخر هذه الشروط منذ أن فتحت طريقة الدفع هذه. أغلقها وافتحها مرة أخرى لرؤية التغييرات.",
+        "description": "اعرض طريقة الدفع هذه عند الدفع في المتجر فقط عند استيفاء جميع الشروط. المدفوعات المسجّلة في لوحة التحكم تتجاهلها.",
+        "empty": "لا توجد شروط — تُعرض طريقة الدفع هذه في كل عملية دفع.",
+        "fields": {
+          "max_totals": "الحد الأقصى لإجمالي الطلب",
+          "min_totals": "الحد الأدنى لإجمالي الطلب"
+        },
+        "remove": "إزالة شرط {{name}}",
+        "summary": {
+          "max_totals": "حتى {{amount}}",
+          "min_totals": "من {{amount}}"
+        },
+        "title": "التوفر"
+      },
       "create_description": "اختر موفرًا وقم بتكوين بيانات الاعتماد الخاصة به.",
       "create_label": "إنشاء طريقة الدفع",
       "delete_confirm": {
@@ -4720,6 +4740,8 @@
         "updated": "تم تحديث طريقة الدفع"
       },
       "provider_description": "Provider: {{provider}}",
+      "provider_installed": "{{provider}} · مثبّت {{count}}",
+      "set_up_title": "إعداد {{provider}}",
       "status": {
         "disabled": "عاجز"
       },

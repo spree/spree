@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "e.g. Credit card (Stripe)"
         },
-        "provider_configuration": "Provider configuration",
         "storefront_visible": {
           "label": "Visible on storefront"
         },
@@ -4557,6 +4556,7 @@
             "description": "Install a payment provider extension to accept cards and wallets."
           },
           "manual_title": "Manual payment methods",
+          "add_another_account": "Add another {{provider}} account",
           "add_manual": "Add manual method",
           "manual_empty": {
             "title": "No manual payment methods",
@@ -4572,7 +4572,11 @@
               "description": "Activate a payment method and show it on the storefront to list it here."
             }
           },
-          "test_gateway": "Test gateway"
+          "test_gateway": "Test gateway",
+          "availability_notice": {
+            "title": "Offer each method where it fits",
+            "description": "Limit a payment method to some markets, channels, customer groups or companies, or to a range of order totals, under Availability when you configure it. For example, run a separate Stripe account for each market, or offer pay on invoice to wholesale buyers only."
+          }
         },
         "storefront": {
           "title": "Storefront & checkout",
@@ -4671,6 +4675,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "Add condition",
+        "changed_elsewhere": "Someone else changed these conditions since you opened this payment method. Close it and open it again to see their changes.",
+        "description": "Offer this payment method at storefront checkout only when every condition is met. Payments taken in the dashboard ignore them.",
+        "empty": "No conditions — this payment method is offered at every checkout.",
+        "fields": {
+          "max_totals": "Maximum order total",
+          "min_totals": "Minimum order total"
+        },
+        "remove": "Remove the {{name}} condition",
+        "summary": {
+          "max_totals": "up to {{amount}}",
+          "min_totals": "from {{amount}}"
+        },
+        "title": "Availability"
+      },
       "create_description": "Pick a provider and configure its credentials.",
       "create_label": "Create payment method",
       "delete_confirm": {
@@ -4684,6 +4704,8 @@
         "updated": "Payment method updated"
       },
       "provider_description": "Provider: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} installed",
+      "set_up_title": "Set up {{provider}}",
       "status": {
         "disabled": "Disabled"
       },

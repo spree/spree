@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "例: クレジットカード（Stripe）"
         },
-        "provider_configuration": "プロバイダーの設定",
         "storefront_visible": {
           "label": "ストアに表示"
         },
@@ -4556,6 +4555,7 @@
             "description": "カードやウォレットを受け付けるには、決済プロバイダーの拡張機能をインストールしてください。"
           },
           "manual_title": "手動の決済方法",
+          "add_another_account": "{{provider}}のアカウントをもう1つ追加",
           "add_manual": "手動の決済方法を追加",
           "manual_empty": {
             "title": "手動の決済方法はありません",
@@ -4571,7 +4571,11 @@
               "description": "決済方法を有効にしてストアフロントに表示すると、ここに表示されます。"
             }
           },
-          "test_gateway": "テスト用ゲートウェイ"
+          "test_gateway": "テスト用ゲートウェイ",
+          "availability_notice": {
+            "title": "各支払い方法を適した場面で提供",
+            "description": "支払い方法の設定画面の「利用条件」で、特定のマーケット、チャネル、顧客グループ、企業、または注文金額の範囲に限定できます。たとえば、マーケットごとに別の Stripe アカウントを使ったり、請求書払いを卸売の購入者だけに提供したりできます。"
+          }
         },
         "storefront": {
           "title": "ストアフロントとチェックアウト",
@@ -4670,6 +4674,22 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "add": "条件を追加",
+        "changed_elsewhere": "この支払い方法を開いた後に、他のユーザーがこれらの条件を変更しました。閉じてからもう一度開き、変更内容を確認してください。",
+        "description": "すべての条件を満たす場合にのみ、ストアのチェックアウトでこの支払い方法を表示します。ダッシュボードで受け付ける支払いには適用されません。",
+        "empty": "条件なし — この支払い方法はすべてのチェックアウトで表示されます。",
+        "fields": {
+          "max_totals": "最高注文金額",
+          "min_totals": "最低注文金額"
+        },
+        "remove": "{{name}}の条件を削除",
+        "summary": {
+          "max_totals": "{{amount}}以下",
+          "min_totals": "{{amount}}以上"
+        },
+        "title": "利用条件"
+      },
       "create_description": "プロバイダーを選び、認証情報を設定します。",
       "create_label": "支払い方法を作成",
       "delete_confirm": {
@@ -4683,6 +4703,8 @@
         "updated": "支払い方法を更新しました"
       },
       "provider_description": "プロバイダー: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} 件インストール済み",
+      "set_up_title": "{{provider}}を設定",
       "status": {
         "disabled": "無効"
       },

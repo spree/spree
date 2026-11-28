@@ -15,6 +15,7 @@ module Spree
         'Integration' => -> { Spree::Integration.registered_classes },
         'OrderRoutingRule' => -> { Spree.order_routing.rules },
         'PaymentMethod' => -> { Spree::PaymentMethod.providers },
+        'PaymentMethodRule' => -> { Spree.payment_method_rules },
         'PriceRule' => -> { Array(Spree.pricing&.rules) },
         'PromotionCalculator' => lambda {
           Spree.calculators.promotion_actions_create_adjustments + Spree.calculators.promotion_actions_create_item_adjustments

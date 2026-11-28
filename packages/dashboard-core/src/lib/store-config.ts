@@ -16,7 +16,7 @@ const PAGE_SIZE = 100
  * Fetches every page of a list and joins them, so a store with more records
  * than one page holds still gets all of them.
  */
-async function listEveryPage<T>(
+export async function listEveryPage<T>(
   fetchPage: (page: number) => Promise<PaginatedResponse<T>>,
 ): Promise<PaginatedResponse<T>> {
   const first = await fetchPage(1)
