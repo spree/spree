@@ -35,6 +35,18 @@ module Spree
       true
     end
 
+    # Whether this rule keeps every discount of its promotion off +line_item+,
+    # whatever the promotion's other rules say — order-wide discounts included.
+    def excludes?(_line_item)
+      false
+    end
+
+    # Whether this rule only excludes lines rather than qualifying an order:
+    # one whose match policy is `none`.
+    def exclusion?
+      has_preference?(:match_policy) && preferred_match_policy == 'none'
+    end
+
     def eligibility_errors
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end

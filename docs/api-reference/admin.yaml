@@ -88742,6 +88742,10 @@ components:
           nullable: true
         promotionable:
           type: boolean
+          description: 'Deprecated: Add a product or category rule whose `match_policy`
+            is `none` to every promotion that should skip the product. Removed in
+            6.5.'
+          deprecated: true
         tags:
           type: array
           items:
@@ -89044,6 +89048,10 @@ components:
           nullable: true
         promotionable:
           type: boolean
+          description: 'Deprecated: Add a product or category rule whose `match_policy`
+            is `none` to every promotion that should skip the product. Removed in
+            6.5.'
+          deprecated: true
         tags:
           type: array
           items:

@@ -62,4 +62,22 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       end
     end
   end
+
+  context 'when the promotion excludes a product' do
+    let(:order) { create(:order_with_line_items, line_items_count: 2, line_items_price: 30, store: store) }
+    let(:promotion) { create(:promotion, store: store) }
+    let(:rule) { described_class.create!(promotion: promotion, preferred_amount_min: 50, preferred_operator_min: 'gte') }
+
+    before { order.line_items.first.update_column(:price, 70) }
+
+    it 'leaves the excluded product out of the total' do
+      expect(rule).to be_eligible(order)
+
+      create(:promotion_rule_product, promotion: promotion, preferred_match_policy: 'none',
+                                      product_ids_to_add: [order.line_items.first.product_id])
+      promotion.reload
+
+      expect(rule.reload).not_to be_eligible(order)
+    end
+  end
 end

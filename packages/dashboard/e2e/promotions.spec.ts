@@ -1,17 +1,21 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
   adminRequest,
+  deleteSeededRecords,
   FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   gotoIndex,
   login,
   rowButton,
   saveCustomFieldWithPage,
+  seedRecord,
   withCustomFieldDefinition,
 } from './helpers'
 
@@ -124,7 +128,99 @@ async function expectTiers(page: Page, tiers: [string, string][]) {
 const PROMOTIONS_PATH = (storeId: string) => `/${storeId}/promotions`
 const CTA = /new promotion/i
 
+// Seeds a 50.00 product and a coupon that excludes the promo product's
+// category, then an order holding both. Returns the coupon code and order id.
+async function seedExcludedCategoryOrder(
+  page: Page,
+  creds: Awaited<ReturnType<typeof login>>,
+  extraRules: Record<string, unknown>[] = [],
+) {
+  const suffix = Date.now()
+  const code = `EXCL${suffix}`
+
+  const locations = await adminRequest<{ data: { id: string }[] }>(
+    page,
+    creds,
+    'get',
+    '/stock_locations',
+  )
+  const sku = `E2E-EXCL-${suffix}`
+  const product = await seedRecord(page, creds, '/products', {
+    name: `E2E Discounted ${suffix}`,
+    status: 'active',
+    prices: [{ amount: '50.00', currency: 'USD' }],
+    variants: [
+      {
+        options: [],
+        sku,
+        track_inventory: true,
+        stock_levels: [{ stock_location_id: locations.data[0].id, count_on_hand: 10 }],
+      },
+    ],
+  })
+  const [discounted, excluded, categories, customers] = await Promise.all([
+    adminRequest<{ data: { id: string }[] }>(page, creds, 'get', `/variants?q[sku_eq]=${sku}`),
+    adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    ),
+    adminRequest<{ data: { id: string; name: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/categories?q[name_cont]=${encodeURIComponent(FIXTURE_PROMO_TAXON)}`,
+    ),
+    adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+    ),
+  ])
+  const category = categories.data.find((c) => c.name === FIXTURE_PROMO_TAXON)
+  // Orders only take what their channel sells.
+  const channels = await adminRequest<{ data: { id: string; default: boolean }[] }>(
+    page,
+    creds,
+    'get',
+    '/channels',
+  )
+  const defaultChannel = channels.data.find((channel) => channel.default)
+  await adminRequest(page, creds, 'post', `/channels/${defaultChannel?.id}/add_products`, {
+    product_ids: [product.id],
+  })
+
+  await seedRecord(page, creds, '/promotions', {
+    name: `E2E Excluded Category Discount ${suffix}`,
+    kind: 'coupon_code',
+    code,
+    rules: [
+      { type: 'category', preferences: { match_policy: 'none' }, category_ids: [category?.id] },
+      ...extraRules,
+    ],
+    actions: [
+      {
+        type: 'create_adjustment',
+        calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: '10' } },
+      },
+    ],
+  })
+  const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+    customer_id: customers.data[0].id,
+    items: [
+      { variant_id: discounted.data[0].id, quantity: 1 },
+      { variant_id: excluded.data[0].id, quantity: 1 },
+    ],
+  })
+
+  return { code, orderId: order.id }
+}
+
 test.describe('promotions', () => {
+  test.afterEach(({ page }) => deleteSeededRecords(page))
+
   test('lists promotions', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
@@ -320,6 +416,77 @@ test.describe('promotions', () => {
     await expect(page.getByText(FIXTURE_PROMO_TAXON).first()).toBeVisible({ timeout: 5_000 })
 
     await submitCreate(page, name)
+  })
+
+  test('creates a promotion excluding a category', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Excluded Category Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^categories\b/i)
+    await page.getByText(/^none of these categories$/i).click()
+    await pickAutocompleteOption(page, /search categories/i, FIXTURE_PROMO_TAXON)
+    await saveEditor(page)
+    await submitCreate(page, name)
+
+    await page.reload()
+    await page
+      .locator('div.items-stretch')
+      .filter({ hasText: FIXTURE_PROMO_TAXON })
+      .first()
+      .getByRole('button')
+      .first()
+      .click()
+    await expect(
+      page.getByRole('dialog').getByRole('radio', { checked: true }),
+    ).toHaveAccessibleName(/none of these categories/i)
+  })
+
+  // An excluded product stays at full price while the rest of the order is
+  // discounted: 10% of the 50.00 product only, not of the 19.99 promo product.
+  test('discounts only the products outside an excluded category', async ({ page }) => {
+    const creds = await login(page)
+    const { code, orderId } = await seedExcludedCategoryOrder(page, creds)
+
+    await page.goto(`/${creds.store_id}/orders/${orderId}`)
+    await page
+      .getByRole('button', { name: /^apply$/i })
+      .first()
+      .click()
+    const dialog = page.getByRole('dialog')
+    await dialog.locator('#coupon-code').fill(code)
+    await dialog.getByRole('button', { name: /^apply$/i }).click()
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+
+    await expect(page.getByText(code).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/-\$5\.00/).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The 19.99 promo product would lift the order over 60.00, but an excluded
+  // product does not count towards a minimum order total.
+  test('leaves excluded products out of a minimum order total', async ({ page }) => {
+    const creds = await login(page)
+    const { code, orderId } = await seedExcludedCategoryOrder(page, creds, [
+      { type: 'item_total', preferences: { amount_min: '60', operator_min: 'gte' } },
+    ])
+
+    await page.goto(`/${creds.store_id}/orders/${orderId}`)
+    await page
+      .getByRole('button', { name: /^apply$/i })
+      .first()
+      .click()
+    const dialog = page.getByRole('dialog')
+    await dialog.locator('#coupon-code').fill(code)
+    await dialog.getByRole('button', { name: /^apply$/i }).click()
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+
+    // The admin keeps the code on the order but holds the discount back.
+    await expect(page.getByText(/applies once the order qualifies/i)).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/-\$\d+\.\d{2}/)).toHaveCount(0)
   })
 
   test('creates a promotion with a Customer rule', async ({ page }) => {

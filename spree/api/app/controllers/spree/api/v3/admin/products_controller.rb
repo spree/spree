@@ -27,7 +27,9 @@ module Spree
             body.attribute :delivery_profile_id, :id,
               nullable: true,
               description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
-            body.attribute :promotionable, :boolean
+            body.attribute :promotionable, :boolean,
+                           deprecated: 'Add a product or category rule whose `match_policy` is `none` to every ' \
+                                       'promotion that should skip the product. Removed in 6.5.'
             body.attribute :tags, :array, of: :string, example: %w[eco sale]
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:
