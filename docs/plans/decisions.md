@@ -6947,3 +6947,13 @@ A session payment's `response_code` stays its Adyen session id, and the PSP refe
 **Consequences:** Any tax provider can offer a lookup by implementing one class method. The Avalara gem's `commit_transaction_enabled` preference becomes a three-way `document_recording` choice, translated by the upgrade task. A workflow failure carrying a hash renders its messages in the Admin and Store APIs instead of the hash printed as text.
 
 **Plan:** `6.0-avalara-provider-gem.md` (Key Decision "Sales Tax Badge certification scope", Phase 8).
+
+## 2026-11-27 — Order timeline; actors travel on events
+
+**Context:** A merchant cannot see what happened to a placed order: when it was paid, who refunded it, when it shipped, what a return restocked. Spree publishes an event for almost every step but keeps none, a payment keeps only its current status, and there is nowhere to leave a comment.
+
+**Decision:** Each order gets an append-only activity log, `spree_order_activities`, written from the events its records publish by one subscriber that runs inline, in a savepoint of its own. Only orders placed after the release have one; nothing is backfilled. Entries point to order changes rather than copying their actions, and one step makes one entry: a change requested and confirmed together is one entry, a change made by a return, exchange or claim is nested under that record's entry, and a refund is recorded once the gateway answers (`payment.refunded`, `refund.requested`, `refund.failed`), never from `refund.created`, which fires before it. Staff can comment; an author can delete their comment but not edit it. The Admin and Seller APIs set `Spree::Current.actor` for each request, and every event copies it into its metadata as `actor_id` (prefixed id) and `actor_type` (actor kind).
+
+**Consequences:** Event metadata keys `actor_id` and `actor_type` are reserved, and webhook consumers receive them. A background job acting for a staff member or API key sets `Spree::Current.actor`, or its entries name no one. A new step a merchant should see on an order must publish an event. Order change sets record `confirmed_by`, `canceled_by`, `previous_total` and `new_total` (amended into the order change plan the same day), which the timeline reads.
+
+**Plans:** `6.1-order-timeline.md` (new), `6.1-order-change-substrate.md` (Key Decision "A change set records who closed it and what it did to the total").

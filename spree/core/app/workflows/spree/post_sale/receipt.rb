@@ -26,7 +26,8 @@ module Spree
         end
 
         run_hooks :after_receive
-        post_sale_record.publish_event("#{post_sale_kind}.received")
+        # Names the restock it made, so the order timeline shows it under the receipt.
+        post_sale_record.publish_event("#{post_sale_kind}.received", nil, { order_change_id: @order_change&.prefixed_id }.compact)
         success(post_sale_record.reload)
       end
 
@@ -85,10 +86,12 @@ module Spree
         end
         return if actions.empty?
 
-        Spree.order_change_apply_service.call(
+        result = Spree.order_change_apply_service.call(
           order: post_sale_record.order, actions: actions,
           post_sale_record: post_sale_record, requested_by: received_by
         )
+        @order_change = result.value if result.success?
+        result
       end
 
       def mark_received

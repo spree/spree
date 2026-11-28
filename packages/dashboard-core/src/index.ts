@@ -101,6 +101,7 @@ export * from './hooks/use-stock-locations'
 export * from './hooks/use-switch-admin-locale'
 export * from './hooks/use-table-density'
 export * from './hooks/use-visual-viewport-offset'
+export * from './lib/activity-registry'
 export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
 // ---------------------------------------------------------------------------

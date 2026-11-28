@@ -49,7 +49,7 @@ module Spree
 
         step :recalculate_order
         run_hooks :after_fulfill
-        exchange.publish_event('exchange.fulfilled')
+        exchange.publish_event('exchange.fulfilled', nil, { order_change_id: @order_change&.prefixed_id }.compact)
         success(exchange.reload)
       end
 

@@ -10,6 +10,12 @@ module Spree
     # request and per job.
     attribute :store_scope_guard_armed
 
+    # Who is acting in this request or job: a staff member, an API key, an
+    # app. Every event published meanwhile carries it in its metadata, so a
+    # subscriber that runs after commit still knows who did the step
+    # (docs/plans/6.1-order-timeline.md).
+    attribute :actor
+
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
     # writes to it): a carrier gem keys its quote here so several delivery
@@ -55,6 +61,8 @@ module Spree
       begin
         self.attributes = {}
         self.store = store
+        # Who is acting does not change with the store.
+        self.actor = previous[:actor]
         yield
       ensure
         self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)

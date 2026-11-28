@@ -1096,6 +1096,7 @@ en:
     options: Options
     or: or
     order: Order
+    order_activity_not_deletable: Only a comment can be deleted, and only by the person who wrote it.
     order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_change_actions_malformed: Each action must be an object with a kind.

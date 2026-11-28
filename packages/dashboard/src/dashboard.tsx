@@ -14,6 +14,7 @@ import './nav/settings'
 import './nav/enterprise-previews'
 import './search/create-actions'
 import './search/default'
+import './timeline/default'
 
 /**
  * The Spree admin app shell: provider stack + router, fully wired.

@@ -15,6 +15,7 @@ module Spree
         result = service.call(order: record.order, actions: actions, post_sale_record: record, requested_by: requested_by)
         failure(result.value, result.error.value) if result.failure?
 
+        @order_change = result.value
         service.fulfillments
       end
     end

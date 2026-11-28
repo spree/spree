@@ -79,6 +79,36 @@ RSpec.describe Spree::Event do
     end
   end
 
+  describe 'actor metadata', events: true do
+    let(:admin) { create(:admin_user) }
+
+    it 'names the actor of the request that published it by prefixed id and kind' do
+      Spree::Current.actor = admin
+
+      event = Spree::Events.publish('order.approved', {})
+
+      expect(event.metadata).to include('actor_id' => admin.prefixed_id, 'actor_type' => 'admin_user')
+      expect(event.actor).to eq(admin)
+    end
+
+    it 'keeps that actor when rebuilt where someone else is acting' do
+      Spree::Current.actor = admin
+      published = Spree::Events.publish('order.approved', {})
+      Spree::Current.actor = create(:admin_user)
+
+      rebuilt = described_class.new(name: 'order.approved', metadata: published.metadata)
+
+      expect(rebuilt.actor).to eq(admin)
+    end
+
+    it 'names no one when nobody is acting' do
+      event = Spree::Events.publish('order.approved', {})
+
+      expect(event.metadata.keys).not_to include('actor_id', 'actor_type')
+      expect(event.actor).to be_nil
+    end
+  end
+
   describe '#store' do
     it 'returns the store for the store_id' do
       event = described_class.new(name: 'order.placed', store_id: store.id)

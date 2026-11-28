@@ -114,6 +114,7 @@ export type { OauthApplicationUpdateParams } from './OauthApplicationUpdateParam
 export type { OptionTypeCreateParams } from './OptionTypeCreateParams'
 export type { OptionTypeUpdateParams } from './OptionTypeUpdateParams'
 export type { OptionValueParams } from './OptionValueParams'
+export type { OrderActivityCreateParams } from './OrderActivityCreateParams'
 export type { OrderCancelParams } from './OrderCancelParams'
 export type { OrderChangeCreateParams } from './OrderChangeCreateParams'
 export type { OrderChangePreviewParams } from './OrderChangePreviewParams'

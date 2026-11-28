@@ -19,7 +19,6 @@ import {
   OrderDiscountsCard,
   TaxLinesCard,
 } from '../../../../../components/spree/orders/order-adjustments-cards'
-import { OrderChangesCard } from '../../../../../components/spree/orders/order-changes-card'
 import { CommissionLinesCard } from '../../../../../components/spree/orders/order-commission-lines-card'
 import { CustomerCard } from '../../../../../components/spree/orders/order-customer-card'
 import { DiscountsCard } from '../../../../../components/spree/orders/order-discounts-sidebar-card'
@@ -36,6 +35,7 @@ import { OrderPurchaseOrderCard } from '../../../../../components/spree/orders/o
 import { SellerTransfersCard } from '../../../../../components/spree/orders/order-seller-transfers-card'
 import { OrderSkeleton } from '../../../../../components/spree/orders/order-skeleton'
 import { OrderSummaryCard } from '../../../../../components/spree/orders/order-summary-card'
+import { OrderTimeline } from '../../../../../components/spree/orders/order-timeline'
 import { useOrder } from '../../../../../hooks/use-order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/')({
@@ -74,14 +74,12 @@ function OrderDetailPage() {
           <OrderSummaryCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
-              would only ever render an empty card with a disabled action.
-              A draft is edited directly, so it has no changes to list. */}
+              would only ever render an empty card with a disabled action. */}
           {order.completed_at && (
             <>
               <OrderReturnsCard order={order} />
               <OrderExchangesCard order={order} />
               <OrderClaimsCard order={order} />
-              <OrderChangesCard order={order} />
             </>
           )}
           <CommissionLinesCard order={order} />
@@ -99,6 +97,8 @@ function OrderDetailPage() {
             externalReferences={order.external_references}
           />
           <Slot name="order.form_main" context={{ order }} />
+          {/* A draft is edited directly and has no history to show yet. */}
+          {order.completed_at && <OrderTimeline order={order} />}
         </>
       }
       sidebar={

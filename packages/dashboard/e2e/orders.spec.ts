@@ -734,19 +734,29 @@ test.describe('placed order editing', () => {
 
   // The order page is where a merchant asks "who changed this, and when?",
   // so every change is listed there, a waiting one included.
-  test('lists the changes made to the order on its page', async ({ page }) => {
+  test('shows the order’s timeline with comments and changes', async ({ page }) => {
     const creds = await login(page)
     const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
     const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
 
     await page.goto(orderUrl)
-    const history = page
+    const timeline = page
       .locator('[data-slot="section"]')
-      .filter({ has: page.getByText('Order changes', { exact: true }) })
-    await expect(history.getByText(/no changes since the order was placed/i)).toBeVisible({
-      timeout: 15_000,
-    })
+      .filter({ has: page.getByText('Timeline', { exact: true }) })
+    await expect(timeline.getByText(/^Order placed · /)).toBeVisible({ timeout: 15_000 })
 
+    // A comment can be posted and then deleted by its author.
+    await timeline.getByLabel('Leave a comment…').fill('Customer asked to hold the parcel')
+    await timeline.getByRole('button', { name: /^post$/i }).click()
+    await expect(timeline.getByText('Customer asked to hold the parcel')).toBeVisible()
+    await timeline.getByRole('button', { name: /^delete comment$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await expect(timeline.getByText('Customer asked to hold the parcel')).toHaveCount(0)
+
+    // Saving an edit records one entry, with what it changed.
     await page.goto(`${orderUrl}/edit`)
     const quantity = page.locator('input[type="number"]').first()
     await expect(quantity).toHaveValue('1', { timeout: 15_000 })
@@ -755,20 +765,14 @@ test.describe('placed order editing', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
 
-    await expect(history.getByText(/to a quantity of 2$/)).toBeVisible({ timeout: 15_000 })
-    await expect(history.getByText(/^applied$/i)).toBeVisible()
+    const changed = timeline.locator('li[data-kind="order_change.confirmed"]')
+    // Saved by the signed-in admin, so the entry names them.
+    await expect(changed).toContainText(` · ${creds.admin_email}`, { timeout: 15_000 })
+    await changed.getByRole('button', { name: /^show details$/i }).click({ timeout: 15_000 })
+    await expect(changed.getByText(/to a quantity of 2$/)).toBeVisible()
+    await expect(changed.getByText(/^Total .+ → .+$/)).toBeVisible()
 
-    // Both changes are made with this session's token, so both name its user.
-    const { data: changes } = await adminRequest<{ data: { requested_by?: { label: string } }[] }>(
-      page,
-      creds,
-      'get',
-      `/orders/${order.id}/order_changes?expand=requested_by`,
-    )
-    const actor = changes[0].requested_by?.label ?? ''
-    expect(actor).not.toBe('')
-    await expect(history.getByText(actor, { exact: false })).toBeVisible()
-
+    // A change requested through the API waits on top until it is applied.
     const { items } = await adminRequest<{ items: { id: string }[] }>(
       page,
       creds,
@@ -778,11 +782,16 @@ test.describe('placed order editing', () => {
     await adminRequest(page, creds, 'post', `/orders/${order.id}/order_changes`, {
       actions: [{ kind: 'update_item', line_item_id: items[0].id, quantity: 5 }],
     })
-
     await page.reload()
-    await expect(history.getByText(/to a quantity of 5$/)).toBeVisible({ timeout: 15_000 })
-    await expect(history.getByText(/^requested$/i)).toBeVisible()
-    await expect(history.getByText(actor, { exact: false })).toHaveCount(2)
+    const requested = page.getByTestId('requested-order-change')
+    await expect(requested.getByText('A change is waiting to be applied')).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(requested.getByText(/to a quantity of 5$/)).toBeVisible()
+
+    await requested.getByRole('button', { name: /^apply change$/i }).click()
+    await expect(requested).toHaveCount(0, { timeout: 15_000 })
+    await expect(timeline.locator('li[data-kind="order_change.confirmed"]')).toHaveCount(2)
   })
 })
 

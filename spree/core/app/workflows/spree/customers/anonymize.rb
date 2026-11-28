@@ -261,7 +261,13 @@ module Spree
 
         # Orders carry a staff-written note that carts have no column for, so
         # each is scrubbed to the columns it actually has.
+        # Read before the scrub: rewriting a guest order's email is what stops
+        # it matching the address it was found by.
+        order_ids = owned_purchases(Spree::Order).ids
         owned_purchases(Spree::Order).update_all(scrubbed.merge(internal_note: nil))
+        # Timeline comments are staff free text like the note, so they go too;
+        # every other timeline entry references the customer, never copies them.
+        Spree::OrderActivity.comments.where(order_id: order_ids).delete_all
         owned_purchases(Spree::Cart).update_all(scrubbed)
 
         owned_purchases(Spree::OrderGroup).

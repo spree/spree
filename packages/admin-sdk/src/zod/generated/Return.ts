@@ -34,7 +34,7 @@ export const ReturnSchema = z.object({
   stock_location_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
-  created_by: ActorSchema.optional(),
+  created_by: ActorSchema.nullable().optional(),
   refunded_total: z.string(),
   refundable_total: z.string(),
   get order() { return OrderSchema.optional(); },

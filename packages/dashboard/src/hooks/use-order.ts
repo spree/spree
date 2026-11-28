@@ -113,19 +113,65 @@ export function useOrderFees(orderId: string) {
 
 /**
  * Keyed under the order, so anything that refreshes the order — saving an
- * edit, receiving a return — refreshes its change history too.
+ * edit, receiving a return — refreshes its timeline too.
  */
-export function useOrderChanges(orderId: string, page: number) {
+export function useOrderActivities(orderId: string, page: number) {
   return useQuery({
-    queryKey: useResourceKey('orders', orderId, 'order_changes', page),
+    queryKey: useResourceKey('orders', orderId, 'activities', page),
     queryFn: () =>
-      adminClient.orders.orderChanges.list(orderId, {
+      adminClient.orders.activities.list(orderId, {
         page,
-        limit: 10,
-        sort: '-created_at',
-        expand: ['requested_by', 'actions.variant'],
+        limit: 25,
+        expand: ['actor', 'order_change.actions.variant'],
       }),
     enabled: !!orderId,
+  })
+}
+
+/** The change waiting to be applied, if any — an order has at most one open. */
+export function useRequestedOrderChange(orderId: string) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'order_changes', 'requested'),
+    queryFn: () =>
+      adminClient.orders.orderChanges.list(orderId, {
+        status_eq: 'requested',
+        limit: 1,
+        expand: ['requested_by', 'actions.variant'],
+      }),
+    select: (response) => response.data[0] ?? null,
+    enabled: !!orderId,
+  })
+}
+
+export function useOrderComment(orderId: string) {
+  return useResourceMutation({
+    mutationFn: (body: string) => adminClient.orders.activities.create(orderId, { body }),
+    // A comment changes nothing else on the order.
+    invalidate: [['orders', orderId, 'activities']],
+    successMessage: false,
+    showValidationErrors: true,
+  })
+}
+
+export function useDeleteOrderComment(orderId: string) {
+  return useResourceMutation({
+    mutationFn: (id: string) => adminClient.orders.activities.delete(orderId, id),
+    // A comment changes nothing else on the order.
+    invalidate: [['orders', orderId, 'activities']],
+    successMessage: i18n.t('admin.orders.detail.timeline.comment_deleted'),
+  })
+}
+
+/** Applies or discards the order's requested change. */
+export function useSettleOrderChange(orderId: string) {
+  return useResourceMutation({
+    mutationFn: ({ id, action }: { id: string; action: 'confirm' | 'cancel' }) =>
+      action === 'confirm'
+        ? adminClient.orders.orderChanges.confirm(orderId, id)
+        : adminClient.orders.orderChanges.cancel(orderId, id),
+    invalidate: [orderQueryKey(orderId)],
+    successMessage: false,
+    showValidationErrors: true,
   })
 }
 

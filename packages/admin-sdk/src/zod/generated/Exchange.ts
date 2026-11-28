@@ -28,7 +28,7 @@ export const ExchangeSchema = z.object({
   stock_location_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
-  created_by: ActorSchema.optional(),
+  created_by: ActorSchema.nullable().optional(),
   get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
   get refunds() { return z.array(RefundSchema).optional(); },

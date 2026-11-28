@@ -585,6 +585,7 @@ module Spree
           Spree::ProductMetricsSubscriber,
           Spree::TaxIdentifierValidationSubscriber
         ]
+        Spree.subscribers << Spree::OrderActivitySubscriber
 
         # Pre-load authentication strategy classes to avoid reflection at request time
         Rails.application.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new(

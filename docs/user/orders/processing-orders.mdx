@@ -138,7 +138,7 @@ On a placed order, the **Totals** card works out the new figures as you edit, wi
 
 If the store cannot take the edit, for example because an added product has sold out, the card says why before you save.
 
-Each saved edit is kept on the order as a record of what changed and who changed it. The **Order changes** card on the order's page lists them, newest first: when each change was made, by whom, what it did to each item or discount, and whether it was applied or is still waiting. Restocks and replacements from a return, exchange or claim are listed there too, with the number of the return, exchange or claim they came from. Only one change can be in progress on an order at a time. If one was started elsewhere, for example through the API, and not finished, saving shows **Another change to this order is in progress** until that change is confirmed or canceled.
+Each saved edit is kept on the order as a record of what changed and who changed it, and shows on the order's [<u>timeline</u>](#how-to-follow-an-orders-history) with what it did to each item or discount and how it moved the total. Only one change can be in progress on an order at a time. If one was started elsewhere, for example through the API, and not finished, saving shows **Another change to this order is in progress** until that change is confirmed or canceled.
 
 <Note>Unit prices cannot be changed on a placed order. Setting a price per line is part of building a [<u>draft order</u>](/user/orders/draft-orders), where a price can be agreed with a business buyer before the order is placed. To take money off an order that is already placed, add a discount instead.</Note>
 
@@ -233,6 +233,25 @@ Two more on the same side are edited the same way:
 **Custom fields** holds the extra order fields your store has defined, each edited in place on the order.
 
 They suit anything your team needs to record against an order that Spree has no field for, such as a preferred delivery date, a gift message, whether installation was booked, or the account manager looking after the sale. Which fields appear, and which are required, is set under [<u>Custom Fields</u>](/user/settings/custom-fields).
+
+## How to Follow an Order's History
+
+The **Timeline** at the bottom of a placed order's page lists everything that has happened to it, newest first and grouped by day:
+
+- when it was placed, and how it was paid
+- payments captured or voided, refunds, and any that failed, with the card or payment method and the transaction reference
+- fulfillments shipped, delivered or canceled, with the tracking number
+- edits to its items and discounts, what each changed and how it moved the total
+- returns, exchanges and claims, with any restock or replacement they made
+- approval and cancellation
+
+Each entry names who did it: a member of staff, or the name of the API key an integration used. Steps the customer took, or that happened on their own, name no one. Click the arrow beside an entry to see more, such as what an edit changed line by line or a payment's transaction reference.
+
+To leave a note for your team, type it in **Leave a comment…** at the top and click **Post**. You can delete a comment you wrote, but not edit it, and nobody can delete the other entries.
+
+When a change to the order was requested but not yet applied, for example through the API, it shows above the comment box with what it would change. Click **Apply change** to apply it or **Discard** to drop it.
+
+<Note>The timeline starts with the version of Spree that added it. Orders placed before then show only what happened since.</Note>
 
 ## How to Cancel an Order
 

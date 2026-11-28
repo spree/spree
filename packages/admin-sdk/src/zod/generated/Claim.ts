@@ -29,7 +29,7 @@ export const ClaimSchema = z.object({
   updated_at: z.string(),
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
-  created_by: ActorSchema.optional(),
+  created_by: ActorSchema.nullable().optional(),
   get order() { return OrderSchema.optional(); },
   get refunds() { return z.array(RefundSchema).optional(); },
 }) as unknown as z.ZodObject<{
