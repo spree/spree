@@ -6,7 +6,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FormSection,
+  FieldSeparator,
   Input,
   Select,
   SelectContent,
@@ -150,28 +150,33 @@ export function PaymentMethodForm({
 
       {providerType &&
       (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
-        <FormSection title={t('admin.fields.payment_method.provider_configuration')}>
-          {customFormRegistered ? (
-            // A plugin has taken over — render the registered editor
-            // instead of the generic preferences form. Plugin owns its
-            // own dirty state and submission inside `onPreferencesChange`.
-            <Slot name={paymentMethodFormSlot(providerType)} context={slotContext} />
-          ) : (
-            <PreferencesForm
-              schema={preferenceSchema}
-              values={preferences}
-              onChange={onPreferencesChange}
-              redactPasswords={mode === 'edit'}
-            />
-          )}
-        </FormSection>
+        customFormRegistered ? (
+          // A plugin has taken over — render the registered editor
+          // instead of the generic preferences form. Plugin owns its
+          // own dirty state and submission inside `onPreferencesChange`.
+          <Slot name={paymentMethodFormSlot(providerType)} context={slotContext} />
+        ) : (
+          <PreferencesForm
+            schema={preferenceSchema}
+            values={preferences}
+            onChange={onPreferencesChange}
+            redactPasswords={mode === 'edit'}
+          />
+        )
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}
 
+      {providerType && <FieldSeparator />}
+
       <PaymentMethodTopFields form={form} storeCaptureMethod={storeCaptureMethod} />
 
-      {providerType && storefrontVisible && <PaymentMethodConditions form={form} />}
+      {providerType && storefrontVisible && (
+        <>
+          <FieldSeparator />
+          <PaymentMethodConditions form={form} />
+        </>
+      )}
     </div>
   )
 }

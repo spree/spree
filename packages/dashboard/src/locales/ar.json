@@ -1817,7 +1817,6 @@
         "name": {
           "placeholder": "مثلًا Credit card (Stripe)"
         },
-        "provider_configuration": "إعدادات المزود",
         "storefront_visible": {
           "label": "مرئي في المتجر"
         },
@@ -4609,7 +4608,11 @@
               "description": "فعّل طريقة دفع واعرضها في المتجر لتظهر هنا."
             }
           },
-          "test_gateway": "بوابة اختبار"
+          "test_gateway": "بوابة اختبار",
+          "availability_notice": {
+            "title": "اعرض كل طريقة حيث تناسب",
+            "description": "قيّد طريقة الدفع بأسواق أو قنوات أو مجموعات عملاء أو شركات معينة، أو بنطاق من إجماليات الطلبات، من قسم التوفر عند إعدادها. على سبيل المثال، استخدم حساب Stripe منفصلًا لكل سوق، أو اعرض الدفع بالفاتورة على مشتري الجملة فقط."
+          }
         },
         "storefront": {
           "title": "واجهة المتجر والدفع",
@@ -4722,7 +4725,7 @@
           "max_totals": "حتى {{amount}}",
           "min_totals": "من {{amount}}"
         },
-        "title": "شروط الدفع"
+        "title": "التوفر"
       },
       "create_description": "اختر موفرًا وقم بتكوين بيانات الاعتماد الخاصة به.",
       "create_label": "إنشاء طريقة الدفع",
@@ -4738,6 +4741,7 @@
       },
       "provider_description": "Provider: {{provider}}",
       "provider_installed": "{{provider}} · مثبّت {{count}}",
+      "set_up_title": "إعداد {{provider}}",
       "status": {
         "disabled": "عاجز"
       },

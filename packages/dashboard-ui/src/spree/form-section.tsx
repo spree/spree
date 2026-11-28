@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { cn } from '../lib/utils'
 import { FieldGroup, FieldLegend, FieldSet } from '../ui/field'
 
 interface FormSectionProps {
@@ -8,6 +9,8 @@ interface FormSectionProps {
   description?: string
   /** Right-aligned beside the title — an "Add" button, a count, a toggle. */
   action?: ReactNode
+  /** `plain` drops the card, for a section set off by dividers inside a sheet. */
+  variant?: 'card' | 'plain'
   children: ReactNode
 }
 
@@ -19,11 +22,22 @@ interface FormSectionProps {
  * belong to — the difference between "Pickup" read once and every control
  * under it being understood as part of pickup.
  */
-export function FormSection({ title, description, action, children }: FormSectionProps) {
+export function FormSection({
+  title,
+  description,
+  action,
+  variant = 'card',
+  children,
+}: FormSectionProps) {
   const hasHeading = title || description || action
 
   return (
-    <FieldSet className="gap-3">
+    <FieldSet
+      className={cn(
+        'gap-3',
+        variant === 'plain' && 'rounded-none border-0 bg-transparent p-0 shadow-none',
+      )}
+    >
       {hasHeading && (
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col gap-0.5">

@@ -31,15 +31,36 @@ import {
   ItemDescription,
   ItemTitle,
 } from '@spree/dashboard-ui'
-import { PlusIcon, Trash2Icon } from 'lucide-react'
+import {
+  Building2Icon,
+  GlobeIcon,
+  PlusIcon,
+  RadioTowerIcon,
+  ReceiptTextIcon,
+  Trash2Icon,
+  UsersIcon,
+} from '@spree/dashboard-ui/icons'
+import type { LucideIcon } from 'lucide-react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useChannels } from '../../../hooks/use-channels'
+import { useAllMarkets } from '../../../hooks/use-markets'
 import {
   PAYMENT_METHOD_RULE_PICKERS as PICKERS,
   usePaymentMethodRuleRecordNames,
   usePaymentMethodRuleTypes,
 } from '../../../hooks/use-payment-methods'
 import type { PaymentMethodFormValues } from './types'
+
+// The icons the sidebar and settings use for each record, so a condition is
+// recognised at a glance on the payments list.
+const RULE_ICONS: Partial<Record<string, LucideIcon>> = {
+  channel_rule: RadioTowerIcon,
+  market_rule: GlobeIcon,
+  customer_group_rule: UsersIcon,
+  company_rule: Building2Icon,
+  order_total_rule: ReceiptTextIcon,
+}
 
 type PaymentMethodRuleType = Awaited<
   ReturnType<typeof adminClient.paymentMethods.ruleTypes>
@@ -63,6 +84,7 @@ export function PaymentMethodConditions({
 
   return (
     <FormSection
+      variant="plain"
       title={t('admin.payment_methods.conditions.title')}
       description={t('admin.payment_methods.conditions.description')}
       action={
@@ -131,6 +153,14 @@ function ConditionRow({
   onRemove: () => void
 }) {
   const { t } = useTranslation()
+  // The store's channels and markets are few and already cached, so their
+  // pickers list every option on open, as the other rule editors do.
+  const { data: channels } = useChannels()
+  const { markets } = useAllMarkets()
+  const preloaded: Record<string, { id: string }[] | undefined> = {
+    ch: channels?.data,
+    mkt: markets,
+  }
   const schema = ruleType?.schema
   const properties = Object.entries(schema?.properties ?? {})
   // An id list the schema marks with a record prefix gets that record's picker.
@@ -184,6 +214,7 @@ function ConditionRow({
               {idList && picker && (
                 <ResourceMultiAutocomplete
                   {...picker(`payment-method-rule-${ruleType?.type}`)}
+                  initialItems={prefix ? preloaded[prefix] : undefined}
                   value={(values[idList[0]] ?? []) as string[]}
                   onChange={(ids: string[]) => field.onChange({ ...values, [idList[0]]: ids })}
                 />
@@ -269,8 +300,8 @@ function CurrencyBounds({
 }
 
 /**
- * A payment method's conditions as one badge each, such as "Market: Europe",
- * so two accounts of one provider can be told apart on the payments list.
+ * A payment method's conditions as one badge each, such as Europe with the
+ * market icon, so two accounts of one provider can be told apart on the payments list.
  */
 export function PaymentMethodConditionsSummary({ rules }: { rules: PaymentMethodRule[] }) {
   const { data: ruleTypes } = usePaymentMethodRuleTypes()
@@ -318,12 +349,21 @@ function ConditionSummary({
   const label = ruleType
     ? typeLabel('payment_method_rule', ruleType.type, ruleType.label)
     : rule.type
-  const details = [...names, ...bounds]
-  const text = details.length > 0 ? `${label}: ${details.join(', ')}` : label
+  const details = [...names, ...bounds].join(', ')
+  const text = details ? `${label}: ${details}` : label
+  const Icon = RULE_ICONS[rule.type]
 
   return (
     <Badge variant="outline" className="max-w-full" title={text}>
-      <span className="truncate">{text}</span>
+      {Icon && <Icon aria-hidden className="size-3 text-muted-foreground" />}
+      {Icon && details ? (
+        <span className="truncate">
+          <span className="sr-only">{label}: </span>
+          {details}
+        </span>
+      ) : (
+        <span className="truncate">{text}</span>
+      )}
     </Badge>
   )
 }

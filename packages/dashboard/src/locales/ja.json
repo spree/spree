@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "例: クレジットカード（Stripe）"
         },
-        "provider_configuration": "プロバイダーの設定",
         "storefront_visible": {
           "label": "ストアに表示"
         },
@@ -4572,7 +4571,11 @@
               "description": "決済方法を有効にしてストアフロントに表示すると、ここに表示されます。"
             }
           },
-          "test_gateway": "テスト用ゲートウェイ"
+          "test_gateway": "テスト用ゲートウェイ",
+          "availability_notice": {
+            "title": "各支払い方法を適した場面で提供",
+            "description": "支払い方法の設定画面の「利用条件」で、特定のマーケット、チャネル、顧客グループ、企業、または注文金額の範囲に限定できます。たとえば、マーケットごとに別の Stripe アカウントを使ったり、請求書払いを卸売の購入者だけに提供したりできます。"
+          }
         },
         "storefront": {
           "title": "ストアフロントとチェックアウト",
@@ -4685,7 +4688,7 @@
           "max_totals": "{{amount}}以下",
           "min_totals": "{{amount}}以上"
         },
-        "title": "チェックアウト条件"
+        "title": "利用条件"
       },
       "create_description": "プロバイダーを選び、認証情報を設定します。",
       "create_label": "支払い方法を作成",
@@ -4701,6 +4704,7 @@
       },
       "provider_description": "プロバイダー: {{provider}}",
       "provider_installed": "{{provider}} · {{count}} 件インストール済み",
+      "set_up_title": "{{provider}}を設定",
       "status": {
         "disabled": "無効"
       },

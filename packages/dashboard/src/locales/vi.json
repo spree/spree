@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "ví dụ: Thẻ tín dụng (Sọc)"
         },
-        "provider_configuration": "Cấu hình nhà cung cấp",
         "storefront_visible": {
           "label": "Hiển thị trên cửa hàng trực tuyến"
         },
@@ -4572,7 +4571,11 @@
               "description": "Kích hoạt một phương thức thanh toán và hiển thị nó trên cửa hàng để thấy ở đây."
             }
           },
-          "test_gateway": "Cổng thử nghiệm"
+          "test_gateway": "Cổng thử nghiệm",
+          "availability_notice": {
+            "title": "Cung cấp mỗi phương thức ở nơi phù hợp",
+            "description": "Khi cấu hình, hãy giới hạn phương thức thanh toán cho một số thị trường, kênh, nhóm khách hàng hoặc công ty, hoặc cho một khoảng tổng đơn hàng trong mục Phạm vi áp dụng. Ví dụ: dùng một tài khoản Stripe riêng cho mỗi thị trường, hoặc chỉ cho người mua sỉ thanh toán bằng hóa đơn."
+          }
         },
         "storefront": {
           "title": "Cửa hàng & thanh toán",
@@ -4668,7 +4671,7 @@
           "max_totals": "tối đa {{amount}}",
           "min_totals": "từ {{amount}}"
         },
-        "title": "Điều kiện thanh toán"
+        "title": "Phạm vi áp dụng"
       },
       "create_description": "Chọn một nhà cung cấp và định cấu hình thông tin đăng nhập của nó.",
       "create_label": "Tạo phương thức thanh toán",
@@ -4684,6 +4687,7 @@
       },
       "provider_description": "Nhà cung cấp: {{provider}}",
       "provider_installed": "{{provider}} · đã cài {{count}}",
+      "set_up_title": "Thiết lập {{provider}}",
       "status": {
         "disabled": "Đã tắt"
       },

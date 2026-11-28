@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Card,
+  CardFooter,
   cn,
   Item,
   ItemActions,
@@ -19,19 +20,19 @@ import { useTranslation } from 'react-i18next'
 import { useUpdatePaymentMethod } from '../../../hooks/use-payment-methods'
 import { isTestGateway } from '../../../schemas/payment-method'
 import { IntegrationLogo } from '../integrations/integration-card'
-import { SetupGuideLink } from '../integrations/setup-guide-link'
 import { PaymentMethodConditionsSummary } from '../payment-method-editors/payment-method-conditions'
 import { paymentProviderLabel } from '../payment-method-editors/payment-method-sheets'
 
 type MethodStatus = 'active' | 'inactive' | 'not_connected'
 
 /**
- * Payment methods as one bordered list: those set up on this store, then the
- * providers that can be. Providers and manual methods share it so both read
- * the same. Test gateways go last, so a real provider is read first.
+ * Payment methods set up on this store, then the providers that can be.
+ * Providers and manual methods share it so both read the same. Test gateways
+ * go last, so a real provider is read first.
  *
- * Pass `onAddAccount` with the providers that can be added again, and the
- * last row of each offers another account of it.
+ * Pass `onAddAccount` to list each provider's accounts in a card of their
+ * own, which offers another account of it at its foot. A test gateway never
+ * does: a second simulated account has nothing to tell apart.
  */
 export function PaymentMethodList({
   methods,
@@ -48,33 +49,65 @@ export function PaymentMethodList({
   addAccountTypes?: PaymentMethodType[]
   onAddAccount?: (type: string) => void
 }) {
+  const { t } = useTranslation()
   const testLast = <T,>(rows: T[], type: (row: T) => string) =>
     [...rows].sort((a, b) => Number(isTestGateway(type(a))) - Number(isTestGateway(type(b))))
   const rows = testLast(methods, (method) => method.type)
-  const isLastOfType = (index: number) =>
-    !rows.slice(index + 1).some((other) => other.type === rows[index]?.type)
+  const installed = (group: PaymentMethod[]) =>
+    group.map((method) => (
+      <InstalledMethodRow
+        key={method.id}
+        method={method}
+        onConfigure={() => onConfigure(method.id)}
+      />
+    ))
+  const availableRows = testLast(available, (type) => type.type).map((type) => (
+    <AvailableProviderRow key={type.type} type={type} onSetUp={() => onSetUp?.(type.type)} />
+  ))
 
+  if (!onAddAccount) {
+    return (
+      <MethodCard>
+        {installed(rows)}
+        {availableRows}
+      </MethodCard>
+    )
+  }
+
+  const byProvider = new Map<string, PaymentMethod[]>()
+  for (const method of rows)
+    byProvider.set(method.type, [...(byProvider.get(method.type) ?? []), method])
   return (
-    <Card>
-      <div className="mx-4 divide-y">
-        {rows.map((method, index) => {
-          const accountType =
-            onAddAccount && isLastOfType(index)
-              ? addAccountTypes.find((type) => type.type === method.type)
-              : undefined
-          return (
-            <InstalledMethodRow
-              key={method.id}
-              method={method}
-              onConfigure={() => onConfigure(method.id)}
-              onAddAccount={accountType ? () => onAddAccount?.(accountType.type) : undefined}
-            />
-          )
-        })}
-        {testLast(available, (type) => type.type).map((type) => (
-          <AvailableProviderRow key={type.type} type={type} onSetUp={() => onSetUp?.(type.type)} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-3">
+      {[...byProvider].map(([type, group]) => {
+        const canAdd =
+          !isTestGateway(type) && addAccountTypes.some((addable) => addable.type === type)
+        return (
+          <MethodCard key={type} provider={type}>
+            {installed(group)}
+            {canAdd && (
+              // The last row's divider already separates it.
+              <CardFooter className="mx-0 border-t-0 py-3">
+                <Button variant="outline" size="sm" onClick={() => onAddAccount(type)}>
+                  <PlusIcon className="size-4" />
+                  {t('admin.pages.settings.payments.add_another_account', {
+                    provider: paymentProviderLabel(type),
+                  })}
+                </Button>
+              </CardFooter>
+            )}
+          </MethodCard>
+        )
+      })}
+      {availableRows.length > 0 && <MethodCard>{availableRows}</MethodCard>}
+    </div>
+  )
+}
+
+function MethodCard({ provider, children }: { provider?: string; children: ReactNode }) {
+  return (
+    <Card data-provider={provider}>
+      <div className="mx-4 divide-y">{children}</div>
     </Card>
   )
 }
@@ -82,16 +115,13 @@ export function PaymentMethodList({
 function InstalledMethodRow({
   method,
   onConfigure,
-  onAddAccount,
 }: {
   method: PaymentMethod
   onConfigure: () => void
-  onAddAccount?: () => void
 }) {
   const { t } = useTranslation()
   const { permissions } = usePermissions()
   const updateMutation = useUpdatePaymentMethod(method.id, { showValidationErrors: true })
-  const provider = paymentProviderLabel(method.type)
   const description = method.description !== method.name ? method.description : null
 
   return (
@@ -102,11 +132,6 @@ function InstalledMethodRow({
       description={description}
       badges={
         <>
-          {/* The store's own methods and test gateways are named by their
-              other badges, so only an outside provider is named here. */}
-          {method.third_party && !isTestGateway(method.type) && provider !== method.name && (
-            <Badge variant="outline">{provider}</Badge>
-          )}
           {isTestGateway(method.type) && <TestGatewayBadge />}
           {method.preferences?.test_mode === true && (
             <Badge variant="warning">{t('admin.integrations.test_mode')}</Badge>
@@ -116,24 +141,8 @@ function InstalledMethodRow({
           )}
         </>
       }
-      docsUrl={method.docs_url}
       details={
-        <>
-          {method.storefront_visible && (
-            <PaymentMethodConditionsSummary rules={method.rules ?? []} />
-          )}
-          {onAddAccount && (
-            <Button
-              variant="link"
-              size="sm"
-              className="h-auto self-start p-0"
-              onClick={onAddAccount}
-            >
-              <PlusIcon className="size-4" />
-              {t('admin.pages.settings.payments.add_another_account', { provider })}
-            </Button>
-          )}
-        </>
+        method.storefront_visible && <PaymentMethodConditionsSummary rules={method.rules ?? []} />
       }
       actions={
         <>
@@ -162,7 +171,6 @@ function AvailableProviderRow({ type, onSetUp }: { type: PaymentMethodType; onSe
       status="not_connected"
       description={type.description}
       badges={isTestGateway(type.type) ? <TestGatewayBadge /> : null}
-      docsUrl={type.docs_url}
       actions={
         <Button size="sm" onClick={onSetUp}>
           {t('admin.integrations.connect_cta')}
@@ -183,7 +191,6 @@ function MethodRow({
   status,
   description,
   badges,
-  docsUrl,
   details,
   actions,
 }: {
@@ -192,7 +199,6 @@ function MethodRow({
   status: MethodStatus
   description?: string | null
   badges?: ReactNode
-  docsUrl?: string | null
   /** Shown under the description, such as the method's conditions. */
   details?: ReactNode
   actions: ReactNode
@@ -207,7 +213,7 @@ function MethodRow({
   return (
     // A plain wrapper takes the list's divider; the Item's own border would hide it.
     <div data-payment-method={name}>
-      <Item className="flex-nowrap gap-3 rounded-none border-0 px-0 py-3">
+      <Item className="flex-nowrap gap-3 rounded-none border-0 px-0 py-4">
         <ItemMedia>
           <IntegrationLogo name={name} logoUrl={logoUrl} />
         </ItemMedia>
@@ -230,7 +236,6 @@ function MethodRow({
           </ItemTitle>
           {description && <ItemDescription className="line-clamp-1">{description}</ItemDescription>}
           {details}
-          {status === 'not_connected' && <SetupGuideLink url={docsUrl} />}
         </ItemContent>
         <ItemActions className="shrink-0 gap-3">{actions}</ItemActions>
       </Item>

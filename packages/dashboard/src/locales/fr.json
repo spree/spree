@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "ex. Carte de crédit (Stripe)"
         },
-        "provider_configuration": "Configuration du fournisseur",
         "storefront_visible": {
           "label": "Visible sur la boutique"
         },
@@ -4575,7 +4574,11 @@
               "description": "Activez une méthode de paiement et affichez-la sur la boutique pour la voir ici."
             }
           },
-          "test_gateway": "Passerelle de test"
+          "test_gateway": "Passerelle de test",
+          "availability_notice": {
+            "title": "Proposez chaque moyen là où il convient",
+            "description": "Limitez un moyen de paiement à certains marchés, canaux, groupes de clients ou entreprises, ou à une plage de montants de commande, dans Disponibilité lors de sa configuration. Par exemple, utilisez un compte Stripe distinct par marché, ou réservez le paiement sur facture aux acheteurs grossistes."
+          }
         },
         "storefront": {
           "title": "Boutique et paiement",
@@ -4688,7 +4691,7 @@
           "max_totals": "jusqu’à {{amount}}",
           "min_totals": "à partir de {{amount}}"
         },
-        "title": "Conditions au paiement"
+        "title": "Disponibilité"
       },
       "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
       "create_label": "Créer un moyen de paiement",
@@ -4704,6 +4707,7 @@
       },
       "provider_description": "Fournisseur : {{provider}}",
       "provider_installed": "{{provider}} · {{count}} installé(s)",
+      "set_up_title": "Configurer {{provider}}",
       "status": {
         "disabled": "Désactivé"
       },

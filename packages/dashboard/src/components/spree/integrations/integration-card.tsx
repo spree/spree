@@ -166,13 +166,16 @@ export function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: stri
   return (
     // Brand logos are drawn for a light background, so the tile behind one
     // stays white in dark mode too; the letter fallback follows the theme.
+    // The tile is 16:9 because most logos are wordmarks, and every tile shares
+    // the shape so names line up. A logo fills it, clipped to its corners so
+    // it never spills past the border drawn over it.
     <Avatar
       className={cn(
-        'size-10 shrink-0 rounded-lg p-1.5 after:rounded-lg after:border-border-subtle',
-        logoUrl ? 'bg-white' : 'bg-background',
+        'aspect-video h-10 w-auto shrink-0 rounded-lg after:rounded-lg after:border-border-subtle',
+        logoUrl ? 'overflow-hidden bg-white' : 'bg-background p-1.5',
       )}
     >
-      {logoUrl && <AvatarImage src={logoUrl} className="rounded-none object-contain" />}
+      {logoUrl && <AvatarImage src={logoUrl} className="aspect-auto rounded-lg object-contain" />}
       <AvatarFallback className="rounded-md bg-transparent font-semibold">
         {name.charAt(0).toUpperCase()}
       </AvatarFallback>

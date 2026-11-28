@@ -125,10 +125,9 @@ test.describe('integrations', () => {
     await page.goto(`${INTEGRATIONS_PATH(creds.store_id)}?add_payment_method=bogus`)
 
     const sheet = page.getByRole('dialog')
-    await expect(sheet.getByRole('heading', { name: /add payment method/i })).toBeVisible({
+    await expect(sheet.getByRole('heading', { name: /^set up bogus$/i })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(sheet.getByText(/provider: bogus/i)).toBeVisible()
     await expect(sheet.locator('#type')).toHaveCount(0)
     await expect(sheet.locator('#name')).toHaveValue('Bogus')
   })

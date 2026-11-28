@@ -1,5 +1,8 @@
 import { Can, PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   Empty,
@@ -14,7 +17,13 @@ import {
   SectionTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { BanknoteIcon, CreditCardIcon, ListOrderedIcon, PlusIcon } from '@spree/dashboard-ui/icons'
+import {
+  BanknoteIcon,
+  CreditCardIcon,
+  InfoIcon,
+  ListOrderedIcon,
+  PlusIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -107,6 +116,14 @@ function PaymentsPage() {
           ) : undefined
         }
       />
+
+      <Alert variant="info">
+        <InfoIcon />
+        <AlertTitle>{t('admin.pages.settings.payments.availability_notice.title')}</AlertTitle>
+        <AlertDescription>
+          {t('admin.pages.settings.payments.availability_notice.description')}
+        </AlertDescription>
+      </Alert>
 
       <Section>
         <SectionHeader>

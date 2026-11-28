@@ -1817,7 +1817,6 @@
         "name": {
           "placeholder": "np. Karta kredytowa (Stripe)"
         },
-        "provider_configuration": "Konfiguracja dostawcy",
         "storefront_visible": {
           "label": "Widoczna w sklepie"
         },
@@ -4629,7 +4628,11 @@
               "description": "Aktywuj metodę płatności i pokaż ją w sklepie, aby pojawiła się tutaj."
             }
           },
-          "test_gateway": "Bramka testowa"
+          "test_gateway": "Bramka testowa",
+          "availability_notice": {
+            "title": "Oferuj każdą metodę tam, gdzie pasuje",
+            "description": "Ogranicz metodę płatności do wybranych rynków, kanałów, grup klientów lub firm albo do zakresu wartości zamówienia w sekcji Dostępność podczas jej konfiguracji. Na przykład prowadź osobne konto Stripe dla każdego rynku albo oferuj płatność na fakturę tylko klientom hurtowym."
+          }
         },
         "storefront": {
           "title": "Sklep i kasa",
@@ -4742,7 +4745,7 @@
           "max_totals": "do {{amount}}",
           "min_totals": "od {{amount}}"
         },
-        "title": "Warunki w kasie"
+        "title": "Dostępność"
       },
       "create_description": "Wybierz dostawcę i skonfiguruj jego dane uwierzytelniające.",
       "create_label": "Utwórz metodę płatności",
@@ -4758,6 +4761,7 @@
       },
       "provider_description": "Dostawca: {{provider}}",
       "provider_installed": "{{provider}} · zainstalowano: {{count}}",
+      "set_up_title": "Skonfiguruj {{provider}}",
       "status": {
         "disabled": "Wyłączona"
       },

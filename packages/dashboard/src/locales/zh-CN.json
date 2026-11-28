@@ -1794,7 +1794,6 @@
         "name": {
           "placeholder": "例如：信用卡 (Stripe)"
         },
-        "provider_configuration": "服务商配置",
         "storefront_visible": {
           "label": "在店面显示"
         },
@@ -4561,7 +4560,11 @@
               "description": "启用一种付款方式并在店面显示，即可在此列出。"
             }
           },
-          "test_gateway": "测试网关"
+          "test_gateway": "测试网关",
+          "availability_notice": {
+            "title": "在合适的场景提供每种支付方式",
+            "description": "配置支付方式时，可在“可用范围”中将其限定于特定市场、渠道、客户组或公司，或某个订单金额区间。例如，为每个市场使用单独的 Stripe 账户，或仅向批发买家提供发票付款。"
+          }
         },
         "storefront": {
           "title": "店面与结账",
@@ -4674,7 +4677,7 @@
           "max_totals": "不超过 {{amount}}",
           "min_totals": "不低于 {{amount}}"
         },
-        "title": "结账条件"
+        "title": "可用范围"
       },
       "create_description": "选择服务商并配置其凭据。",
       "create_label": "创建支付方式",
@@ -4690,6 +4693,7 @@
       },
       "provider_description": "服务商：{{provider}}",
       "provider_installed": "{{provider}} · 已安装 {{count}} 个",
+      "set_up_title": "设置 {{provider}}",
       "status": {
         "disabled": "已禁用"
       },

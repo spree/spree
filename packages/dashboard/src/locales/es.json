@@ -904,7 +904,11 @@
               "description": "Activa un método de pago y muéstralo en la tienda para que aparezca aquí."
             }
           },
-          "test_gateway": "Pasarela de prueba"
+          "test_gateway": "Pasarela de prueba",
+          "availability_notice": {
+            "title": "Ofrece cada método donde corresponda",
+            "description": "Limita un método de pago a ciertos mercados, canales, grupos de clientes o empresas, o a un rango de totales de pedido, en Disponibilidad al configurarlo. Por ejemplo, usa una cuenta de Stripe distinta para cada mercado u ofrece el pago con factura solo a compradores mayoristas."
+          }
         },
         "storefront": {
           "title": "Tienda y checkout",
@@ -1826,7 +1830,6 @@
         "name": {
           "placeholder": "p. ej., Tarjeta de crédito (Stripe)"
         },
-        "provider_configuration": "Configuración del proveedor",
         "storefront_visible": {
           "label": "Visible en el storefront"
         },
@@ -6115,7 +6118,7 @@
           "max_totals": "hasta {{amount}}",
           "min_totals": "desde {{amount}}"
         },
-        "title": "Condiciones de pago"
+        "title": "Disponibilidad"
       },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
@@ -6131,6 +6134,7 @@
       },
       "provider_description": "Proveedor: {{provider}}",
       "provider_installed": "{{provider}} · {{count}} instalados",
+      "set_up_title": "Configurar {{provider}}",
       "status": {
         "disabled": "Deshabilitado"
       },

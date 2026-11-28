@@ -11,12 +11,14 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  Separator,
   Sheet,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Skeleton,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -101,6 +103,10 @@ export function CreatePaymentMethodSheet({
     () => providerTypes.find((t) => t.type === providerType)?.schema,
     [providerTypes, providerType],
   )
+  // An outside provider is connected, as in the integrations gallery; a
+  // method the store handles itself is simply created.
+  const connectsProvider =
+    initialType?.third_party ?? providerTypes.find((t) => t.type === providerType)?.third_party
 
   // Prefill the Name field from the provider, numbered past the names the
   // store already uses, once those have loaded — unless the admin typed one.
@@ -141,12 +147,14 @@ export function CreatePaymentMethodSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('admin.pages.settings.payment_methods.add_sheet_title')}</SheetTitle>
-          <SheetDescription>
+          <SheetTitle>
             {initialType
-              ? t('admin.payment_methods.provider_description', { provider: initialType.label })
-              : t('admin.payment_methods.create_description')}
-          </SheetDescription>
+              ? t('admin.payment_methods.set_up_title', { provider: initialType.label })
+              : t('admin.pages.settings.payment_methods.add_sheet_title')}
+          </SheetTitle>
+          {!initialType && (
+            <SheetDescription>{t('admin.payment_methods.create_description')}</SheetDescription>
+          )}
           <SetupGuideLink
             url={providerTypes.find((entry) => entry.type === providerType)?.docs_url}
           />
@@ -183,8 +191,12 @@ export function CreatePaymentMethodSheet({
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
-                ? t('admin.actions.creating')
-                : t('admin.payment_methods.create_label')}
+                ? connectsProvider
+                  ? t('admin.actions.saving')
+                  : t('admin.actions.creating')
+                : connectsProvider
+                  ? t('admin.integrations.connect_cta')
+                  : t('admin.payment_methods.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -332,7 +344,7 @@ export function EditPaymentMethodSheet({
           <SetupGuideLink url={paymentMethod?.docs_url} />
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
+          <PaymentMethodFormSkeleton />
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -387,5 +399,41 @@ export function EditPaymentMethodSheet({
         )}
       </SheetContent>
     </Sheet>
+  )
+}
+
+/** The edit form's outline while the method loads, so the sheet doesn't jump when it arrives. */
+function PaymentMethodFormSkeleton() {
+  const { t } = useTranslation()
+  const field = (labelWidth: string, key: string) => (
+    <div key={key} className="flex flex-col gap-2">
+      <Skeleton className={`h-4 ${labelWidth}`} />
+      <Skeleton className="h-9 w-full" />
+    </div>
+  )
+  const toggle = (labelWidth: string, key: string) => (
+    <div key={key} className="flex items-center justify-between gap-4">
+      <div className="flex flex-1 flex-col gap-1.5">
+        <Skeleton className={`h-4 ${labelWidth}`} />
+        <Skeleton className="h-3 w-3/5" />
+      </div>
+      <Skeleton className="h-5 w-9 rounded-full" />
+    </div>
+  )
+
+  return (
+    <div role="status" aria-busy className="flex flex-col gap-6 p-4">
+      <span className="sr-only">{t('admin.common.loading')}</span>
+      {field('w-28', 'key')}
+      {field('w-36', 'secret')}
+      <Separator />
+      {field('w-16', 'name')}
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-20 w-full" />
+      </div>
+      {toggle('w-32', 'storefront')}
+      {toggle('w-20', 'active')}
+    </div>
   )
 }

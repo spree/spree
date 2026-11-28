@@ -1799,7 +1799,6 @@
         "name": {
           "placeholder": "z. B. Kreditkarte (Stripe)"
         },
-        "provider_configuration": "Anbieterkonfiguration",
         "storefront_visible": {
           "label": "Im Storefront sichtbar"
         },
@@ -4573,7 +4572,11 @@
               "description": "Aktivieren Sie eine Zahlungsmethode und zeigen Sie sie im Shop an, damit sie hier erscheint."
             }
           },
-          "test_gateway": "Test-Gateway"
+          "test_gateway": "Test-Gateway",
+          "availability_notice": {
+            "title": "Jede Zahlungsart dort anbieten, wo sie passt",
+            "description": "Beschränke eine Zahlungsart unter „Verfügbarkeit“ in ihren Einstellungen auf bestimmte Märkte, Kanäle, Kundengruppen oder Firmen oder auf einen Bereich von Bestellsummen. Führe zum Beispiel für jeden Markt ein eigenes Stripe-Konto oder biete Kauf auf Rechnung nur Großhandelskunden an."
+          }
         },
         "storefront": {
           "title": "Shop & Kasse",
@@ -4686,7 +4689,7 @@
           "max_totals": "bis {{amount}}",
           "min_totals": "ab {{amount}}"
         },
-        "title": "Checkout-Bedingungen"
+        "title": "Verfügbarkeit"
       },
       "create_description": "Wählen Sie einen Anbieter und konfigurieren Sie dessen Zugangsdaten.",
       "create_label": "Zahlungsmethode erstellen",
@@ -4702,6 +4705,7 @@
       },
       "provider_description": "Anbieter: {{provider}}",
       "provider_installed": "{{provider}} · {{count}} installiert",
+      "set_up_title": "{{provider}} einrichten",
       "status": {
         "disabled": "Deaktiviert"
       },

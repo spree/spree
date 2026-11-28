@@ -57,6 +57,8 @@ test.describe('payments', () => {
 
     await expect(page.getByRole('heading', { name: /^manual payment methods$/i })).toBeVisible()
     await expect(page.getByRole('heading', { name: /^payment capture$/i })).toBeVisible()
+    // The page points merchants at limiting a method to where it fits.
+    await expect(page.getByText(/offer each method where it fits/i)).toBeVisible()
     // Core ships one outside provider (Bogus) and seeds store credit, a
     // method the store handles itself.
     await expect(methodRow(page, 'Bogus')).toBeVisible()
@@ -73,6 +75,29 @@ test.describe('payments', () => {
     await expect(page.getByText(/tax by shipping address/i)).toHaveCount(0)
   })
 
+  test('outlines the form while a payment method loads', async ({ page }) => {
+    const creds = await login(page)
+    await openPayments(page, creds.store_id)
+
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    await page.route(/\/api\/v3\/admin\/payment_methods\/pm_[^/?]+(\?|$)/, async (route) => {
+      await held
+      await route.continue()
+    })
+    await methodRow(page, 'Store Credit')
+      .getByRole('button', { name: /^configure$/i })
+      .click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('status')).toBeVisible()
+    release()
+    await expect(dialog.getByRole('status')).toHaveCount(0, { timeout: 15_000 })
+    await expect(dialog.locator('#name')).toBeVisible()
+  })
+
   test('sets up a provider from its row, keeping its secret on edit', async ({ page }) => {
     const creds = await login(page)
     await openPayments(page, creds.store_id)
@@ -81,12 +106,16 @@ test.describe('payments', () => {
     await methodRow(page, 'Bogus')
       .getByRole('button', { name: /^connect$/i })
       .click()
-    await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /^set up bogus$/i })).toBeVisible()
 
     await page.locator('#name').fill(name)
     await page.locator('#preference-dummy_key').fill('E2EPUBLIC')
     await page.locator('#preference-dummy_secret_key').fill('e2e-secret-9876')
-    await page.getByRole('button', { name: /create payment method/i }).click()
+    // An outside provider is connected; a manual method is created.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^connect$/i })
+      .click()
 
     // Set up, the provider's row carries the method's own name.
     const row = methodRow(page, name)
@@ -97,13 +126,11 @@ test.describe('payments', () => {
     await expect(row.getByText(/^test gateway$/i)).toBeVisible()
     await expect(row.getByText('Bogus', { exact: true })).toHaveCount(0)
 
-    // Another account of it is added from its own row, with the provider
-    // already chosen and its settings first.
-    await row.getByRole('button', { name: /^add another bogus account$/i }).click()
-    await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
-    await expect(page.locator('#preference-dummy_key')).toBeVisible()
-    await expect(page.locator('#type')).toHaveCount(0)
-    await page.keyboard.press('Escape')
+    // Each provider's accounts share a card. A second simulated account has
+    // nothing to tell apart, so a test gateway's card never offers one.
+    const providerCard = page.locator('[data-provider="bogus"]')
+    await expect(providerCard.locator(`[data-payment-method="${name}"]`)).toBeVisible()
+    await expect(providerCard.getByRole('button', { name: /^add another/i })).toHaveCount(0)
 
     // The plain setting comes back as typed, the secret only as a mask.
     await row.getByRole('button', { name: /^configure$/i }).click()
@@ -211,6 +238,14 @@ test.describe('payments', () => {
     await page.getByRole('button', { name: /add condition/i }).click()
     await page.getByRole('menuitem', { name: 'Company' }).click()
 
+    // The store's markets are listed as soon as the picker opens, without typing.
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Market' }).click()
+    await page.getByPlaceholder('Search by name…').click()
+    await expect(page.getByRole('option').first()).toBeVisible()
+    await page.keyboard.press('Escape')
+    await page.getByRole('button', { name: /^remove the market condition$/i }).click()
+
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
       timeout: 15_000,
@@ -219,6 +254,8 @@ test.describe('payments', () => {
     // The list names each condition, so two accounts of one provider can be
     // told apart there, and a manual method is not labelled with its kind.
     await expect(row.getByText('Order total: from $5,000.00')).toBeVisible()
+    // Each condition shows its record's icon in place of its kind's name.
+    await expect(row.getByTitle('Order total: from $5,000.00').locator('svg')).toBeVisible()
     await expect(row.getByText('Company', { exact: true })).toBeVisible()
     await expect(row.getByText('Check', { exact: true })).toHaveCount(0)
 
@@ -233,7 +270,7 @@ test.describe('payments', () => {
 
     // An admin-only method has no storefront checkout to set conditions for.
     await page.getByRole('switch', { name: /visible in storefront/i }).click()
-    await expect(page.getByText('Checkout conditions')).toHaveCount(0)
+    await expect(page.getByRole('dialog').getByText('Availability', { exact: true })).toHaveCount(0)
     await page.getByRole('switch', { name: /visible in storefront/i }).click()
 
     await page.getByRole('button', { name: /^save$/i }).click()
