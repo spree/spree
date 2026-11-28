@@ -12,9 +12,10 @@ module Spree
     # Pinned to the installed version's tag rather than `main`: whether a type
     # *has* an example is answered by the local `db/sample_data`, so pointing
     # elsewhere would let a released install link to a newer, incompatible
-    # schema (or a file that has since been removed).
+    # schema (or a file that has since been removed). A development version is
+    # never tagged, so it reads `main`, the code it tracks.
     SAMPLE_DATA_BASE_URL_TEMPLATE =
-      'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
+      'https://raw.githubusercontent.com/spree/spree/%{ref}/spree/core/db/sample_data'.freeze
 
     publishes_lifecycle_events
     publishes_events :completed, :progress
@@ -473,7 +474,8 @@ module Spree
 
       # @return [String]
       def sample_data_base_url
-        format(SAMPLE_DATA_BASE_URL_TEMPLATE, version: Spree.version)
+        ref = Spree.version.end_with?('.dev') ? 'refs/heads/main' : "refs/tags/v#{Spree.version}"
+        format(SAMPLE_DATA_BASE_URL_TEMPLATE, ref: ref)
       end
 
       # eg. Spree::Imports::ProductTranslations => "product_translations.csv"
