@@ -13,7 +13,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns the store\'s configured payment methods. Use `source_required: true` to know which methods need a saved source.'
+      description 'Returns the store\'s configured payment methods. Use `source_required: true` to know which methods need a saved source. ' \
+                  'Pass `expand=rules` to include each method\'s rules.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/list'
@@ -130,7 +131,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns a payment method by ID.'
+      description 'Returns a payment method by ID. Pass `expand=rules` to include its rules.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/get'

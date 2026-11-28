@@ -109,7 +109,7 @@ module Spree
           end
 
           def collection_includes
-            [:payment_method_rules]
+            expand_list.include?('rules') ? [:payment_method_rules] : []
           end
 
           # `types` is read-only discovery — maps to the read scope + :show ability.

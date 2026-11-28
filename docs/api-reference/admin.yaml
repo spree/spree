@@ -33758,7 +33758,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns the store's configured payment methods. Use `source_required: true` to know which methods need a saved source.
+        Returns the store's configured payment methods. Use `source_required: true` to know which methods need a saved source. Pass `expand=rules` to include each method's rules.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -33872,7 +33872,6 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: false
-                  rules: []
                 meta:
                   page: 1
                   limit: 25
@@ -33968,7 +33967,6 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
-                rules: []
               schema:
                 "$ref": "#/components/schemas/PaymentMethod"
         '422':
@@ -34109,7 +34107,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns a payment method by ID.
+        Returns a payment method by ID. Pass `expand=rules` to include its rules.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -34182,7 +34180,6 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
-                rules: []
               schema:
                 "$ref": "#/components/schemas/PaymentMethod"
     patch:
@@ -34256,7 +34253,6 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
-                rules: []
               schema:
                 "$ref": "#/components/schemas/PaymentMethod"
       requestBody:
@@ -72666,7 +72662,6 @@ components:
       - logo_url
       - docs_url
       - third_party
-      - rules
       x-typelizer: true
     PaymentMethodType:
       type: object

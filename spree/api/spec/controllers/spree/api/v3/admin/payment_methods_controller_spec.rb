@@ -144,6 +144,16 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['id']).to eq(payment_method.prefixed_id)
     end
 
+    it 'returns rules only when expanded' do
+      create(:market_payment_method_rule, payment_method: payment_method)
+
+      get :show, params: { id: payment_method.prefixed_id }, as: :json
+      expect(json_response).not_to have_key('rules')
+
+      get :show, params: { id: payment_method.prefixed_id, expand: 'rules' }, as: :json
+      expect(json_response['rules'].sole['type']).to eq('market_rule')
+    end
+
     context 'when the payment method has a :password preference' do
       let!(:payment_method) do
         bogus = create(:bogus_payment_method)
@@ -204,7 +214,8 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
     it 'saves rules sent with the method' do
       channel = create(:channel, store: store)
 
-      post :create, params: create_params.merge(rules: [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } }]), as: :json
+      rules = [{ type: 'channel_rule', preferences: { channel_ids: [channel.prefixed_id] } }]
+      post :create, params: create_params.merge(expand: 'rules', rules: rules), as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['rules'].sole).to include('type' => 'channel_rule', 'preferences' => { 'channel_ids' => [channel.prefixed_id] })
@@ -233,6 +244,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
       patch :update, params: {
         id: payment_method.prefixed_id,
+        expand: 'rules',
         rules: [{ id: company_rule.prefixed_id, type: 'company_rule', preferences: { company_orders_only: false } },
                 { type: 'order_total_rule', preferences: { max_totals: { USD: '500.00' } } }]
       }, as: :json

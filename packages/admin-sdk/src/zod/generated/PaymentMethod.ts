@@ -24,7 +24,7 @@ export const PaymentMethodSchema = z.object({
   logo_url: z.string().nullable(),
   docs_url: z.string().nullable(),
   third_party: z.boolean(),
-  rules: z.array(PaymentMethodRuleSchema),
+  rules: z.array(PaymentMethodRuleSchema).optional(),
 });
 
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;

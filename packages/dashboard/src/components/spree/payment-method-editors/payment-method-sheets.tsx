@@ -279,7 +279,7 @@ export function EditPaymentMethodSheet({
     // `rules` replaces the whole set, so a condition someone else saved since
     // this sheet opened would be deleted without a word. Refuse instead.
     if (rulesChanged) {
-      const current = await adminClient.paymentMethods.get(id)
+      const current = await adminClient.paymentMethods.get(id, { expand: ['rules'] })
       if (JSON.stringify(rulesFromRecord(current)) !== loadedRules) {
         form.setError('root', { message: t('admin.payment_methods.conditions.changed_elsewhere') })
         return
@@ -295,10 +295,13 @@ export function EditPaymentMethodSheet({
       // custom field save sends only the custom fields.
       const savesRecord = form.formState.isDirty || prefsDirty
       if (savesRecord) {
-        const saved = await updateMutation.mutateAsync(params)
+        await updateMutation.mutateAsync(params)
         // The saved rules carry the ids the server gave new ones, so the next
         // save updates them rather than replacing them.
-        form.reset({ ...values, rules: rulesFromRecord(saved) })
+        const rules = rulesChanged
+          ? rulesFromRecord(await adminClient.paymentMethods.get(id, { expand: ['rules'] }))
+          : values.rules
+        form.reset({ ...values, rules })
         originalPreferencesRef.current = JSON.stringify(preferences)
       }
       if (!(await customFields.save({ announce: !savesRecord }))) return

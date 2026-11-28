@@ -67,7 +67,7 @@ function PaymentsPage() {
   const canReorder = permissions.can('update', Subject.PaymentMethod)
   const canEditStore = permissions.can('update', Subject.Store)
 
-  const { data: methodsResponse, isLoading } = usePaymentMethods()
+  const { data: methodsResponse, isLoading } = usePaymentMethods({ expand: ['rules'] })
   const { data: typesResponse } = usePaymentMethodTypes({ enabled: canCreate })
   const { data: store } = useStoreSettings()
 

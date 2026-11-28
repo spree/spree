@@ -77,16 +77,19 @@ interface UsePaymentMethodsParams {
   page?: number
   limit?: number
   enabled?: boolean
+  /** Associations to embed, such as `rules`, which the API leaves out unless asked. */
+  expand?: string[]
 }
 
 export function usePaymentMethods({
   page = 1,
   limit = 100,
   enabled = true,
+  expand,
 }: UsePaymentMethodsParams = {}) {
   return useQuery({
-    queryKey: useResourceKey('payment-methods', { page, limit }),
-    queryFn: () => adminClient.paymentMethods.list({ page, limit }),
+    queryKey: useResourceKey('payment-methods', { page, limit, expand }),
+    queryFn: () => adminClient.paymentMethods.list({ page, limit, expand }),
     enabled,
   })
 }
@@ -107,7 +110,7 @@ export function usePaymentMethodNames(text: string | undefined) {
 export function usePaymentMethod(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('payment-methods', id ?? 'noop'),
-    queryFn: () => adminClient.paymentMethods.get(id as string),
+    queryFn: () => adminClient.paymentMethods.get(id as string, { expand: ['rules'] }),
     enabled: !!id,
   })
 }

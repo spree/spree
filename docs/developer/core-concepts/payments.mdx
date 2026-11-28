@@ -142,7 +142,7 @@ Rules decide whether a payment method is offered at storefront checkout. A metho
 | `customer_group_rule` | `customer_group_ids` | The customer belongs to one of the groups. Guests never pass once a group is listed. |
 | `company_rule` | `company_ids`, `company_orders_only` | The cart is placed for a listed company or one of its divisions. With no companies listed, `company_orders_only` requires any company. |
 
-An empty `channel_ids`, `market_ids` or `customer_group_ids` list restricts nothing, so a rule saved half-configured never hides a method. A `company_rule` with no companies listed still requires a company while `company_orders_only` is on, which is the default. Rules are sent with the payment method as `rules`, which replaces the whole set, or managed one at a time:
+An empty `channel_ids`, `market_ids` or `customer_group_ids` list restricts nothing, so a rule saved half-configured never hides a method. A `company_rule` with no companies listed still requires a company while `company_orders_only` is on, which is the default. Rules are sent with the payment method as `rules`, which replaces the whole set, or managed one at a time. A payment method returns its rules only when asked with `expand=rules`:
 
 <Tabs>
 <Tab title="Admin SDK">
@@ -155,6 +155,9 @@ await adminClient.paymentMethods.update('pm_xyz789', {
     { type: 'order_total_rule', preferences: { min_totals: { EUR: '500.00' } } },
   ],
 })
+
+// Read them back
+const method = await adminClient.paymentMethods.get('pm_xyz789', { expand: ['rules'] })
 
 // The kinds a store accepts, with each one's preference schema
 const { data: ruleTypes } = await adminClient.paymentMethods.ruleTypes()
