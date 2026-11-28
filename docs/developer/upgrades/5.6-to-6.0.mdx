@@ -560,7 +560,7 @@ A gift also no longer counts toward spend thresholds or toward the amount a perc
 
 ## Excluded products are never discounted
 
-A product or category rule set to **None of these** (`match_policy: none`) now leaves only the excluded products at full price. The rest of the order is still discounted. Before, an excluded product anywhere in the cart blocked the whole promotion. Item discounts skip the excluded lines, and a whole-order discount is taken from the other lines and shared among them only. The promotion is refused only when every product in the cart is excluded.
+A product or category rule set to **None of these** (`match_policy: none`) now leaves only the excluded products at full price. The rest of the order is still discounted. Before, an excluded product anywhere in the cart blocked the whole promotion. Item discounts skip the excluded lines, and a whole-order discount is taken from the other lines and shared among them only. The promotion is refused only when every product in the cart is excluded. Excluded products don't count towards an **Item total** rule's minimum or maximum either.
 
 The category rule gains the same **None of these categories** option. Products in a child of an excluded category are excluded too.
 

@@ -1,5 +1,6 @@
 # A rule to apply to an order greater than (or greater than or equal to)
-# a specific amount. Free gifts do not count toward it.
+# a specific amount. Free gifts and products the promotion excludes do not
+# count toward it.
 module Spree
   class Promotion
     module Rules
@@ -13,7 +14,7 @@ module Spree
         OPERATORS_MAX = ['lt', 'lte']
 
         def eligible?(order, options = {})
-          item_total = order.item_total - order.gift_amount(promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false))
+          item_total = counted_total(order, options)
 
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal(preferred_amount_min.to_s))
 
@@ -30,6 +31,16 @@ module Spree
         end
 
         private
+
+        def counted_total(order, options)
+          gift_options = { promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false) }
+          total = order.item_total - order.gift_amount(**gift_options)
+          excluded = promotion ? order.line_items.select { |line_item| promotion.excludes_line_item?(line_item) } : []
+          return total if excluded.empty?
+
+          # Gift units on the excluded lines are already out of the total.
+          total - excluded.sum(BigDecimal(0), &:amount) + order.gift_amount(**gift_options, among: excluded)
+        end
 
         def formatted_amount_min(order)
           Spree::Money.new(preferred_amount_min, currency: order.currency).to_s
