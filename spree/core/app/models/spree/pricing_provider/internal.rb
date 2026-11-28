@@ -44,7 +44,12 @@ module Spree
         # node first — then the rule-matched lists, then the caller falls
         # back to base.
         # @return [Spree::Price]
+        # A gift card denomination is never on a price list: its price is the
+        # card's face value, and a list price would issue a card worth more
+        # than was paid.
         def find_price_from_lists
+          return if context.variant.gift_card?
+
           catalog_price_list_groups.each do |price_lists|
             price = best_price_among(price_lists)
             return price if price

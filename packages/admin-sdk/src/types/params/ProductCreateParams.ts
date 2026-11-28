@@ -41,6 +41,13 @@ export type ProductCreateParams = {
    * that should skip the product. Removed in 6.5.
    */
   promotionable?: boolean
+  /**
+   * Sell this product as a gift card. Each variant is a denomination priced at its face value; a
+   * paid order issues one card per unit and emails it to the recipient. Turning it on stops
+   * inventory tracking, tax and promotions and moves the product to digital delivery. Not available
+   * to sellers.
+   */
+  gift_card?: boolean
   tags?: string[]
   category_ids?: string[]
   /**

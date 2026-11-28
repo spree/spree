@@ -14,7 +14,9 @@ module Spree
                    amount_authorized: [:string, nullable: false], amount_remaining: [:string, nullable: false]
 
           typelize customer_id: [:string, nullable: true],
-                   created_by_id: [:string, nullable: true]
+                   created_by_id: [:string, nullable: true],
+                   line_item_id: [:string, nullable: true, comment: 'The line a shopper bought the card on; null for a card issued by staff.'],
+                   issuing_order_id: [:string, nullable: true, comment: 'The order that bought the card.']
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -24,7 +26,11 @@ module Spree
             params[:gift_card_codes] ? gift_card.display_code : gift_card.masked_code
           end
 
-          prefixed_id_attributes :customer, :created_by
+          prefixed_id_attributes :customer, :created_by, :line_item
+
+          attribute :issuing_order_id do |gift_card|
+            gift_card.line_item&.order&.prefixed_id
+          end
 
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes

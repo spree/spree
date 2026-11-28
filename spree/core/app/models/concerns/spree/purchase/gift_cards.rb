@@ -21,6 +21,15 @@ module Spree
         Spree::StoreCredit.where(id: store_credit_ids, originator: gift_card).sum(:amount)
       end
 
+      # Whether any line buys a gift card. Such a purchase cannot be paid
+      # from a gift card or store credit, which would turn one balance into
+      # another.
+      #
+      # @return [Boolean]
+      def buys_gift_card?
+        line_items_with_variants(variant: :product).any?(&:gift_card?)
+      end
+
       def total_minus_gift_cards
         total - gift_card_total
       end

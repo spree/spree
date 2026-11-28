@@ -79,5 +79,11 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
 
       expect(rule.reload).not_to be_eligible(order)
     end
+
+    it 'leaves a gift card out of the total' do
+      order.line_items.first.product.update_column(:gift_card, true)
+
+      expect(rule).not_to be_eligible(order)
+    end
   end
 end

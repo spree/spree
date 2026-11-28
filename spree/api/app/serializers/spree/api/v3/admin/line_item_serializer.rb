@@ -11,14 +11,14 @@ module Spree
 
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize price: [:string, nullable: false],
-                   total: [:string, nullable: false],
-                   adjustment_total: [:string, nullable: false],
-                   additional_tax_total: [:string, nullable: false],
-                   included_tax_total: [:string, nullable: false],
-                   discount_total: [:string, nullable: false],
-                   pre_tax_amount: [:string, nullable: false],
-                   discounted_amount: [:string, nullable: false]
+          typelize price: [:string, { nullable: false }],
+                   total: [:string, { nullable: false }],
+                   adjustment_total: [:string, { nullable: false }],
+                   additional_tax_total: [:string, { nullable: false }],
+                   included_tax_total: [:string, { nullable: false }],
+                   discount_total: [:string, { nullable: false }],
+                   pre_tax_amount: [:string, { nullable: false }],
+                   discounted_amount: [:string, { nullable: false }]
 
           typelize metadata: 'Record<string, unknown>',
                    cost_price: [:string, nullable: true],
@@ -39,7 +39,8 @@ module Spree
           # Base price, not resolved: resolving would call the pricing provider
           # once per line on a read path that must stay provider-free.
           attribute :catalog_price do |line_item|
-            Spree::Money::Rounding.format(line_item.variant&.amount_in(line_item.currency), line_item.currency, unit_price: true)
+            Spree::Money::Rounding.format(line_item.variant&.amount_in(line_item.currency), line_item.currency,
+                                          unit_price: true)
           end
 
           # Which agreement priced this line. The list id is stamped on the
@@ -89,6 +90,12 @@ module Spree
           one :tax_category,
               resource: proc { Spree.api.admin_tax_category_serializer },
               if: proc { expand?('tax_category') }
+
+          one :gift_card_recipient, key: :recipient, resource: proc { Spree.api.admin_gift_card_recipient_serializer },
+                                    source: proc { gift_card_recipient if gift_card? }
+          many :gift_cards, resource: proc { Spree.api.admin_gift_card_serializer },
+                            source: proc { gift_card? ? gift_cards : [] },
+                            if: proc { |line_item| line_item.order_id.present? }
 
           expandable_custom_fields admin: true
         end

@@ -45,6 +45,17 @@ describe Spree::PricingProvider::Internal::Resolution do
       end
     end
 
+    context 'when the variant is a gift card denomination' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
+
+      before { variant.product.update_column(:gift_card, true) }
+
+      it 'charges the face value, never a list price' do
+        expect(resolver.resolve.amount).to eq(19.99)
+      end
+    end
+
     context 'with a zero-amount price list price' do
       let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 0, price_list: price_list) }

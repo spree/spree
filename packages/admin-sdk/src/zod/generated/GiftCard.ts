@@ -25,6 +25,8 @@ export const GiftCardSchema = z.object({
   updated_at: z.string(),
   customer_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
+  line_item_id: z.string().nullable(),
+  issuing_order_id: z.string().nullable(),
   get customer() { return CustomerSchema.optional(); },
   created_by: AdminUserSchema.optional(),
   gift_card_batch: GiftCardBatchSchema.optional(),
@@ -47,6 +49,8 @@ export const GiftCardSchema = z.object({
   updated_at: z.ZodType<GiftCard['updated_at']>;
   customer_id: z.ZodType<GiftCard['customer_id']>;
   created_by_id: z.ZodType<GiftCard['created_by_id']>;
+  line_item_id: z.ZodType<GiftCard['line_item_id']>;
+  issuing_order_id: z.ZodType<GiftCard['issuing_order_id']>;
   customer: z.ZodOptional<z.ZodType<Exclude<GiftCard['customer'], undefined>>>;
   created_by: z.ZodOptional<z.ZodType<Exclude<GiftCard['created_by'], undefined>>>;
   gift_card_batch: z.ZodOptional<z.ZodType<Exclude<GiftCard['gift_card_batch'], undefined>>>;

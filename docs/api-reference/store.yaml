@@ -972,6 +972,7 @@ paths:
                     name: Product 354715
                     slug: product-354715
                     options_text: ''
+                    gift_card: false
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -993,6 +994,7 @@ paths:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
+                    recipient:
                   fulfillments: []
                   billing_address:
                   shipping_address:
@@ -1093,6 +1095,7 @@ paths:
                     name: Product 3552171
                     slug: product-3552171
                     options_text: ''
+                    gift_card: false
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -1114,6 +1117,7 @@ paths:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
+                    recipient:
                   fulfillments: []
                   billing_address:
                   shipping_address:
@@ -1637,6 +1641,7 @@ paths:
                   name: Product 3603263
                   slug: product-3603263
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -1658,6 +1663,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -1862,6 +1868,7 @@ paths:
                   name: Product 3628992
                   slug: product-3628992
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -1883,6 +1890,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                   id: addr_gbHJdmfrXB
@@ -2113,6 +2121,7 @@ paths:
                   name: Product 3654794
                   slug: product-3654794
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -2134,6 +2143,8 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
+                  gift_cards: []
                 fulfillments:
                 - id: ful_gbHJdmfrXB
                   number: R1001-F1
@@ -2446,6 +2457,7 @@ paths:
                   name: Product 3982614
                   slug: product-3982614
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -2467,6 +2479,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -2641,6 +2654,7 @@ paths:
                   name: Product 3993461
                   slug: product-3993461
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -2662,6 +2676,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -2830,6 +2845,7 @@ paths:
                   name: Product 4018182
                   slug: product-4018182
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -2851,6 +2867,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
                   number: cart_UkLWZg9DAJ-F1
@@ -3153,6 +3170,7 @@ paths:
                   name: Product 4035702
                   slug: product-4035702
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3174,6 +3192,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -3398,6 +3417,7 @@ paths:
                   name: Product 4079569
                   slug: product-4079569
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3419,6 +3439,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -3590,6 +3611,7 @@ paths:
                   name: Product 41063
                   slug: product-41063
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3611,6 +3633,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   seller_id:
@@ -3621,6 +3644,7 @@ paths:
                   name: Product 411298
                   slug: product-411298
                   options_text: ''
+                  gift_card: false
                   price: '19.99'
                   display_price: "$19.99"
                   total: '19.99'
@@ -3642,6 +3666,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -3837,6 +3862,7 @@ paths:
                   name: Product 4179165
                   slug: product-4179165
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3858,6 +3884,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -4655,6 +4682,7 @@ paths:
                   name: Product 4829789
                   slug: product-4829789
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4676,6 +4704,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -4840,6 +4869,7 @@ paths:
                   name: Product 484179
                   slug: product-484179
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4861,6 +4891,7 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
                 fulfillments: []
                 billing_address:
                 shipping_address:
@@ -5902,6 +5933,7 @@ paths:
                     name: Product 3845649
                     slug: product-3845649
                     options_text: ''
+                    gift_card: false
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -5922,6 +5954,8 @@ paths:
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
+                    recipient:
+                    gift_cards: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
                     number: R1001-F1
@@ -7245,6 +7279,7 @@ paths:
                     name: Product 3855270
                     slug: product-3855270
                     options_text: ''
+                    gift_card: false
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -7266,6 +7301,8 @@ paths:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
+                    recipient:
+                    gift_cards: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
                     number: R1001-F1
@@ -7575,6 +7612,7 @@ paths:
                   name: Product 3875633
                   slug: product-3875633
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -7596,6 +7634,8 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
+                  gift_cards: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
                   number: R1001-F1
@@ -8653,11 +8693,12 @@ paths:
           | `expires_at` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `gift_card_batch_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `line_item_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `state` | One of `active`, `partially_redeemed`, `redeemed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `status` | One of `active`, `partially_redeemed`, `redeemed`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `code`, `created_at`, `created_by_id`, `currency`, `customer_id`, `expires_at`, `gift_card_batch_id`, `id`, `state`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `code`, `created_at`, `created_by_id`, `currency`, `customer_id`, `expires_at`, `gift_card_batch_id`, `id`, `line_item_id`, `state`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: GiftCard
         sortable:
@@ -8669,6 +8710,7 @@ paths:
         - expires_at
         - gift_card_batch_id
         - id
+        - line_item_id
         - state
         - status
         - updated_at
@@ -10858,6 +10900,7 @@ paths:
                   name: Product 421496
                   slug: product-421496
                   options_text: ''
+                  gift_card: false
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -10879,6 +10922,8 @@ paths:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
+                  recipient:
+                  gift_cards: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
                   number: R1001-F1
@@ -12103,6 +12148,7 @@ paths:
                 - id: prod_UkLWZg9DAJ
                   name: Product 3836979
                   slug: product-3836979
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12396,6 +12442,7 @@ paths:
                 - id: prod_UkLWZg9DAJ
                   name: Product 4319085
                   slug: product-4319085
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12428,6 +12475,7 @@ paths:
                 - id: prod_gbHJdmfrXB
                   name: Product 4328209
                   slug: product-4328209
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -12558,6 +12606,7 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Product 4596885
                 slug: product-4596885
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13611,6 +13660,7 @@ paths:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
                   sku: SKU-594
+                  gift_card: false
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -13697,6 +13747,7 @@ paths:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
                   sku: SKU-595
+                  gift_card: false
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -17559,6 +17610,305 @@ components:
       - expires_at
       - created_by_id
       x-typelizer: true
+    GiftCardIssuedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - active
+            - partially_redeemed
+            - redeemed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        amount:
+          type: string
+          nullable: true
+        amount_used:
+          type: string
+          nullable: true
+        amount_authorized:
+          type: string
+          nullable: true
+        amount_remaining:
+          type: string
+          nullable: true
+        display_amount:
+          type: string
+          nullable: true
+          description: "`amount` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
+        display_amount_used:
+          type: string
+          nullable: true
+          description: "`amount_used` formatted with its currency symbol in the request's
+            language."
+          deprecated: true
+        display_amount_remaining:
+          type: string
+          nullable: true
+          description: "`amount_remaining` formatted with its currency symbol in the
+            request's language."
+          deprecated: true
+        expires_at:
+          type: string
+          nullable: true
+        redeemed_at:
+          type: string
+          nullable: true
+        expired:
+          type: boolean
+        active:
+          type: boolean
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        line_item_id:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        recipient:
+          allOf:
+          - "$ref": "#/components/schemas/GiftCardRecipient"
+          nullable: true
+      required:
+      - id
+      - code
+      - status
+      - currency
+      - amount
+      - amount_used
+      - amount_authorized
+      - amount_remaining
+      - display_amount
+      - display_amount_used
+      - display_amount_remaining
+      - expires_at
+      - redeemed_at
+      - expired
+      - active
+      - line_item_id
+      - order_id
+      - recipient
+      x-typelizer: true
+    GiftCardRecipient:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        send_at:
+          type: string
+          nullable: true
+          description: When the gift card email is sent; null sends it as soon as
+            the order is paid.
+      required:
+      - id
+      - email
+      - name
+      - message
+      - send_at
+      x-typelizer: true
     GiftCard:
       type: object
       properties:
@@ -18184,6 +18534,10 @@ components:
           type: string
         options_text:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the line buys a gift card, issued when the order
+            is paid.
         price:
           type: string
           nullable: true
@@ -18293,6 +18647,14 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/TaxLine"
+        recipient:
+          allOf:
+          - "$ref": "#/components/schemas/GiftCardRecipient"
+          nullable: true
+        gift_cards:
+          type: array
+          items:
+            "$ref": "#/components/schemas/GiftCard"
         custom_fields:
           type: array
           items:
@@ -18308,6 +18670,7 @@ components:
       - name
       - slug
       - options_text
+      - gift_card
       - price
       - display_price
       - total
@@ -18328,6 +18691,7 @@ components:
       - compare_at_amount
       - thumbnail_url
       - option_values
+      - recipient
       x-typelizer: true
     Locale:
       type: object
@@ -22088,6 +22452,10 @@ components:
           type: string
         slug:
           type: string
+        gift_card:
+          type: boolean
+          description: 'True when the product is a gift card: each variant is a denomination,
+            and buying one issues a card per unit when the order is paid.'
         meta_title:
           type: string
           nullable: true
@@ -22186,6 +22554,7 @@ components:
       - id
       - name
       - slug
+      - gift_card
       - meta_title
       - meta_description
       - meta_keywords
@@ -23480,6 +23849,10 @@ components:
           type: string
         product_id:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the variant is a gift card denomination; its price
+            is the card's face value.
         sku:
           type: string
           nullable: true
@@ -23579,6 +23952,7 @@ components:
       required:
       - id
       - product_id
+      - gift_card
       - sku
       - options_text
       - track_inventory
@@ -24327,6 +24701,12 @@ components:
           type: object
           additionalProperties: true
           description: Values for line item attributes an extension adds.
+        recipient:
+          allOf:
+          - "$ref": "#/components/schemas/GiftCardRecipientParams"
+          description: Who a gift card is for; only accepted when the variant is a
+            gift card. Without it the card is emailed to the order email. Adding the
+            same denomination for a different recipient creates a separate line.
       required:
       - variant_id
     AddressCreateParams:
@@ -24862,6 +25242,27 @@ components:
           type: boolean
       required:
       - name
+    GiftCardRecipientParams:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: friend@example.com
+        name:
+          type: string
+          example: Alex
+        message:
+          type: string
+          description: At most 500 characters.
+          example: Happy birthday!
+        send_at:
+          type: string
+          format: date-time
+          description: When to email the gift card, at most 90 days ahead. Omit to
+            send it as soon as the order is paid.
+      required:
+      - email
     LineItemInputParams:
       type: object
       properties:
@@ -25114,6 +25515,11 @@ components:
             has.
           example:
             engraving: J.D.
+        recipient:
+          allOf:
+          - "$ref": "#/components/schemas/GiftCardRecipientParams"
+          description: Replaces who a gift card line is for. Only accepted on a gift
+            card line.
     UpdatePaymentSessionParams:
       type: object
       properties:
@@ -25319,6 +25725,7 @@ components:
         expires_at: date
         gift_card_batch_id: id
         id: id
+        line_item_id: id
         state:
           enum:
           - active

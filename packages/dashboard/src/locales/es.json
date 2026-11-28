@@ -643,7 +643,8 @@
           "tab_downloads": "Descargas digitales",
           "downloads_help": "Cuánto tiempo funciona un enlace de descarga y cuántas veces se puede usar. Los archivos individuales pueden reemplazar estos valores.",
           "default_package_description": "La caja en la que sueles enviar. Los proveedores de tarifas de transporte suman su peso a cada paquete y usan sus dimensiones para el precio por peso dimensional.",
-          "tab_default_package": "Paquete predeterminado"
+          "tab_default_package": "Paquete predeterminado",
+          "tab_gift_cards": "Tarjetas regalo"
         },
         "tax_categories": {
           "add_sheet_title": "Agregar categoría de impuestos",
@@ -3097,6 +3098,16 @@
           "confirm_change_to_guest": "Este pedido pasará a ser un pedido de invitado y dejará el historial de pedidos del cliente.",
           "confirm_change_releases_balance": "El crédito de tienda y las tarjetas regalo que aplicó el cliente anterior se quitarán y se le devolverán, por lo que el importe pendiente vuelve a subir.",
           "change": "Cambiar cliente"
+        },
+        "issued_gift_cards": {
+          "title": "Tarjetas regalo emitidas",
+          "never_expires": "Nunca",
+          "columns": {
+            "code": "Código",
+            "amount": "Importe",
+            "expires": "Caduca",
+            "recipient": "Destinatario"
+          }
         }
       },
       "edit": {

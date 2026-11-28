@@ -12,6 +12,7 @@ export { EmailFreightSummarySchema, type EmailFreightSummary } from './EmailFrei
 export { EmailFulfillmentSchema, type EmailFulfillment } from './EmailFulfillment';
 export { EmailFulfillmentGroupSchema, type EmailFulfillmentGroup } from './EmailFulfillmentGroup';
 export { EmailGiftCardSchema, type EmailGiftCard } from './EmailGiftCard';
+export { EmailGiftCardRecipientSchema, type EmailGiftCardRecipient } from './EmailGiftCardRecipient';
 export { EmailLineItemSchema, type EmailLineItem } from './EmailLineItem';
 export { EmailMarketSchema, type EmailMarket } from './EmailMarket';
 export { EmailNewsletterSubscriberSchema, type EmailNewsletterSubscriber } from './EmailNewsletterSubscriber';

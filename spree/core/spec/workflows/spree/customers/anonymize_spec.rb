@@ -140,6 +140,16 @@ RSpec.describe Spree::Customers::Anonymize do
       expect(order.last_ip_address).to be_nil
     end
 
+    it 'scrubs the gift card recipients the buyer named' do
+      line_item = create(:line_item, order: order, product: create(:gift_card_product, store: store))
+      line_item.assign_gift_card_recipient(email: 'friend@example.com', name: 'Alex', message: 'Happy birthday!')
+
+      result
+
+      recipient = line_item.gift_card_recipient.reload
+      expect([recipient.email, recipient.name, recipient.message]).to eq([customer.reload.email, nil, nil])
+    end
+
     it 'redacts the address snapshot but leaves the tax jurisdiction readable' do
       ship_address = order.ship_address
       original_state = ship_address.state_code

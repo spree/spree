@@ -20,6 +20,7 @@ module Spree
           value = Spree::Money::Rounding.parse_decimal(value)
           return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value&.positive?
           return failure(nil, I18n.t('spree.errors.messages.discount_value_type_invalid')) unless %w[flat percent].include?(value_type)
+          return failure(nil, I18n.t('spree.errors.messages.gift_card_not_discountable')) if line_item&.gift_card?
 
           rows = order.with_lock do
             created = line_item ? [line_item_row(order, line_item, label, value, value_type)].compact : distributed_rows(order, label, value, value_type)
@@ -67,7 +68,11 @@ module Spree
         end
 
         # Remaining discountable base: amount net of already-applied discounts.
+        # A gift card has none: its cards are issued at face value, so a
+        # discount on it would hand out more than was paid.
         def discountable_base(line_item)
+          return BigDecimal(0) if line_item.gift_card?
+
           line_item.amount + line_item.owner.discounts.where(line_item_id: line_item.id).sum(:amount)
         end
 

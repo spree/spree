@@ -38,6 +38,24 @@ describe Spree::TaxProvider::Internal, type: :model do
         expect(line_item.reload.pre_tax_amount).to eq(10)
       end
 
+      it 'charges no tax on a gift card, clearing what the line carried before' do
+        provider.estimate(order)
+        expect(order.tax_lines.reload.count).to eq(1)
+
+        line_item.product.update_column(:gift_card, true)
+        provider.estimate(order)
+
+        expect(order.tax_lines.reload).to be_empty
+        expect(line_item.reload.pre_tax_amount).to eq(10)
+      end
+
+      it 'charges no tax on a gift card line it is named to estimate' do
+        line_item.product.update_column(:gift_card, true)
+        provider.estimate(order, [line_item.reload])
+
+        expect(order.tax_lines.reload).to be_empty
+      end
+
       it 'replaces stale lines on re-estimate' do
         provider.estimate(order)
         first_ids = order.tax_lines.reload.ids
@@ -432,6 +450,14 @@ describe Spree::TaxProvider::Internal, type: :model do
       expect(row.amount).to eq((line.taxable_basis / 1.2 * 0.2).round(2))
       expect(row).to have_attributes(included: true, tax_rate: rate, order: order, credit: false)
       expect(order.tax_lines.reload).to be_empty
+    end
+
+    it 'does not tax a gift card taken in exchange' do
+      line.new_variant.product.update_column(:gift_card, true)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.charges).to be_empty
     end
 
     it 'leaves the credit for the units coming back alone' do

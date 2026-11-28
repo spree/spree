@@ -1362,6 +1362,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
+                      "user/loyalty/selling-gift-cards",
                       "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
@@ -3016,6 +3017,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
+              "user/loyalty/selling-gift-cards",
               "user/loyalty/store-credits"
             ]
           },

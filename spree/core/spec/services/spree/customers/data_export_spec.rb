@@ -43,6 +43,15 @@ RSpec.describe Spree::Customers::DataExport do
       expect(exported[:line_items]).to be_present
     end
 
+    it 'includes the gift card recipients the person named' do
+      line_item = create(:line_item, order: order, product: create(:gift_card_product, store: store))
+      line_item.assign_gift_card_recipient(email: 'friend@example.com', name: 'Alex', message: 'Enjoy')
+
+      exported_line = payload[:orders].first[:line_items].find { |line| line[:gift_card_recipient] }
+
+      expect(exported_line[:gift_card_recipient]).to include(email: 'friend@example.com', name: 'Alex', message: 'Enjoy')
+    end
+
     it 'leaves incomplete carts out' do
       create(:order, customer: customer, store: store)
 
