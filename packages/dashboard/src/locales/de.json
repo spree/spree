@@ -3276,6 +3276,33 @@
         "order_group_help": "Diese Bestellung wurde zusammen mit anderen in einem Checkout aufgegeben.",
         "order_group_part_of": "Teil eines größeren Einkaufs",
         "order_group_view_all": "Alle Bestellungen dieses Einkaufs anzeigen",
+        "order_changes": {
+          "title": "Bestelländerungen",
+          "empty": "Keine Änderungen seit Aufgabe der Bestellung.",
+          "unknown_item": "Ein Artikel, der nicht mehr im Katalog ist",
+          "from_return": "aus Retoure {{number}}",
+          "from_exchange": "aus Umtausch {{number}}",
+          "from_claim": "aus Reklamation {{number}}",
+          "statuses": {
+            "pending": "Ausstehend",
+            "requested": "Angefragt",
+            "confirmed": "Angewendet",
+            "canceled": "Storniert",
+            "declined": "Abgelehnt"
+          },
+          "actions": {
+            "add_item": "{{quantity}} × {{name}} hinzugefügt",
+            "update_item": "Menge von {{name}} auf {{quantity}} geändert",
+            "remove_item": "{{name}} entfernt",
+            "receive_item": "{{quantity}} × {{name}} wieder eingelagert",
+            "add_fulfillment": "{{quantity}} × {{name}} als Ersatz versendet",
+            "add_discount": "Rabatt „{{label}}“ ({{value}}) hinzugefügt",
+            "update_discount": "Rabatt in „{{label}}“, {{amount}} geändert",
+            "update_discount_label": "Rabatt in „{{label}}“ umbenannt",
+            "update_discount_amount": "Rabatt auf {{amount}} geändert",
+            "remove_discount": "Rabatt „{{label}}“ entfernt"
+          }
+        },
         "payment_form": {
           "amount_help": "Leer lassen, um standardmäßig den offenen Saldo zu verwenden.",
           "capture_immediately": "Sofort einziehen",
@@ -3407,6 +3434,9 @@
           "price_reverting": "Wird auf Katalogpreis zurückgesetzt",
           "removed": "Wird entfernt"
         },
+        "balance_change": "Saldoänderung",
+        "balance_owed_hint": "Nach dem Speichern hat der Kunde einen offenen Betrag. Ziehen Sie ihn über die Zahlungen der Bestellung ein.",
+        "balance_refund_hint": "Nach dem Speichern steht dem Kunden eine Rückerstattung zu. Erstatten Sie sie über die Zahlungen der Bestellung.",
         "catalog_price_unknown": "Katalogpreis",
         "columns": {
           "line_total": "Positionssumme",
@@ -3421,7 +3451,10 @@
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
         "totals_preview_confirm_hint": "Wird beim Speichern vom Server bestätigt.",
+        "totals_preview_failed": "Diese Änderungen können nicht übernommen werden: {{message}}",
         "totals_preview_hint": "Versand, Steuern und Aktionen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_preview_loading": "Summen werden aktualisiert…",
+        "totals_preview_server_hint": "Vom Shop berechnet, inklusive Versand, Steuern und Aktionen. Erst beim Speichern wird etwas übernommen.",
         "totals_title": "Summen",
         "validation": {
           "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
@@ -4411,6 +4444,7 @@
             "media": "Medien",
             "newsletter_subscriber": "Newsletter-Abonnent",
             "order": "Bestellung",
+            "order_change": "Bestelländerung",
             "order_group": "Bestellgruppe",
             "payment": "Zahlung",
             "payment_session": "Zahlungssitzung",

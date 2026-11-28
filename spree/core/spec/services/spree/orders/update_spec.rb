@@ -496,6 +496,48 @@ module Spree
 
             expect { subject }.to change { order.reload.payment_status }.from('paid').to('partially_paid')
           end
+
+          it 'records the edit as a confirmed order change' do
+            line_item = order.line_items.find_by!(variant: variant)
+
+            expect(subject).to be_success
+
+            change = order.order_changes.sole
+            expect(change.status).to eq('confirmed')
+            expect(change.actions.map { |action| [action.kind, action.line_item_id, action.quantity] }).
+              to eq([['update_item', line_item.id, 3]])
+          end
+
+          it 'is refused while another change to the order is open' do
+            create(:order_change, order: order, status: 'requested')
+
+            expect(subject).to be_failure
+            expect(order.errors.full_messages).to eq([I18n.t('spree.order_change_in_progress')])
+            expect(order.reload.line_items.find_by!(variant: variant).quantity).not_to eq(3)
+          end
+
+          context 'with a variant the order does not carry' do
+            let(:other_variant) { create(:product_in_stock).default_variant }
+            let(:params) { { items: [{ variant_id: other_variant.prefixed_id, quantity: 1, metadata: { gift: 'yes' } }] } }
+
+            it 'adds it through the change and keeps its metadata' do
+              expect(subject).to be_success
+
+              expect(order.order_changes.sole.actions.map(&:kind)).to eq(['add_item'])
+              expect(order.reload.line_items.find_by!(variant: other_variant).metadata).to eq('gift' => 'yes')
+            end
+          end
+
+          context 'with quantity zero' do
+            let(:params) { { items: [{ variant_id: variant.prefixed_id, quantity: 0 }] } }
+
+            it 'removes the line through the change' do
+              expect(subject).to be_success
+
+              expect(order.order_changes.sole.actions.map(&:kind)).to eq(['remove_item'])
+              expect(order.reload.line_items.where(variant: variant)).to be_empty
+            end
+          end
         end
       end
 

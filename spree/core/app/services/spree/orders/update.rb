@@ -8,8 +8,11 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
-      def call(order:, params: {})
+      # @param requested_by [Object, nil] who made the edit, recorded on the
+      #   order change a placed order's item edits become
+      def call(order:, params: {}, requested_by: nil)
         @order = order
+        @requested_by = requested_by
         @params = params.to_h.deep_symbolize_keys
 
         items_param = @params.delete(:items)
@@ -93,8 +96,71 @@ module Spree
       end
 
       def process_items(items)
+        return change_placed_items(items) if @order.completed?
+
         result = Spree::Orders::UpsertItems.call(order: @order, items: items)
         propagate_step_failure!(result, fallback: 'Failed to update items on order') if result.failure?
+      end
+
+      # A placed order's lines change only through an order change, so the
+      # edit is recorded, waits for any open change and runs its hooks, as
+      # the order edit screen's does.
+      def change_placed_items(items)
+        items = Array(items).map { |item| item.to_h.deep_symbolize_keys }
+        if items.any? { |item| item.key?(:price) }
+          @order.errors.add(:base, I18n.t('spree.cart_line_item.price_override_not_allowed'))
+          raise ActiveRecord::RecordInvalid, @order
+        end
+
+        actions = items.filter_map { |item| placed_item_action(item) }
+        if actions.any?
+          result = Spree.order_change_apply_service.call(order: @order, actions: actions, requested_by: @requested_by)
+          if result.failure?
+            # A refusal such as another open change is a symbol naming its message.
+            reason = result.error.respond_to?(:value) ? result.error.value : result.error
+            propagate_step_failure!(result, fallback: 'Failed to update items on order') unless reason.is_a?(Symbol)
+
+            @order.errors.add(:base, I18n.t("spree.#{reason}"))
+            raise ActiveRecord::RecordInvalid, @order
+          end
+          # The change wrote through its own copy of the order.
+          @order.reload
+        end
+
+        merge_line_metadata(items)
+      end
+
+      # The item's quantity is where its variant's line ends up: zero or less
+      # removes it, and a variant the order does not carry is added.
+      def placed_item_action(item)
+        quantity = (item[:quantity] || 1).to_i
+        line_item = @order.line_items.detect { |line| line.variant_id == variant_key(item) }
+
+        if line_item
+          return { kind: 'remove_item', line_item: line_item } unless quantity.positive?
+          return if line_item.quantity == quantity
+
+          { kind: 'update_item', line_item: line_item, quantity: quantity }
+        elsif quantity.positive?
+          { kind: 'add_item', variant: @order.store.variants.find_by_param!(item[:variant_id]), quantity: quantity }
+        end
+      end
+
+      # Line metadata is the merchant's own note, not part of what was sold,
+      # so it is written to the line as an item upsert writes it.
+      def merge_line_metadata(items)
+        lines = @order.line_items.reload.index_by(&:variant_id)
+        items.each do |item|
+          next if item[:metadata].blank?
+
+          line_item = lines[variant_key(item)] or next
+          line_item.update!(metadata: line_item.metadata.merge(item[:metadata].to_h.stringify_keys))
+        end
+      end
+
+      # Prefixed or raw, as the item upsert reads it.
+      def variant_key(item)
+        Spree::Variant.decode_prefixed_id(item[:variant_id]) || item[:variant_id].to_s.to_i
       end
 
       # Store credit and a named gift card pay only for their owner's orders,

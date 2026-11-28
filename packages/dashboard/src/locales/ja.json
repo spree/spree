@@ -3275,6 +3275,33 @@
         "order_group_help": "この注文は、1 回のチェックアウトでほかの注文と一緒に行われました。",
         "order_group_part_of": "大きな購入の一部",
         "order_group_view_all": "この購入のすべての注文を見る",
+        "order_changes": {
+          "title": "注文の変更",
+          "empty": "注文確定以降の変更はありません。",
+          "unknown_item": "カタログにない商品",
+          "from_return": "返品 {{number}} より",
+          "from_exchange": "交換 {{number}} より",
+          "from_claim": "クレーム {{number}} より",
+          "statuses": {
+            "pending": "保留中",
+            "requested": "依頼済み",
+            "confirmed": "適用済み",
+            "canceled": "キャンセル済み",
+            "declined": "却下"
+          },
+          "actions": {
+            "add_item": "{{name}} を {{quantity}} 点追加",
+            "update_item": "{{name}} の数量を {{quantity}} に変更",
+            "remove_item": "{{name}} を削除",
+            "receive_item": "{{name}} を {{quantity}} 点再入庫",
+            "add_fulfillment": "{{name}} を {{quantity}} 点交換品として発送",
+            "add_discount": "割引「{{label}}」({{value}})を追加",
+            "update_discount": "割引を「{{label}}」、{{amount}} に変更",
+            "update_discount_label": "割引の名前を「{{label}}」に変更",
+            "update_discount_amount": "割引を {{amount}} に変更",
+            "remove_discount": "割引「{{label}}」を削除"
+          }
+        },
         "payment_form": {
           "amount_help": "空欄なら未払いの残高になります。",
           "capture_immediately": "すぐに確定",
@@ -3406,6 +3433,9 @@
           "price_reverting": "カタログ価格に戻します",
           "removed": "削除します"
         },
+        "balance_change": "残高の変動",
+        "balance_owed_hint": "保存後、お客様に未払いの残高があります。注文の支払いから回収してください。",
+        "balance_refund_hint": "保存後、お客様への返金が必要です。注文の支払いから返金してください。",
         "catalog_price_unknown": "カタログ価格",
         "columns": {
           "line_total": "明細の合計",
@@ -3420,7 +3450,10 @@
         "title": "注文を編集",
         "totals_hint": "保存すると、サーバーが合計を再計算します。",
         "totals_preview_confirm_hint": "保存すると、サーバーが確定します。",
+        "totals_preview_failed": "この変更は適用できません: {{message}}",
         "totals_preview_hint": "保存すると、サーバーが送料・税・プロモーションを再計算します。",
+        "totals_preview_loading": "合計を更新しています…",
+        "totals_preview_server_hint": "配送料、税金、プロモーションを含めてストアが計算します。保存をクリックするまで何も保存されません。",
         "totals_title": "合計",
         "validation": {
           "below_fulfilled_one": "処理済みの {{count}} 点より少なくはできません",
@@ -4410,6 +4443,7 @@
             "media": "メディア",
             "newsletter_subscriber": "ニュースレターの購読者",
             "order": "注文",
+            "order_change": "注文の変更",
             "order_group": "注文グループ",
             "payment": "支払い",
             "payment_session": "支払いセッション",

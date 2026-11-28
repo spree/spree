@@ -19,6 +19,7 @@ import {
   OrderDiscountsCard,
   TaxLinesCard,
 } from '../../../../../components/spree/orders/order-adjustments-cards'
+import { OrderChangesCard } from '../../../../../components/spree/orders/order-changes-card'
 import { CommissionLinesCard } from '../../../../../components/spree/orders/order-commission-lines-card'
 import { CustomerCard } from '../../../../../components/spree/orders/order-customer-card'
 import { DiscountsCard } from '../../../../../components/spree/orders/order-discounts-sidebar-card'
@@ -73,12 +74,14 @@ function OrderDetailPage() {
           <OrderSummaryCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
-              would only ever render an empty card with a disabled action. */}
+              would only ever render an empty card with a disabled action.
+              A draft is edited directly, so it has no changes to list. */}
           {order.completed_at && (
             <>
               <OrderReturnsCard order={order} />
               <OrderExchangesCard order={order} />
               <OrderClaimsCard order={order} />
+              <OrderChangesCard order={order} />
             </>
           )}
           <CommissionLinesCard order={order} />

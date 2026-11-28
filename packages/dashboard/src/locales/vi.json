@@ -3275,6 +3275,33 @@
         "order_group_help": "Đơn hàng này được đặt cùng với những đơn hàng khác trong một lần thanh toán.",
         "order_group_part_of": "Một phần của giao dịch mua lớn hơn",
         "order_group_view_all": "Xem tất cả các đơn đặt hàng trong giao dịch mua này",
+        "order_changes": {
+          "title": "Thay đổi đơn hàng",
+          "empty": "Không có thay đổi nào kể từ khi đặt đơn.",
+          "unknown_item": "Một sản phẩm không còn trong danh mục",
+          "from_return": "từ đơn trả hàng {{number}}",
+          "from_exchange": "từ đơn đổi hàng {{number}}",
+          "from_claim": "từ khiếu nại {{number}}",
+          "statuses": {
+            "pending": "Đang chờ",
+            "requested": "Đã yêu cầu",
+            "confirmed": "Đã áp dụng",
+            "canceled": "Đã hủy",
+            "declined": "Bị từ chối"
+          },
+          "actions": {
+            "add_item": "Đã thêm {{quantity}} × {{name}}",
+            "update_item": "Đã đổi số lượng {{name}} thành {{quantity}}",
+            "remove_item": "Đã xóa {{name}}",
+            "receive_item": "Đã nhập lại kho {{quantity}} × {{name}}",
+            "add_fulfillment": "Đã gửi {{quantity}} × {{name}} để thay thế",
+            "add_discount": "Đã thêm giảm giá “{{label}}” ({{value}})",
+            "update_discount": "Đã đổi giảm giá thành “{{label}}”, {{amount}}",
+            "update_discount_label": "Đã đổi tên giảm giá thành “{{label}}”",
+            "update_discount_amount": "Đã đổi giảm giá thành {{amount}}",
+            "remove_discount": "Đã xóa giảm giá “{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "Để trống để mặc định số dư chưa thanh toán.",
           "capture_immediately": "Chụp ngay lập tức",
@@ -3406,6 +3433,9 @@
           "price_reverting": "Hoàn nguyên về giá danh mục",
           "removed": "Đang xóa"
         },
+        "balance_change": "Thay đổi số dư",
+        "balance_owed_hint": "Sau khi lưu, khách hàng có một khoản cần thanh toán. Hãy thu từ các khoản thanh toán của đơn hàng.",
+        "balance_refund_hint": "Sau khi lưu, khách hàng cần được hoàn tiền. Hãy hoàn tiền từ các khoản thanh toán của đơn hàng.",
         "catalog_price_unknown": "giá danh mục",
         "columns": {
           "line_total": "Tổng số dòng",
@@ -3420,7 +3450,10 @@
         "title": "Chỉnh sửa đơn hàng",
         "totals_hint": "Tổng số được máy chủ tính toán lại sau khi bạn lưu.",
         "totals_preview_confirm_hint": "Được máy chủ xác nhận khi bạn lưu.",
+        "totals_preview_failed": "Không thể áp dụng các thay đổi này: {{message}}",
         "totals_preview_hint": "Vận chuyển, thuế và khuyến mãi được máy chủ tính toán lại sau khi bạn lưu.",
+        "totals_preview_loading": "Đang cập nhật tổng tiền…",
+        "totals_preview_server_hint": "Do cửa hàng tính, bao gồm phí giao hàng, thuế và khuyến mãi. Không có gì được lưu cho đến khi bạn nhấn Lưu.",
         "totals_title": "Tổng số",
         "validation": {
           "below_fulfilled_one": "Không thể xuống dưới {{count}} đơn vị đã hoàn thành",
@@ -4410,6 +4443,7 @@
             "media": "Phương tiện truyền thông",
             "newsletter_subscriber": "Người đăng ký nhận bản tin",
             "order": "Đặt hàng",
+            "order_change": "Thay đổi đơn hàng",
             "order_group": "Nhóm đặt hàng",
             "payment": "Thanh toán",
             "payment_session": "Phiên thanh toán",

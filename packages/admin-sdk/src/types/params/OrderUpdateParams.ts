@@ -53,7 +53,8 @@ export type OrderUpdateParams = {
   /**
    * Line items to upsert, keyed by variant. An entry sets that variant's quantity, creating the
    * line item when the order has none; `quantity: 0` removes it. Variants you do not send are left
-   * alone.
+   * alone. On a placed order the edit is applied as an order change, so it is recorded in the
+   * order's changes and refused while another change is open.
    */
   items?: {
     variant_id: string

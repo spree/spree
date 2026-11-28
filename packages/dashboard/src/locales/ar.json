@@ -3300,6 +3300,33 @@
         "order_group_help": "تم تقديم هذا الطلب مع طلبات أخرى في عملية دفع واحدة.",
         "order_group_part_of": "جزء من عملية شراء أكبر",
         "order_group_view_all": "عرض كل الطلبات في عملية الشراء هذه",
+        "order_changes": {
+          "title": "تغييرات الطلب",
+          "empty": "لا توجد تغييرات منذ تقديم الطلب.",
+          "unknown_item": "منتج لم يعد في الكتالوج",
+          "from_return": "من المرتجع {{number}}",
+          "from_exchange": "من الاستبدال {{number}}",
+          "from_claim": "من المطالبة {{number}}",
+          "statuses": {
+            "pending": "قيد الانتظار",
+            "requested": "مطلوب",
+            "confirmed": "مُطبَّق",
+            "canceled": "ملغى",
+            "declined": "مرفوض"
+          },
+          "actions": {
+            "add_item": "أُضيف {{quantity}} × {{name}}",
+            "update_item": "تغيّرت كمية {{name}} إلى {{quantity}}",
+            "remove_item": "أُزيل {{name}}",
+            "receive_item": "أُعيد إلى المخزون {{quantity}} × {{name}}",
+            "add_fulfillment": "شُحن {{quantity}} × {{name}} كبديل",
+            "add_discount": "أُضيف الخصم «{{label}}» ({{value}})",
+            "update_discount": "تغيّر خصم إلى «{{label}}»، {{amount}}",
+            "update_discount_label": "أُعيدت تسمية خصم إلى «{{label}}»",
+            "update_discount_amount": "تغيّر خصم إلى {{amount}}",
+            "remove_discount": "أُزيل الخصم «{{label}}»"
+          }
+        },
         "payment_form": {
           "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
           "capture_immediately": "التقط على الفور",
@@ -3431,6 +3458,9 @@
           "price_reverting": "سيعود إلى سعر الكتالوج",
           "removed": "قيد الإزالة"
         },
+        "balance_change": "تغيّر الرصيد",
+        "balance_owed_hint": "بعد الحفظ، يتبقى على العميل رصيد للدفع. حصّله من مدفوعات الطلب.",
+        "balance_refund_hint": "بعد الحفظ، يستحق العميل استرداد مبلغ. ردّه من مدفوعات الطلب.",
         "catalog_price_unknown": "سعر الكتالوج",
         "columns": {
           "line_total": "إجمالي السطر",
@@ -3445,7 +3475,10 @@
         "title": "تعديل الطلب",
         "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
         "totals_preview_confirm_hint": "يؤكده الخادم عند الحفظ.",
+        "totals_preview_failed": "لا يمكن تطبيق هذه التغييرات: {{message}}",
         "totals_preview_hint": "يُعيد الخادم حساب الشحن والضرائب والعروض بعد الحفظ.",
+        "totals_preview_loading": "جارٍ تحديث الإجماليات…",
+        "totals_preview_server_hint": "يحسبها المتجر، بما في ذلك الشحن والضرائب والعروض. لا يُحفظ شيء حتى تنقر على حفظ.",
         "totals_title": "الإجماليات",
         "validation": {
           "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
@@ -4447,6 +4480,7 @@
             "media": "وسائط",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "طلب",
+            "order_change": "تعديل الطلب",
             "order_group": "مجموعة طلبات",
             "payment": "قسط",
             "payment_session": "Payment session",

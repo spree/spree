@@ -3306,6 +3306,33 @@
         "order_group_help": "To zamówienie zostało złożone razem z innymi w ramach jednego zakupu.",
         "order_group_part_of": "Część większego zakupu",
         "order_group_view_all": "Zobacz wszystkie zamówienia z tego zakupu",
+        "order_changes": {
+          "title": "Zmiany zamówienia",
+          "empty": "Brak zmian od złożenia zamówienia.",
+          "unknown_item": "Produkt, którego nie ma już w katalogu",
+          "from_return": "ze zwrotu {{number}}",
+          "from_exchange": "z wymiany {{number}}",
+          "from_claim": "z reklamacji {{number}}",
+          "statuses": {
+            "pending": "Oczekująca",
+            "requested": "Zgłoszona",
+            "confirmed": "Zastosowana",
+            "canceled": "Anulowana",
+            "declined": "Odrzucona"
+          },
+          "actions": {
+            "add_item": "Dodano {{quantity}} × {{name}}",
+            "update_item": "Zmieniono ilość {{name}} na {{quantity}}",
+            "remove_item": "Usunięto {{name}}",
+            "receive_item": "Przyjęto na stan {{quantity}} × {{name}}",
+            "add_fulfillment": "Wysłano {{quantity}} × {{name}} jako zamiennik",
+            "add_discount": "Dodano rabat „{{label}}” ({{value}})",
+            "update_discount": "Zmieniono rabat na „{{label}}”, {{amount}}",
+            "update_discount_label": "Zmieniono nazwę rabatu na „{{label}}”",
+            "update_discount_amount": "Zmieniono rabat na {{amount}}",
+            "remove_discount": "Usunięto rabat „{{label}}”"
+          }
+        },
         "payment_form": {
           "amount_help": "Pozostaw puste, aby użyć domyślnie pozostałego salda.",
           "capture_immediately": "Pobierz natychmiast",
@@ -3439,6 +3466,9 @@
           "price_reverting": "Powrót do ceny katalogowej",
           "removed": "Do usunięcia"
         },
+        "balance_change": "Zmiana salda",
+        "balance_owed_hint": "Po zapisaniu klient ma saldo do zapłaty. Pobierz je w płatnościach zamówienia.",
+        "balance_refund_hint": "Po zapisaniu klientowi należy się zwrot. Zwróć środki w płatnościach zamówienia.",
         "catalog_price_unknown": "cena katalogowa",
         "columns": {
           "line_total": "Wartość pozycji",
@@ -3453,7 +3483,10 @@
         "title": "Edytuj zamówienie",
         "totals_hint": "Sumy są przeliczane przez serwer po zapisaniu zmian.",
         "totals_preview_confirm_hint": "Potwierdzane przez serwer po zapisaniu.",
+        "totals_preview_failed": "Tych zmian nie można zastosować: {{message}}",
         "totals_preview_hint": "Wysyłka, podatki i promocje zostaną przeliczone przez serwer po zapisaniu.",
+        "totals_preview_loading": "Aktualizowanie sum…",
+        "totals_preview_server_hint": "Wyliczone przez sklep, z wysyłką, podatkami i promocjami. Nic nie zostanie zapisane, dopóki nie klikniesz Zapisz.",
         "totals_title": "Sumy",
         "validation": {
           "below_fulfilled_few": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
@@ -4461,6 +4494,7 @@
             "media": "Multimedia",
             "newsletter_subscriber": "Subskrybent newslettera",
             "order": "Zamówienie",
+            "order_change": "Zmiana zamówienia",
             "order_group": "Grupa zamówień",
             "payment": "Płatność",
             "payment_session": "Sesja płatności",

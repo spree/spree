@@ -30,6 +30,8 @@ module Spree
     belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :exchanges
     acted_by :created_by
 
+    # The change sets that restocked or shipped for it (docs/plans/6.1-order-change-substrate.md).
+    has_many :order_changes, class_name: 'Spree::OrderChange', inverse_of: :exchange, dependent: :nullify
     has_many :exchange_line_items, class_name: 'Spree::ExchangeLineItem',
                                    dependent: :destroy, inverse_of: :exchange
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
