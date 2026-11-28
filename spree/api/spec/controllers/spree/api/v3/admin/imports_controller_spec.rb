@@ -395,13 +395,13 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
   describe 'GET #example' do
     # Redirected rather than linked client-side: the URL is pinned to the
-    # installed Spree version, which only the server knows.
+    # installed Spree version, which only the server knows. The import spec
+    # covers which tag or branch that is.
     it 'redirects to the example CSV for the installed version' do
       get :example, params: { type: 'products' }
 
       expect(response).to have_http_status(:found)
       expect(response.location).to eq(Spree::Imports::Products.sample_csv_url)
-      expect(response.location).to include("v#{Spree.version}")
     end
 
     it 'returns 404 for a type with no example file' do
